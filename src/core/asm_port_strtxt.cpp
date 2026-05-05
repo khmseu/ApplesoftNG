@@ -1,5 +1,7 @@
 #include "core/asm_port_strtxt.hpp"
 
+#include "core/asm_port_strlit.hpp"
+
 #include <cstdint>
 
 namespace applesoft::asm_port {
@@ -13,9 +15,6 @@ std::uint8_t read_TXTPTR_high() { return 0; }
 
 // TODO(asm-port): read CPU carry flag from arithmetic state.
 bool read_carry_flag() { return false; }
-
-// TODO(asm-port): port STRLIT label.
-void STRLIT(std::uint8_t /*a*/, std::uint8_t /*y*/) {}
 
 // TODO(asm-port): port POINT label.
 void POINT() {}
