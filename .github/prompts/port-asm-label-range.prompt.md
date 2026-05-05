@@ -1,5 +1,4 @@
 ---
-mode: ask
 ---
 
 Port one historical assembler segment to C++ using the repo conversion rules.
