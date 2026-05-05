@@ -5,12 +5,12 @@ mode: ask
 Port one historical assembler segment to C++ using the repo conversion rules.
 
 Required input:
-- `start_label`
-- `end_label`
+- `start_label` (inclusive)
+- `end_label` (exclusive)
 
 Execution contract:
 1. Find both labels in [SourceMaterial/Apple-II-Source-slim](../../SourceMaterial/Apple-II-Source-slim).
-2. Read the inclusive range and the comments immediately preceding the range.
+2. Read the range from `start_label` up to but not including `end_label`, and the comments immediately preceding the range.
 3. Explain the behavior briefly.
 4. Implement one C++ function that reproduces the behavior.
 5. Preserve assembler naming as much as possible.

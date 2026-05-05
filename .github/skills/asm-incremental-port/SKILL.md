@@ -10,15 +10,15 @@ Incrementally port Applesoft historical assembler ranges into C++ using a strict
 - "translate this listing window"
 
 ## Inputs
-- `start_label`
-- `end_label`
+- `start_label` (inclusive)
+- `end_label` (exclusive)
 
 Optional:
 - preferred destination subsystem (`core` or `platform`)
 
 ## Procedure
 1. Resolve both labels in the listings under [SourceMaterial/Apple-II-Source-slim/src/system](../../../SourceMaterial/Apple-II-Source-slim/src/system).
-2. Read the full bounded range, including inline comments and comments immediately preceding the range.
+2. Read the bounded range from `start_label` up to but not including `end_label`, including inline comments and comments immediately preceding the range.
 3. Summarize intent in 2-5 bullets before coding.
 4. Implement one C++ function for the range.
 5. Keep label-based naming as-is when legal; otherwise minimally normalize and document mapping.

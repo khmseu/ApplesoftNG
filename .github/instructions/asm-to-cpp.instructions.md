@@ -7,14 +7,14 @@ applyTo: "SourceMaterial/Apple-II-Source-slim/**/*.lst,SourceMaterial/Apple-II-S
 Use these instructions when converting a bounded assembler segment into C++.
 
 ## Required Inputs
-- `start_label`: first label of the conversion window.
-- `end_label`: last label of the conversion window.
+- `start_label`: first label of the conversion window, inclusive.
+- `end_label`: last label of the conversion window, exclusive.
 
 Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II-Source-slim](../../SourceMaterial/Apple-II-Source-slim).
 
 ## Mandatory Workflow
 1. Locate both labels and confirm they are in the same source listing region.
-2. Extract the inclusive range between `start_label` and `end_label`.
+2. Extract the range that starts at `start_label` and stops immediately before `end_label`.
 3. Include comments that are:
 - inline inside the range.
 - immediately preceding the first line in range and semantically attached.

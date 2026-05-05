@@ -38,6 +38,7 @@ These commands are verified in this workspace.
 - Historical project notes: [SourceMaterial/Apple-II-Source-slim/project-description.md](SourceMaterial/Apple-II-Source-slim/project-description.md)
 
 ## AI Conversion Support
+- Label window rule for asm conversion: start label is inclusive, end label is exclusive.
 - Conversion instructions: [.github/instructions/asm-to-cpp.instructions.md](.github/instructions/asm-to-cpp.instructions.md)
 - Incremental conversion skill: [.github/skills/asm-incremental-port/SKILL.md](.github/skills/asm-incremental-port/SKILL.md)
 - Prompt template for two-label conversion: [.github/prompts/port-asm-label-range.prompt.md](.github/prompts/port-asm-label-range.prompt.md)
