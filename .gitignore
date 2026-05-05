@@ -1,0 +1,11 @@
+build/
+build-*/
+
+# CMake and compiler databases generated outside build directories
+compile_commands.json
+
+# Editors and local temp files
+*.swp
+*.swo
+*~
+.DS_Store
