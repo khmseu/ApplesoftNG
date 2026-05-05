@@ -19,6 +19,7 @@ set(SOURCES
     src/platform/console.cpp
     src/core/asm_port_input.cpp
     src/core/asm_port_strtxt.cpp
+    src/core/asm_port_strlt2.cpp
 )
 
 # Add executable
