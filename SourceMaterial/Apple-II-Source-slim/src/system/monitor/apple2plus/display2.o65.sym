@@ -1,0 +1,67 @@
+ASCBEL, 0x0087, 0, 0x0000
+    display2.s65 147
+ASCBS, 0x0088, 0, 0x0000
+    display2.s65 179
+SPKR, 0xc030, 0, 0x0000
+    display2.s65 154
+BASCALC, 0x0000, 0, 0x0002
+    display2.s65 193
+BSCLC2, 0x000f, 0, 0x0002
+    display2.s65 136
+BELL1, 0x0018, 0, 0x0002
+    display2.s65 180
+RTS2B, 0x002e, 0, 0x0002
+    display2.s65 148
+WAIT, 0x00e7, 0, 0x0002
+    display2.s65 150 153
+BELL2, 0x0023, 0, 0x0002
+    display2.s65 156
+STOADV, 0x002f, 0, 0x0002
+    display2.s65 170 173
+ADVANCE, 0x0033, 0, 0x0002
+    display2.s65 206
+CR, 0x00a1, 0, 0x0002
+    display2.s65 166 176
+RTS3, 0x003b, 0, 0x0002
+    display2.s65 183
+VIDOUT, 0x003c, 0, 0x0002
+LF, 0x00a5, 0, 0x0002
+    display2.s65 178 209
+BS, 0x004f, 0, 0x0002
+    display2.s65 207
+UP, 0x0059, 0, 0x0002
+    display2.s65 210
+RTS4, 0x006a, 0, 0x0002
+    display2.s65 213 189
+VTAB, 0x0061, 0, 0x0002
+    display2.s65 225 267
+VTABZ, 0x0063, 0, 0x0002
+    display2.s65 218 241 246 258
+ESC1, 0x006b, 0, 0x0002
+HOME, 0x0097, 0, 0x0002
+    display2.s65 204
+CLREOL, 0x00db, 0, 0x0002
+    display2.s65 212
+CLREOP, 0x0081, 0, 0x0002
+CLEOP1, 0x0085, 0, 0x0002
+    display2.s65 224 233
+CLEOLZ, 0x00dd, 0, 0x0002
+    display2.s65 219 266
+SCROLL, 0x00af, 0, 0x0002
+SCRL1, 0x00b5, 0, 0x0002
+    display2.s65 263
+SCRL3, 0x00d4, 0, 0x0002
+    display2.s65 256
+SCRL2, 0x00cb, 0, 0x0002
+    display2.s65 262
+CLEOL2, 0x00df, 0, 0x0002
+    display2.s65 273
+WAIT2, 0x00e8, 0, 0x0002
+    display2.s65 284
+WAIT3, 0x00e9, 0, 0x0002
+    display2.s65 281
+NXTA4, 0x00f3, 0, 0x0002
+NXTA1, 0x00f9, 0, 0x0002
+    display2.s65 290
+RTS4B, 0x0107, 0, 0x0002
+    display2.s65 297

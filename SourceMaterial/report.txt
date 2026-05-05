@@ -1,0 +1,3862 @@
+6502 Assembly Analyzer  -  Apple II ROM report
+============================================================
+
+1. EXPORTED FUNCTIONS (from .sym files)
+=======================================
+
+[Applesoft :: applesoft]   (base $D000)
+  $D000  TOKEN_ADDRESS_TABLE      EXPORT
+  $D080  UNFNC                    EXPORT
+  $D0B2  MATHTBL                  EXPORT
+  $D0C7  M_NEG                    EXPORT
+  $D0CA  MEQUU                    EXPORT
+  $D0CD  M_REL                    EXPORT
+  $D0D0  TOKEN_NAME_TABLE         EXPORT
+  $D260  ERROR_MESSAGES           EXPORT,LABEL
+  $D350  QT_ERROR                 EXPORT
+  $D358  QT_IN                    EXPORT
+  $D35D  QT_BREAK                 EXPORT
+  $D365  GTFORPNT                 EXPORT,JSR,LABEL
+  $D36A  L_GTFORPNT_1             EXPORT,BRANCH
+  $D37F  L_GTFORPNT_2             EXPORT,BRANCH
+  $D38B  L_GTFORPNT_3             EXPORT,BRANCH
+  $D392  L_GTFORPNT_4             EXPORT,BRANCH
+  $D393  BLTU                     EXPORT,JSR
+  $D39A  BLTU2                    EXPORT,JSR
+  $D3B7  L_BLTU2_1                EXPORT,BRANCH
+  $D3C3  L_BLTU2_2                EXPORT,BRANCH
+  $D3C7  L_BLTU2_3                EXPORT,BRANCH
+  $D3CE  L_BLTU2_4                EXPORT,BRANCH
+  $D3D6  CHKMEM                   EXPORT,JSR
+  $D3E3  REASON                   EXPORT,JSR
+  $D3ED  L_REASON_1               EXPORT,BRANCH
+  $D3F1  L_REASON_2               EXPORT,BRANCH
+  $D3FC  L_REASON_3               EXPORT,BRANCH
+  $D40F  L_REASON_4               EXPORT,BRANCH
+  $D410  MEMERR                   EXPORT,JMP,BRANCH
+  $D412  ERROR                    EXPORT,JMP,JTABLE
+  $D419  L_ERROR_1                EXPORT,BRANCH
+  $D41F  L_ERROR_2                EXPORT,BRANCH
+  $D431  PRINT_ERROR_LINNUM       EXPORT,JMP,LABEL
+  $D43C  RESTART                  EXPORT,JMP,BRANCH,LABEL
+  $D45C  NUMBERED_LINE            EXPORT,BRANCH,LABEL
+  $D49F  L_NUMBERED_LINE_1        EXPORT,BRANCH
+  $D4A7  L_NUMBERED_LINE_2        EXPORT,BRANCH
+  $D4B5  PUT_NEW_LINE             EXPORT,BRANCH,LABEL
+  $D4D1  L_PUT_NEW_LINE_1         EXPORT,BRANCH
+  $D4EA  L_PUT_NEW_LINE_2         EXPORT,BRANCH
+  $D4F2  FIX_LINKS                EXPORT,JMP,BRANCH,LABEL
+  $D4FE  L_FIX_LINKS_1            EXPORT,BRANCH
+  $D50F  L_FIX_LINKS_2            EXPORT,BRANCH
+  $D511  L_FIX_LINKS_3            EXPORT,BRANCH
+  $D52C  INLIN                    EXPORT,JSR,JMP
+  $D52E  INLIN2                   EXPORT,JSR
+  $D539  L_INLIN2_1               EXPORT,BRANCH
+  $D541  L_INLIN2_2               EXPORT,BRANCH
+  $D54C  L_INLIN2_3               EXPORT,BRANCH
+  $D553  INCHR                    EXPORT,JSR
+  $D559  PARSE_INPUT_LINE         EXPORT,JSR,LABEL
+  $D56C  PARSE                    EXPORT,BRANCH
+  $D56D  L_PARSE_1                EXPORT,BRANCH
+  $D578  L_PARSE_2                EXPORT,BRANCH
+  $D588  L_PARSE_3                EXPORT,BRANCH
+  $D590  L_PARSE_4                EXPORT,BRANCH
+  $D5A2  L_PARSE_5                EXPORT,BRANCH
+  $D5A7  L_PARSE_6                EXPORT,BRANCH
+  $D5A8  L_PARSE_7                EXPORT,BRANCH
+  $D5CB  L_PARSE_8                EXPORT,BRANCH
+  $D5CD  L_PARSE_9                EXPORT,BRANCH
+  $D5E0  L_PARSE_10               EXPORT,BRANCH
+  $D5E2  L_PARSE_11               EXPORT,BRANCH
+  $D5E9  L_PARSE_12               EXPORT,BRANCH
+  $D5F2  L_PARSE_13               EXPORT,BRANCH
+  $D5F9  L_PARSE_14               EXPORT,BRANCH
+  $D5FD  L_PARSE_15               EXPORT,BRANCH
+  $D604  L_PARSE_16               EXPORT,BRANCH
+  $D610  L_PARSE_17               EXPORT,BRANCH
+  $D61A  FNDLIN                   EXPORT,JSR
+  $D61E  FL1                      EXPORT,JSR,BRANCH
+  $D635  L_FL1_1                  EXPORT,BRANCH
+  $D63E  L_FL1_2                  EXPORT,BRANCH
+  $D647  L_FL1_3                  EXPORT,BRANCH
+  $D648  RTS_1                    EXPORT,BRANCH
+  $D649  NEW                      EXPORT,JTABLE
+  $D64B  SCRTCH                   EXPORT,JSR
+  $D665  SETPTRS                  EXPORT,JSR,JMP,LABEL
+  $D66A  CLEAR                    EXPORT,JTABLE
+  $D66C  CLEARC                   EXPORT,JSR,JMP
+  $D683  STKINI                   EXPORT,JSR
+  $D696  RTS_2                    EXPORT,BRANCH
+  $D697  STXTPT                   EXPORT,JSR
+  $D6A5  LIST                     EXPORT,JTABLE
+  $D6B1  L_LIST_1                 EXPORT,BRANCH
+  $D6C4  L_LIST_2                 EXPORT,BRANCH
+  $D6CC  L_LIST_3                 EXPORT,BRANCH
+  $D6DA  LIST_0                   EXPORT,BRANCH
+  $D6F5  L_LIST_0_5               EXPORT,BRANCH
+  $D6F7  L_LIST_0_6               EXPORT,BRANCH
+  $D6FE  LIST_1                   EXPORT,BRANCH
+  $D702  LIST_2                   EXPORT,BRANCH
+  $D712  L_LIST_2_1               EXPORT,BRANCH
+  $D724  LIST_3                   EXPORT,BRANCH
+  $D72C  GETCHR                   EXPORT,JSR
+  $D731  L_GETCHR_1               EXPORT,BRANCH
+  $D734  LIST_4                   EXPORT,BRANCH
+  $D746  L_LIST_4_1               EXPORT,BRANCH
+  $D749  L_LIST_4_2               EXPORT,BRANCH
+  $D750  L_LIST_4_3               EXPORT,BRANCH
+  $D755  L_LIST_4_4               EXPORT,BRANCH
+  $D75F  L_LIST_4_5               EXPORT,BRANCH
+  $D766  FOR                      EXPORT,JTABLE
+  $D777  L_FOR_1                  EXPORT,BRANCH
+  $D7AF  STEP                     EXPORT
+  $D7C3  L_STEP_1                 EXPORT,BRANCH
+  $D7D2  NEWSTT                   EXPORT,JMP
+  $D7E5  L_NEWSTT_1               EXPORT,BRANCH
+  $D805  TRACE_                   EXPORT,JMP,BRANCH
+  $D805  L_NEWSTT_2               EXPORT,BRANCH,LABEL
+  $D81D  L_TRACE__1               EXPORT,BRANCH
+  $D826  GOEND                    EXPORT,BRANCH
+  $D828  EXECUTE_STATEMENT        EXPORT,JSR,JMP,LABEL
+  $D82A  EXECUTE_STATEMENT_1      EXPORT,JMP,LABEL
+  $D83F  L_EXECUTE_STATEMENT_1_1  EXPORT,BRANCH
+  $D842  COLON_                   EXPORT,BRANCH
+  $D846  SYNERR_1                 EXPORT,BRANCH
+  $D849  RESTORE                  EXPORT,JSR,JTABLE,LABEL
+  $D853  SETDA                    EXPORT,JMP,BRANCH
+  $D857  RTS_3                    EXPORT,BRANCH
+  $D858  ISCNTC                   EXPORT,JSR
+  $D860  L_ISCNTC_1               EXPORT,BRANCH
+  $D863  CONTROL_C_TYPED          EXPORT,JMP,LABEL
+  $D86C  L_CONTROL_C_TYPED_2      EXPORT,BRANCH
+  $D86E  STOP                     EXPORT,JTABLE
+  $D870  ENDX                     EXPORT,JTABLE
+  $D871  END2                     EXPORT,BRANCH
+  $D888  L_END2_1                 EXPORT,BRANCH
+  $D88A  END4                     EXPORT,BRANCH
+  $D893  L_END4_1                 EXPORT,BRANCH
+  $D896  CONT                     EXPORT,JTABLE
+  $D8A1  L_CONT_1                 EXPORT,BRANCH
+  $D8AF  RTS_4                    EXPORT,BRANCH
+  $D8B0  SAVE                     EXPORT,JTABLE
+  $D8C9  LOAD                     EXPORT,JTABLE
+  $D8ED  L_LOAD_1                 EXPORT,BRANCH
+  $D8F0  VARTIO                   EXPORT,JSR,JMP
+  $D901  PROGIO                   EXPORT,JSR
+  $D912  RUN                      EXPORT,JTABLE
+  $D91B  L_RUN_1                  EXPORT,BRANCH
+  $D921  GOSUB                    EXPORT,JTABLE
+  $D935  GO_TO_LINE               EXPORT,JMP,LABEL
+  $D93E  GOTO                     EXPORT,JSR,JMP,JTABLE
+  $D955  L_GOTO_1                 EXPORT,BRANCH
+  $D959  L_GOTO_2                 EXPORT,BRANCH
+  $D96A  RTS_5                    EXPORT,BRANCH
+  $D96B  POP                      EXPORT,JTABLE
+  $D97C  UNDERR                   EXPORT,BRANCH
+  $D981  SYNERR_2                 EXPORT,BRANCH
+  $D984  RETURN                   EXPORT,BRANCH
+  $D995  DATA                     EXPORT,JSR,JTABLE
+  $D998  ADDON                    EXPORT,JSR,JMP,BRANCH
+  $D9A2  L_ADDON_1                EXPORT,BRANCH,LABEL
+  $D9A2  RTS_6                    EXPORT,BRANCH
+  $D9A3  DATAN                    EXPORT,JSR
+  $D9A6  REMN                     EXPORT,JSR
+  $D9AE  L_REMN_1                 EXPORT,BRANCH
+  $D9B6  L_REMN_2                 EXPORT,BRANCH
+  $D9C5  PULL3                    EXPORT,BRANCH
+  $D9C9  IF                       EXPORT,JTABLE
+  $D9D8  L_IF_1                   EXPORT,BRANCH
+  $D9DC  REM                      EXPORT,JTABLE
+  $D9E1  IF_TRUE                  EXPORT,BRANCH,LABEL
+  $D9E9  L_IF_TRUE_1              EXPORT,BRANCH
+  $D9EC  ONGOTO                   EXPORT,JTABLE
+  $D9F4  ON_1                     EXPORT,BRANCH
+  $D9F8  ON_2                     EXPORT,BRANCH
+  $DA00  L_ON_2_3                 EXPORT,BRANCH
+  $DA0B  RTS_7                    EXPORT,BRANCH
+  $DA0C  LINGET                   EXPORT,JSR
+  $DA12  L_LINGET_1               EXPORT,JMP
+  $DA40  L_LINGET_2               EXPORT,BRANCH
+  $DA46  LET                      EXPORT,JSR,JMP,JTABLE
+  $DA63  LET2                     EXPORT,JSR
+  $DA77  L_LET2_1                 EXPORT,BRANCH
+  $DA7A  LET_STRING               EXPORT,BRANCH,LABEL
+  $DA7B  PUTSTR                   EXPORT,JSR
+  $DA8C  L_PUTSTR_1               EXPORT,BRANCH
+  $DA9A  L_PUTSTR_2               EXPORT,BRANCH
+  $DAA1  L_PUTSTR_3               EXPORT,BRANCH
+  $DAB7  L_PUTSTR_4               EXPORT,JMP
+  $DACF  PR_STRING                EXPORT,JMP,BRANCH,LABEL
+  $DAD5  PRINT                    EXPORT,JTABLE
+  $DAD7  PRINT2                   EXPORT,JMP
+  $DAFB  CRDO                     EXPORT,JSR,BRANCH
+  $DB00  NEGATE                   EXPORT,JSR
+  $DB02  RTS_8                    EXPORT,BRANCH
+  $DB03  PR_COMMA                 EXPORT,BRANCH,LABEL
+  $DB0E  L_PR_COMMA_1             EXPORT,BRANCH
+  $DB16  PR_TAB_OR_SPC            EXPORT,BRANCH,LABEL
+  $DB21  L_PR_TAB_OR_SPC_1        EXPORT,BRANCH
+  $DB2B  L_PR_TAB_OR_SPC_2        EXPORT,BRANCH
+  $DB2C  NXSPC                    EXPORT,BRANCH
+  $DB2F  PR_NEXT_CHAR             EXPORT,BRANCH,LABEL
+  $DB35  DOSPC                    EXPORT,BRANCH
+  $DB3A  STROUT                   EXPORT,JSR,JMP
+  $DB3D  STRPRT                   EXPORT,JSR
+  $DB44  L_STRPRT_1               EXPORT,JMP,BRANCH
+  $DB57  OUTSP                    EXPORT,JSR
+  $DB5A  OUTQUES                  EXPORT,JSR
+  $DB5C  OUTDO                    EXPORT,JSR
+  $DB64  L_OUTDO_1                EXPORT,BRANCH
+  $DB71  INPUTERR                 EXPORT,JMP,LABEL
+  $DB7B  READERR                  EXPORT,BRANCH,LABEL
+  $DB7F  ERLIN                    EXPORT,BRANCH
+  $DB86  INPERR                   EXPORT,JMP
+  $DB87  RESPERR                  EXPORT,BRANCH,LABEL
+  $DB90  L_RESPERR_1              EXPORT,BRANCH
+  $DBA0  GET                      EXPORT,JTABLE
+  $DBB2  INPUT                    EXPORT,JTABLE
+  $DBC4  L_INPUT_1                EXPORT,BRANCH
+  $DBC7  L_INPUT_2                EXPORT,JMP
+  $DBDC  NXIN                     EXPORT,JSR
+  $DBE2  READ                     EXPORT,JTABLE
+  $DBE9  INPUT_FLAG_ZERO          EXPORT,BRANCH
+  $DBEB  PROCESS_INPUT_LIST       EXPORT,JSR
+  $DBF1  PROCESS_INPUT_ITEM       EXPORT,JMP
+  $DC1F  L_PROCESS_INPUT_ITEM_1   EXPORT,BRANCH
+  $DC27  L_PROCESS_INPUT_ITEM_2   EXPORT,BRANCH
+  $DC2B  INSTART                  EXPORT,JMP,BRANCH,LABEL
+  $DC3F  L_INSTART_1              EXPORT,BRANCH
+  $DC4B  L_INSTART_2              EXPORT,BRANCH
+  $DC4C  L_INSTART_3              EXPORT,BRANCH
+  $DC57  L_INSTART_4              EXPORT,BRANCH
+  $DC63  L_INSTART_5              EXPORT,BRANCH
+  $DC69  INPUTDWTA                EXPORT,BRANCH,LABEL
+  $DC72  INPUT_MORE               EXPORT,JMP,LABEL
+  $DC7E  L_INPUT_MORE_1           EXPORT,BRANCH
+  $DC99  INPFIN                   EXPORT,BRANCH
+  $DCA0  FINDATA                  EXPORT,BRANCH,LABEL
+  $DCB9  L_FINDATA_1              EXPORT,BRANCH
+  $DCC6  INPDONE                  EXPORT,BRANCH,LABEL
+  $DCD1  L_INPDONE_1              EXPORT,BRANCH
+  $DCDE  L_INPDONE_2              EXPORT,BRANCH
+  $DCDF  ERR_EXTRA                EXPORT
+  $DCEF  ERR_REENTRY              EXPORT
+  $DCF9  NEXT                     EXPORT,JTABLE
+  $DCFF  NEXT_1                   EXPORT,JSR,BRANCH
+  $DD02  NEXT_2                   EXPORT,BRANCH
+  $DD0D  GERR                     EXPORT,BRANCH
+  $DD0F  NEXT_3                   EXPORT,BRANCH
+  $DD52  L_NEXT_3_1               EXPORT,BRANCH
+  $DD55  L_NEXT_3_2               EXPORT,BRANCH
+  $DD67  FRMNUM                   EXPORT,JSR
+  $DD6A  CHKNUM                   EXPORT,JSR,JMP
+  $DD6C  CHKSTR                   EXPORT,JSR
+  $DD6D  CHKVAL                   EXPORT,JSR
+  $DD73  L_CHKVAL_1               EXPORT,BRANCH
+  $DD74  L_CHKVAL_2               EXPORT,BRANCH
+  $DD76  L_CHKVAL_3               EXPORT,BRANCH
+  $DD78  JERROR                   EXPORT,BRANCH
+  $DD7B  FRMEVL                   EXPORT,JSR
+  $DD81  L_FRMEVL_1               EXPORT,BRANCH
+  $DD86  FRMEVL_1                 EXPORT,JMP,LABEL
+  $DD95  FRMEVL_2                 EXPORT,JMP,LABEL
+  $DD98  L_FRMEVL_2_1             EXPORT,JMP
+  $DDB4  L_FRMEVL_2_2             EXPORT,BRANCH
+  $DDC5  L_FRMEVL_2_3             EXPORT,BRANCH
+  $DDCD  FRM_PRECEDENCE_TEST      EXPORT,BRANCH,LABEL
+  $DDD6  NXOP                     EXPORT,BRANCH
+  $DDD7  SAVOP                    EXPORT,JMP
+  $DDE4  FRM_RELATIONAL           EXPORT,BRANCH,LABEL
+  $DDEE  L_FRM_RELATIONAL_1       EXPORT,BRANCH
+  $DDF6  PREFNC                   EXPORT,BRANCH
+  $DDFD  FRM_RECURSE              EXPORT,JSR,LABEL
+  $DE0D  SNTXERR                  EXPORT,BRANCH
+  $DE10  FRM_STACK_1              EXPORT,JSR,LABEL
+  $DE15  FRM_STACK_2              EXPORT,JSR,LABEL
+  $DE20  FRM_STACK_3              EXPORT,JMP,LABEL
+  $DE35  NOTMATH                  EXPORT,BRANCH
+  $DE38  GOEX                     EXPORT,BRANCH
+  $DE3A  FRM_PERFORM_1            EXPORT,BRANCH,LABEL
+  $DE41  L_FRM_PERFORM_1_1        EXPORT,BRANCH
+  $DE43  FRM_PERFORM_2            EXPORT,BRANCH,LABEL
+  $DE5D  EXIT                     EXPORT,BRANCH
+  $DE60  FRM_ELEMENT              EXPORT,JSR,LABEL
+  $DE64  L_FRM_ELEMENT_1          EXPORT,BRANCH
+  $DE69  L_FRM_ELEMENT_2          EXPORT,BRANCH
+  $DE6C  L_FRM_ELEMENT_3          EXPORT,BRANCH
+  $DE81  STRTXT                   EXPORT,JSR
+  $DE8A  L_STRTXT_1               EXPORT,BRANCH
+  $DE90  NOT_                     EXPORT,BRANCH
+  $DE98  EQUOP                    EXPORT,JTABLE
+  $DE9F  L_EQUOP_1                EXPORT,BRANCH
+  $DEA4  FN_                      EXPORT,BRANCH
+  $DEAB  SGN_                     EXPORT,BRANCH
+  $DEB2  PARCHK                   EXPORT,JSR,BRANCH
+  $DEB8  CHKCLS                   EXPORT,JSR,JMP
+  $DEBB  CHKOPN                   EXPORT,JSR
+  $DEBE  CHKCOM                   EXPORT,JSR
+  $DEC0  SYNCHR                   EXPORT,JSR
+  $DEC9  SYNERR                   EXPORT,JMP,BRANCH
+  $DECE  MIN                      EXPORT,BRANCH
+  $DED0  EQUL                     EXPORT,BRANCH
+  $DED5  FRM_VARIABLE             EXPORT,BRANCH,LABEL
+  $DED7  FRM_VARIABLE_CALL        EXPORT,CONST
+  $DEE5  L_FRM_VARIABLE_CALL_1    EXPORT,BRANCH
+  $DEF6  L_FRM_VARIABLE_CALL_2    EXPORT,BRANCH
+  $DEF9  SCREEN                   EXPORT,BRANCH
+  $DF0C  UNARY                    EXPORT,JMP
+  $DF3A  L_UNARY_1                EXPORT,BRANCH
+  $DF3F  L_UNARY_2                EXPORT,JMP
+  $DF4F  OR                       EXPORT,JTABLE
+  $DF55  ANDOP                    EXPORT,JTABLE
+  $DF5D  FALSE                    EXPORT,BRANCH
+  $DF60  TRUE                     EXPORT,BRANCH
+  $DF65  RELOPS                   EXPORT,JTABLE
+  $DF7D  STRCMP                   EXPORT,BRANCH
+  $DFA5  L_STRCMP_1               EXPORT,BRANCH
+  $DFAA  STRCMP_1                 EXPORT,BRANCH,LABEL
+  $DFB0  NUMCMP                   EXPORT,JMP
+  $DFB5  STRCMP_2                 EXPORT,BRANCH,LABEL
+  $DFC1  CMPDONE                  EXPORT,BRANCH,LABEL
+  $DFCA  L_CMPDONE_1              EXPORT,BRANCH
+  $DFCD  PDL                      EXPORT,JTABLE
+  $DFD6  NXDIM                    EXPORT,BRANCH
+  $DFD9  DIM                      EXPORT,JTABLE
+  $DFE3  PTRGET                   EXPORT,JSR
+  $DFE8  PTRGET2                  EXPORT,JSR,LABEL
+  $DFEA  PTRGET3                  EXPORT,JSR,LABEL
+  $DFF4  BADNAM                   EXPORT,BRANCH
+  $DFF7  NAMOK                    EXPORT,BRANCH
+  $E000  BASIC                    EXPORT
+  $E003  BASIC2                   EXPORT
+  $E007  PTRGET4                  EXPORT,JMP,LABEL
+  $E011  L_PTRGET4_1              EXPORT,BRANCH
+  $E012  L_PTRGET4_2              EXPORT,BRANCH
+  $E01C  L_PTRGET4_3              EXPORT,BRANCH
+  $E026  L_PTRGET4_4              EXPORT,BRANCH
+  $E036  L_PTRGET4_5              EXPORT,BRANCH
+  $E03D  L_PTRGET4_6              EXPORT,BRANCH
+  $E046  L_PTRGET4_7              EXPORT,BRANCH
+  $E049  L_PTRGET4_8              EXPORT,BRANCH
+  $E04F  L_PTRGET4_9              EXPORT,BRANCH
+  $E059  L_PTRGET4_10             EXPORT,BRANCH
+  $E05B  L_PTRGET4_11             EXPORT,BRANCH
+  $E065  L_PTRGET4_12             EXPORT,BRANCH
+  $E073  L_PTRGET4_13             EXPORT,BRANCH
+  $E07D  ISLETC                   EXPORT,JSR
+  $E086  L_ISLETC_1               EXPORT,BRANCH
+  $E087  NAME_NOT_FOUND           EXPORT,BRANCH,LABEL
+  $E09A  C_ZERO                   EXPORT
+  $E09C  MAKE_NEW_VARIABLE        EXPORT,BRANCH,LABEL
+  $E0B2  L_MAKE_NEW_VARIABLE_1    EXPORT,BRANCH
+  $E0DE  SET_VARPNT_AND_YA        EXPORT,BRANCH,LABEL
+  $E0E8  L_SET_VARPNT_AND_YA_1    EXPORT,BRANCH
+  $E0ED  GETARY                   EXPORT,JSR
+  $E0EF  GETARY2                  EXPORT,JSR,LABEL
+  $E0F9  L_GETARY2_1              EXPORT,BRANCH
+  $E0FE  NEG32768                 EXPORT
+  $E102  MAKINT                   EXPORT,JSR
+  $E108  MKINT                    EXPORT,JSR
+  $E10C  AYINT                    EXPORT,JSR
+  $E119  MI1                      EXPORT,BRANCH
+  $E11B  MI2                      EXPORT,BRANCH
+  $E11E  ARRAY                    EXPORT,JMP
+  $E12C  L_ARRAY_1                EXPORT,BRANCH
+  $E169  L_ARRAY_2                EXPORT,BRANCH
+  $E16D  L_ARRAY_3                EXPORT,BRANCH
+  $E179  L_ARRAY_4                EXPORT,BRANCH
+  $E188  L_ARRAY_5                EXPORT,BRANCH
+  $E196  SUBERR                   EXPORT,JMP,BRANCH
+  $E199  IQERR                    EXPORT,JMP,BRANCH
+  $E19B  JER                      EXPORT,BRANCH
+  $E19E  USE_OLD_ARRAY            EXPORT,BRANCH,LABEL
+  $E1AA  L_USE_OLD_ARRAY_1        EXPORT,BRANCH
+  $E1B8  MAKE_NEW_ARRAY           EXPORT,BRANCH,LABEL
+  $E1C1  L_MAKE_NEW_ARRAY_1       EXPORT,BRANCH
+  $E1D5  L_MAKE_NEW_ARRAY_2       EXPORT,BRANCH
+  $E1DE  L_MAKE_NEW_ARRAY_3       EXPORT,BRANCH
+  $E1E7  L_MAKE_NEW_ARRAY_4       EXPORT,BRANCH
+  $E1F7  L_MAKE_NEW_ARRAY_5       EXPORT,BRANCH
+  $E21A  L_MAKE_NEW_ARRAY_6       EXPORT,BRANCH
+  $E229  L_MAKE_NEW_ARRAY_7       EXPORT,BRANCH
+  $E22E  L_MAKE_NEW_ARRAY_8       EXPORT,BRANCH
+  $E24B  FIND_ARRAY_ELEMENT       EXPORT,JMP,LABEL
+  $E253  FAE_1                    EXPORT,BRANCH
+  $E269  GSE                      EXPORT,BRANCH
+  $E26C  GME                      EXPORT,BRANCH
+  $E26F  FAE_2                    EXPORT,BRANCH
+  $E270  FAE_3                    EXPORT,BRANCH
+  $E281  L_FAE_3_1                EXPORT,BRANCH
+  $E292  L_FAE_3_2                EXPORT,BRANCH
+  $E298  L_FAE_3_3                EXPORT,BRANCH
+  $E2AC  RTS_9                    EXPORT,BRANCH
+  $E2AD  MULTIPLY_SUBSCRIPT       EXPORT,JSR,LABEL
+  $E2B6  MULTIPLY_SUBS_1          EXPORT,JSR,LABEL
+  $E2C0  L_MULTIPLY_SUBS_1_1      EXPORT,BRANCH
+  $E2D9  L_MULTIPLY_SUBS_1_2      EXPORT,BRANCH
+  $E2DE  FRE                      EXPORT,JTABLE
+  $E2E5  L_FRE_1                  EXPORT,BRANCH
+  $E2F2  GIVAYF                   EXPORT,JMP,BRANCH
+  $E2FF  POS                      EXPORT,JTABLE
+  $E301  SNGFLT                   EXPORT,JSR,JMP
+  $E306  ERRDIR                   EXPORT,JSR
+  $E30E  UNDFNC                   EXPORT,BRANCH
+  $E313  DEF                      EXPORT,JTABLE
+  $E341  FNC_                     EXPORT,JSR
+  $E354  FUNCT                    EXPORT,JMP
+  $E378  L_FUNCT_1                EXPORT,BRANCH
+  $E3A9  L_FUNCT_2                EXPORT,BRANCH
+  $E3AF  FNCDATA                  EXPORT,JMP,LABEL
+  $E3C5  STR                      EXPORT,JTABLE
+  $E3D5  STRINI                   EXPORT,JSR
+  $E3DD  STRSPA                   EXPORT,JSR
+  $E3E7  STRLIT                   EXPORT,JSR,BRANCH
+  $E3ED  STRLT2                   EXPORT,JSR
+  $E3F7  L_STRLT2_1               EXPORT,BRANCH
+  $E404  L_STRLT2_2               EXPORT,BRANCH
+  $E408  L_STRLT2_3               EXPORT,BRANCH
+  $E409  L_STRLT2_4               EXPORT,BRANCH
+  $E415  L_STRLT2_5               EXPORT,BRANCH
+  $E41F  L_STRLT2_6               EXPORT,BRANCH
+  $E42A  PUTNEW                   EXPORT,JSR,JMP,BRANCH
+  $E432  JERR                     EXPORT,BRANCH
+  $E435  PUTEMP                   EXPORT,BRANCH
+  $E452  GETSPA                   EXPORT,JSR
+  $E454  L_GETSPA_1               EXPORT,BRANCH
+  $E45F  L_GETSPA_2               EXPORT,BRANCH
+  $E469  L_GETSPA_3               EXPORT,BRANCH
+  $E474  L_GETSPA_4               EXPORT,BRANCH
+  $E484  GARBAG                   EXPORT,JSR
+  $E488  FIND_HIGHEST_STRING      EXPORT,JMP,LABEL
+  $E4A0  L_FIND_HIGHEST_STRING_1  EXPORT,BRANCH
+  $E4A9  L_FIND_HIGHEST_STRING_2  EXPORT,BRANCH
+  $E4B5  L_FIND_HIGHEST_STRING_3  EXPORT,BRANCH
+  $E4BD  L_FIND_HIGHEST_STRING_4  EXPORT,BRANCH
+  $E4C2  L_FIND_HIGHEST_STRING_5  EXPORT,BRANCH
+  $E4CA  L_FIND_HIGHEST_STRING_6  EXPORT,BRANCH
+  $E4CE  L_FIND_HIGHEST_STRING_7  EXPORT,BRANCH
+  $E4D9  L_FIND_HIGHEST_STRING_8  EXPORT,BRANCH
+  $E50A  L_FIND_HIGHEST_STRING_9  EXPORT,BRANCH,LABEL
+  $E50C  L_FIND_HIGHEST_STRING_10 EXPORT,BRANCH
+  $E514  L_FIND_HIGHEST_STRING_11 EXPORT,BRANCH
+  $E519  CHECK_SIMPLE_VARIABLE    EXPORT,JSR,LABEL
+  $E523  CHECK_VARIABLE           EXPORT,JSR,LABEL
+  $E538  L_CHECK_VARIABLE_1       EXPORT,BRANCH
+  $E542  L_CHECK_VARIABLE_2       EXPORT,BRANCH
+  $E552  CHECK_BUMP               EXPORT,BRANCH,LABEL
+  $E55D  CHECK_EXIT               EXPORT,BRANCH,LABEL
+  $E562  MOVE_HIGHEST_STRING_TO_TOP EXPORT,JMP,LABEL
+  $E597  CAT                      EXPORT,JMP
+  $E5B7  L_CAT_1                  EXPORT,BRANCH
+  $E5D4  MOVINS                   EXPORT,JSR
+  $E5E2  MOVSTR                   EXPORT,JSR
+  $E5E6  MOVSTR_1                 EXPORT,JSR,LABEL
+  $E5EA  L_MOVSTR_1_1             EXPORT,BRANCH
+  $E5F3  L_MOVSTR_1_2             EXPORT,BRANCH
+  $E5FC  L_MOVSTR_1_3             EXPORT,BRANCH
+  $E5FD  FRESTR                   EXPORT,JSR
+  $E600  FREFAC                   EXPORT,JSR
+  $E604  FRETMP                   EXPORT,JSR
+  $E62F  L_FRETMP_1               EXPORT,BRANCH
+  $E630  L_FRETMP_2               EXPORT,BRANCH
+  $E635  FRETMS                   EXPORT,JSR
+  $E645  L_FRETMS_1               EXPORT,BRANCH
+  $E646  CHRSTR                   EXPORT,JTABLE
+  $E65A  LEFTSTR                  EXPORT,JTABLE,LABEL
+  $E660  SUBSTRING_1              EXPORT,JMP,LABEL
+  $E666  L_SUBSTRING_1_1          EXPORT,BRANCH
+  $E667  SUBSTRING_2              EXPORT,BRANCH,LABEL
+  $E668  SUBSTRING_3              EXPORT,BRANCH,LABEL
+  $E67F  L_SUBSTRING_3_1          EXPORT,BRANCH
+  $E686  RIGHTSTR                 EXPORT,JTABLE,LABEL
+  $E691  MIDSTR                   EXPORT,JTABLE
+  $E6A2  L_MIDSTR_1               EXPORT,BRANCH
+  $E6B9  SUBSTRING_SETUP          EXPORT,JSR,LABEL
+  $E6D6  LEN                      EXPORT,JTABLE
+  $E6DC  GETSTR                   EXPORT,JSR
+  $E6E5  ASC                      EXPORT,JTABLE
+  $E6F2  GOIQ                     EXPORT,BRANCH
+  $E6F5  GTBYTC                   EXPORT,JSR
+  $E6F8  GETBYT                   EXPORT,JSR,JMP
+  $E6FB  CONINT                   EXPORT,JSR
+  $E707  VAL                      EXPORT,JTABLE
+  $E70F  L_VAL_1                  EXPORT,BRANCH
+  $E727  L_VAL_2                  EXPORT,BRANCH
+  $E73D  POINT                    EXPORT,JSR,JMP
+  $E746  GTNUM                    EXPORT,JSR
+  $E74C  COMBYTE                  EXPORT,JSR,LABEL
+  $E752  GETADR                   EXPORT,JSR
+  $E764  PEEK                     EXPORT,JTABLE
+  $E77B  POKE                     EXPORT,JTABLE
+  $E784  WAIT                     EXPORT,JSR,JTABLE
+  $E793  L_WAIT_1                 EXPORT,BRANCH
+  $E797  L_WAIT_2                 EXPORT,BRANCH
+  $E79F  RTS_10                   EXPORT,BRANCH
+  $E7A0  FADDH                    EXPORT,JSR
+  $E7A7  FSUB                     EXPORT,JSR
+  $E7AA  FSUBT                    EXPORT,JSR,JTABLE
+  $E7B9  FADD_1                   EXPORT,BRANCH
+  $E7BE  FADD                     EXPORT,JSR,JMP
+  $E7C1  FADDT                    EXPORT,JMP,JTABLE
+  $E7C6  L_FADDT_1                EXPORT,BRANCH
+  $E7CE  FADD_2                   EXPORT,JSR
+  $E7EA  L_FADD_2_1               EXPORT,BRANCH
+  $E7EE  L_FADD_2_2               EXPORT,BRANCH
+  $E7FA  FADD_3                   EXPORT,BRANCH
+  $E806  L_FADD_3_1               EXPORT,BRANCH
+  $E829  NORMALIZE_FAC_1          EXPORT,JMP,LABEL
+  $E82E  NORMALIZE_FAC_2          EXPORT,JSR,JMP,BRANCH,LABEL
+  $E832  L_NORMALIZE_FAC_2_1      EXPORT,BRANCH
+  $E84E  ZERO_FAC                 EXPORT,JMP,BRANCH,LABEL
+  $E850  STA_IN_FAC_SIGN_AND_EXP  EXPORT,JMP,LABEL
+  $E852  STA_IN_FAC_SIGN          EXPORT,JMP,LABEL
+  $E855  FADD_4                   EXPORT,BRANCH
+  $E874  NORMALIZE_FAC_3          EXPORT,BRANCH,LABEL
+  $E880  NORMALIZE_FAC_4          EXPORT,BRANCH,LABEL
+  $E88D  NORMALIZE_FAC_5          EXPORT,JMP,LABEL
+  $E88F  NORMALIZE_FAC_6          EXPORT,JMP,LABEL
+  $E89D  RTS_11                   EXPORT,BRANCH
+  $E89E  COMPLEMENT_FAC           EXPORT,JSR,LABEL
+  $E8A4  COMPLEMENT_FAC_MANTISSA  EXPORT,JSR,LABEL
+  $E8C6  INCREMENT_FAC_MANTISSA   EXPORT,JSR,LABEL
+  $E8D4  RTS_12                   EXPORT,BRANCH
+  $E8D5  OVERFLOW                 EXPORT,JMP,BRANCH,LABEL
+  $E8DA  SHIFT_RIGHT_1            EXPORT,JMP,LABEL
+  $E8DC  SHIFT_RIGHT_2            EXPORT,BRANCH,LABEL
+  $E8F0  SHIFT_RIGHT              EXPORT,JSR,LABEL
+  $E8FD  SHIFT_RIGHT_3            EXPORT,BRANCH,LABEL
+  $E8FD  L                        EXPORT
+  $E903  L_L_1                    EXPORT,BRANCH
+  $E907  SHIFT_RIGHT_4            EXPORT,JSR,LABEL
+  $E911  SHIFT_RIGHT_5            EXPORT,BRANCH,LABEL
+  $E913  CON_ONE                  
+  $E918  POLY_LOG                 EXPORT
+  $E92D  CON_SQR_HALF             
+  $E932  CON_SQR_TWO              
+  $E937  CON_NEG_HALF             
+  $E93C  CON_LOG_TWO              
+  $E941  LOG                      EXPORT,JSR,JTABLE
+  $E948  GIQ                      EXPORT,BRANCH
+  $E94B  LOG_2                    EXPORT,BRANCH
+  $E97F  FMULT                    EXPORT,JSR,JMP
+  $E982  FMULTT                   EXPORT,JTABLE
+  $E987  L_FMULTT_1               EXPORT,BRANCH
+  $E9B0  MULTIPLY_1               EXPORT,JSR,LABEL
+  $E9B5  MULTIPLY_2               EXPORT,JSR,BRANCH,LABEL
+  $E9B8  L_MULTIPLY_2_1           EXPORT,BRANCH
+  $E9D4  L_MULTIPLY_2_2           EXPORT,BRANCH
+  $E9E2  RTS_13                   EXPORT,JMP
+  $E9E3  LOAD_ARG_FROM_YA         EXPORT,JSR,LABEL
+  $EA0E  ADD_EXPONENTS            EXPORT,JSR,LABEL
+  $EA10  ADD_EXPONENTS_1          EXPORT,JSR,LABEL
+  $EA1B  L_ADD_EXPONENTS_1_1      EXPORT,BRANCH
+  $EA26  L_ADD_EXPONENTS_1_2      EXPORT,BRANCH
+  $EA28  L_ADD_EXPONENTS_1_3      EXPORT
+  $EA2B  OUTOFRNG                 EXPORT,JSR,LABEL
+  $EA31  ZERO                     EXPORT,BRANCH
+  $EA36  JOV                      EXPORT,BRANCH
+  $EA39  MUL10                    EXPORT,JSR
+  $EA4F  L_MUL10_1                EXPORT,BRANCH
+  $EA50  CON_TEN                  
+  $EA55  DIV10                    EXPORT,JSR
+  $EA5E  DIV                      EXPORT,JSR
+  $EA66  FDIV                     EXPORT,JSR,JMP
+  $EA69  FDIVT                    EXPORT,JMP,JTABLE
+  $EA80  L_FDIVT_1                EXPORT,BRANCH
+  $EA96  L_FDIVT_2                EXPORT,BRANCH
+  $EAA3  L_FDIVT_3                EXPORT,BRANCH
+  $EAA6  L_FDIVT_4                EXPORT,JMP
+  $EAB4  L_FDIVT_5                EXPORT,BRANCH
+  $EAD1  L_FDIVT_6                EXPORT,BRANCH
+  $EAD5  L_FDIVT_7                EXPORT,BRANCH
+  $EAE1  L_FDIVT_8                EXPORT,BRANCH
+  $EAE6  COPY_RESULT_INTO_FAC     EXPORT,JMP,LABEL
+  $EAF9  LOAD_FAC_FROM_YA         EXPORT,JSR,JMP,LABEL
+  $EB1E  STORE_FAC_IN_TEMP2_ROUNDED EXPORT,JSR,LABEL
+  $EB21  STORE_FAC_IN_TEMP1_ROUNDED EXPORT,JSR,LABEL
+  $EB27  SETFOR                   EXPORT,JSR,JMP
+  $EB2B  STORE_FACDB_YX_ROUNDED   EXPORT,JSR,JMP,BRANCH,LABEL
+  $EB53  COPY_ARG_TO_FAC          EXPORT,JMP,LABEL
+  $EB55  MFA                      EXPORT,JSR
+  $EB59  L_MFA_1                  EXPORT,BRANCH
+  $EB63  COPY_FAC_TO_ARG_ROUNDED  EXPORT,JSR,LABEL
+  $EB66  MAF                      EXPORT,JSR
+  $EB68  L_MAF_1                  EXPORT,BRANCH
+  $EB71  RTS_14                   EXPORT,BRANCH
+  $EB72  ROUND_FAC                EXPORT,JSR,LABEL
+  $EB7A  INCREMENT_MANTISSA       EXPORT,JSR,LABEL
+  $EB82  SIGN                     EXPORT,JSR,BRANCH
+  $EB86  SIGN1                    EXPORT,BRANCH
+  $EB88  SIGN2                    EXPORT,JMP
+  $EB8F  RTS_15                   EXPORT,BRANCH
+  $EB90  SGN                      EXPORT,JTABLE
+  $EB93  FLOAT                    EXPORT,JSR,JMP
+  $EB9B  FLOAT_1                  EXPORT,JMP,LABEL
+  $EBA0  FLOAT_2                  EXPORT,JSR,LABEL
+  $EBAF  ABS                      EXPORT,JTABLE
+  $EBB2  FCOMP                    EXPORT,JSR
+  $EBB4  FCOMP2                   EXPORT,JSR
+  $EBE9  L_FCOMP2_1               EXPORT,BRANCH
+  $EBEF  L_FCOMP2_2               EXPORT,BRANCH
+  $EBF2  QINT                     EXPORT,JSR,JMP
+  $EC06  L_QINT_1                 EXPORT,BRANCH
+  $EC11  RTS_16                   EXPORT,BRANCH
+  $EC12  QINT_2                   EXPORT,BRANCH
+  $EC23  INT                      EXPORT,JSR,JTABLE
+  $EC40  QINT_3                   EXPORT,BRANCH
+  $EC49  RTS_17                   EXPORT,BRANCH
+  $EC4A  FIN                      EXPORT,JSR,JMP
+  $EC4E  L_FIN_1                  EXPORT,BRANCH
+  $EC5D  L_FIN_2                  EXPORT,BRANCH
+  $EC61  FIN_1                    EXPORT,JMP,BRANCH
+  $EC64  FIN_2                    EXPORT,BRANCH
+  $EC66  FIN_3                    EXPORT,BRANCH
+  $EC85  L_FIN_3_1                EXPORT,BRANCH
+  $EC87  FIN_4                    EXPORT,JMP,BRANCH
+  $EC8A  FIN_5                    EXPORT,BRANCH
+  $EC8C  FIN_6                    EXPORT,BRANCH
+  $EC98  FIN_10                   EXPORT,BRANCH
+  $EC9E  FIN_7                    EXPORT,BRANCH
+  $ECA0  FIN_8                    EXPORT,JMP
+  $ECA9  L_FIN_8_13               EXPORT,BRANCH
+  $ECB2  L_FIN_8_14               EXPORT,BRANCH
+  $ECB9  L_FIN_8_15               EXPORT,BRANCH
+  $ECBE  L_FIN_8_16               EXPORT,BRANCH
+  $ECC1  FIN_9                    EXPORT,BRANCH
+  $ECC8  L_FIN_9_1                EXPORT,BRANCH
+  $ECD5  ADDACC                   EXPORT,JSR
+  $ECE8  GETEXP                   EXPORT,BRANCH
+  $ECF7  L_GETEXP_1               EXPORT,BRANCH
+  $ED05  L_GETEXP_2               EXPORT,BRANCH
+  $ED0A  CON_99999999P9           
+  $ED0F  CON_999999999            
+  $ED14  CON_BILLION              
+  $ED19  INPRT                    EXPORT,JSR
+  $ED24  LINPRT                   EXPORT,JSR
+  $ED2E  PRINT_FAC                EXPORT,LABEL
+  $ED31  GO_STROUT                EXPORT,JSR,LABEL
+  $ED34  FOUT                     EXPORT,JSR
+  $ED36  FOUT_1                   EXPORT,JSR
+  $ED41  L_FOUT_1_1               EXPORT,BRANCH
+  $ED4F  L_FOUT_1_2               EXPORT,BRANCH
+  $ED57  L_FOUT_1_3               EXPORT,BRANCH
+  $ED60  L_FOUT_1_4               EXPORT,BRANCH
+  $ED62  L_FOUT_1_5               EXPORT,BRANCH
+  $ED6D  L_FOUT_1_6               EXPORT,BRANCH
+  $ED78  L_FOUT_1_7               EXPORT,BRANCH
+  $ED7F  L_FOUT_1_8               EXPORT,BRANCH
+  $ED86  L_FOUT_1_9               EXPORT,BRANCH
+  $ED89  L_FOUT_1_10              EXPORT,BRANCH
+  $ED8C  FOUT_2                   EXPORT
+  $ED9E  L_FOUT_2_1               EXPORT,BRANCH
+  $ED9F  L_FOUT_2_2               EXPORT,BRANCH
+  $EDAA  L_FOUT_2_3               EXPORT,BRANCH
+  $EDBB  L_FOUT_2_4               EXPORT,BRANCH
+  $EDBD  L_FOUT_2_5               EXPORT,BRANCH
+  $EDC1  L_FOUT_2_6               EXPORT,BRANCH
+  $EDE5  L_FOUT_2_7               EXPORT,BRANCH
+  $EDE7  L_FOUT_2_8               EXPORT,BRANCH
+  $EDEE  L_FOUT_2_9               EXPORT,BRANCH
+  $EE09  L_FOUT_2_10              EXPORT,BRANCH
+  $EE17  FOUT_3                   EXPORT
+  $EE19  L_FOUT_3_1               EXPORT,BRANCH
+  $EE26  L_FOUT_3_2               EXPORT,BRANCH
+  $EE36  L_FOUT_3_3               EXPORT,BRANCH
+  $EE42  L_FOUT_3_4               EXPORT,BRANCH
+  $EE57  FOUT_4                   EXPORT,JMP
+  $EE5A  FOUT_5                   EXPORT,BRANCH
+  $EE5F  FOUT_6                   EXPORT,BRANCH
+  $EE64  CON_HALF                 
+  $EE69  DECTBL                   EXPORT
+  $EE8D  SQR                      EXPORT,JTABLE
+  $EE8D  DECTBL_END               EXPORT,LABEL
+  $EE97  FPWRT                    EXPORT,JTABLE
+  $EEA0  L_FPWRT_1                EXPORT,BRANCH
+  $EEBA  L_FPWRT_2                EXPORT,BRANCH
+  $EED0  NEGOP                    EXPORT,JSR,JMP,JTABLE
+  $EEDA  RTS_18                   EXPORT,BRANCH
+  $EEDB  CON_LOG_E                
+  $EEE0  POLY_EXP                 EXPORT
+  $EF09  EXP                      EXPORT,JSR,BRANCH,JTABLE
+  $EF19  L_EXP_1                  EXPORT,BRANCH
+  $EF24  L_EXP_2                  EXPORT,BRANCH
+  $EF27  L_EXP_3                  EXPORT,BRANCH
+  $EF37  L_EXP_4                  EXPORT,BRANCH
+  $EF5C  POLYNOMIAL_ODD           EXPORT,JSR,JMP,LABEL
+  $EF72  POLYNOMIAL               EXPORT,JSR,LABEL
+  $EF76  SERMAIN                  EXPORT,JSR,LABEL
+  $EF85  L_SERMAIN_1              EXPORT,BRANCH
+  $EF89  L_SERMAIN_2              EXPORT,BRANCH
+  $EF96  L_SERMAIN_3              EXPORT,BRANCH
+  $EFA5  RTS_19                   EXPORT,BRANCH
+  $EFA6  CON_RND_1                EXPORT
+  $EFAA  CON_RND_2                EXPORT
+  $EFAE  RND                      EXPORT,JTABLE
+  $EFCC  L_RND_1                  EXPORT,BRANCH
+  $EFE7  GO_MOVMF                 EXPORT,JSR
+  $EFEA  COS                      EXPORT,JTABLE
+  $EFF1  SIN                      EXPORT,JSR,JTABLE
+  $F023  SIN_1                    EXPORT,JMP,BRANCH
+  $F026  SIN_2                    EXPORT,BRANCH
+  $F033  L_SIN_2_1                EXPORT,BRANCH
+  $F03A  TAN                      EXPORT,JTABLE
+  $F062  TAN_1                    EXPORT,JSR
+  $F066  CON_PI_HALF              
+  $F06B  CON_PI_DOUB              
+  $F070  QUARTER                  
+  $F075  POLY_SIN                 EXPORT
+  $F09E  ATN                      EXPORT,JTABLE
+  $F0A6  L_ATN_1                  EXPORT,BRANCH
+  $F0B4  L_ATN_2                  EXPORT,BRANCH
+  $F0C7  L_ATN_3                  EXPORT,BRANCH
+  $F0CD  RTS_20                   EXPORT,BRANCH
+  $F0CE  POLY_ATN                 EXPORT
+  $F10B  GENERIC_CHRGET           EXPORT,BRANCH,LABEL
+  $F111  L_GENERIC_CHRGET_1       EXPORT,BRANCH
+  $F122  L_GENERIC_CHRGET_2       EXPORT,BRANCH
+  $F128  COLD_START               EXPORT,JMP,LABEL
+  $F128  GENERIC_END              EXPORT,LABEL
+  $F152  L_COLD_START_1           EXPORT,BRANCH
+  $F181  L_COLD_START_2           EXPORT,BRANCH
+  $F195  L_COLD_START_3           EXPORT,BRANCH
+  $F1B8  L_COLD_START_4           EXPORT,BRANCH
+  $F1D5  CALL                     EXPORT,JTABLE
+  $F1DE  IN_NUMBER                EXPORT,JTABLE,LABEL
+  $F1E5  PR_NUMBER                EXPORT,JTABLE,LABEL
+  $F1EC  PLOTFNS                  EXPORT,JSR,LABEL
+  $F206  GOERR                    EXPORT,JMP,BRANCH
+  $F209  LINCOOR                  EXPORT,JSR,LABEL
+  $F218  L_LINCOOR_1              EXPORT,BRANCH
+  $F225  PLOT                     EXPORT,JSR,JTABLE
+  $F232  HLIN                     EXPORT,JTABLE
+  $F241  VLIN                     EXPORT,JTABLE
+  $F24F  COLOR                    EXPORT,JTABLE
+  $F256  VTAB                     EXPORT,IMPORT,JMP,BRANCH,JTABLE
+  $F262  SPEED                    EXPORT,JTABLE
+  $F26D  TRACE                    EXPORT,JTABLE
+  $F26F  NOTRACE                  EXPORT,JTABLE,LABEL
+  $F273  NORMAL                   EXPORT,JSR,JTABLE
+  $F277  INVERSE                  EXPORT,JTABLE,LABEL
+  $F279  N_I_                     EXPORT,BRANCH
+  $F27B  N_I_F_                   EXPORT,BRANCH
+  $F280  FLASH                    EXPORT,JTABLE
+  $F286  HIMEM                    EXPORT,JTABLE
+  $F296  JMM                      EXPORT,BRANCH
+  $F299  SETHI                    EXPORT,BRANCH
+  $F2A6  LOMEM                    EXPORT,JTABLE
+  $F2CB  ONERR                    EXPORT,JTABLE
+  $F2E9  HANDLERR                 EXPORT,JMP,LABEL
+  $F318  RESUME                   EXPORT,JTABLE
+  $F32E  JSYN                     EXPORT,BRANCH
+  $F331  DEL                      EXPORT,JTABLE
+  $F357  L_DEL_1                  EXPORT,BRANCH
+  $F365  L_DEL_2                  EXPORT,BRANCH
+  $F367  L_DEL_3                  EXPORT,BRANCH
+  $F371  L_DEL_4                  EXPORT,BRANCH
+  $F377  L_DEL_5                  EXPORT,BRANCH
+  $F388  L_DEL_6                  EXPORT,BRANCH
+  $F390  GR                       EXPORT,JTABLE
+  $F399  TEXT                     EXPORT,JTABLE
+  $F39F  STORE                    EXPORT,JTABLE
+  $F3AF  L_STORE_1                EXPORT,BRANCH
+  $F3BC  RECALL                   EXPORT,JTABLE
+  $F3D2  L_RECALL_1               EXPORT,BRANCH
+  $F3D8  HGR2                     EXPORT,JTABLE
+  $F3E2  HGR                      EXPORT,JTABLE
+  $F3EA  SETHPG                   EXPORT,BRANCH
+  $F3F2  HCLR                     EXPORT
+  $F3F6  BKGND                    EXPORT
+  $F3FE  L_BKGND_1                EXPORT,BRANCH
+  $F411  HPOSN                    EXPORT,JSR
+  $F441  L_HPOSN_1                EXPORT,BRANCH
+  $F442  L_HPOSN_2                EXPORT,BRANCH
+  $F457  HPLOT0                   EXPORT,JSR
+  $F465  MOVE_LEFT_OR_RIGHT       EXPORT,JSR,BRANCH,LABEL
+  $F46E  LR_1                     EXPORT,BRANCH
+  $F471  LR_2                     EXPORT,BRANCH
+  $F476  LR_3                     EXPORT,BRANCH
+  $F478  LR_4                     EXPORT,BRANCH
+  $F47E  COLOR_SHIFT              EXPORT,JSR,BRANCH,LABEL
+  $F489  L_COLOR_SHIFT_1          EXPORT,BRANCH
+  $F48A  MOVE_RIGHT               EXPORT,BRANCH,LABEL
+  $F49C  LRUDX1                   EXPORT,JSR
+  $F49D  LRUDX2                   EXPORT,JSR
+  $F4B3  LRUD1                    EXPORT,JSR
+  $F4B4  LRUD2                    EXPORT,JSR
+  $F4C4  LRUD3                    EXPORT,BRANCH
+  $F4C8  LRUD4                    EXPORT,BRANCH
+  $F4CD  CON_03                   EXPORT,CONST
+  $F4D3  MOVE_UP_OR_DOWN          EXPORT,JSR,LABEL
+  $F4EB  L_MOVE_UP_OR_DOWN_1      EXPORT,BRANCH
+  $F4F6  L_MOVE_UP_OR_DOWN_2      EXPORT,BRANCH
+  $F4FB  L_MOVE_UP_OR_DOWN_3      EXPORT,BRANCH
+  $F4FD  L_MOVE_UP_OR_DOWN_4      EXPORT,BRANCH
+  $F4FF  L_MOVE_UP_OR_DOWN_5      EXPORT,BRANCH
+  $F501  UD_1                     EXPORT,BRANCH
+  $F505  MOVE_DOWN                EXPORT,BRANCH,LABEL
+  $F508  CON_04                   EXPORT,CONST
+  $F524  L_CON_04_1               EXPORT,BRANCH
+  $F52A  L_CON_04_2               EXPORT,BRANCH
+  $F52C  L_CON_04_3               EXPORT,BRANCH
+  $F530  HLINRL                   EXPORT
+  $F53A  HGLIN                    EXPORT,JSR
+  $F550  L_HGLIN_1                EXPORT,BRANCH
+  $F568  L_HGLIN_2                EXPORT,BRANCH
+  $F57C  MOVEX                    EXPORT,BRANCH
+  $F581  MOVEX2                   EXPORT,BRANCH
+  $F58B  L_MOVEX2_1               EXPORT,BRANCH
+  $F59E  L_MOVEX2_2               EXPORT,BRANCH
+  $F5B2  MSKTBL                   EXPORT
+  $F5B9  CON_1C                   EXPORT
+  $F5BA  COSINE_TABLE             
+  $F5CB  HFIND                    EXPORT
+  $F5F0  L_HFIND_1                EXPORT,BRANCH
+  $F5FE  L_HFIND_2                EXPORT,BRANCH
+  $F600  RTS_22                   EXPORT,BRANCH
+  $F601  DRAW0                    EXPORT
+  $F605  DRAW1                    EXPORT,JMP
+  $F626  L_DRAW1_1                EXPORT,BRANCH
+  $F630  L_DRAW1_2                EXPORT,BRANCH
+  $F63D  L_DRAW1_3                EXPORT,BRANCH
+  $F648  L_DRAW1_4                EXPORT,BRANCH
+  $F658  L_DRAW1_5                EXPORT,BRANCH
+  $F65D  XDRAW0                   EXPORT
+  $F661  XDRAW1                   EXPORT,JMP
+  $F682  L_XDRAW1_1               EXPORT,BRANCH
+  $F68C  L_XDRAW1_2               EXPORT,BRANCH
+  $F699  L_XDRAW1_3               EXPORT,BRANCH
+  $F6A4  L_XDRAW1_4               EXPORT,BRANCH
+  $F6B4  L_XDRAW1_5               EXPORT,BRANCH
+  $F6B9  HFNS                     EXPORT,JSR
+  $F6CD  L_HFNS_1                 EXPORT,BRANCH
+  $F6E6  GGERR                    EXPORT,BRANCH
+  $F6E9  HCOLOR                   EXPORT,JTABLE
+  $F6F5  RTS_23                   EXPORT,BRANCH
+  $F6F6  COLORTBL                 EXPORT
+  $F6FE  HPLOT                    EXPORT,JTABLE
+  $F708  L_HPLOT_1                EXPORT,JMP
+  $F70F  L_HPLOT_2                EXPORT,BRANCH
+  $F721  ROT                      EXPORT,JTABLE
+  $F727  SCALE                    EXPORT,JTABLE
+  $F72D  DRWPNT                   EXPORT,JSR
+  $F741  L_DRWPNT_1               EXPORT,BRANCH
+  $F747  L_DRWPNT_2               EXPORT,BRANCH
+  $F766  L_DRWPNT_3               EXPORT,BRANCH
+  $F769  DRAW                     EXPORT,JTABLE
+  $F76F  XDRAW                    EXPORT,JTABLE
+  $F775  SHLOAD                   EXPORT,JTABLE
+  $F796  L_SHLOAD_1               EXPORT,BRANCH
+  $F7A0  L_SHLOAD_2               EXPORT,BRANCH
+  $F7A3  L_SHLOAD_3               EXPORT,BRANCH
+  $F7BC  TAPEPNT                  EXPORT,JSR,LABEL
+  $F7D9  GETARYPT                 EXPORT,JSR,LABEL
+  $F7E7  HTAB                     EXPORT,JTABLE
+  $F7EC  L_HTAB_1                 EXPORT,JMP
+  $F7FA  L_HTAB_2                 EXPORT,BRANCH
+
+[Autostart-Monitor :: lores]   (base $F800)
+  $F800  PLOT                     EXPORT
+  $F80C  RTMASK                   EXPORT,BRANCH
+  $F80E  PLOT1                    EXPORT,JSR
+  $F819  HLINE                    EXPORT
+  $F81C  HLINE1                   EXPORT,BRANCH
+  $F826  VLINEZ                   EXPORT,BRANCH
+  $F828  VLINE                    EXPORT,JSR
+  $F831  RTS1                     EXPORT,BRANCH
+  $F832  CLRSCR                   EXPORT
+  $F836  CLRTOP                   EXPORT,IMPORT,JSR
+  $F838  CLRSC2                   EXPORT,BRANCH
+  $F83C  CLRSC3                   EXPORT,BRANCH
+  $F847  GBASCALC                 EXPORT,JSR
+  $F856  GBCALC                   EXPORT,BRANCH
+  $F85F  NXTCOL                   EXPORT
+  $F864  SETCOL                   EXPORT
+  $F871  SCRN                     EXPORT
+  $F879  SCRN2                    EXPORT,IMPORT,JSR
+  $F87F  RTMSKZ                   EXPORT,BRANCH
+
+[Autostart-Monitor :: disasm]   (base $F882)
+  $F882  INSDS1                   EXPORT,IMPORT,JSR
+  $F88E  INSDS2                   EXPORT
+  $F89B  IEVEN                    EXPORT,BRANCH
+  $F8A5  ERR                      EXPORT,BRANCH
+  $F8A9  GETFMT                   EXPORT,BRANCH
+  $F8BE  MNNDX1                   EXPORT,BRANCH
+  $F8C2  MNNDX2                   EXPORT,BRANCH
+  $F8C9  MNNDX3                   EXPORT,BRANCH
+  $F8D0  INSTDSP                  EXPORT,IMPORT,JSR
+  $F8D4  PRNTOP                   EXPORT,BRANCH
+  $F8DB  PRNTBL                   EXPORT,BRANCH
+  $F8F5  PRMN1                    EXPORT,BRANCH
+  $F8F9  PRMN2                    EXPORT,BRANCH
+  $F910  PRADR1                   EXPORT,BRANCH
+  $F914  PRADR2                   EXPORT,BRANCH
+  $F926  PRADR3                   EXPORT,BRANCH
+  $F92A  PRADR4                   EXPORT,BRANCH
+  $F930  PRADR5                   EXPORT,BRANCH
+  $F938  RELADR                   EXPORT
+  $F940  PRNTYX                   EXPORT,IMPORT,JSR,BRANCH
+  $F941  PRNTAX                   EXPORT
+  $F944  PRNTX                    EXPORT
+  $F948  PRBLNK                   EXPORT,JSR
+  $F94A  PRBL2                    EXPORT,JSR,BRANCH
+  $F953  PCADJ                    EXPORT,IMPORT,JSR
+  $F954  PCADJ2                   EXPORT
+  $F956  PCADJ3                   EXPORT,JSR
+  $F95C  PCADJ4                   EXPORT,BRANCH
+  $F961  RTS2                     EXPORT,BRANCH
+  $F962  FMT1                     
+  $F9A6  FMT2                     EXPORT
+  $F9B4  CHAR1                    EXPORT,LABEL
+  $F9BA  CHAR2                    EXPORT
+  $F9C0  MNEML                    
+  $FA00  MNEMR                    
+
+[Autostart-Monitor :: debug]   (base $FA40)
+  $FA40  IRQ                      EXPORT,IMPORT,JTABLE
+  $FA4C  BREAK                    EXPORT,BRANCH
+  $FA62  RESET2                   EXPORT,IMPORT,JTABLE
+  $FA9B  LFA9B                    EXPORT,BRANCH
+  $FAA3  LFAA3                    EXPORT,BRANCH
+  $FAA6  LFAA6                    EXPORT,BRANCH
+  $FAAB  LFAAB                    EXPORT,BRANCH
+  $FABA  LFABA                    EXPORT,BRANCH
+  $FAC7  LFAC7                    EXPORT,BRANCH
+  $FAD7  REGDSP                   EXPORT,IMPORT,JMP
+  $FADA  RGDSP1                   EXPORT,JSR
+  $FAE4  RDSP1                    EXPORT,BRANCH
+  $FAFC  LFAFC                    EXPORT
+  $FB01  LFB01                    
+  $FB08  LFB08                    EXPORT,IMPORT
+  $FB19  RTBL                     EXPORT
+
+[Autostart-Monitor :: paddles]   (base $FB1E)
+  $FB1E  PREAD                    EXPORT
+  $FB25  PREAD2                   EXPORT,BRANCH
+  $FB2E  RTS2D                    EXPORT,BRANCH
+
+[Autostart-Monitor :: display1]   (base $FB2F)
+  $FB2F  INIT                     EXPORT,IMPORT,JSR
+  $FB39  SETTXT                   EXPORT
+  $FB40  SETGR                    EXPORT
+  $FB4B  SETWND                   EXPORT,BRANCH
+  $FB5B  TABV                     EXPORT
+
+[Autostart-Monitor :: math]   (base $FB60)
+  $FB60  LFB60                    EXPORT,IMPORT,JSR
+  $FB65  LFB65                    EXPORT,BRANCH
+  $FB78  LFB78                    EXPORT,IMPORT,JSR
+  $FB88  LFB88                    EXPORT,BRANCH
+  $FB94  LFB94                    EXPORT,BRANCH
+  $FB97  LFB97                    EXPORT,JSR,BRANCH
+  $FB9B  LFB9B                    EXPORT,BRANCH
+  $FBA5  LFBA5                    EXPORT,IMPORT,JSR
+
+[Autostart-Monitor :: display2]   (base $FBC1)
+  $FBC1  BASCALC                  EXPORT,JSR
+  $FBD0  BSCLC2                   EXPORT,BRANCH
+  $FBD9  BELL1                    EXPORT,BRANCH
+  $FBE4  BELL2                    EXPORT,BRANCH
+  $FBEF  RTS2B                    EXPORT,BRANCH
+  $FBF0  STOADV                   EXPORT,BRANCH
+  $FBF4  ADVANCE                  EXPORT,BRANCH
+  $FBFC  RTS3                     EXPORT,BRANCH
+  $FBFD  VIDOUT                   EXPORT,IMPORT,JMP
+  $FC10  BS                       EXPORT,BRANCH
+  $FC1A  UP                       EXPORT,BRANCH
+  $FC22  VTAB                     EXPORT
+  $FC24  VTABZ                    EXPORT,JSR,BRANCH
+  $FC2B  RTS4                     EXPORT,BRANCH
+  $FC2C  ESC1                     EXPORT,IMPORT,JMP
+  $FC42  CLREOP                   EXPORT
+  $FC46  CLEOP1                   EXPORT,BRANCH
+  $FC58  HOME                     EXPORT,IMPORT,JSR,BRANCH
+  $FC62  CR                       EXPORT,BRANCH
+  $FC66  LF                       EXPORT,BRANCH
+  $FC70  SCROLL                   EXPORT
+  $FC76  SCRL1                    EXPORT,BRANCH
+  $FC8C  SCRL2                    EXPORT,BRANCH
+  $FC95  SCRL3                    EXPORT,BRANCH
+  $FC9C  CLREOL                   EXPORT,IMPORT,JSR,BRANCH
+  $FC9E  CLEOLZ                   EXPORT,JSR
+  $FCA0  CLEOL2                   EXPORT,BRANCH
+  $FCA8  WAIT                     EXPORT
+  $FCA9  WAIT2                    EXPORT,BRANCH
+  $FCAA  WAIT3                    EXPORT,BRANCH
+  $FCB4  NXTA4                    EXPORT,IMPORT,JSR
+  $FCBA  NXTA1                    EXPORT,IMPORT,JSR,BRANCH
+  $FCC8  RTS4B                    EXPORT,BRANCH
+
+[Autostart-Monitor :: cassette]   (base $FCC9)
+  $FCC9  HEADR                    EXPORT,IMPORT,JSR,BRANCH
+  $FCD6  WRBIT                    EXPORT,IMPORT,JSR
+  $FCDB  ZERDLY                   EXPORT,JSR,BRANCH
+  $FCE2  ONEDLY                   EXPORT,BRANCH
+  $FCE5  WRTAPE                   EXPORT,BRANCH
+  $FCEC  RDBYTE                   EXPORT,IMPORT,JSR
+  $FCEE  RDBYT2                   EXPORT,BRANCH
+  $FCFA  RD2BIT                   EXPORT,IMPORT,JSR
+  $FCFD  RDBIT                    EXPORT,IMPORT,JSR,BRANCH
+
+[Autostart-Monitor :: keyin]   (base $FD0C)
+  $FD0C  RDKEY                    EXPORT,IMPORT,JSR
+  $FD1B  KEYIN                    EXPORT,IMPORT,BRANCH
+  $FD21  KEYIN2                   EXPORT,BRANCH
+  $FD2F  ESC                      EXPORT,BRANCH
+  $FD35  RDCHAR                   EXPORT,JSR
+  $FD3D  NOTCR                    EXPORT,BRANCH
+  $FD5F  NOTCR1                   EXPORT,BRANCH
+  $FD62  CANCEL                   EXPORT,BRANCH
+  $FD67  GETLNZ                   EXPORT,IMPORT,JSR,BRANCH
+  $FD6A  GETLN                    EXPORT
+  $FD71  BCKSPC                   EXPORT,BRANCH
+  $FD75  NXTCHAR                  EXPORT,BRANCH
+  $FD78  NXTCHAR1                 EXPORT
+  $FD7E  CAPTST                   EXPORT,BRANCH
+  $FD84  ADDINP                   EXPORT,BRANCH
+
+[Autostart-Monitor :: cmd]   (base $FD8E)
+  $FD8E  CROUT                    EXPORT,IMPORT,JSR
+  $FD92  PRA1                     EXPORT,JSR
+  $FD96  PRYX2                    EXPORT,IMPORT,JSR
+  $FDA3  XAM8                     EXPORT,BRANCH
+  $FDAD  MODSCHK                  EXPORT,BRANCH
+  $FDB3  XAM                      EXPORT,BRANCH
+  $FDB6  DATAOUT                  EXPORT,BRANCH
+  $FDC5  RTS4C                    EXPORT
+  $FDC6  XAMPM                    EXPORT,BRANCH
+  $FDD1  ADD                      EXPORT,BRANCH
+  $FDDA  PRBYTE                   EXPORT,IMPORT,JSR,JMP
+  $FDE3  PRHEX                    EXPORT
+  $FDE5  PRHEXZ                   EXPORT,JSR
+  $FDED  COUT                     EXPORT,IMPORT,JSR,JMP,BRANCH
+  $FDF0  COUT1                    EXPORT
+  $FDF6  COUTZ                    EXPORT,BRANCH
+  $FE00  BL1                      EXPORT,JSR
+  $FE04  BLANK                    EXPORT
+  $FE0B  STOR                     EXPORT
+  $FE17  RTS5                     EXPORT,BRANCH
+  $FE18  SETMODE                  EXPORT
+  $FE1D  SETMDZ                   EXPORT,BRANCH
+  $FE20  LT                       EXPORT
+  $FE22  LT2                      EXPORT,BRANCH
+  $FE2C  MOVE                     EXPORT,BRANCH
+  $FE36  VFY                      EXPORT,BRANCH
+  $FE58  VFYOK                    EXPORT,BRANCH
+  $FE5E  LIST1                    EXPORT
+  $FE63  LIST2                    EXPORT,BRANCH
+  $FE75  A1PC                     EXPORT,JSR
+  $FE78  A1PCLP                   EXPORT,BRANCH
+  $FE7F  A1PCRTS                  EXPORT,BRANCH
+  $FE80  SETINV                   EXPORT
+  $FE84  SETNORM                  EXPORT,IMPORT,JSR
+  $FE86  SETIFLG                  EXPORT,BRANCH
+  $FE89  SETKBD                   EXPORT,IMPORT,JSR
+  $FE8B  INPORT                   EXPORT
+  $FE8D  INPRT                    EXPORT
+  $FE93  SETVID                   EXPORT,IMPORT,JSR
+  $FE95  OUTPORT                  EXPORT
+  $FE97  OUTPRT                   EXPORT
+  $FE9B  IOPRT                    EXPORT,BRANCH
+  $FEA7  IOPRT1                   EXPORT,BRANCH
+  $FEA9  IOPRT2                   EXPORT,BRANCH
+  $FEB0  XBASIC                   EXPORT
+  $FEB3  BASCONT                  EXPORT
+  $FEB6  GO                       EXPORT
+  $FEBF  REGZ                     EXPORT
+  $FEC2  TRACE                    EXPORT,LABEL
+  $FEC5  STEPZ                    EXPORT
+  $FECA  USR                      EXPORT
+  $FECD  WRITE                    EXPORT
+  $FED4  WR1                      EXPORT,BRANCH
+  $FEED  WRBYTE                   EXPORT,JSR
+  $FEEF  WRBYT2                   EXPORT,BRANCH
+  $FEF6  CRMON                    EXPORT
+  $FEFD  READ                     EXPORT
+  $FF0A  RD2                      EXPORT,BRANCH
+  $FF16  RD3                      EXPORT,BRANCH
+  $FF2D  PRERR                    EXPORT
+  $FF3A  BELL                     EXPORT,IMPORT,JSR,BRANCH
+  $FF3F  RESTORE                  EXPORT
+  $FF44  RESTR1                   EXPORT
+  $FF4A  SAVE                     EXPORT
+  $FF4C  SAV1                     EXPORT,IMPORT,JSR
+  $FF59  RESET                    EXPORT
+  $FF65  MON                      EXPORT,IMPORT,JMP,BRANCH
+  $FF69  MONZ                     EXPORT,BRANCH
+  $FF73  NXTITM                   EXPORT,JMP
+  $FF7A  CHRSRCH                  EXPORT,BRANCH
+  $FF8A  DIG                      EXPORT,BRANCH
+  $FF90  NXTBIT                   EXPORT,BRANCH
+  $FF98  NXTBAS                   EXPORT,BRANCH
+  $FFA2  NXTBS2                   EXPORT,BRANCH
+  $FFA7  GETNUM                   EXPORT,JSR
+  $FFAD  NXTCHR                   EXPORT,BRANCH
+  $FFBE  TOSUB                    EXPORT,JSR
+  $FFC7  ZMODE                    EXPORT,JSR
+  $FFCC  CHRTBL                   EXPORT
+  $FFE3  SUBTBL                   EXPORT
+
+[Autostart-Monitor :: vectors]   (base $FFFA)
+  $FFFA  M6502VEC                 EXPORT
+
+2. SUBROUTINES DISCOVERED VIA JSR (232)
+=======================================
+  $D000  JMPADRS                  [applesoft]  callers=1
+  $D000  CHRGET                   [applesoft]  callers=23
+  $D000  CHRGOT                   [applesoft]  callers=23
+  $D000  MON_SCRN                 [applesoft]  callers=1
+  $D000  MON_PREAD                [applesoft]  callers=1
+  $D000  MON_WAIT                 [applesoft]  callers=1
+  $D000  MON_RD2BIT               [applesoft]  callers=1
+  $D000  MON_RDKEY                [applesoft]  callers=2
+  $D000  MON_GETLN                [applesoft]  callers=1
+  $D000  MON_COUT                 [applesoft]  callers=1
+  $D000  MON_WRITE                [applesoft]  callers=2
+  $D000  MON_READ                 [applesoft]  callers=4
+  $D365  GTFORPNT                 [applesoft]  callers=3
+  $D393  BLTU                     [applesoft]  callers=2
+  $D39A  BLTU2                    [applesoft]  callers=1
+  $D3D6  CHKMEM                   [applesoft]  callers=3
+  $D3E3  REASON                   [applesoft]  callers=4
+  $D52C  INLIN                    [applesoft]  callers=2
+  $D52E  INLIN2                   [applesoft]  callers=1
+  $D553  INCHR                    [applesoft]  callers=1
+  $D559  PARSE_INPUT_LINE         [applesoft]  callers=2
+  $D61A  FNDLIN                   [applesoft]  callers=4
+  $D61E  FL1                      [applesoft]  callers=2
+  $D64B  SCRTCH                   [applesoft]  callers=1
+  $D665  SETPTRS                  [applesoft]  callers=4
+  $D66C  CLEARC                   [applesoft]  callers=2
+  $D683  STKINI                   [applesoft]  callers=1
+  $D697  STXTPT                   [applesoft]  callers=1
+  $D72C  GETCHR                   [applesoft]  callers=2
+  $D828  EXECUTE_STATEMENT        [applesoft]  callers=2
+  $D849  RESTORE                  [applesoft]  callers=3
+  $D858  ISCNTC                   [applesoft]  callers=2
+  $D8F0  VARTIO                   [applesoft]  callers=3
+  $D901  PROGIO                   [applesoft]  callers=2
+  $D93E  GOTO                     [applesoft]  callers=4
+  $D995  DATA                     [applesoft]  callers=2
+  $D998  ADDON                    [applesoft]  callers=3
+  $D9A3  DATAN                    [applesoft]  callers=3
+  $D9A6  REMN                     [applesoft]  callers=3
+  $DA0C  LINGET                   [applesoft]  callers=6
+  $DA46  LET                      [applesoft]  callers=3
+  $DA63  LET2                     [applesoft]  callers=1
+  $DA7B  PUTSTR                   [applesoft]  callers=1
+  $DAFB  CRDO                     [applesoft]  callers=8
+  $DB00  NEGATE                   [applesoft]  callers=1
+  $DB3A  STROUT                   [applesoft]  callers=4
+  $DB3D  STRPRT                   [applesoft]  callers=2
+  $DB57  OUTSP                    [applesoft]  callers=2
+  $DB5A  OUTQUES                  [applesoft]  callers=4
+  $DB5C  OUTDO                    [applesoft]  callers=9
+  $DBDC  NXIN                     [applesoft]  callers=1
+  $DBEB  PROCESS_INPUT_LIST       [applesoft]  callers=1
+  $DCFF  NEXT_1                   [applesoft]  callers=2
+  $DD67  FRMNUM                   [applesoft]  callers=10
+  $DD6A  CHKNUM                   [applesoft]  callers=8
+  $DD6C  CHKSTR                   [applesoft]  callers=3
+  $DD6D  CHKVAL                   [applesoft]  callers=2
+  $DD7B  FRMEVL                   [applesoft]  callers=6
+  $DDFD  FRM_RECURSE              [applesoft]  callers=1
+  $DE10  FRM_STACK_1              [applesoft]  callers=1
+  $DE15  FRM_STACK_2              [applesoft]  callers=1
+  $DE60  FRM_ELEMENT              [applesoft]  callers=2
+  $DE81  STRTXT                   [applesoft]  callers=1
+  $DEB2  PARCHK                   [applesoft]  callers=3
+  $DEB8  CHKCLS                   [applesoft]  callers=4
+  $DEBB  CHKOPN                   [applesoft]  callers=3
+  $DEBE  CHKCOM                   [applesoft]  callers=5
+  $DEC0  SYNCHR                   [applesoft]  callers=13
+  $DFE3  PTRGET                   [applesoft]  callers=6
+  $DFE8  PTRGET2                  [applesoft]  callers=1
+  $DFEA  PTRGET3                  [applesoft]  callers=1
+  $E07D  ISLETC                   [applesoft]  callers=4
+  $E0ED  GETARY                   [applesoft]  callers=2
+  $E0EF  GETARY2                  [applesoft]  callers=1
+  $E102  MAKINT                   [applesoft]  callers=1
+  $E108  MKINT                    [applesoft]  callers=1
+  $E10C  AYINT                    [applesoft]  callers=1
+  $E2AD  MULTIPLY_SUBSCRIPT       [applesoft]  callers=2
+  $E2B6  MULTIPLY_SUBS_1          [applesoft]  callers=1
+  $E301  SNGFLT                   [applesoft]  callers=7
+  $E306  ERRDIR                   [applesoft]  callers=3
+  $E341  FNC_                     [applesoft]  callers=2
+  $E3D5  STRINI                   [applesoft]  callers=3
+  $E3DD  STRSPA                   [applesoft]  callers=2
+  $E3E7  STRLIT                   [applesoft]  callers=4
+  $E3ED  STRLT2                   [applesoft]  callers=1
+  $E42A  PUTNEW                   [applesoft]  callers=4
+  $E452  GETSPA                   [applesoft]  callers=1
+  $E484  GARBAG                   [applesoft]  callers=3
+  $E519  CHECK_SIMPLE_VARIABLE    [applesoft]  callers=1
+  $E523  CHECK_VARIABLE           [applesoft]  callers=2
+  $E5D4  MOVINS                   [applesoft]  callers=2
+  $E5E2  MOVSTR                   [applesoft]  callers=1
+  $E5E6  MOVSTR_1                 [applesoft]  callers=2
+  $E5FD  FRESTR                   [applesoft]  callers=1
+  $E600  FREFAC                   [applesoft]  callers=3
+  $E604  FRETMP                   [applesoft]  callers=3
+  $E635  FRETMS                   [applesoft]  callers=2
+  $E6B9  SUBSTRING_SETUP          [applesoft]  callers=3
+  $E6DC  GETSTR                   [applesoft]  callers=3
+  $E6F5  GTBYTC                   [applesoft]  callers=1
+  $E6F8  GETBYT                   [applesoft]  callers=17
+  $E6FB  CONINT                   [applesoft]  callers=2
+  $E73D  POINT                    [applesoft]  callers=2
+  $E746  GTNUM                    [applesoft]  callers=2
+  $E74C  COMBYTE                  [applesoft]  callers=1
+  $E752  GETADR                   [applesoft]  callers=6
+  $E784  WAIT                     [applesoft]  callers=3
+  $E7A0  FADDH                    [applesoft]  callers=2
+  $E7A7  FSUB                     [applesoft]  callers=3
+  $E7AA  FSUBT                    [applesoft]  callers=3
+  $E7BE  FADD                     [applesoft]  callers=7
+  $E7CE  FADD_2                   [applesoft]  callers=1
+  $E82E  NORMALIZE_FAC_2          [applesoft]  callers=3
+  $E89E  COMPLEMENT_FAC           [applesoft]  callers=1
+  $E8A4  COMPLEMENT_FAC_MANTISSA  [applesoft]  callers=1
+  $E8C6  INCREMENT_FAC_MANTISSA   [applesoft]  callers=1
+  $E8F0  SHIFT_RIGHT              [applesoft]  callers=2
+  $E907  SHIFT_RIGHT_4            [applesoft]  callers=2
+  $E941  LOG                      [applesoft]  callers=2
+  $E97F  FMULT                    [applesoft]  callers=6
+  $E9B0  MULTIPLY_1               [applesoft]  callers=1
+  $E9B5  MULTIPLY_2               [applesoft]  callers=2
+  $E9E3  LOAD_ARG_FROM_YA         [applesoft]  callers=4
+  $EA0E  ADD_EXPONENTS            [applesoft]  callers=2
+  $EA10  ADD_EXPONENTS_1          [applesoft]  callers=1
+  $EA2B  OUTOFRNG                 [applesoft]  callers=1
+  $EA39  MUL10                    [applesoft]  callers=3
+  $EA55  DIV10                    [applesoft]  callers=2
+  $EA5E  DIV                      [applesoft]  callers=1
+  $EA66  FDIV                     [applesoft]  callers=3
+  $EAF9  LOAD_FAC_FROM_YA         [applesoft]  callers=7
+  $EB1E  STORE_FAC_IN_TEMP2_ROUNDED [applesoft]  callers=1
+  $EB21  STORE_FAC_IN_TEMP1_ROUNDED [applesoft]  callers=2
+  $EB27  SETFOR                   [applesoft]  callers=2
+  $EB2B  STORE_FACDB_YX_ROUNDED   [applesoft]  callers=4
+  $EB55  MFA                      [applesoft]  callers=1
+  $EB63  COPY_FAC_TO_ARG_ROUNDED  [applesoft]  callers=5
+  $EB66  MAF                      [applesoft]  callers=1
+  $EB72  ROUND_FAC                [applesoft]  callers=5
+  $EB7A  INCREMENT_MANTISSA       [applesoft]  callers=1
+  $EB82  SIGN                     [applesoft]  callers=5
+  $EB93  FLOAT                    [applesoft]  callers=2
+  $EBA0  FLOAT_2                  [applesoft]  callers=1
+  $EBB2  FCOMP                    [applesoft]  callers=5
+  $EBB4  FCOMP2                   [applesoft]  callers=1
+  $EBF2  QINT                     [applesoft]  callers=4
+  $EC23  INT                      [applesoft]  callers=4
+  $EC4A  FIN                      [applesoft]  callers=3
+  $ECD5  ADDACC                   [applesoft]  callers=2
+  $ED19  INPRT                    [applesoft]  callers=1
+  $ED24  LINPRT                   [applesoft]  callers=2
+  $ED31  GO_STROUT                [applesoft]  callers=1
+  $ED34  FOUT                     [applesoft]  callers=2
+  $ED36  FOUT_1                   [applesoft]  callers=1
+  $EED0  NEGOP                    [applesoft]  callers=7
+  $EF09  EXP                      [applesoft]  callers=3
+  $EF5C  POLYNOMIAL_ODD           [applesoft]  callers=3
+  $EF72  POLYNOMIAL               [applesoft]  callers=1
+  $EF76  SERMAIN                  [applesoft]  callers=1
+  $EFE7  GO_MOVMF                 [applesoft]  callers=1
+  $EFF1  SIN                      [applesoft]  callers=2
+  $F062  TAN_1                    [applesoft]  callers=1
+  $F1EC  PLOTFNS                  [applesoft]  callers=3
+  $F209  LINCOOR                  [applesoft]  callers=2
+  $F225  PLOT                     [applesoft]  callers=3
+  $F273  NORMAL                   [applesoft]  callers=2
+  $F411  HPOSN                    [applesoft]  callers=2
+  $F457  HPLOT0                   [applesoft]  callers=1
+  $F465  MOVE_LEFT_OR_RIGHT       [applesoft]  callers=2
+  $F47E  COLOR_SHIFT              [applesoft]  callers=2
+  $F49C  LRUDX1                   [applesoft]  callers=1
+  $F49D  LRUDX2                   [applesoft]  callers=1
+  $F4B3  LRUD1                    [applesoft]  callers=1
+  $F4B4  LRUD2                    [applesoft]  callers=1
+  $F4D3  MOVE_UP_OR_DOWN          [applesoft]  callers=1
+  $F53A  HGLIN                    [applesoft]  callers=1
+  $F6B9  HFNS                     [applesoft]  callers=3
+  $F72D  DRWPNT                   [applesoft]  callers=2
+  $F7BC  TAPEPNT                  [applesoft]  callers=2
+  $F7D9  GETARYPT                 [applesoft]  callers=2
+  $F80E  PLOT1                    [lores]  callers=1
+  $F828  VLINE                    [lores]  callers=1
+  $F836  CLRTOP                   [lores]  callers=1
+  $F847  GBASCALC                 [lores]  callers=2
+  $F879  SCRN2                    [lores]  callers=1
+  $F882  INSDS1                   [disasm]  callers=2
+  $F8D0  INSTDSP                  [disasm]  callers=1
+  $F940  PRNTYX                   [disasm]  callers=2
+  $F948  PRBLNK                   [disasm]  callers=2
+  $F94A  PRBL2                    [disasm]  callers=2
+  $F953  PCADJ                    [disasm]  callers=1
+  $F956  PCADJ3                   [disasm]  callers=1
+  $FADA  RGDSP1                   [debug]  callers=1
+  $FB2F  INIT                     [display1]  callers=2
+  $FB60  LFB60                    [math]  callers=1
+  $FB78  LFB78                    [math]  callers=1
+  $FB97  LFB97                    [math]  callers=2
+  $FBA5  LFBA5                    [math]  callers=1
+  $FBC1  BASCALC                  [display2]  callers=1
+  $FC24  VTABZ                    [display2]  callers=4
+  $FC58  HOME                     [display2]  callers=2
+  $FC9C  CLREOL                   [display2]  callers=2
+  $FC9E  CLEOLZ                   [display2]  callers=2
+  $FCB4  NXTA4                    [display2]  callers=2
+  $FCBA  NXTA1                    [display2]  callers=4
+  $FCC9  HEADR                    [cassette]  callers=3
+  $FCD6  WRBIT                    [cassette]  callers=1
+  $FCDB  ZERDLY                   [cassette]  callers=3
+  $FCEC  RDBYTE                   [cassette]  callers=1
+  $FCFA  RD2BIT                   [cassette]  callers=2
+  $FCFD  RDBIT                    [cassette]  callers=3
+  $FD0C  RDKEY                    [keyin]  callers=3
+  $FD35  RDCHAR                   [keyin]  callers=1
+  $FD67  GETLNZ                   [keyin]  callers=2
+  $FD8E  CROUT                    [cmd]  callers=3
+  $FD92  PRA1                     [cmd]  callers=2
+  $FD96  PRYX2                    [cmd]  callers=1
+  $FDDA  PRBYTE                   [cmd]  callers=7
+  $FDE5  PRHEXZ                   [cmd]  callers=1
+  $FDED  COUT                     [cmd]  callers=15
+  $FE00  BL1                      [cmd]  callers=1
+  $FE75  A1PC                     [cmd]  callers=2
+  $FE84  SETNORM                  [cmd]  callers=2
+  $FE89  SETKBD                   [cmd]  callers=2
+  $FE93  SETVID                   [cmd]  callers=2
+  $FEED  WRBYTE                   [cmd]  callers=1
+  $FF3A  BELL                     [cmd]  callers=5
+  $FF4C  SAV1                     [cmd]  callers=1
+  $FFA7  GETNUM                   [cmd]  callers=1
+  $FFBE  TOSUB                    [cmd]  callers=1
+  $FFC7  ZMODE                    [cmd]  callers=1
+
+3. JMP-ONLY TARGETS (90)
+========================
+  $D000  GOWARM                   [applesoft]
+  $D000  LINNUM                   [applesoft]
+  $D000  INDEX                    [applesoft]
+  $D000  MON_PLOT                 [applesoft]
+  $D000  MON_HLINE                [applesoft]
+  $D000  MON_VLINE                [applesoft]
+  $D000  MON_SETCOL               [applesoft]
+  $D000  MON_SETTXT               [applesoft]
+  $D000  MON_SETGR                [applesoft]
+  $D000  MON_TABV                 [applesoft]
+  $D000  MON_INPORT               [applesoft]
+  $D000  MON_OUTPORT              [applesoft]
+  $D000  MON_READ2                [applesoft]
+  $D410  MEMERR                   [applesoft]
+  $D412  ERROR                    [applesoft]
+  $D431  PRINT_ERROR_LINNUM       [applesoft]
+  $D43C  RESTART                  [applesoft]
+  $D4F2  FIX_LINKS                [applesoft]
+  $D7D2  NEWSTT                   [applesoft]
+  $D805  TRACE_                   [applesoft]
+  $D82A  EXECUTE_STATEMENT_1      [applesoft]
+  $D853  SETDA                    [applesoft]
+  $D863  CONTROL_C_TYPED          [applesoft]
+  $D935  GO_TO_LINE               [applesoft]
+  $DA12  L_LINGET_1               [applesoft]
+  $DAB7  L_PUTSTR_4               [applesoft]
+  $DACF  PR_STRING                [applesoft]
+  $DAD7  PRINT2                   [applesoft]
+  $DB44  L_STRPRT_1               [applesoft]
+  $DB71  INPUTERR                 [applesoft]
+  $DB86  INPERR                   [applesoft]
+  $DBC7  L_INPUT_2                [applesoft]
+  $DBF1  PROCESS_INPUT_ITEM       [applesoft]
+  $DC2B  INSTART                  [applesoft]
+  $DC72  INPUT_MORE               [applesoft]
+  $DD86  FRMEVL_1                 [applesoft]
+  $DD95  FRMEVL_2                 [applesoft]
+  $DD98  L_FRMEVL_2_1             [applesoft]
+  $DDD7  SAVOP                    [applesoft]
+  $DE20  FRM_STACK_3              [applesoft]
+  $DEC9  SYNERR                   [applesoft]
+  $DF0C  UNARY                    [applesoft]
+  $DF3F  L_UNARY_2                [applesoft]
+  $DFB0  NUMCMP                   [applesoft]
+  $E007  PTRGET4                  [applesoft]
+  $E11E  ARRAY                    [applesoft]
+  $E196  SUBERR                   [applesoft]
+  $E199  IQERR                    [applesoft]
+  $E24B  FIND_ARRAY_ELEMENT       [applesoft]
+  $E2F2  GIVAYF                   [applesoft]
+  $E354  FUNCT                    [applesoft]
+  $E3AF  FNCDATA                  [applesoft]
+  $E488  FIND_HIGHEST_STRING      [applesoft]
+  $E562  MOVE_HIGHEST_STRING_TO_TOP [applesoft]
+  $E597  CAT                      [applesoft]
+  $E660  SUBSTRING_1              [applesoft]
+  $E7C1  FADDT                    [applesoft]
+  $E829  NORMALIZE_FAC_1          [applesoft]
+  $E84E  ZERO_FAC                 [applesoft]
+  $E850  STA_IN_FAC_SIGN_AND_EXP  [applesoft]
+  $E852  STA_IN_FAC_SIGN          [applesoft]
+  $E88D  NORMALIZE_FAC_5          [applesoft]
+  $E88F  NORMALIZE_FAC_6          [applesoft]
+  $E8D5  OVERFLOW                 [applesoft]
+  $E8DA  SHIFT_RIGHT_1            [applesoft]
+  $E9E2  RTS_13                   [applesoft]
+  $EA69  FDIVT                    [applesoft]
+  $EAA6  L_FDIVT_4                [applesoft]
+  $EAE6  COPY_RESULT_INTO_FAC     [applesoft]
+  $EB53  COPY_ARG_TO_FAC          [applesoft]
+  $EB88  SIGN2                    [applesoft]
+  $EB9B  FLOAT_1                  [applesoft]
+  $EC61  FIN_1                    [applesoft]
+  $EC87  FIN_4                    [applesoft]
+  $ECA0  FIN_8                    [applesoft]
+  $EE57  FOUT_4                   [applesoft]
+  $F023  SIN_1                    [applesoft]
+  $F128  COLD_START               [applesoft]
+  $F206  GOERR                    [applesoft]
+  $F256  VTAB                     [applesoft]
+  $F2E9  HANDLERR                 [applesoft]
+  $F605  DRAW1                    [applesoft]
+  $F661  XDRAW1                   [applesoft]
+  $F708  L_HPLOT_1                [applesoft]
+  $F7EC  L_HTAB_1                 [applesoft]
+  $FAD7  REGDSP                   [debug]
+  $FBFD  VIDOUT                   [display2]
+  $FC2C  ESC1                     [display2]
+  $FF65  MON                      [cmd]
+  $FF73  NXTITM                   [cmd]
+
+4. JUMP-TABLE ENTRIES (100)
+===========================
+  $D000  USR                      [applesoft]
+  $D000  AMPERSAND_VECTOR         [applesoft]
+  $D000  MON_HOME                 [applesoft]
+  $D412  ERROR                    [applesoft]
+  $D649  NEW                      [applesoft]
+  $D66A  CLEAR                    [applesoft]
+  $D6A5  LIST                     [applesoft]
+  $D766  FOR                      [applesoft]
+  $D849  RESTORE                  [applesoft]
+  $D86E  STOP                     [applesoft]
+  $D870  ENDX                     [applesoft]
+  $D896  CONT                     [applesoft]
+  $D8B0  SAVE                     [applesoft]
+  $D8C9  LOAD                     [applesoft]
+  $D912  RUN                      [applesoft]
+  $D921  GOSUB                    [applesoft]
+  $D93E  GOTO                     [applesoft]
+  $D96B  POP                      [applesoft]
+  $D995  DATA                     [applesoft]
+  $D9C9  IF                       [applesoft]
+  $D9DC  REM                      [applesoft]
+  $D9EC  ONGOTO                   [applesoft]
+  $DA46  LET                      [applesoft]
+  $DAD5  PRINT                    [applesoft]
+  $DBA0  GET                      [applesoft]
+  $DBB2  INPUT                    [applesoft]
+  $DBE2  READ                     [applesoft]
+  $DCF9  NEXT                     [applesoft]
+  $DE98  EQUOP                    [applesoft]
+  $DF4F  OR                       [applesoft]
+  $DF55  ANDOP                    [applesoft]
+  $DF65  RELOPS                   [applesoft]
+  $DFCD  PDL                      [applesoft]
+  $DFD9  DIM                      [applesoft]
+  $E2DE  FRE                      [applesoft]
+  $E2FF  POS                      [applesoft]
+  $E313  DEF                      [applesoft]
+  $E3C5  STR                      [applesoft]
+  $E646  CHRSTR                   [applesoft]
+  $E65A  LEFTSTR                  [applesoft]
+  $E686  RIGHTSTR                 [applesoft]
+  $E691  MIDSTR                   [applesoft]
+  $E6D6  LEN                      [applesoft]
+  $E6E5  ASC                      [applesoft]
+  $E707  VAL                      [applesoft]
+  $E764  PEEK                     [applesoft]
+  $E77B  POKE                     [applesoft]
+  $E784  WAIT                     [applesoft]
+  $E7AA  FSUBT                    [applesoft]
+  $E7C1  FADDT                    [applesoft]
+  $E941  LOG                      [applesoft]
+  $E982  FMULTT                   [applesoft]
+  $EA69  FDIVT                    [applesoft]
+  $EB90  SGN                      [applesoft]
+  $EBAF  ABS                      [applesoft]
+  $EC23  INT                      [applesoft]
+  $EE8D  SQR                      [applesoft]
+  $EE97  FPWRT                    [applesoft]
+  $EED0  NEGOP                    [applesoft]
+  $EF09  EXP                      [applesoft]
+  $EFAE  RND                      [applesoft]
+  $EFEA  COS                      [applesoft]
+  $EFF1  SIN                      [applesoft]
+  $F03A  TAN                      [applesoft]
+  $F09E  ATN                      [applesoft]
+  $F1D5  CALL                     [applesoft]
+  $F1DE  IN_NUMBER                [applesoft]
+  $F1E5  PR_NUMBER                [applesoft]
+  $F225  PLOT                     [applesoft]
+  $F232  HLIN                     [applesoft]
+  $F241  VLIN                     [applesoft]
+  $F24F  COLOR                    [applesoft]
+  $F256  VTAB                     [applesoft]
+  $F262  SPEED                    [applesoft]
+  $F26D  TRACE                    [applesoft]
+  $F26F  NOTRACE                  [applesoft]
+  $F273  NORMAL                   [applesoft]
+  $F277  INVERSE                  [applesoft]
+  $F280  FLASH                    [applesoft]
+  $F286  HIMEM                    [applesoft]
+  $F2A6  LOMEM                    [applesoft]
+  $F2CB  ONERR                    [applesoft]
+  $F318  RESUME                   [applesoft]
+  $F331  DEL                      [applesoft]
+  $F390  GR                       [applesoft]
+  $F399  TEXT                     [applesoft]
+  $F39F  STORE                    [applesoft]
+  $F3BC  RECALL                   [applesoft]
+  $F3D8  HGR2                     [applesoft]
+  $F3E2  HGR                      [applesoft]
+  $F6E9  HCOLOR                   [applesoft]
+  $F6FE  HPLOT                    [applesoft]
+  $F721  ROT                      [applesoft]
+  $F727  SCALE                    [applesoft]
+  $F769  DRAW                     [applesoft]
+  $F76F  XDRAW                    [applesoft]
+  $F775  SHLOAD                   [applesoft]
+  $F7E7  HTAB                     [applesoft]
+  $FA40  IRQ                      [debug]
+  $FA62  RESET2                   [debug]
+
+5. ROM ORDER (all labels by module then address)
+================================================
+
+--- Applesoft :: applesoft   base=$D000  size=$2800 ---
+  $D000  GOWARM                     [IMPORT,JMP,CONST]
+  $D000  GOSTROUT                   [IMPORT,CONST]
+  $D000  USR                        [IMPORT,JTABLE,CONST]
+  $D000  CHARAC                     [IMPORT,CONST]
+  $D000  ENDCHR                     [IMPORT,CONST]
+  $D000  TKN_CNTR                   [IMPORT,CONST]
+  $D000  EOL_PNTR                   [IMPORT,CONST]
+  $D000  NUMDIM                     [IMPORT,CONST]
+  $D000  DIMFLG                     [IMPORT,CONST]
+  $D000  VALTYP                     [IMPORT,CONST]
+  $D000  DATAFLG                    [IMPORT,CONST]
+  $D000  GARFLG                     [IMPORT,CONST]
+  $D000  SUBFLG                     [IMPORT,CONST]
+  $D000  INPUTFLG                   [IMPORT,CONST]
+  $D000  CPRMASK                    [IMPORT,CONST]
+  $D000  SIGNFLG                    [IMPORT,CONST]
+  $D000  HGR_SHAPE                  [IMPORT,CONST]
+  $D000  HGR_BITS                   [IMPORT,CONST]
+  $D000  HGR_COUNT                  [IMPORT,CONST]
+  $D000  MON_CH                     [IMPORT,CONST]
+  $D000  MON_GBASL                  [IMPORT,CONST]
+  $D000  MON_GBASH                  [IMPORT,CONST]
+  $D000  MON_H2                     [IMPORT,CONST]
+  $D000  MON_V2                     [IMPORT,CONST]
+  $D000  MON_HMASK                  [IMPORT,CONST]
+  $D000  MON_INVFLG                 [IMPORT,CONST]
+  $D000  MON_PROMPT                 [IMPORT,CONST]
+  $D000  MON_A1L                    [IMPORT,CONST]
+  $D000  MON_A1H                    [IMPORT,CONST]
+  $D000  MON_A2L                    [IMPORT,CONST]
+  $D000  MON_A2H                    [IMPORT,CONST]
+  $D000  LINNUM                     [IMPORT,JMP,CONST]
+  $D000  TEMPPT                     [IMPORT,CONST]
+  $D000  LASTPT                     [IMPORT,CONST]
+  $D000  TEMPST                     [IMPORT,CONST]
+  $D000  INDEX                      [IMPORT,JMP,CONST]
+  $D000  DEST                       [IMPORT,CONST]
+  $D000  RESULT                     [IMPORT,CONST]
+  $D000  TXTTAB                     [IMPORT,CONST]
+  $D000  VARTAB                     [IMPORT,CONST]
+  $D000  ARYTAB                     [IMPORT,CONST]
+  $D000  STREND                     [IMPORT,CONST]
+  $D000  FRETOP                     [IMPORT,CONST]
+  $D000  FRESPC                     [IMPORT,CONST]
+  $D000  MEMSIZ                     [IMPORT,CONST]
+  $D000  CURLIN                     [IMPORT,CONST]
+  $D000  OLDLIN                     [IMPORT,CONST]
+  $D000  OLDTEXT                    [IMPORT,CONST]
+  $D000  DATLIN                     [IMPORT,CONST]
+  $D000  DATPTR                     [IMPORT,CONST]
+  $D000  INPTR                      [IMPORT,CONST]
+  $D000  VARNAM                     [IMPORT,CONST]
+  $D000  VARPNT                     [IMPORT,CONST]
+  $D000  FORPNT                     [IMPORT,CONST]
+  $D000  TXPSV                      [IMPORT,CONST]
+  $D000  LASTOP                     [IMPORT,CONST]
+  $D000  CPRTYP                     [IMPORT,CONST]
+  $D000  TEMP3                      [IMPORT,CONST]
+  $D000  FNCNAM                     [IMPORT,CONST]
+  $D000  DSCPTR                     [IMPORT,CONST]
+  $D000  DSCLEN                     [IMPORT,CONST]
+  $D000  JMPADRS                    [IMPORT,JSR,CONST]
+  $D000  LENGTH                     [IMPORT,CONST]
+  $D000  ARG_EXTENSION              [IMPORT,CONST]
+  $D000  TEMP1                      [IMPORT,CONST]
+  $D000  ARYPNT                     [IMPORT,CONST]
+  $D000  HIGHDS                     [IMPORT,CONST]
+  $D000  HIGHTR                     [IMPORT,CONST]
+  $D000  TEMP2                      [IMPORT,CONST]
+  $D000  TMPEXP                     [IMPORT,CONST]
+  $D000  INDX                       [IMPORT,CONST]
+  $D000  EXPON                      [IMPORT,CONST]
+  $D000  DPFLG                      [IMPORT,CONST]
+  $D000  LOWTR                      [IMPORT,CONST]
+  $D000  EXPSGN                     [IMPORT,CONST]
+  $D000  FAC                        [IMPORT,CONST]
+  $D000  DSCTMP                     [IMPORT,CONST]
+  $D000  VPNT                       [IMPORT,CONST]
+  $D000  FAC_SIGN                   [IMPORT,CONST]
+  $D000  SERLEN                     [IMPORT,CONST]
+  $D000  SHIFT_SIGN_EXT             [IMPORT,CONST]
+  $D000  ARG                        [IMPORT,CONST]
+  $D000  ARG_SIGN                   [IMPORT,CONST]
+  $D000  SGNCPR                     [IMPORT,CONST]
+  $D000  FAC_EXTENSION              [IMPORT,CONST]
+  $D000  SERPNT                     [IMPORT,CONST]
+  $D000  STRNG1                     [IMPORT,CONST]
+  $D000  STRNG2                     [IMPORT,CONST]
+  $D000  PRGEND                     [IMPORT,CONST]
+  $D000  CHRGET                     [IMPORT,JSR,JMP,CONST]
+  $D000  CHRGOT                     [IMPORT,JSR,JMP,CONST]
+  $D000  TXTPTR                     [IMPORT,CONST]
+  $D000  RNDSEED                    [IMPORT,CONST]
+  $D000  HGR_DX                     [IMPORT,CONST]
+  $D000  HGR_DY                     [IMPORT,CONST]
+  $D000  HGR_QUADRANT               [IMPORT,CONST]
+  $D000  HGR_E                      [IMPORT,CONST]
+  $D000  LOCK                       [IMPORT,CONST]
+  $D000  ERRFLG                     [IMPORT,CONST]
+  $D000  ERRLIN                     [IMPORT,CONST]
+  $D000  ERRPOS                     [IMPORT,CONST]
+  $D000  ERRNUM                     [IMPORT,CONST]
+  $D000  ERRSTK                     [IMPORT,CONST]
+  $D000  HGR_X                      [IMPORT,CONST]
+  $D000  HGR_Y                      [IMPORT,CONST]
+  $D000  HGR_COLOR                  [IMPORT,CONST]
+  $D000  HGR_HORIZ                  [IMPORT,CONST]
+  $D000  HGR_PAGE                   [IMPORT,CONST]
+  $D000  HGR_SCALE                  [IMPORT,CONST]
+  $D000  HGR_SHAPE_PNTR             [IMPORT,CONST]
+  $D000  HGR_COLLISIONS             [IMPORT,CONST]
+  $D000  FIRST                      [IMPORT,CONST]
+  $D000  SPEEDZ                     [IMPORT,CONST]
+  $D000  TRCFLG                     [IMPORT,CONST]
+  $D000  FLASH_BIT                  [IMPORT,CONST]
+  $D000  TXTPSV                     [IMPORT,CONST]
+  $D000  CURLSV                     [IMPORT,CONST]
+  $D000  REMSTK                     [IMPORT,CONST]
+  $D000  HGR_ROTATION               [IMPORT,CONST]
+  $D000  STACK                      [IMPORT,CONST]
+  $D000  INPUT_BUFFER               [IMPORT,CONST]
+  $D000  AMPERSAND_VECTOR           [IMPORT,JTABLE,CONST]
+  $D000  KEYBOARD                   [IMPORT,CONST]
+  $D000  SW_TXTCLR                  [IMPORT,CONST]
+  $D000  SW_MIXCLR                  [IMPORT,CONST]
+  $D000  SW_MIXSET                  [IMPORT,CONST]
+  $D000  SW_LOWSCR                  [IMPORT,CONST]
+  $D000  SW_HISCR                   [IMPORT,CONST]
+  $D000  SW_LORES                   [IMPORT,CONST]
+  $D000  SW_HIRES                   [IMPORT,CONST]
+  $D000  MON_PLOT                   [IMPORT,JMP,CONST]
+  $D000  MON_HLINE                  [IMPORT,JMP,CONST]
+  $D000  MON_VLINE                  [IMPORT,JMP,CONST]
+  $D000  MON_SETCOL                 [IMPORT,JMP,CONST]
+  $D000  MON_SCRN                   [IMPORT,JSR,CONST]
+  $D000  MON_PREAD                  [IMPORT,JSR,CONST]
+  $D000  MON_SETTXT                 [IMPORT,JMP,CONST]
+  $D000  MON_SETGR                  [IMPORT,JMP,CONST]
+  $D000  MON_TABV                   [IMPORT,JMP,CONST]
+  $D000  MON_HOME                   [IMPORT,JTABLE,CONST]
+  $D000  MON_WAIT                   [IMPORT,JSR,CONST]
+  $D000  MON_RD2BIT                 [IMPORT,JSR,CONST]
+  $D000  MON_RDKEY                  [IMPORT,JSR,CONST]
+  $D000  MON_GETLN                  [IMPORT,JSR,CONST]
+  $D000  MON_COUT                   [IMPORT,JSR,CONST]
+  $D000  MON_INPORT                 [IMPORT,JMP,CONST]
+  $D000  MON_OUTPORT                [IMPORT,JMP,CONST]
+  $D000  MON_WRITE                  [IMPORT,JSR,JMP,CONST]
+  $D000  MON_READ                   [IMPORT,JSR,JMP,CONST]
+  $D000  MON_READ2                  [IMPORT,JMP,CONST]
+  $D000  TOKEN_FOR                  [IMPORT,CONST]
+  $D000  TOKENDWTA                  [IMPORT,CONST]
+  $D000  TOKEN_POP                  [IMPORT,CONST]
+  $D000  TOKEN_GOTO                 [IMPORT,CONST]
+  $D000  TOKEN_GOSUB                [IMPORT,CONST]
+  $D000  TOKEN_REM                  [IMPORT,CONST]
+  $D000  TOKEN_PRINT                [IMPORT,CONST]
+  $D000  TOKEN_TAB                  [IMPORT,CONST]
+  $D000  TOKEN_TO                   [IMPORT,CONST]
+  $D000  TOKEN_FN                   [IMPORT,CONST]
+  $D000  TOKEN_SPC                  [IMPORT,CONST]
+  $D000  TOKEN_THEN                 [IMPORT,CONST]
+  $D000  TOKENDB                    [IMPORT,CONST]
+  $D000  TOKEN_NOT                  [IMPORT,CONST]
+  $D000  TOKEN_STEP                 [IMPORT,CONST]
+  $D000  TOKEN_PLUS                 [IMPORT,CONST]
+  $D000  TOKEN_MINUS                [IMPORT,CONST]
+  $D000  TOKEN_GREATER              [IMPORT,CONST]
+  $D000  TOKENEQUUAL                [IMPORT,CONST]
+  $D000  TOKEN_SGN                  [IMPORT,CONST]
+  $D000  TOKEN_SCRN                 [IMPORT,CONST]
+  $D000  TOKEN_LEFTSTR              [IMPORT,CONST]
+  $D000  TOKEN_ADDRESS_TABLE        [EXPORT]
+  $D080  UNFNC                      [EXPORT]
+  $D0B2  P_OR                       [IMPORT,CONST]
+  $D0B2  P_AND                      [IMPORT,CONST]
+  $D0B2  P_REL                      [IMPORT,CONST]
+  $D0B2  P_ADD                      [IMPORT,CONST]
+  $D0B2  P_MUL                      [IMPORT,CONST]
+  $D0B2  P_PWR                      [IMPORT,CONST]
+  $D0B2  P_NEQ                      [IMPORT,CONST]
+  $D0B2  MATHTBL                    [EXPORT]
+  $D0C7  M_NEG                      [EXPORT]
+  $D0CA  MEQUU                      [EXPORT]
+  $D0CD  M_REL                      [EXPORT]
+  $D0D0  TOKEN_NAME_TABLE           [EXPORT]
+  $D260  ERROR_MESSAGES             [EXPORT,LABEL]
+  $D260  ERR_NOFOR                  [IMPORT,CONST]
+  $D270  ERR_SYNTAX                 [IMPORT,CONST]
+  $D276  ERR_NOGOSUB                [IMPORT,CONST]
+  $D28A  ERR_NODATA                 [IMPORT,CONST]
+  $D295  ERR_ILLQTY                 [IMPORT,CONST]
+  $D2A5  ERR_OVERFLOW               [IMPORT,CONST]
+  $D2AD  ERR_MEMFULL                [IMPORT,CONST]
+  $D2BA  ERR_UNDEFSTAT              [IMPORT,CONST]
+  $D2CB  ERR_BADSUBS                [IMPORT,CONST]
+  $D2D8  ERR_REDIMD                 [IMPORT,CONST]
+  $D2E5  ERR_ZERODIV                [IMPORT,CONST]
+  $D2F5  ERR_ILLDIR                 [IMPORT,CONST]
+  $D303  ERR_BADTYPE                [IMPORT,CONST]
+  $D310  ERR_STRLONG                [IMPORT,CONST]
+  $D31F  ERR_FRMCPX                 [IMPORT,CONST]
+  $D332  ERR_CANTCONT               [IMPORT,CONST]
+  $D340  ERR_UNDEFFUNC              [IMPORT,CONST]
+  $D350  QT_ERROR                   [EXPORT]
+  $D358  QT_IN                      [EXPORT]
+  $D35D  QT_BREAK                   [EXPORT]
+  $D365  GTFORPNT                   [EXPORT,JSR,LABEL]
+  $D36A  L_GTFORPNT_1               [EXPORT,BRANCH]
+  $D37F  L_GTFORPNT_2               [EXPORT,BRANCH]
+  $D38B  L_GTFORPNT_3               [EXPORT,BRANCH]
+  $D392  L_GTFORPNT_4               [EXPORT,BRANCH]
+  $D393  BLTU                       [EXPORT,JSR]
+  $D39A  BLTU2                      [EXPORT,JSR]
+  $D3B7  L_BLTU2_1                  [EXPORT,BRANCH]
+  $D3C3  L_BLTU2_2                  [EXPORT,BRANCH]
+  $D3C7  L_BLTU2_3                  [EXPORT,BRANCH]
+  $D3CE  L_BLTU2_4                  [EXPORT,BRANCH]
+  $D3D6  CHKMEM                     [EXPORT,JSR]
+  $D3E3  REASON                     [EXPORT,JSR]
+  $D3ED  L_REASON_1                 [EXPORT,BRANCH]
+  $D3F1  L_REASON_2                 [EXPORT,BRANCH]
+  $D3FC  L_REASON_3                 [EXPORT,BRANCH]
+  $D40F  L_REASON_4                 [EXPORT,BRANCH]
+  $D410  MEMERR                     [EXPORT,JMP,BRANCH]
+  $D412  ERROR                      [EXPORT,JMP,JTABLE]
+  $D419  L_ERROR_1                  [EXPORT,BRANCH]
+  $D41F  L_ERROR_2                  [EXPORT,BRANCH]
+  $D431  PRINT_ERROR_LINNUM         [EXPORT,JMP,LABEL]
+  $D43C  RESTART                    [EXPORT,JMP,BRANCH,LABEL]
+  $D45C  NUMBERED_LINE              [EXPORT,BRANCH,LABEL]
+  $D49F  L_NUMBERED_LINE_1          [EXPORT,BRANCH]
+  $D4A7  L_NUMBERED_LINE_2          [EXPORT,BRANCH]
+  $D4B5  PUT_NEW_LINE               [EXPORT,BRANCH,LABEL]
+  $D4D1  L_PUT_NEW_LINE_1           [EXPORT,BRANCH]
+  $D4EA  L_PUT_NEW_LINE_2           [EXPORT,BRANCH]
+  $D4F2  FIX_LINKS                  [EXPORT,JMP,BRANCH,LABEL]
+  $D4FE  L_FIX_LINKS_1              [EXPORT,BRANCH]
+  $D50F  L_FIX_LINKS_2              [EXPORT,BRANCH]
+  $D511  L_FIX_LINKS_3              [EXPORT,BRANCH]
+  $D52C  INLIN                      [EXPORT,JSR,JMP]
+  $D52E  INLIN2                     [EXPORT,JSR]
+  $D539  L_INLIN2_1                 [EXPORT,BRANCH]
+  $D541  L_INLIN2_2                 [EXPORT,BRANCH]
+  $D54C  L_INLIN2_3                 [EXPORT,BRANCH]
+  $D553  INCHR                      [EXPORT,JSR]
+  $D559  PARSE_INPUT_LINE           [EXPORT,JSR,LABEL]
+  $D56C  PARSE                      [EXPORT,BRANCH]
+  $D56D  L_PARSE_1                  [EXPORT,BRANCH]
+  $D578  L_PARSE_2                  [EXPORT,BRANCH]
+  $D588  L_PARSE_3                  [EXPORT,BRANCH]
+  $D590  L_PARSE_4                  [EXPORT,BRANCH]
+  $D5A2  L_PARSE_5                  [EXPORT,BRANCH]
+  $D5A7  L_PARSE_6                  [EXPORT,BRANCH]
+  $D5A8  L_PARSE_7                  [EXPORT,BRANCH]
+  $D5CB  L_PARSE_8                  [EXPORT,BRANCH]
+  $D5CD  L_PARSE_9                  [EXPORT,BRANCH]
+  $D5E0  L_PARSE_10                 [EXPORT,BRANCH]
+  $D5E2  L_PARSE_11                 [EXPORT,BRANCH]
+  $D5E9  L_PARSE_12                 [EXPORT,BRANCH]
+  $D5F2  L_PARSE_13                 [EXPORT,BRANCH]
+  $D5F9  L_PARSE_14                 [EXPORT,BRANCH]
+  $D5FD  L_PARSE_15                 [EXPORT,BRANCH]
+  $D604  L_PARSE_16                 [EXPORT,BRANCH]
+  $D610  L_PARSE_17                 [EXPORT,BRANCH]
+  $D61A  FNDLIN                     [EXPORT,JSR]
+  $D61E  FL1                        [EXPORT,JSR,BRANCH]
+  $D635  L_FL1_1                    [EXPORT,BRANCH]
+  $D63E  L_FL1_2                    [EXPORT,BRANCH]
+  $D647  L_FL1_3                    [EXPORT,BRANCH]
+  $D648  RTS_1                      [EXPORT,BRANCH]
+  $D649  NEW                        [EXPORT,JTABLE]
+  $D64B  SCRTCH                     [EXPORT,JSR]
+  $D665  SETPTRS                    [EXPORT,JSR,JMP,LABEL]
+  $D66A  CLEAR                      [EXPORT,JTABLE]
+  $D66C  CLEARC                     [EXPORT,JSR,JMP]
+  $D683  STKINI                     [EXPORT,JSR]
+  $D696  RTS_2                      [EXPORT,BRANCH]
+  $D697  STXTPT                     [EXPORT,JSR]
+  $D6A5  LIST                       [EXPORT,JTABLE]
+  $D6B1  L_LIST_1                   [EXPORT,BRANCH]
+  $D6C4  L_LIST_2                   [EXPORT,BRANCH]
+  $D6CC  L_LIST_3                   [EXPORT,BRANCH]
+  $D6DA  LIST_0                     [EXPORT,BRANCH]
+  $D6F5  L_LIST_0_5                 [EXPORT,BRANCH]
+  $D6F7  L_LIST_0_6                 [EXPORT,BRANCH]
+  $D6FE  LIST_1                     [EXPORT,BRANCH]
+  $D702  LIST_2                     [EXPORT,BRANCH]
+  $D712  L_LIST_2_1                 [EXPORT,BRANCH]
+  $D724  LIST_3                     [EXPORT,BRANCH]
+  $D72C  GETCHR                     [EXPORT,JSR]
+  $D731  L_GETCHR_1                 [EXPORT,BRANCH]
+  $D734  LIST_4                     [EXPORT,BRANCH]
+  $D746  L_LIST_4_1                 [EXPORT,BRANCH]
+  $D749  L_LIST_4_2                 [EXPORT,BRANCH]
+  $D750  L_LIST_4_3                 [EXPORT,BRANCH]
+  $D755  L_LIST_4_4                 [EXPORT,BRANCH]
+  $D75F  L_LIST_4_5                 [EXPORT,BRANCH]
+  $D766  FOR                        [EXPORT,JTABLE]
+  $D777  L_FOR_1                    [EXPORT,BRANCH]
+  $D7AF  STEP                       [EXPORT]
+  $D7C3  L_STEP_1                   [EXPORT,BRANCH]
+  $D7D2  NEWSTT                     [EXPORT,JMP]
+  $D7E5  L_NEWSTT_1                 [EXPORT,BRANCH]
+  $D805  L_NEWSTT_2                 [EXPORT,BRANCH,LABEL]
+  $D805  TRACE_                     [EXPORT,JMP,BRANCH]
+  $D81D  L_TRACE__1                 [EXPORT,BRANCH]
+  $D826  GOEND                      [EXPORT,BRANCH]
+  $D828  EXECUTE_STATEMENT          [EXPORT,JSR,JMP,LABEL]
+  $D82A  EXECUTE_STATEMENT_1        [EXPORT,JMP,LABEL]
+  $D83F  L_EXECUTE_STATEMENT_1_1    [EXPORT,BRANCH]
+  $D842  COLON_                     [EXPORT,BRANCH]
+  $D846  SYNERR_1                   [EXPORT,BRANCH]
+  $D849  RESTORE                    [EXPORT,JSR,JTABLE,LABEL]
+  $D853  SETDA                      [EXPORT,JMP,BRANCH]
+  $D857  RTS_3                      [EXPORT,BRANCH]
+  $D858  ISCNTC                     [EXPORT,JSR]
+  $D860  L_ISCNTC_1                 [EXPORT,BRANCH]
+  $D863  CONTROL_C_TYPED            [EXPORT,JMP,LABEL]
+  $D86C  L_CONTROL_C_TYPED_2        [EXPORT,BRANCH]
+  $D86E  STOP                       [EXPORT,JTABLE]
+  $D870  ENDX                       [EXPORT,JTABLE]
+  $D871  END2                       [EXPORT,BRANCH]
+  $D888  L_END2_1                   [EXPORT,BRANCH]
+  $D88A  END4                       [EXPORT,BRANCH]
+  $D893  L_END4_1                   [EXPORT,BRANCH]
+  $D896  CONT                       [EXPORT,JTABLE]
+  $D8A1  L_CONT_1                   [EXPORT,BRANCH]
+  $D8AF  RTS_4                      [EXPORT,BRANCH]
+  $D8B0  SAVE                       [EXPORT,JTABLE]
+  $D8C9  LOAD                       [EXPORT,JTABLE]
+  $D8ED  L_LOAD_1                   [EXPORT,BRANCH]
+  $D8F0  VARTIO                     [EXPORT,JSR,JMP]
+  $D901  PROGIO                     [EXPORT,JSR]
+  $D912  RUN                        [EXPORT,JTABLE]
+  $D91B  L_RUN_1                    [EXPORT,BRANCH]
+  $D921  GOSUB                      [EXPORT,JTABLE]
+  $D935  GO_TO_LINE                 [EXPORT,JMP,LABEL]
+  $D93E  GOTO                       [EXPORT,JSR,JMP,JTABLE]
+  $D955  L_GOTO_1                   [EXPORT,BRANCH]
+  $D959  L_GOTO_2                   [EXPORT,BRANCH]
+  $D96A  RTS_5                      [EXPORT,BRANCH]
+  $D96B  POP                        [EXPORT,JTABLE]
+  $D97C  UNDERR                     [EXPORT,BRANCH]
+  $D981  SYNERR_2                   [EXPORT,BRANCH]
+  $D984  RETURN                     [EXPORT,BRANCH]
+  $D995  DATA                       [EXPORT,JSR,JTABLE]
+  $D998  ADDON                      [EXPORT,JSR,JMP,BRANCH]
+  $D9A2  L_ADDON_1                  [EXPORT,BRANCH,LABEL]
+  $D9A2  RTS_6                      [EXPORT,BRANCH]
+  $D9A3  DATAN                      [EXPORT,JSR]
+  $D9A6  REMN                       [EXPORT,JSR]
+  $D9AE  L_REMN_1                   [EXPORT,BRANCH]
+  $D9B6  L_REMN_2                   [EXPORT,BRANCH]
+  $D9C5  PULL3                      [EXPORT,BRANCH]
+  $D9C9  IF                         [EXPORT,JTABLE]
+  $D9D8  L_IF_1                     [EXPORT,BRANCH]
+  $D9DC  REM                        [EXPORT,JTABLE]
+  $D9E1  IF_TRUE                    [EXPORT,BRANCH,LABEL]
+  $D9E9  L_IF_TRUE_1                [EXPORT,BRANCH]
+  $D9EC  ONGOTO                     [EXPORT,JTABLE]
+  $D9F4  ON_1                       [EXPORT,BRANCH]
+  $D9F8  ON_2                       [EXPORT,BRANCH]
+  $DA00  L_ON_2_3                   [EXPORT,BRANCH]
+  $DA0B  RTS_7                      [EXPORT,BRANCH]
+  $DA0C  LINGET                     [EXPORT,JSR]
+  $DA12  L_LINGET_1                 [EXPORT,JMP]
+  $DA40  L_LINGET_2                 [EXPORT,BRANCH]
+  $DA46  LET                        [EXPORT,JSR,JMP,JTABLE]
+  $DA63  LET2                       [EXPORT,JSR]
+  $DA77  L_LET2_1                   [EXPORT,BRANCH]
+  $DA7A  LET_STRING                 [EXPORT,BRANCH,LABEL]
+  $DA7B  PUTSTR                     [EXPORT,JSR]
+  $DA8C  L_PUTSTR_1                 [EXPORT,BRANCH]
+  $DA9A  L_PUTSTR_2                 [EXPORT,BRANCH]
+  $DAA1  L_PUTSTR_3                 [EXPORT,BRANCH]
+  $DAB7  L_PUTSTR_4                 [EXPORT,JMP]
+  $DACF  PR_STRING                  [EXPORT,JMP,BRANCH,LABEL]
+  $DAD5  PRINT                      [EXPORT,JTABLE]
+  $DAD7  PRINT2                     [EXPORT,JMP]
+  $DAFB  CRDO                       [EXPORT,JSR,BRANCH]
+  $DB00  NEGATE                     [EXPORT,JSR]
+  $DB02  RTS_8                      [EXPORT,BRANCH]
+  $DB03  PR_COMMA                   [EXPORT,BRANCH,LABEL]
+  $DB0E  L_PR_COMMA_1               [EXPORT,BRANCH]
+  $DB16  PR_TAB_OR_SPC              [EXPORT,BRANCH,LABEL]
+  $DB21  L_PR_TAB_OR_SPC_1          [EXPORT,BRANCH]
+  $DB2B  L_PR_TAB_OR_SPC_2          [EXPORT,BRANCH]
+  $DB2C  NXSPC                      [EXPORT,BRANCH]
+  $DB2F  PR_NEXT_CHAR               [EXPORT,BRANCH,LABEL]
+  $DB35  DOSPC                      [EXPORT,BRANCH]
+  $DB3A  STROUT                     [EXPORT,JSR,JMP]
+  $DB3D  STRPRT                     [EXPORT,JSR]
+  $DB44  L_STRPRT_1                 [EXPORT,JMP,BRANCH]
+  $DB57  OUTSP                      [EXPORT,JSR]
+  $DB5A  OUTQUES                    [EXPORT,JSR]
+  $DB5C  OUTDO                      [EXPORT,JSR]
+  $DB64  L_OUTDO_1                  [EXPORT,BRANCH]
+  $DB71  INPUTERR                   [EXPORT,JMP,LABEL]
+  $DB7B  READERR                    [EXPORT,BRANCH,LABEL]
+  $DB7F  ERLIN                      [EXPORT,BRANCH]
+  $DB86  INPERR                     [EXPORT,JMP]
+  $DB87  RESPERR                    [EXPORT,BRANCH,LABEL]
+  $DB90  L_RESPERR_1                [EXPORT,BRANCH]
+  $DBA0  GET                        [EXPORT,JTABLE]
+  $DBB2  INPUT                      [EXPORT,JTABLE]
+  $DBC4  L_INPUT_1                  [EXPORT,BRANCH]
+  $DBC7  L_INPUT_2                  [EXPORT,JMP]
+  $DBDC  NXIN                       [EXPORT,JSR]
+  $DBE2  READ                       [EXPORT,JTABLE]
+  $DBE9  INPUT_FLAG_ZERO            [EXPORT,BRANCH]
+  $DBEB  PROCESS_INPUT_LIST         [EXPORT,JSR]
+  $DBF1  PROCESS_INPUT_ITEM         [EXPORT,JMP]
+  $DC1F  L_PROCESS_INPUT_ITEM_1     [EXPORT,BRANCH]
+  $DC27  L_PROCESS_INPUT_ITEM_2     [EXPORT,BRANCH]
+  $DC2B  INSTART                    [EXPORT,JMP,BRANCH,LABEL]
+  $DC3F  L_INSTART_1                [EXPORT,BRANCH]
+  $DC4B  L_INSTART_2                [EXPORT,BRANCH]
+  $DC4C  L_INSTART_3                [EXPORT,BRANCH]
+  $DC57  L_INSTART_4                [EXPORT,BRANCH]
+  $DC63  L_INSTART_5                [EXPORT,BRANCH]
+  $DC69  INPUTDWTA                  [EXPORT,BRANCH,LABEL]
+  $DC72  INPUT_MORE                 [EXPORT,JMP,LABEL]
+  $DC7E  L_INPUT_MORE_1             [EXPORT,BRANCH]
+  $DC99  INPFIN                     [EXPORT,BRANCH]
+  $DCA0  FINDATA                    [EXPORT,BRANCH,LABEL]
+  $DCB9  L_FINDATA_1                [EXPORT,BRANCH]
+  $DCC6  INPDONE                    [EXPORT,BRANCH,LABEL]
+  $DCD1  L_INPDONE_1                [EXPORT,BRANCH]
+  $DCDE  L_INPDONE_2                [EXPORT,BRANCH]
+  $DCDF  ERR_EXTRA                  [EXPORT]
+  $DCEF  ERR_REENTRY                [EXPORT]
+  $DCF9  NEXT                       [EXPORT,JTABLE]
+  $DCFF  NEXT_1                     [EXPORT,JSR,BRANCH]
+  $DD02  NEXT_2                     [EXPORT,BRANCH]
+  $DD0D  GERR                       [EXPORT,BRANCH]
+  $DD0F  NEXT_3                     [EXPORT,BRANCH]
+  $DD52  L_NEXT_3_1                 [EXPORT,BRANCH]
+  $DD55  L_NEXT_3_2                 [EXPORT,BRANCH]
+  $DD67  FRMNUM                     [EXPORT,JSR]
+  $DD6A  CHKNUM                     [EXPORT,JSR,JMP]
+  $DD6C  CHKSTR                     [EXPORT,JSR]
+  $DD6D  CHKVAL                     [EXPORT,JSR]
+  $DD73  L_CHKVAL_1                 [EXPORT,BRANCH]
+  $DD74  L_CHKVAL_2                 [EXPORT,BRANCH]
+  $DD76  L_CHKVAL_3                 [EXPORT,BRANCH]
+  $DD78  JERROR                     [EXPORT,BRANCH]
+  $DD7B  FRMEVL                     [EXPORT,JSR]
+  $DD81  L_FRMEVL_1                 [EXPORT,BRANCH]
+  $DD86  FRMEVL_1                   [EXPORT,JMP,LABEL]
+  $DD95  FRMEVL_2                   [EXPORT,JMP,LABEL]
+  $DD98  L_FRMEVL_2_1               [EXPORT,JMP]
+  $DDB4  L_FRMEVL_2_2               [EXPORT,BRANCH]
+  $DDC5  L_FRMEVL_2_3               [EXPORT,BRANCH]
+  $DDCD  FRM_PRECEDENCE_TEST        [EXPORT,BRANCH,LABEL]
+  $DDD6  NXOP                       [EXPORT,BRANCH]
+  $DDD7  SAVOP                      [EXPORT,JMP]
+  $DDE4  FRM_RELATIONAL             [EXPORT,BRANCH,LABEL]
+  $DDEE  L_FRM_RELATIONAL_1         [EXPORT,BRANCH]
+  $DDF6  PREFNC                     [EXPORT,BRANCH]
+  $DDFD  FRM_RECURSE                [EXPORT,JSR,LABEL]
+  $DE0D  SNTXERR                    [EXPORT,BRANCH]
+  $DE10  FRM_STACK_1                [EXPORT,JSR,LABEL]
+  $DE15  FRM_STACK_2                [EXPORT,JSR,LABEL]
+  $DE20  FRM_STACK_3                [EXPORT,JMP,LABEL]
+  $DE35  NOTMATH                    [EXPORT,BRANCH]
+  $DE38  GOEX                       [EXPORT,BRANCH]
+  $DE3A  FRM_PERFORM_1              [EXPORT,BRANCH,LABEL]
+  $DE41  L_FRM_PERFORM_1_1          [EXPORT,BRANCH]
+  $DE43  FRM_PERFORM_2              [EXPORT,BRANCH,LABEL]
+  $DE5D  EXIT                       [EXPORT,BRANCH]
+  $DE60  FRM_ELEMENT                [EXPORT,JSR,LABEL]
+  $DE64  L_FRM_ELEMENT_1            [EXPORT,BRANCH]
+  $DE69  L_FRM_ELEMENT_2            [EXPORT,BRANCH]
+  $DE6C  L_FRM_ELEMENT_3            [EXPORT,BRANCH]
+  $DE81  STRTXT                     [EXPORT,JSR]
+  $DE8A  L_STRTXT_1                 [EXPORT,BRANCH]
+  $DE90  NOT_                       [EXPORT,BRANCH]
+  $DE98  EQUOP                      [EXPORT,JTABLE]
+  $DE9F  L_EQUOP_1                  [EXPORT,BRANCH]
+  $DEA4  FN_                        [EXPORT,BRANCH]
+  $DEAB  SGN_                       [EXPORT,BRANCH]
+  $DEB2  PARCHK                     [EXPORT,JSR,BRANCH]
+  $DEB8  CHKCLS                     [EXPORT,JSR,JMP]
+  $DEBB  CHKOPN                     [EXPORT,JSR]
+  $DEBE  CHKCOM                     [EXPORT,JSR]
+  $DEC0  SYNCHR                     [EXPORT,JSR]
+  $DEC9  SYNERR                     [EXPORT,JMP,BRANCH]
+  $DECE  MIN                        [EXPORT,BRANCH]
+  $DED0  EQUL                       [EXPORT,BRANCH]
+  $DED5  FRM_VARIABLE               [EXPORT,BRANCH,LABEL]
+  $DED8  FRM_VARIABLE_CALL          [EXPORT,CONST]
+  $DEE5  L_FRM_VARIABLE_CALL_1      [EXPORT,BRANCH]
+  $DEF6  L_FRM_VARIABLE_CALL_2      [EXPORT,BRANCH]
+  $DEF9  SCREEN                     [EXPORT,BRANCH]
+  $DF0C  UNARY                      [EXPORT,JMP]
+  $DF3A  L_UNARY_1                  [EXPORT,BRANCH]
+  $DF3F  L_UNARY_2                  [EXPORT,JMP]
+  $DF4F  OR                         [EXPORT,JTABLE]
+  $DF55  ANDOP                      [EXPORT,JTABLE]
+  $DF5D  FALSE                      [EXPORT,BRANCH]
+  $DF60  TRUE                       [EXPORT,BRANCH]
+  $DF65  RELOPS                     [EXPORT,JTABLE]
+  $DF7D  STRCMP                     [EXPORT,BRANCH]
+  $DFA5  L_STRCMP_1                 [EXPORT,BRANCH]
+  $DFAA  STRCMP_1                   [EXPORT,BRANCH,LABEL]
+  $DFB0  NUMCMP                     [EXPORT,JMP]
+  $DFB5  STRCMP_2                   [EXPORT,BRANCH,LABEL]
+  $DFC1  CMPDONE                    [EXPORT,BRANCH,LABEL]
+  $DFCA  L_CMPDONE_1                [EXPORT,BRANCH]
+  $DFCD  PDL                        [EXPORT,JTABLE]
+  $DFD6  NXDIM                      [EXPORT,BRANCH]
+  $DFD9  DIM                        [EXPORT,JTABLE]
+  $DFE3  PTRGET                     [EXPORT,JSR]
+  $DFE8  PTRGET2                    [EXPORT,JSR,LABEL]
+  $DFEA  PTRGET3                    [EXPORT,JSR,LABEL]
+  $DFF4  BADNAM                     [EXPORT,BRANCH]
+  $DFF7  NAMOK                      [EXPORT,BRANCH]
+  $E000  BASIC                      [EXPORT]
+  $E003  BASIC2                     [EXPORT]
+  $E007  PTRGET4                    [EXPORT,JMP,LABEL]
+  $E011  L_PTRGET4_1                [EXPORT,BRANCH]
+  $E012  L_PTRGET4_2                [EXPORT,BRANCH]
+  $E01C  L_PTRGET4_3                [EXPORT,BRANCH]
+  $E026  L_PTRGET4_4                [EXPORT,BRANCH]
+  $E036  L_PTRGET4_5                [EXPORT,BRANCH]
+  $E03D  L_PTRGET4_6                [EXPORT,BRANCH]
+  $E046  L_PTRGET4_7                [EXPORT,BRANCH]
+  $E049  L_PTRGET4_8                [EXPORT,BRANCH]
+  $E04F  L_PTRGET4_9                [EXPORT,BRANCH]
+  $E059  L_PTRGET4_10               [EXPORT,BRANCH]
+  $E05B  L_PTRGET4_11               [EXPORT,BRANCH]
+  $E065  L_PTRGET4_12               [EXPORT,BRANCH]
+  $E073  L_PTRGET4_13               [EXPORT,BRANCH]
+  $E07D  ISLETC                     [EXPORT,JSR]
+  $E086  L_ISLETC_1                 [EXPORT,BRANCH]
+  $E087  NAME_NOT_FOUND             [EXPORT,BRANCH,LABEL]
+  $E09A  C_ZERO                     [EXPORT]
+  $E09C  MAKE_NEW_VARIABLE          [EXPORT,BRANCH,LABEL]
+  $E0B2  L_MAKE_NEW_VARIABLE_1      [EXPORT,BRANCH]
+  $E0DE  SET_VARPNT_AND_YA          [EXPORT,BRANCH,LABEL]
+  $E0E8  L_SET_VARPNT_AND_YA_1      [EXPORT,BRANCH]
+  $E0ED  GETARY                     [EXPORT,JSR]
+  $E0EF  GETARY2                    [EXPORT,JSR,LABEL]
+  $E0F9  L_GETARY2_1                [EXPORT,BRANCH]
+  $E0FE  NEG32768                   [EXPORT]
+  $E102  MAKINT                     [EXPORT,JSR]
+  $E108  MKINT                      [EXPORT,JSR]
+  $E10C  AYINT                      [EXPORT,JSR]
+  $E119  MI1                        [EXPORT,BRANCH]
+  $E11B  MI2                        [EXPORT,BRANCH]
+  $E11E  ARRAY                      [EXPORT,JMP]
+  $E12C  L_ARRAY_1                  [EXPORT,BRANCH]
+  $E169  L_ARRAY_2                  [EXPORT,BRANCH]
+  $E16D  L_ARRAY_3                  [EXPORT,BRANCH]
+  $E179  L_ARRAY_4                  [EXPORT,BRANCH]
+  $E188  L_ARRAY_5                  [EXPORT,BRANCH]
+  $E196  SUBERR                     [EXPORT,JMP,BRANCH]
+  $E199  IQERR                      [EXPORT,JMP,BRANCH]
+  $E19B  JER                        [EXPORT,BRANCH]
+  $E19E  USE_OLD_ARRAY              [EXPORT,BRANCH,LABEL]
+  $E1AA  L_USE_OLD_ARRAY_1          [EXPORT,BRANCH]
+  $E1B8  MAKE_NEW_ARRAY             [EXPORT,BRANCH,LABEL]
+  $E1C1  L_MAKE_NEW_ARRAY_1         [EXPORT,BRANCH]
+  $E1D5  L_MAKE_NEW_ARRAY_2         [EXPORT,BRANCH]
+  $E1DE  L_MAKE_NEW_ARRAY_3         [EXPORT,BRANCH]
+  $E1E7  L_MAKE_NEW_ARRAY_4         [EXPORT,BRANCH]
+  $E1F7  L_MAKE_NEW_ARRAY_5         [EXPORT,BRANCH]
+  $E21A  L_MAKE_NEW_ARRAY_6         [EXPORT,BRANCH]
+  $E229  L_MAKE_NEW_ARRAY_7         [EXPORT,BRANCH]
+  $E22E  L_MAKE_NEW_ARRAY_8         [EXPORT,BRANCH]
+  $E24B  FIND_ARRAY_ELEMENT         [EXPORT,JMP,LABEL]
+  $E253  FAE_1                      [EXPORT,BRANCH]
+  $E269  GSE                        [EXPORT,BRANCH]
+  $E26C  GME                        [EXPORT,BRANCH]
+  $E26F  FAE_2                      [EXPORT,BRANCH]
+  $E270  FAE_3                      [EXPORT,BRANCH]
+  $E281  L_FAE_3_1                  [EXPORT,BRANCH]
+  $E292  L_FAE_3_2                  [EXPORT,BRANCH]
+  $E298  L_FAE_3_3                  [EXPORT,BRANCH]
+  $E2AC  RTS_9                      [EXPORT,BRANCH]
+  $E2AD  MULTIPLY_SUBSCRIPT         [EXPORT,JSR,LABEL]
+  $E2B6  MULTIPLY_SUBS_1            [EXPORT,JSR,LABEL]
+  $E2C0  L_MULTIPLY_SUBS_1_1        [EXPORT,BRANCH]
+  $E2D9  L_MULTIPLY_SUBS_1_2        [EXPORT,BRANCH]
+  $E2DE  FRE                        [EXPORT,JTABLE]
+  $E2E5  L_FRE_1                    [EXPORT,BRANCH]
+  $E2F2  GIVAYF                     [EXPORT,JMP,BRANCH]
+  $E2FF  POS                        [EXPORT,JTABLE]
+  $E301  SNGFLT                     [EXPORT,JSR,JMP]
+  $E306  ERRDIR                     [EXPORT,JSR]
+  $E30E  UNDFNC                     [EXPORT,BRANCH]
+  $E313  DEF                        [EXPORT,JTABLE]
+  $E341  FNC_                       [EXPORT,JSR]
+  $E354  FUNCT                      [EXPORT,JMP]
+  $E378  L_FUNCT_1                  [EXPORT,BRANCH]
+  $E3A9  L_FUNCT_2                  [EXPORT,BRANCH]
+  $E3AF  FNCDATA                    [EXPORT,JMP,LABEL]
+  $E3C5  STR                        [EXPORT,JTABLE]
+  $E3D5  STRINI                     [EXPORT,JSR]
+  $E3DD  STRSPA                     [EXPORT,JSR]
+  $E3E7  STRLIT                     [EXPORT,JSR,BRANCH]
+  $E3ED  STRLT2                     [EXPORT,JSR]
+  $E3F7  L_STRLT2_1                 [EXPORT,BRANCH]
+  $E404  L_STRLT2_2                 [EXPORT,BRANCH]
+  $E408  L_STRLT2_3                 [EXPORT,BRANCH]
+  $E409  L_STRLT2_4                 [EXPORT,BRANCH]
+  $E415  L_STRLT2_5                 [EXPORT,BRANCH]
+  $E41F  L_STRLT2_6                 [EXPORT,BRANCH]
+  $E42A  PUTNEW                     [EXPORT,JSR,JMP,BRANCH]
+  $E432  JERR                       [EXPORT,BRANCH]
+  $E435  PUTEMP                     [EXPORT,BRANCH]
+  $E452  GETSPA                     [EXPORT,JSR]
+  $E454  L_GETSPA_1                 [EXPORT,BRANCH]
+  $E45F  L_GETSPA_2                 [EXPORT,BRANCH]
+  $E469  L_GETSPA_3                 [EXPORT,BRANCH]
+  $E474  L_GETSPA_4                 [EXPORT,BRANCH]
+  $E484  GARBAG                     [EXPORT,JSR]
+  $E488  FIND_HIGHEST_STRING        [EXPORT,JMP,LABEL]
+  $E4A0  L_FIND_HIGHEST_STRING_1    [EXPORT,BRANCH]
+  $E4A9  L_FIND_HIGHEST_STRING_2    [EXPORT,BRANCH]
+  $E4B5  L_FIND_HIGHEST_STRING_3    [EXPORT,BRANCH]
+  $E4BD  L_FIND_HIGHEST_STRING_4    [EXPORT,BRANCH]
+  $E4C2  L_FIND_HIGHEST_STRING_5    [EXPORT,BRANCH]
+  $E4CA  L_FIND_HIGHEST_STRING_6    [EXPORT,BRANCH]
+  $E4CE  L_FIND_HIGHEST_STRING_7    [EXPORT,BRANCH]
+  $E4D9  L_FIND_HIGHEST_STRING_8    [EXPORT,BRANCH]
+  $E50A  L_FIND_HIGHEST_STRING_9    [EXPORT,BRANCH,LABEL]
+  $E50C  L_FIND_HIGHEST_STRING_10   [EXPORT,BRANCH]
+  $E514  L_FIND_HIGHEST_STRING_11   [EXPORT,BRANCH]
+  $E519  CHECK_SIMPLE_VARIABLE      [EXPORT,JSR,LABEL]
+  $E523  CHECK_VARIABLE             [EXPORT,JSR,LABEL]
+  $E538  L_CHECK_VARIABLE_1         [EXPORT,BRANCH]
+  $E542  L_CHECK_VARIABLE_2         [EXPORT,BRANCH]
+  $E552  CHECK_BUMP                 [EXPORT,BRANCH,LABEL]
+  $E55D  CHECK_EXIT                 [EXPORT,BRANCH,LABEL]
+  $E562  MOVE_HIGHEST_STRING_TO_TOP [EXPORT,JMP,LABEL]
+  $E597  CAT                        [EXPORT,JMP]
+  $E5B7  L_CAT_1                    [EXPORT,BRANCH]
+  $E5D4  MOVINS                     [EXPORT,JSR]
+  $E5E2  MOVSTR                     [EXPORT,JSR]
+  $E5E6  MOVSTR_1                   [EXPORT,JSR,LABEL]
+  $E5EA  L_MOVSTR_1_1               [EXPORT,BRANCH]
+  $E5F3  L_MOVSTR_1_2               [EXPORT,BRANCH]
+  $E5FC  L_MOVSTR_1_3               [EXPORT,BRANCH]
+  $E5FD  FRESTR                     [EXPORT,JSR]
+  $E600  FREFAC                     [EXPORT,JSR]
+  $E604  FRETMP                     [EXPORT,JSR]
+  $E62F  L_FRETMP_1                 [EXPORT,BRANCH]
+  $E630  L_FRETMP_2                 [EXPORT,BRANCH]
+  $E635  FRETMS                     [EXPORT,JSR]
+  $E645  L_FRETMS_1                 [EXPORT,BRANCH]
+  $E646  CHRSTR                     [EXPORT,JTABLE]
+  $E65A  LEFTSTR                    [EXPORT,JTABLE,LABEL]
+  $E660  SUBSTRING_1                [EXPORT,JMP,LABEL]
+  $E666  L_SUBSTRING_1_1            [EXPORT,BRANCH]
+  $E667  SUBSTRING_2                [EXPORT,BRANCH,LABEL]
+  $E668  SUBSTRING_3                [EXPORT,BRANCH,LABEL]
+  $E67F  L_SUBSTRING_3_1            [EXPORT,BRANCH]
+  $E686  RIGHTSTR                   [EXPORT,JTABLE,LABEL]
+  $E691  MIDSTR                     [EXPORT,JTABLE]
+  $E6A2  L_MIDSTR_1                 [EXPORT,BRANCH]
+  $E6B9  SUBSTRING_SETUP            [EXPORT,JSR,LABEL]
+  $E6D6  LEN                        [EXPORT,JTABLE]
+  $E6DC  GETSTR                     [EXPORT,JSR]
+  $E6E5  ASC                        [EXPORT,JTABLE]
+  $E6F2  GOIQ                       [EXPORT,BRANCH]
+  $E6F5  GTBYTC                     [EXPORT,JSR]
+  $E6F8  GETBYT                     [EXPORT,JSR,JMP]
+  $E6FB  CONINT                     [EXPORT,JSR]
+  $E707  VAL                        [EXPORT,JTABLE]
+  $E70F  L_VAL_1                    [EXPORT,BRANCH]
+  $E727  L_VAL_2                    [EXPORT,BRANCH]
+  $E73D  POINT                      [EXPORT,JSR,JMP]
+  $E746  GTNUM                      [EXPORT,JSR]
+  $E74C  COMBYTE                    [EXPORT,JSR,LABEL]
+  $E752  GETADR                     [EXPORT,JSR]
+  $E764  PEEK                       [EXPORT,JTABLE]
+  $E77B  POKE                       [EXPORT,JTABLE]
+  $E784  WAIT                       [EXPORT,JSR,JTABLE]
+  $E793  L_WAIT_1                   [EXPORT,BRANCH]
+  $E797  L_WAIT_2                   [EXPORT,BRANCH]
+  $E79F  RTS_10                     [EXPORT,BRANCH]
+  $E7A0  FADDH                      [EXPORT,JSR]
+  $E7A7  FSUB                       [EXPORT,JSR]
+  $E7AA  FSUBT                      [EXPORT,JSR,JTABLE]
+  $E7B9  FADD_1                     [EXPORT,BRANCH]
+  $E7BE  FADD                       [EXPORT,JSR,JMP]
+  $E7C1  FADDT                      [EXPORT,JMP,JTABLE]
+  $E7C6  L_FADDT_1                  [EXPORT,BRANCH]
+  $E7CE  FADD_2                     [EXPORT,JSR]
+  $E7EA  L_FADD_2_1                 [EXPORT,BRANCH]
+  $E7EE  L_FADD_2_2                 [EXPORT,BRANCH]
+  $E7FA  FADD_3                     [EXPORT,BRANCH]
+  $E806  L_FADD_3_1                 [EXPORT,BRANCH]
+  $E829  NORMALIZE_FAC_1            [EXPORT,JMP,LABEL]
+  $E82E  NORMALIZE_FAC_2            [EXPORT,JSR,JMP,BRANCH,LABEL]
+  $E832  L_NORMALIZE_FAC_2_1        [EXPORT,BRANCH]
+  $E84E  ZERO_FAC                   [EXPORT,JMP,BRANCH,LABEL]
+  $E850  STA_IN_FAC_SIGN_AND_EXP    [EXPORT,JMP,LABEL]
+  $E852  STA_IN_FAC_SIGN            [EXPORT,JMP,LABEL]
+  $E855  FADD_4                     [EXPORT,BRANCH]
+  $E874  NORMALIZE_FAC_3            [EXPORT,BRANCH,LABEL]
+  $E880  NORMALIZE_FAC_4            [EXPORT,BRANCH,LABEL]
+  $E88D  NORMALIZE_FAC_5            [EXPORT,JMP,LABEL]
+  $E88F  NORMALIZE_FAC_6            [EXPORT,JMP,LABEL]
+  $E89D  RTS_11                     [EXPORT,BRANCH]
+  $E89E  COMPLEMENT_FAC             [EXPORT,JSR,LABEL]
+  $E8A4  COMPLEMENT_FAC_MANTISSA    [EXPORT,JSR,LABEL]
+  $E8C6  INCREMENT_FAC_MANTISSA     [EXPORT,JSR,LABEL]
+  $E8D4  RTS_12                     [EXPORT,BRANCH]
+  $E8D5  OVERFLOW                   [EXPORT,JMP,BRANCH,LABEL]
+  $E8DA  SHIFT_RIGHT_1              [EXPORT,JMP,LABEL]
+  $E8DC  SHIFT_RIGHT_2              [EXPORT,BRANCH,LABEL]
+  $E8F0  SHIFT_RIGHT                [EXPORT,JSR,LABEL]
+  $E8FD  SHIFT_RIGHT_3              [EXPORT,BRANCH,LABEL]
+  $E8FD  L                          [EXPORT]
+  $E903  L_L_1                      [EXPORT,BRANCH]
+  $E907  SHIFT_RIGHT_4              [EXPORT,JSR,LABEL]
+  $E911  SHIFT_RIGHT_5              [EXPORT,BRANCH,LABEL]
+  $E913  81                         [LABEL]
+  $E918  POLY_LOG                   [EXPORT]
+  $E919  7f                         [LABEL]
+  $E91E  80                         [LABEL]
+  $E928  82                         [LABEL]
+  $E941  LOG                        [EXPORT,JSR,JTABLE]
+  $E948  GIQ                        [EXPORT,BRANCH]
+  $E94B  LOG_2                      [EXPORT,BRANCH]
+  $E97F  FMULT                      [EXPORT,JSR,JMP]
+  $E982  FMULTT                     [EXPORT,JTABLE]
+  $E987  L_FMULTT_1                 [EXPORT,BRANCH]
+  $E9B0  MULTIPLY_1                 [EXPORT,JSR,LABEL]
+  $E9B5  MULTIPLY_2                 [EXPORT,JSR,BRANCH,LABEL]
+  $E9B8  L_MULTIPLY_2_1             [EXPORT,BRANCH]
+  $E9D4  L_MULTIPLY_2_2             [EXPORT,BRANCH]
+  $E9E2  RTS_13                     [EXPORT,JMP]
+  $E9E3  LOAD_ARG_FROM_YA           [EXPORT,JSR,LABEL]
+  $EA0E  ADD_EXPONENTS              [EXPORT,JSR,LABEL]
+  $EA10  ADD_EXPONENTS_1            [EXPORT,JSR,LABEL]
+  $EA1B  L_ADD_EXPONENTS_1_1        [EXPORT,BRANCH]
+  $EA26  L_ADD_EXPONENTS_1_2        [EXPORT,BRANCH]
+  $EA28  L_ADD_EXPONENTS_1_3        [EXPORT]
+  $EA2B  OUTOFRNG                   [EXPORT,JSR,LABEL]
+  $EA31  ZERO                       [EXPORT,BRANCH]
+  $EA36  JOV                        [EXPORT,BRANCH]
+  $EA39  MUL10                      [EXPORT,JSR]
+  $EA4F  L_MUL10_1                  [EXPORT,BRANCH]
+  $EA50  84                         [LABEL]
+  $EA55  DIV10                      [EXPORT,JSR]
+  $EA5E  DIV                        [EXPORT,JSR]
+  $EA66  FDIV                       [EXPORT,JSR,JMP]
+  $EA69  FDIVT                      [EXPORT,JMP,JTABLE]
+  $EA80  L_FDIVT_1                  [EXPORT,BRANCH]
+  $EA96  L_FDIVT_2                  [EXPORT,BRANCH]
+  $EAA3  L_FDIVT_3                  [EXPORT,BRANCH]
+  $EAA6  L_FDIVT_4                  [EXPORT,JMP]
+  $EAB4  L_FDIVT_5                  [EXPORT,BRANCH]
+  $EAD1  L_FDIVT_6                  [EXPORT,BRANCH]
+  $EAD5  L_FDIVT_7                  [EXPORT,BRANCH]
+  $EAE1  L_FDIVT_8                  [EXPORT,BRANCH]
+  $EAE6  COPY_RESULT_INTO_FAC       [EXPORT,JMP,LABEL]
+  $EAF9  LOAD_FAC_FROM_YA           [EXPORT,JSR,JMP,LABEL]
+  $EB1E  STORE_FAC_IN_TEMP2_ROUNDED [EXPORT,JSR,LABEL]
+  $EB21  STORE_FAC_IN_TEMP1_ROUNDED [EXPORT,JSR,LABEL]
+  $EB27  SETFOR                     [EXPORT,JSR,JMP]
+  $EB2B  STORE_FACDB_YX_ROUNDED     [EXPORT,JSR,JMP,BRANCH,LABEL]
+  $EB53  COPY_ARG_TO_FAC            [EXPORT,JMP,LABEL]
+  $EB55  MFA                        [EXPORT,JSR]
+  $EB59  L_MFA_1                    [EXPORT,BRANCH]
+  $EB63  COPY_FAC_TO_ARG_ROUNDED    [EXPORT,JSR,LABEL]
+  $EB66  MAF                        [EXPORT,JSR]
+  $EB68  L_MAF_1                    [EXPORT,BRANCH]
+  $EB71  RTS_14                     [EXPORT,BRANCH]
+  $EB72  ROUND_FAC                  [EXPORT,JSR,LABEL]
+  $EB7A  INCREMENT_MANTISSA         [EXPORT,JSR,LABEL]
+  $EB82  SIGN                       [EXPORT,JSR,BRANCH]
+  $EB86  SIGN1                      [EXPORT,BRANCH]
+  $EB88  SIGN2                      [EXPORT,JMP]
+  $EB8F  RTS_15                     [EXPORT,BRANCH]
+  $EB90  SGN                        [EXPORT,JTABLE]
+  $EB93  FLOAT                      [EXPORT,JSR,JMP]
+  $EB9B  FLOAT_1                    [EXPORT,JMP,LABEL]
+  $EBA0  FLOAT_2                    [EXPORT,JSR,LABEL]
+  $EBAF  ABS                        [EXPORT,JTABLE]
+  $EBB2  FCOMP                      [EXPORT,JSR]
+  $EBB4  FCOMP2                     [EXPORT,JSR]
+  $EBE9  L_FCOMP2_1                 [EXPORT,BRANCH]
+  $EBEF  L_FCOMP2_2                 [EXPORT,BRANCH]
+  $EBF2  QINT                       [EXPORT,JSR,JMP]
+  $EC06  L_QINT_1                   [EXPORT,BRANCH]
+  $EC11  RTS_16                     [EXPORT,BRANCH]
+  $EC12  QINT_2                     [EXPORT,BRANCH]
+  $EC23  INT                        [EXPORT,JSR,JTABLE]
+  $EC40  QINT_3                     [EXPORT,BRANCH]
+  $EC49  RTS_17                     [EXPORT,BRANCH]
+  $EC4A  FIN                        [EXPORT,JSR,JMP]
+  $EC4E  L_FIN_1                    [EXPORT,BRANCH]
+  $EC5D  L_FIN_2                    [EXPORT,BRANCH]
+  $EC61  FIN_1                      [EXPORT,JMP,BRANCH]
+  $EC64  FIN_2                      [EXPORT,BRANCH]
+  $EC66  FIN_3                      [EXPORT,BRANCH]
+  $EC85  L_FIN_3_1                  [EXPORT,BRANCH]
+  $EC87  FIN_4                      [EXPORT,JMP,BRANCH]
+  $EC8A  FIN_5                      [EXPORT,BRANCH]
+  $EC8C  FIN_6                      [EXPORT,BRANCH]
+  $EC98  FIN_10                     [EXPORT,BRANCH]
+  $EC9E  FIN_7                      [EXPORT,BRANCH]
+  $ECA0  FIN_8                      [EXPORT,JMP]
+  $ECA9  L_FIN_8_13                 [EXPORT,BRANCH]
+  $ECB2  L_FIN_8_14                 [EXPORT,BRANCH]
+  $ECB9  L_FIN_8_15                 [EXPORT,BRANCH]
+  $ECBE  L_FIN_8_16                 [EXPORT,BRANCH]
+  $ECC1  FIN_9                      [EXPORT,BRANCH]
+  $ECC8  L_FIN_9_1                  [EXPORT,BRANCH]
+  $ECD5  ADDACC                     [EXPORT,JSR]
+  $ECE8  GETEXP                     [EXPORT,BRANCH]
+  $ECF7  L_GETEXP_1                 [EXPORT,BRANCH]
+  $ED05  L_GETEXP_2                 [EXPORT,BRANCH]
+  $ED0A  9b                         [LABEL]
+  $ED0F  9e                         [LABEL]
+  $ED19  INPRT                      [EXPORT,JSR]
+  $ED24  LINPRT                     [EXPORT,JSR]
+  $ED2E  PRINT_FAC                  [EXPORT,LABEL]
+  $ED31  GO_STROUT                  [EXPORT,JSR,LABEL]
+  $ED34  FOUT                       [EXPORT,JSR]
+  $ED36  FOUT_1                     [EXPORT,JSR]
+  $ED41  L_FOUT_1_1                 [EXPORT,BRANCH]
+  $ED4F  L_FOUT_1_2                 [EXPORT,BRANCH]
+  $ED57  L_FOUT_1_3                 [EXPORT,BRANCH]
+  $ED60  L_FOUT_1_4                 [EXPORT,BRANCH]
+  $ED62  L_FOUT_1_5                 [EXPORT,BRANCH]
+  $ED6D  L_FOUT_1_6                 [EXPORT,BRANCH]
+  $ED78  L_FOUT_1_7                 [EXPORT,BRANCH]
+  $ED7F  L_FOUT_1_8                 [EXPORT,BRANCH]
+  $ED86  L_FOUT_1_9                 [EXPORT,BRANCH]
+  $ED89  L_FOUT_1_10                [EXPORT,BRANCH]
+  $ED8C  FOUT_2                     [EXPORT]
+  $ED9E  L_FOUT_2_1                 [EXPORT,BRANCH]
+  $ED9F  L_FOUT_2_2                 [EXPORT,BRANCH]
+  $EDAA  L_FOUT_2_3                 [EXPORT,BRANCH]
+  $EDBB  L_FOUT_2_4                 [EXPORT,BRANCH]
+  $EDBD  L_FOUT_2_5                 [EXPORT,BRANCH]
+  $EDC1  L_FOUT_2_6                 [EXPORT,BRANCH]
+  $EDE5  L_FOUT_2_7                 [EXPORT,BRANCH]
+  $EDE7  L_FOUT_2_8                 [EXPORT,BRANCH]
+  $EDEE  L_FOUT_2_9                 [EXPORT,BRANCH]
+  $EE09  L_FOUT_2_10                [EXPORT,BRANCH]
+  $EE17  FOUT_3                     [EXPORT]
+  $EE19  L_FOUT_3_1                 [EXPORT,BRANCH]
+  $EE26  L_FOUT_3_2                 [EXPORT,BRANCH]
+  $EE36  L_FOUT_3_3                 [EXPORT,BRANCH]
+  $EE42  L_FOUT_3_4                 [EXPORT,BRANCH]
+  $EE57  FOUT_4                     [EXPORT,JMP]
+  $EE5A  FOUT_5                     [EXPORT,BRANCH]
+  $EE5F  FOUT_6                     [EXPORT,BRANCH]
+  $EE69  DECTBL                     [EXPORT]
+  $EE8D  DECTBL_END                 [EXPORT,LABEL]
+  $EE8D  SQR                        [EXPORT,JTABLE]
+  $EE97  FPWRT                      [EXPORT,JTABLE]
+  $EEA0  L_FPWRT_1                  [EXPORT,BRANCH]
+  $EEBA  L_FPWRT_2                  [EXPORT,BRANCH]
+  $EED0  NEGOP                      [EXPORT,JSR,JMP,JTABLE]
+  $EEDA  RTS_18                     [EXPORT,BRANCH]
+  $EEE0  POLY_EXP                   [EXPORT]
+  $EEE1  71                         [LABEL]
+  $EEE6  74                         [LABEL]
+  $EEEB  77                         [LABEL]
+  $EEF0  7a                         [LABEL]
+  $EEF5  7c                         [LABEL]
+  $EEFA  7e                         [LABEL]
+  $EF09  EXP                        [EXPORT,JSR,BRANCH,JTABLE]
+  $EF19  L_EXP_1                    [EXPORT,BRANCH]
+  $EF24  L_EXP_2                    [EXPORT,BRANCH]
+  $EF27  L_EXP_3                    [EXPORT,BRANCH]
+  $EF37  L_EXP_4                    [EXPORT,BRANCH]
+  $EF5C  POLYNOMIAL_ODD             [EXPORT,JSR,JMP,LABEL]
+  $EF72  POLYNOMIAL                 [EXPORT,JSR,LABEL]
+  $EF76  SERMAIN                    [EXPORT,JSR,LABEL]
+  $EF85  L_SERMAIN_1                [EXPORT,BRANCH]
+  $EF89  L_SERMAIN_2                [EXPORT,BRANCH]
+  $EF96  L_SERMAIN_3                [EXPORT,BRANCH]
+  $EFA5  RTS_19                     [EXPORT,BRANCH]
+  $EFA6  CON_RND_1                  [EXPORT]
+  $EFAA  CON_RND_2                  [EXPORT]
+  $EFAE  RND                        [EXPORT,JTABLE]
+  $EFCC  L_RND_1                    [EXPORT,BRANCH]
+  $EFE7  GO_MOVMF                   [EXPORT,JSR]
+  $EFEA  COS                        [EXPORT,JTABLE]
+  $EFF1  SIN                        [EXPORT,JSR,JTABLE]
+  $F023  SIN_1                      [EXPORT,JMP,BRANCH]
+  $F026  SIN_2                      [EXPORT,BRANCH]
+  $F033  L_SIN_2_1                  [EXPORT,BRANCH]
+  $F03A  TAN                        [EXPORT,JTABLE]
+  $F062  TAN_1                      [EXPORT,JSR]
+  $F06B  83                         [LABEL]
+  $F075  POLY_SIN                   [EXPORT]
+  $F07B  86                         [LABEL]
+  $F080  87                         [LABEL]
+  $F09E  ATN                        [EXPORT,JTABLE]
+  $F0A6  L_ATN_1                    [EXPORT,BRANCH]
+  $F0B4  L_ATN_2                    [EXPORT,BRANCH]
+  $F0C7  L_ATN_3                    [EXPORT,BRANCH]
+  $F0CD  RTS_20                     [EXPORT,BRANCH]
+  $F0CE  POLY_ATN                   [EXPORT]
+  $F0CF  76                         [LABEL]
+  $F0D4  79                         [LABEL]
+  $F0D9  7b                         [LABEL]
+  $F0E8  7d                         [LABEL]
+  $F10B  GENERIC_CHRGET             [EXPORT,BRANCH,LABEL]
+  $F111  L_GENERIC_CHRGET_1         [EXPORT,BRANCH]
+  $F122  L_GENERIC_CHRGET_2         [EXPORT,BRANCH]
+  $F128  GENERIC_END                [EXPORT,LABEL]
+  $F128  COLD_START                 [EXPORT,JMP,LABEL]
+  $F152  L_COLD_START_1             [EXPORT,BRANCH]
+  $F181  L_COLD_START_2             [EXPORT,BRANCH]
+  $F195  L_COLD_START_3             [EXPORT,BRANCH]
+  $F1B8  L_COLD_START_4             [EXPORT,BRANCH]
+  $F1D5  CALL                       [EXPORT,JTABLE]
+  $F1DE  IN_NUMBER                  [EXPORT,JTABLE,LABEL]
+  $F1E5  PR_NUMBER                  [EXPORT,JTABLE,LABEL]
+  $F1EC  PLOTFNS                    [EXPORT,JSR,LABEL]
+  $F206  GOERR                      [EXPORT,JMP,BRANCH]
+  $F209  LINCOOR                    [EXPORT,JSR,LABEL]
+  $F218  L_LINCOOR_1                [EXPORT,BRANCH]
+  $F225  PLOT                       [EXPORT,JSR,JTABLE]
+  $F232  HLIN                       [EXPORT,JTABLE]
+  $F241  VLIN                       [EXPORT,JTABLE]
+  $F24F  COLOR                      [EXPORT,JTABLE]
+  $F256  VTAB                       [EXPORT,IMPORT,JMP,BRANCH,JTABLE]
+  $F262  SPEED                      [EXPORT,JTABLE]
+  $F26D  TRACE                      [EXPORT,JTABLE]
+  $F26F  NOTRACE                    [EXPORT,JTABLE,LABEL]
+  $F273  NORMAL                     [EXPORT,JSR,JTABLE]
+  $F277  INVERSE                    [EXPORT,JTABLE,LABEL]
+  $F279  N_I_                       [EXPORT,BRANCH]
+  $F27B  N_I_F_                     [EXPORT,BRANCH]
+  $F280  FLASH                      [EXPORT,JTABLE]
+  $F286  HIMEM                      [EXPORT,JTABLE]
+  $F296  JMM                        [EXPORT,BRANCH]
+  $F299  SETHI                      [EXPORT,BRANCH]
+  $F2A6  LOMEM                      [EXPORT,JTABLE]
+  $F2CB  ONERR                      [EXPORT,JTABLE]
+  $F2E9  HANDLERR                   [EXPORT,JMP,LABEL]
+  $F318  RESUME                     [EXPORT,JTABLE]
+  $F32E  JSYN                       [EXPORT,BRANCH]
+  $F331  DEL                        [EXPORT,JTABLE]
+  $F357  L_DEL_1                    [EXPORT,BRANCH]
+  $F365  L_DEL_2                    [EXPORT,BRANCH]
+  $F367  L_DEL_3                    [EXPORT,BRANCH]
+  $F371  L_DEL_4                    [EXPORT,BRANCH]
+  $F377  L_DEL_5                    [EXPORT,BRANCH]
+  $F388  L_DEL_6                    [EXPORT,BRANCH]
+  $F390  GR                         [EXPORT,JTABLE]
+  $F399  TEXT                       [EXPORT,JTABLE]
+  $F39F  STORE                      [EXPORT,JTABLE]
+  $F3AF  L_STORE_1                  [EXPORT,BRANCH]
+  $F3BC  RECALL                     [EXPORT,JTABLE]
+  $F3D2  L_RECALL_1                 [EXPORT,BRANCH]
+  $F3D8  HGR2                       [EXPORT,JTABLE]
+  $F3E2  HGR                        [EXPORT,JTABLE]
+  $F3EA  SETHPG                     [EXPORT,BRANCH]
+  $F3F2  HCLR                       [EXPORT]
+  $F3F6  BKGND                      [EXPORT]
+  $F3FE  L_BKGND_1                  [EXPORT,BRANCH]
+  $F411  HPOSN                      [EXPORT,JSR]
+  $F441  L_HPOSN_1                  [EXPORT,BRANCH]
+  $F442  L_HPOSN_2                  [EXPORT,BRANCH]
+  $F457  HPLOT0                     [EXPORT,JSR]
+  $F465  MOVE_LEFT_OR_RIGHT         [EXPORT,JSR,BRANCH,LABEL]
+  $F46E  LR_1                       [EXPORT,BRANCH]
+  $F471  LR_2                       [EXPORT,BRANCH]
+  $F476  LR_3                       [EXPORT,BRANCH]
+  $F478  LR_4                       [EXPORT,BRANCH]
+  $F47E  COLOR_SHIFT                [EXPORT,JSR,BRANCH,LABEL]
+  $F489  L_COLOR_SHIFT_1            [EXPORT,BRANCH]
+  $F48A  MOVE_RIGHT                 [EXPORT,BRANCH,LABEL]
+  $F49C  LRUDX1                     [EXPORT,JSR]
+  $F49D  LRUDX2                     [EXPORT,JSR]
+  $F4B3  LRUD1                      [EXPORT,JSR]
+  $F4B4  LRUD2                      [EXPORT,JSR]
+  $F4C4  LRUD3                      [EXPORT,BRANCH]
+  $F4C8  LRUD4                      [EXPORT,BRANCH]
+  $F4CE  CON_03                     [EXPORT,CONST]
+  $F4D3  MOVE_UP_OR_DOWN            [EXPORT,JSR,LABEL]
+  $F4EB  L_MOVE_UP_OR_DOWN_1        [EXPORT,BRANCH]
+  $F4F6  L_MOVE_UP_OR_DOWN_2        [EXPORT,BRANCH]
+  $F4FB  L_MOVE_UP_OR_DOWN_3        [EXPORT,BRANCH]
+  $F4FD  L_MOVE_UP_OR_DOWN_4        [EXPORT,BRANCH]
+  $F4FF  L_MOVE_UP_OR_DOWN_5        [EXPORT,BRANCH]
+  $F501  UD_1                       [EXPORT,BRANCH]
+  $F505  MOVE_DOWN                  [EXPORT,BRANCH,LABEL]
+  $F509  CON_04                     [EXPORT,CONST]
+  $F524  L_CON_04_1                 [EXPORT,BRANCH]
+  $F52A  L_CON_04_2                 [EXPORT,BRANCH]
+  $F52C  L_CON_04_3                 [EXPORT,BRANCH]
+  $F530  HLINRL                     [EXPORT]
+  $F53A  HGLIN                      [EXPORT,JSR]
+  $F550  L_HGLIN_1                  [EXPORT,BRANCH]
+  $F568  L_HGLIN_2                  [EXPORT,BRANCH]
+  $F57C  MOVEX                      [EXPORT,BRANCH]
+  $F581  MOVEX2                     [EXPORT,BRANCH]
+  $F58B  L_MOVEX2_1                 [EXPORT,BRANCH]
+  $F59E  L_MOVEX2_2                 [EXPORT,BRANCH]
+  $F5B2  MSKTBL                     [EXPORT]
+  $F5B9  CON_1C                     [EXPORT]
+  $F5BA  ff                         [LABEL]
+  $F5C2  b4                         [LABEL]
+  $F5CB  HFIND                      [EXPORT]
+  $F5F0  L_HFIND_1                  [EXPORT,BRANCH]
+  $F5FE  L_HFIND_2                  [EXPORT,BRANCH]
+  $F600  RTS_22                     [EXPORT,BRANCH]
+  $F601  DRAW0                      [EXPORT]
+  $F605  DRAW1                      [EXPORT,JMP]
+  $F626  L_DRAW1_1                  [EXPORT,BRANCH]
+  $F630  L_DRAW1_2                  [EXPORT,BRANCH]
+  $F63D  L_DRAW1_3                  [EXPORT,BRANCH]
+  $F648  L_DRAW1_4                  [EXPORT,BRANCH]
+  $F658  L_DRAW1_5                  [EXPORT,BRANCH]
+  $F65D  XDRAW0                     [EXPORT]
+  $F661  XDRAW1                     [EXPORT,JMP]
+  $F682  L_XDRAW1_1                 [EXPORT,BRANCH]
+  $F68C  L_XDRAW1_2                 [EXPORT,BRANCH]
+  $F699  L_XDRAW1_3                 [EXPORT,BRANCH]
+  $F6A4  L_XDRAW1_4                 [EXPORT,BRANCH]
+  $F6B4  L_XDRAW1_5                 [EXPORT,BRANCH]
+  $F6B9  HFNS                       [EXPORT,JSR]
+  $F6CD  L_HFNS_1                   [EXPORT,BRANCH]
+  $F6E6  GGERR                      [EXPORT,BRANCH]
+  $F6E9  HCOLOR                     [EXPORT,JTABLE]
+  $F6F5  RTS_23                     [EXPORT,BRANCH]
+  $F6F6  COLORTBL                   [EXPORT]
+  $F6FE  HPLOT                      [EXPORT,JTABLE]
+  $F708  L_HPLOT_1                  [EXPORT,JMP]
+  $F70F  L_HPLOT_2                  [EXPORT,BRANCH]
+  $F721  ROT                        [EXPORT,JTABLE]
+  $F727  SCALE                      [EXPORT,JTABLE]
+  $F72D  DRWPNT                     [EXPORT,JSR]
+  $F741  L_DRWPNT_1                 [EXPORT,BRANCH]
+  $F747  L_DRWPNT_2                 [EXPORT,BRANCH]
+  $F766  L_DRWPNT_3                 [EXPORT,BRANCH]
+  $F769  DRAW                       [EXPORT,JTABLE]
+  $F76F  XDRAW                      [EXPORT,JTABLE]
+  $F775  SHLOAD                     [EXPORT,JTABLE]
+  $F796  L_SHLOAD_1                 [EXPORT,BRANCH]
+  $F7A0  L_SHLOAD_2                 [EXPORT,BRANCH]
+  $F7A3  L_SHLOAD_3                 [EXPORT,BRANCH]
+  $F7BC  TAPEPNT                    [EXPORT,JSR,LABEL]
+  $F7D9  GETARYPT                   [EXPORT,JSR,LABEL]
+  $F7E7  HTAB                       [EXPORT,JTABLE]
+  $F7EC  L_HTAB_1                   [EXPORT,JMP]
+  $F7FA  L_HTAB_2                   [EXPORT,BRANCH]
+
+--- Autostart-Monitor :: lores   base=$F800  size=$0082 ---
+  $F800  LORESHEIGHT                [IMPORT,CONST]
+  $F800  PLOT                       [EXPORT]
+  $F80C  RTMASK                     [EXPORT,BRANCH]
+  $F80E  PLOT1                      [EXPORT,JSR]
+  $F819  HLINE                      [EXPORT]
+  $F81C  HLINE1                     [EXPORT,BRANCH]
+  $F826  VLINEZ                     [EXPORT,BRANCH]
+  $F828  VLINE                      [EXPORT,JSR]
+  $F831  RTS1                       [EXPORT,BRANCH]
+  $F832  CLRSCR                     [EXPORT]
+  $F836  CLRTOP                     [EXPORT,IMPORT,JSR]
+  $F838  CLRSC2                     [EXPORT,BRANCH]
+  $F83C  CLRSC3                     [EXPORT,BRANCH]
+  $F847  GBASCALC                   [EXPORT,JSR]
+  $F856  GBCALC                     [EXPORT,BRANCH]
+  $F85F  NXTCOL                     [EXPORT]
+  $F864  SETCOL                     [EXPORT]
+  $F871  SCRN                       [EXPORT]
+  $F879  SCRN2                      [EXPORT,IMPORT,JSR]
+  $F87F  RTMSKZ                     [EXPORT,BRANCH]
+
+--- Autostart-Monitor :: disasm   base=$F882  size=$01BE ---
+  $F882  INSDS1                     [EXPORT,IMPORT,JSR]
+  $F88E  INSDS2                     [EXPORT]
+  $F89B  IEVEN                      [EXPORT,BRANCH]
+  $F8A5  ERR                        [EXPORT,BRANCH]
+  $F8A9  GETFMT                     [EXPORT,BRANCH]
+  $F8BE  MNNDX1                     [EXPORT,BRANCH]
+  $F8C2  MNNDX2                     [EXPORT,BRANCH]
+  $F8C9  MNNDX3                     [EXPORT,BRANCH]
+  $F8D0  INSTDSP                    [EXPORT,IMPORT,JSR]
+  $F8D4  PRNTOP                     [EXPORT,BRANCH]
+  $F8DB  PRNTBL                     [EXPORT,BRANCH]
+  $F8F5  PRMN1                      [EXPORT,BRANCH]
+  $F8F9  PRMN2                      [EXPORT,BRANCH]
+  $F910  PRADR1                     [EXPORT,BRANCH]
+  $F914  PRADR2                     [EXPORT,BRANCH]
+  $F926  PRADR3                     [EXPORT,BRANCH]
+  $F92A  PRADR4                     [EXPORT,BRANCH]
+  $F930  PRADR5                     [EXPORT,BRANCH]
+  $F938  RELADR                     [EXPORT]
+  $F940  PRNTYX                     [EXPORT,IMPORT,JSR,BRANCH]
+  $F941  PRNTAX                     [EXPORT]
+  $F944  PRNTX                      [EXPORT]
+  $F948  PRBLNK                     [EXPORT,JSR]
+  $F94A  PRBL2                      [EXPORT,JSR,BRANCH]
+  $F953  PCADJ                      [EXPORT,IMPORT,JSR]
+  $F954  PCADJ2                     [EXPORT]
+  $F956  PCADJ3                     [EXPORT,JSR]
+  $F95C  PCADJ4                     [EXPORT,BRANCH]
+  $F961  RTS2                       [EXPORT,BRANCH]
+  $F962  04                         [LABEL]
+  $F967  80                         [LABEL]
+  $F96C  54                         [LABEL]
+  $F971  90                         [LABEL]
+  $F976  0d                         [LABEL]
+  $F97B  20                         [LABEL]
+  $F985  33                         [LABEL]
+  $F98A  11                         [LABEL]
+  $F98F  c8                         [LABEL]
+  $F994  44                         [LABEL]
+  $F9A6  FMT2                       [EXPORT]
+  $F9B4  CHAR1                      [EXPORT,LABEL]
+  $F9BA  CHAR2                      [EXPORT]
+  $F9C0  1c                         [LABEL]
+  $F9C6  1b                         [LABEL]
+  $F9CC  9d                         [LABEL]
+  $F9D2  19                         [LABEL]
+  $F9D8  24                         [LABEL]
+  $F9E0  00                         [LABEL]
+  $F9E8  ae                         [LABEL]
+  $F9F0  15                         [LABEL]
+  $F9F8  84                         [LABEL]
+  $FA00  d8                         [LABEL]
+  $FA06  94                         [LABEL]
+  $FA0C  68                         [LABEL]
+  $FA12  08                         [LABEL]
+  $FA18  74                         [LABEL]
+  $FA30  1a                         [LABEL]
+  $FA38  c4                         [LABEL]
+
+--- Autostart-Monitor :: debug   base=$FA40  size=$00DE ---
+  $FA40  IRQ                        [EXPORT,IMPORT,JTABLE]
+  $FA4C  BREAK                      [EXPORT,BRANCH]
+  $FA62  RESET2                     [EXPORT,IMPORT,JTABLE]
+  $FA9B  LFA9B                      [EXPORT,BRANCH]
+  $FAA3  LFAA3                      [EXPORT,BRANCH]
+  $FAA6  LFAA6                      [EXPORT,BRANCH]
+  $FAAB  LFAAB                      [EXPORT,BRANCH]
+  $FABA  LFABA                      [EXPORT,BRANCH]
+  $FAC7  LFAC7                      [EXPORT,BRANCH]
+  $FAD7  REGDSP                     [EXPORT,IMPORT,JMP]
+  $FADA  RGDSP1                     [EXPORT,JSR]
+  $FAE4  RDSP1                      [EXPORT,BRANCH]
+  $FAFC  LFAFC                      [EXPORT]
+  $FB01  45                         [LABEL]
+  $FB08  LFB08                      [EXPORT,IMPORT]
+  $FB19  RTBL                       [EXPORT]
+
+--- Autostart-Monitor :: paddles   base=$FB1E  size=$0011 ---
+  $FB1E  PADDL0                     [IMPORT,CONST]
+  $FB1E  PTRIG                      [IMPORT,CONST]
+  $FB1E  PREAD                      [EXPORT]
+  $FB25  PREAD2                     [EXPORT,BRANCH]
+  $FB2E  RTS2D                      [EXPORT,BRANCH]
+
+--- Autostart-Monitor :: display1   base=$FB2F  size=$0031 ---
+  $FB2F  TXTCLR                     [IMPORT,CONST]
+  $FB2F  TXTSET                     [IMPORT,CONST]
+  $FB2F  MIXSET                     [IMPORT,CONST]
+  $FB2F  LOWSCR                     [IMPORT,CONST]
+  $FB2F  LORES                      [IMPORT,CONST]
+  $FB2F  TEXTBOTTOMLINES            [IMPORT,CONST]
+  $FB2F  INIT                       [EXPORT,IMPORT,JSR]
+  $FB39  SETTXT                     [EXPORT]
+  $FB40  SETGR                      [EXPORT]
+  $FB4B  SETWND                     [EXPORT,BRANCH]
+  $FB5B  TABV                       [EXPORT]
+
+--- Autostart-Monitor :: math   base=$FB60  size=$0061 ---
+  $FB60  LFB60                      [EXPORT,IMPORT,JSR]
+  $FB65  LFB65                      [EXPORT,BRANCH]
+  $FB78  LFB78                      [EXPORT,IMPORT,JSR]
+  $FB88  LFB88                      [EXPORT,BRANCH]
+  $FB94  LFB94                      [EXPORT,BRANCH]
+  $FB97  LFB97                      [EXPORT,JSR,BRANCH]
+  $FB9B  LFB9B                      [EXPORT,BRANCH]
+  $FBA5  LFBA5                      [EXPORT,IMPORT,JSR]
+
+--- Autostart-Monitor :: display2   base=$FBC1  size=$0108 ---
+  $FBC1  ASCBEL                     [IMPORT,CONST]
+  $FBC1  ASCBS                      [IMPORT,CONST]
+  $FBC1  SPKR                       [IMPORT,CONST]
+  $FBC1  BASCALC                    [EXPORT,JSR]
+  $FBD0  BSCLC2                     [EXPORT,BRANCH]
+  $FBD9  BELL1                      [EXPORT,BRANCH]
+  $FBE4  BELL2                      [EXPORT,BRANCH]
+  $FBEF  RTS2B                      [EXPORT,BRANCH]
+  $FBF0  STOADV                     [EXPORT,BRANCH]
+  $FBF4  ADVANCE                    [EXPORT,BRANCH]
+  $FBFC  RTS3                       [EXPORT,BRANCH]
+  $FBFD  VIDOUT                     [EXPORT,IMPORT,JMP]
+  $FC10  BS                         [EXPORT,BRANCH]
+  $FC1A  UP                         [EXPORT,BRANCH]
+  $FC22  VTAB                       [EXPORT]
+  $FC24  VTABZ                      [EXPORT,JSR,BRANCH]
+  $FC2B  RTS4                       [EXPORT,BRANCH]
+  $FC2C  ESC1                       [EXPORT,IMPORT,JMP]
+  $FC42  CLREOP                     [EXPORT]
+  $FC46  CLEOP1                     [EXPORT,BRANCH]
+  $FC58  HOME                       [EXPORT,IMPORT,JSR,BRANCH]
+  $FC62  CR                         [EXPORT,BRANCH]
+  $FC66  LF                         [EXPORT,BRANCH]
+  $FC70  SCROLL                     [EXPORT]
+  $FC76  SCRL1                      [EXPORT,BRANCH]
+  $FC8C  SCRL2                      [EXPORT,BRANCH]
+  $FC95  SCRL3                      [EXPORT,BRANCH]
+  $FC9C  CLREOL                     [EXPORT,IMPORT,JSR,BRANCH]
+  $FC9E  CLEOLZ                     [EXPORT,JSR]
+  $FCA0  CLEOL2                     [EXPORT,BRANCH]
+  $FCA8  WAIT                       [EXPORT]
+  $FCA9  WAIT2                      [EXPORT,BRANCH]
+  $FCAA  WAIT3                      [EXPORT,BRANCH]
+  $FCB4  NXTA4                      [EXPORT,IMPORT,JSR]
+  $FCBA  NXTA1                      [EXPORT,IMPORT,JSR,BRANCH]
+  $FCC8  RTS4B                      [EXPORT,BRANCH]
+
+--- Autostart-Monitor :: cassette   base=$FCC9  size=$0043 ---
+  $FCC9  TAPEOUT                    [IMPORT,CONST]
+  $FCC9  TAPEIN                     [IMPORT,CONST]
+  $FCC9  HEADR                      [EXPORT,IMPORT,JSR,BRANCH]
+  $FCD6  WRBIT                      [EXPORT,IMPORT,JSR]
+  $FCDB  ZERDLY                     [EXPORT,JSR,BRANCH]
+  $FCE2  ONEDLY                     [EXPORT,BRANCH]
+  $FCE5  WRTAPE                     [EXPORT,BRANCH]
+  $FCEC  RDBYTE                     [EXPORT,IMPORT,JSR]
+  $FCEE  RDBYT2                     [EXPORT,BRANCH]
+  $FCFA  RD2BIT                     [EXPORT,IMPORT,JSR]
+  $FCFD  RDBIT                      [EXPORT,IMPORT,JSR,BRANCH]
+
+--- Autostart-Monitor :: keyin   base=$FD0C  size=$0082 ---
+  $FD0C  KBD                        [IMPORT,CONST]
+  $FD0C  KBDSTRB                    [IMPORT,CONST]
+  $FD0C  RDKEY                      [EXPORT,IMPORT,JSR]
+  $FD1B  KEYIN                      [EXPORT,IMPORT,BRANCH]
+  $FD21  KEYIN2                     [EXPORT,BRANCH]
+  $FD2F  ESC                        [EXPORT,BRANCH]
+  $FD35  RDCHAR                     [EXPORT,JSR]
+  $FD3D  NOTCR                      [EXPORT,BRANCH]
+  $FD5F  NOTCR1                     [EXPORT,BRANCH]
+  $FD62  CANCEL                     [EXPORT,BRANCH]
+  $FD67  GETLNZ                     [EXPORT,IMPORT,JSR,BRANCH]
+  $FD6A  GETLN                      [EXPORT]
+  $FD71  BCKSPC                     [EXPORT,BRANCH]
+  $FD75  NXTCHAR                    [EXPORT,BRANCH]
+  $FD78  NXTCHAR1                   [EXPORT]
+  $FD7E  CAPTST                     [EXPORT,BRANCH]
+  $FD84  ADDINP                     [EXPORT,BRANCH]
+
+--- Autostart-Monitor :: cmd   base=$FD8E  size=$026C ---
+  $FD8E  IOADR                      [IMPORT,CONST]
+  $FD8E  CTRL_B                     [IMPORT,CONST]
+  $FD8E  CTRL_C                     [IMPORT,CONST]
+  $FD8E  CTRL_E                     [IMPORT,CONST]
+  $FD8E  CTRL_K                     [IMPORT,CONST]
+  $FD8E  CTRL_P                     [IMPORT,CONST]
+  $FD8E  CTRL_Y                     [IMPORT,CONST]
+  $FD8E  CROUT                      [EXPORT,IMPORT,JSR]
+  $FD92  PRA1                       [EXPORT,JSR]
+  $FD96  PRYX2                      [EXPORT,IMPORT,JSR]
+  $FDA3  XAM8                       [EXPORT,BRANCH]
+  $FDAD  MODSCHK                    [EXPORT,BRANCH]
+  $FDB3  XAM                        [EXPORT,BRANCH]
+  $FDB6  DATAOUT                    [EXPORT,BRANCH]
+  $FDC5  RTS4C                      [EXPORT]
+  $FDC6  XAMPM                      [EXPORT,BRANCH]
+  $FDD1  ADD                        [EXPORT,BRANCH]
+  $FDDA  PRBYTE                     [EXPORT,IMPORT,JSR,JMP]
+  $FDE3  PRHEX                      [EXPORT]
+  $FDE5  PRHEXZ                     [EXPORT,JSR]
+  $FDED  COUT                       [EXPORT,IMPORT,JSR,JMP,BRANCH]
+  $FDF0  COUT1                      [EXPORT]
+  $FDF6  COUTZ                      [EXPORT,BRANCH]
+  $FE00  BL1                        [EXPORT,JSR]
+  $FE04  BLANK                      [EXPORT]
+  $FE0B  STOR                       [EXPORT]
+  $FE17  RTS5                       [EXPORT,BRANCH]
+  $FE18  SETMODE                    [EXPORT]
+  $FE1D  SETMDZ                     [EXPORT,BRANCH]
+  $FE20  LT                         [EXPORT]
+  $FE22  LT2                        [EXPORT,BRANCH]
+  $FE2C  MOVE                       [EXPORT,BRANCH]
+  $FE36  VFY                        [EXPORT,BRANCH]
+  $FE58  VFYOK                      [EXPORT,BRANCH]
+  $FE5E  LIST1                      [EXPORT]
+  $FE63  LIST2                      [EXPORT,BRANCH]
+  $FE75  A1PC                       [EXPORT,JSR]
+  $FE78  A1PCLP                     [EXPORT,BRANCH]
+  $FE7F  A1PCRTS                    [EXPORT,BRANCH]
+  $FE80  SETINV                     [EXPORT]
+  $FE84  SETNORM                    [EXPORT,IMPORT,JSR]
+  $FE86  SETIFLG                    [EXPORT,BRANCH]
+  $FE89  SETKBD                     [EXPORT,IMPORT,JSR]
+  $FE8B  INPORT                     [EXPORT]
+  $FE8D  INPRT                      [EXPORT]
+  $FE93  SETVID                     [EXPORT,IMPORT,JSR]
+  $FE95  OUTPORT                    [EXPORT]
+  $FE97  OUTPRT                     [EXPORT]
+  $FE9B  IOPRT                      [EXPORT,BRANCH]
+  $FEA7  IOPRT1                     [EXPORT,BRANCH]
+  $FEA9  IOPRT2                     [EXPORT,BRANCH]
+  $FEB0  XBASIC                     [EXPORT]
+  $FEB3  BASCONT                    [EXPORT]
+  $FEB6  GO                         [EXPORT]
+  $FEBF  REGZ                       [EXPORT]
+  $FEC2  TRACE                      [EXPORT,LABEL]
+  $FEC5  STEPZ                      [EXPORT]
+  $FECA  USR                        [EXPORT]
+  $FECD  WRITE                      [EXPORT]
+  $FED4  WR1                        [EXPORT,BRANCH]
+  $FEED  WRBYTE                     [EXPORT,JSR]
+  $FEEF  WRBYT2                     [EXPORT,BRANCH]
+  $FEF6  CRMON                      [EXPORT]
+  $FEFD  READ                       [EXPORT]
+  $FF0A  RD2                        [EXPORT,BRANCH]
+  $FF16  RD3                        [EXPORT,BRANCH]
+  $FF2D  PRERR                      [EXPORT]
+  $FF3A  BELL                       [EXPORT,IMPORT,JSR,BRANCH]
+  $FF3F  RESTORE                    [EXPORT]
+  $FF44  RESTR1                     [EXPORT]
+  $FF4A  SAVE                       [EXPORT]
+  $FF4C  SAV1                       [EXPORT,IMPORT,JSR]
+  $FF59  RESET                      [EXPORT]
+  $FF65  MON                        [EXPORT,IMPORT,JMP,BRANCH]
+  $FF69  MONZ                       [EXPORT,BRANCH]
+  $FF73  NXTITM                     [EXPORT,JMP]
+  $FF7A  CHRSRCH                    [EXPORT,BRANCH]
+  $FF8A  DIG                        [EXPORT,BRANCH]
+  $FF90  NXTBIT                     [EXPORT,BRANCH]
+  $FF98  NXTBAS                     [EXPORT,BRANCH]
+  $FFA2  NXTBS2                     [EXPORT,BRANCH]
+  $FFA7  GETNUM                     [EXPORT,JSR]
+  $FFAD  NXTCHR                     [EXPORT,BRANCH]
+  $FFBE  TOSUB                      [EXPORT,JSR]
+  $FFC7  ZMODE                      [EXPORT,JSR]
+  $FFCC  CHRTBL                     [EXPORT]
+  $FFE3  SUBTBL                     [EXPORT]
+
+--- Autostart-Monitor :: vectors   base=$FFFA  size=$0006 ---
+  $FFFA  M6502VEC                   [EXPORT]
+
+6. CALL GRAPH (callee  <- callers)
+==================================
+  $D000 GOWARM  <-  L_COLD_START_4
+  $D000 USR  <-  UNFNC
+  $D000 LINNUM  <-  CALL
+  $D000 INDEX  <-  FRM_STACK_3
+  $D000 JMPADRS  <-  L_UNARY_2
+  $D000 CHRGET  <-  EXECUTE_STATEMENT_1, FIN_1, FIN_3, FIN_4, GTBYTC, INSTART, L_FRMEVL_2_1, L_FRM_ELEMENT_1, L_LINGET_2, L_LIST_2, L_NEXT_3_2, L_ON_2_3, L_PTRGET4_2, L_PTRGET4_5, L_TRACE__1, MAKINT, PR_NEXT_CHAR, PTRGET4, RESTART, SCREEN, STEP, SYNCHR, UNARY
+  $D000 CHRGOT  <-  CONINT, DIM, FRMEVL_2, GO_TO_LINE, HANDLERR, IF, IF_TRUE, INPUT_MORE, L_ARRAY_1, L_DRWPNT_2, L_FUNCT_1, L_HPLOT_1, L_INPUT_MORE_1, L_LIST_1, L_NEXT_3_2, L_VAL_2, MIDSTR, PROCESS_INPUT_ITEM, PR_STRING, PTRGET, PTRGET3, STEP, WAIT
+  $D000 AMPERSAND_VECTOR  <-  TOKEN_ADDRESS_TABLE
+  $D000 MON_PLOT  <-  PLOT
+  $D000 MON_HLINE  <-  HLIN
+  $D000 MON_VLINE  <-  VLIN
+  $D000 MON_SETCOL  <-  COLOR
+  $D000 MON_SCRN  <-  SCREEN
+  $D000 MON_PREAD  <-  PDL
+  $D000 MON_SETTXT  <-  TEXT
+  $D000 MON_SETGR  <-  GR
+  $D000 MON_TABV  <-  VTAB
+  $D000 MON_HOME  <-  TOKEN_ADDRESS_TABLE
+  $D000 MON_WAIT  <-  L_OUTDO_1
+  $D000 MON_RD2BIT  <-  L_SHLOAD_3
+  $D000 MON_RDKEY  <-  INCHR, PROCESS_INPUT_ITEM
+  $D000 MON_GETLN  <-  INLIN2
+  $D000 MON_COUT  <-  L_OUTDO_1
+  $D000 MON_INPORT  <-  IN_NUMBER
+  $D000 MON_OUTPORT  <-  PR_NUMBER
+  $D000 MON_WRITE  <-  L_STORE_1, SAVE
+  $D000 MON_READ  <-  LOAD, L_RECALL_1, RECALL, SHLOAD
+  $D000 MON_READ2  <-  L_SHLOAD_3
+  $D365 GTFORPNT  <-  FOR, NEXT_2, POP
+  $D36A L_GTFORPNT_1  <-  L_GTFORPNT_3
+  $D37F L_GTFORPNT_2  <-  L_GTFORPNT_1
+  $D38B L_GTFORPNT_3  <-  L_GTFORPNT_2
+  $D392 L_GTFORPNT_4  <-  L_GTFORPNT_1, L_GTFORPNT_2
+  $D393 BLTU  <-  L_MAKE_NEW_VARIABLE_1, L_PUT_NEW_LINE_1
+  $D39A BLTU2  <-  MOVE_HIGHEST_STRING_TO_TOP
+  $D3B7 L_BLTU2_1  <-  BLTU2
+  $D3C3 L_BLTU2_2  <-  L_BLTU2_3
+  $D3C7 L_BLTU2_3  <-  L_BLTU2_1, L_BLTU2_4
+  $D3CE L_BLTU2_4  <-  BLTU2
+  $D3D6 CHKMEM  <-  FRMEVL_1, GOSUB, L_FOR_1
+  $D3E3 REASON  <-  BLTU, L_COLD_START_4, L_MAKE_NEW_ARRAY_1, L_MAKE_NEW_ARRAY_6
+  $D3ED L_REASON_1  <-  REASON
+  $D3F1 L_REASON_2  <-  L_REASON_2
+  $D3FC L_REASON_3  <-  L_REASON_3
+  $D40F L_REASON_4  <-  L_REASON_3, REASON
+  $D410 MEMERR  <-  CHKMEM, GME, JMM, L_REASON_3, L_SHLOAD_2, RECALL
+  $D412 ERROR  <-  CAT, CONT, JER, JERR, JERROR, L_FDIVT_8, MAKE_NEW_ARRAY, OVERFLOW, SYNERR, UNDERR, UNDFNC, UNFNC
+  $D419 L_ERROR_1  <-  ERROR
+  $D41F L_ERROR_2  <-  L_ERROR_2
+  $D431 PRINT_ERROR_LINNUM  <-  END4
+  $D43C RESTART  <-  BASIC2, L_END4_1, L_FIX_LINKS_1, PRINT_ERROR_LINNUM, RESTART
+  $D45C NUMBERED_LINE  <-  RESTART
+  $D49F L_NUMBERED_LINE_1  <-  NUMBERED_LINE
+  $D4A7 L_NUMBERED_LINE_2  <-  L_NUMBERED_LINE_1, L_NUMBERED_LINE_2
+  $D4B5 PUT_NEW_LINE  <-  NUMBERED_LINE
+  $D4D1 L_PUT_NEW_LINE_1  <-  PUT_NEW_LINE
+  $D4EA L_PUT_NEW_LINE_2  <-  L_PUT_NEW_LINE_2
+  $D4F2 FIX_LINKS  <-  L_DEL_6, L_LOAD_1, PUT_NEW_LINE
+  $D4FE L_FIX_LINKS_1  <-  L_FIX_LINKS_3
+  $D50F L_FIX_LINKS_2  <-  L_FIX_LINKS_1
+  $D511 L_FIX_LINKS_3  <-  L_FIX_LINKS_3
+  $D52C INLIN  <-  L_INPUT_2, NXIN
+  $D52E INLIN2  <-  RESTART
+  $D539 L_INLIN2_1  <-  INLIN2
+  $D541 L_INLIN2_2  <-  L_INLIN2_2
+  $D54C L_INLIN2_3  <-  L_INLIN2_1
+  $D553 INCHR  <-  L_ISCNTC_1
+  $D559 PARSE_INPUT_LINE  <-  NUMBERED_LINE, RESTART
+  $D56C PARSE  <-  L_PARSE_1, PARSE_INPUT_LINE
+  $D56D L_PARSE_1  <-  L_PARSE_11
+  $D578 L_PARSE_2  <-  L_PARSE_1
+  $D588 L_PARSE_3  <-  L_PARSE_2
+  $D590 L_PARSE_4  <-  L_PARSE_3
+  $D5A2 L_PARSE_5  <-  L_PARSE_7
+  $D5A7 L_PARSE_6  <-  L_PARSE_5, L_PARSE_7
+  $D5A8 L_PARSE_7  <-  L_PARSE_16
+  $D5CB L_PARSE_8  <-  L_PARSE_16, L_PARSE_7
+  $D5CD L_PARSE_9  <-  L_PARSE_12, L_PARSE_2, L_PARSE_3
+  $D5E0 L_PARSE_10  <-  L_PARSE_9
+  $D5E2 L_PARSE_11  <-  L_PARSE_9
+  $D5E9 L_PARSE_12  <-  L_PARSE_13
+  $D5F2 L_PARSE_13  <-  L_PARSE_2
+  $D5F9 L_PARSE_14  <-  L_PARSE_7
+  $D5FD L_PARSE_15  <-  L_PARSE_16
+  $D604 L_PARSE_16  <-  L_PARSE_15
+  $D610 L_PARSE_17  <-  L_PARSE_9
+  $D61A FNDLIN  <-  DEL, L_DEL_1, L_LIST_1, NUMBERED_LINE
+  $D61E FL1  <-  L_FL1_2, L_GOTO_2
+  $D635 L_FL1_1  <-  FL1
+  $D63E L_FL1_2  <-  FL1
+  $D647 L_FL1_3  <-  FL1
+  $D648 RTS_1  <-  FL1, L_FL1_1, L_LIST_1, NEW
+  $D649 NEW  <-  TOKEN_ADDRESS_TABLE
+  $D64B SCRTCH  <-  L_COLD_START_4
+  $D665 SETPTRS  <-  FIX_LINKS, LOAD, PARSE_INPUT_LINE, RUN
+  $D66A CLEAR  <-  TOKEN_ADDRESS_TABLE
+  $D66C CLEARC  <-  LOMEM, L_RUN_1
+  $D683 STKINI  <-  L_ERROR_2
+  $D696 RTS_2  <-  CLEAR, LIST, L_LIST_2
+  $D697 STXTPT  <-  SETPTRS
+  $D6A5 LIST  <-  TOKEN_ADDRESS_TABLE
+  $D6B1 L_LIST_1  <-  LIST
+  $D6C4 L_LIST_2  <-  L_LIST_1
+  $D6CC L_LIST_3  <-  L_LIST_1
+  $D6DA LIST_0  <-  L_LIST_2_1, L_LIST_3
+  $D6F5 L_LIST_0_5  <-  LIST_0
+  $D6F7 L_LIST_0_6  <-  LIST_0
+  $D6FE LIST_1  <-  L_LIST_4_5
+  $D702 LIST_2  <-  LIST_4
+  $D712 L_LIST_2_1  <-  LIST_2
+  $D724 LIST_3  <-  LIST_0, L_LIST_0_5
+  $D72C GETCHR  <-  L_LIST_4_2, L_LIST_4_4
+  $D731 L_GETCHR_1  <-  GETCHR
+  $D734 LIST_4  <-  L_LIST_2_1
+  $D746 L_LIST_4_1  <-  L_LIST_4_2
+  $D749 L_LIST_4_2  <-  L_LIST_4_2
+  $D750 L_LIST_4_3  <-  L_LIST_4_1
+  $D755 L_LIST_4_4  <-  L_LIST_4_4
+  $D75F L_LIST_4_5  <-  L_LIST_4_4
+  $D766 FOR  <-  TOKEN_ADDRESS_TABLE
+  $D777 L_FOR_1  <-  FOR
+  $D7C3 L_STEP_1  <-  STEP
+  $D7D2 NEWSTT  <-  GO_TO_LINE, HANDLERR, LIST_3, L_NEXT_3_1, L_TRACE__1, PARSE_INPUT_LINE, RESUME
+  $D7E5 L_NEWSTT_1  <-  NEWSTT
+  $D805 L_NEWSTT_2  <-  L_NEWSTT_1
+  $D805 TRACE_  <-  COLON_, RESTART
+  $D81D L_TRACE__1  <-  TRACE_
+  $D826 GOEND  <-  L_NEWSTT_1
+  $D828 EXECUTE_STATEMENT  <-  L_IF_TRUE_1, L_TRACE__1
+  $D82A EXECUTE_STATEMENT_1  <-  ON_2
+  $D83F L_EXECUTE_STATEMENT_1_1  <-  EXECUTE_STATEMENT_1
+  $D842 COLON_  <-  L_NEWSTT_1
+  $D846 SYNERR_1  <-  EXECUTE_STATEMENT_1
+  $D849 RESTORE  <-  CLEARC, GO, TOKEN_ADDRESS_TABLE
+  $D853 SETDA  <-  INPDONE, RESTORE
+  $D857 RTS_3  <-  EXECUTE_STATEMENT
+  $D858 ISCNTC  <-  LIST_0, NEWSTT
+  $D860 L_ISCNTC_1  <-  ISCNTC
+  $D863 CONTROL_C_TYPED  <-  L_INPUT_2
+  $D86C L_CONTROL_C_TYPED_2  <-  CONTROL_C_TYPED
+  $D86E STOP  <-  TOKEN_ADDRESS_TABLE
+  $D870 ENDX  <-  TOKEN_ADDRESS_TABLE
+  $D871 END2  <-  STOP
+  $D888 L_END2_1  <-  END2
+  $D88A END4  <-  GOEND
+  $D893 L_END4_1  <-  END4
+  $D896 CONT  <-  TOKEN_ADDRESS_TABLE
+  $D8A1 L_CONT_1  <-  CONT
+  $D8AF RTS_4  <-  CONT, END2
+  $D8B0 SAVE  <-  TOKEN_ADDRESS_TABLE
+  $D8C9 LOAD  <-  TOKEN_ADDRESS_TABLE
+  $D8ED L_LOAD_1  <-  LOAD
+  $D8F0 VARTIO  <-  GETARYPT, LOAD, SAVE
+  $D901 PROGIO  <-  LOAD, SAVE
+  $D912 RUN  <-  TOKEN_ADDRESS_TABLE
+  $D91B L_RUN_1  <-  RUN
+  $D921 GOSUB  <-  TOKEN_ADDRESS_TABLE
+  $D935 GO_TO_LINE  <-  L_RUN_1
+  $D93E GOTO  <-  GO_TO_LINE, HANDLERR, IF_TRUE, TOKEN_ADDRESS_TABLE
+  $D955 L_GOTO_1  <-  GOTO
+  $D959 L_GOTO_2  <-  GOTO
+  $D96A RTS_5  <-  POP
+  $D96B POP  <-  TOKEN_ADDRESS_TABLE
+  $D97C UNDERR  <-  L_GOTO_2
+  $D981 SYNERR_2  <-  ON_1
+  $D984 RETURN  <-  POP
+  $D995 DATA  <-  DEF, TOKEN_ADDRESS_TABLE
+  $D998 ADDON  <-  L_FINDATA_1, ONERR, REM
+  $D9A2 L_ADDON_1  <-  ADDON
+  $D9A2 RTS_6  <-  L_REMN_2
+  $D9A3 DATAN  <-  DATA, FINDATA, L_FOR_1
+  $D9A6 REMN  <-  GOTO, ONERR, REM
+  $D9AE L_REMN_1  <-  L_REMN_2
+  $D9B6 L_REMN_2  <-  L_REMN_2
+  $D9C5 PULL3  <-  RETURN
+  $D9C9 IF  <-  TOKEN_ADDRESS_TABLE
+  $D9D8 L_IF_1  <-  IF
+  $D9DC REM  <-  TOKEN_ADDRESS_TABLE
+  $D9E1 IF_TRUE  <-  L_IF_1
+  $D9E9 L_IF_TRUE_1  <-  IF_TRUE
+  $D9EC ONGOTO  <-  TOKEN_ADDRESS_TABLE
+  $D9F4 ON_1  <-  L_LINGET_1
+  $D9F8 ON_2  <-  L_ON_2_3, ONGOTO
+  $DA00 L_ON_2_3  <-  ON_2
+  $DA0B RTS_7  <-  L_LINGET_1
+  $DA0C LINGET  <-  DEL, GOTO, L_LIST_1, L_LIST_2, L_ON_2_3, NUMBERED_LINE
+  $DA12 L_LINGET_1  <-  L_LINGET_2
+  $DA40 L_LINGET_2  <-  L_LINGET_1
+  $DA46 LET  <-  FOR, L_EXECUTE_STATEMENT_1_1, TOKEN_ADDRESS_TABLE
+  $DA63 LET2  <-  INPUTDWTA
+  $DA77 L_LET2_1  <-  LET2
+  $DA7A LET_STRING  <-  LET
+  $DA7B PUTSTR  <-  L_INSTART_4
+  $DA8C L_PUTSTR_1  <-  PUTSTR
+  $DA9A L_PUTSTR_2  <-  L_PUTSTR_1, PUTSTR
+  $DAA1 L_PUTSTR_3  <-  L_PUTSTR_1
+  $DAB7 L_PUTSTR_4  <-  L_PUTSTR_2
+  $DACF PR_STRING  <-  PRINT2
+  $DAD5 PRINT  <-  TOKEN_ADDRESS_TABLE
+  $DAD7 PRINT2  <-  PR_NEXT_CHAR
+  $DAFB CRDO  <-  LIST_0, LIST_2, L_COLD_START_1, L_ERROR_1, L_HTAB_1, PRINT, PR_COMMA, RESTART
+  $DB00 NEGATE  <-  L_STRPRT_1
+  $DB02 RTS_8  <-  L_STRPRT_1, PRINT2
+  $DB03 PR_COMMA  <-  PRINT2
+  $DB0E L_PR_COMMA_1  <-  PR_COMMA
+  $DB16 PR_TAB_OR_SPC  <-  PRINT2
+  $DB21 L_PR_TAB_OR_SPC_1  <-  PR_TAB_OR_SPC
+  $DB2B L_PR_TAB_OR_SPC_2  <-  L_PR_TAB_OR_SPC_1
+  $DB2C NXSPC  <-  DOSPC
+  $DB2F PR_NEXT_CHAR  <-  L_PR_COMMA_1, L_PR_TAB_OR_SPC_1, PRINT2, PR_COMMA
+  $DB35 DOSPC  <-  NXSPC
+  $DB3A STROUT  <-  GO_STROUT, L_INPDONE_1, L_RESPERR_1, PRINT_ERROR_LINNUM
+  $DB3D STRPRT  <-  INPUT, PR_STRING
+  $DB44 L_STRPRT_1  <-  L_STRPRT_1
+  $DB57 OUTSP  <-  DOSPC, TRACE_
+  $DB5A OUTQUES  <-  L_ERROR_1, L_INPUT_1, L_PROCESS_INPUT_ITEM_1, NXIN
+  $DB5C OUTDO  <-  CRDO, LIST_2, LIST_3, L_ERROR_2, L_LIST_4_3, L_LIST_4_4, L_LIST_4_5, L_STRPRT_1, TRACE_
+  $DB64 L_OUTDO_1  <-  OUTDO
+  $DB71 INPUTERR  <-  INPUT_MORE
+  $DB7B READERR  <-  INPUTERR
+  $DB7F ERLIN  <-  INPUTERR
+  $DB86 INPERR  <-  INPFIN
+  $DB87 RESPERR  <-  INPUTERR
+  $DB90 L_RESPERR_1  <-  RESPERR
+  $DBA0 GET  <-  TOKEN_ADDRESS_TABLE
+  $DBB2 INPUT  <-  TOKEN_ADDRESS_TABLE
+  $DBC4 L_INPUT_1  <-  INPUT
+  $DBC7 L_INPUT_2  <-  INPUT
+  $DBDC NXIN  <-  L_PROCESS_INPUT_ITEM_1
+  $DBE2 READ  <-  TOKEN_ADDRESS_TABLE
+  $DBE9 INPUT_FLAG_ZERO  <-  L_INPUT_2
+  $DBEB PROCESS_INPUT_LIST  <-  GET
+  $DBF1 PROCESS_INPUT_ITEM  <-  L_INPUT_MORE_1
+  $DC1F L_PROCESS_INPUT_ITEM_1  <-  PROCESS_INPUT_ITEM
+  $DC27 L_PROCESS_INPUT_ITEM_2  <-  PROCESS_INPUT_ITEM
+  $DC2B INSTART  <-  L_FINDATA_1, PROCESS_INPUT_ITEM
+  $DC3F L_INSTART_1  <-  INSTART
+  $DC4B L_INSTART_2  <-  INSTART
+  $DC4C L_INSTART_3  <-  L_INSTART_1
+  $DC57 L_INSTART_4  <-  L_INSTART_3
+  $DC63 L_INSTART_5  <-  INSTART
+  $DC69 INPUTDWTA  <-  INPFIN
+  $DC72 INPUT_MORE  <-  L_INSTART_4
+  $DC7E L_INPUT_MORE_1  <-  INPUT_MORE
+  $DC99 INPFIN  <-  L_INSTART_5
+  $DCA0 FINDATA  <-  L_FINDATA_1, L_PROCESS_INPUT_ITEM_1
+  $DCB9 L_FINDATA_1  <-  FINDATA
+  $DCC6 INPDONE  <-  L_INPUT_MORE_1
+  $DCD1 L_INPDONE_1  <-  INPDONE
+  $DCDE L_INPDONE_2  <-  L_INPDONE_1
+  $DCF9 NEXT  <-  TOKEN_ADDRESS_TABLE
+  $DCFF NEXT_1  <-  L_NEXT_3_2, NEXT
+  $DD02 NEXT_2  <-  NEXT
+  $DD0D GERR  <-  FINDATA
+  $DD0F NEXT_3  <-  NEXT_2
+  $DD52 L_NEXT_3_1  <-  L_NEXT_3_2
+  $DD55 L_NEXT_3_2  <-  NEXT_3
+  $DD67 FRMNUM  <-  CALL, GETBYT, GTNUM, HFNS, HIMEM, LOMEM, L_FOR_1, L_FUNCT_1, MAKINT, STEP
+  $DD6A CHKNUM  <-  DEF, FNC_, FRM_PERFORM_1, FRM_PRECEDENCE_TEST, FUNCT, L_FOR_1, L_UNARY_2, STR
+  $DD6C CHKSTR  <-  CAT, FRESTR, UNARY
+  $DD6D CHKVAL  <-  LET, RELOPS
+  $DD73 L_CHKVAL_1  <-  L_CHKVAL_2
+  $DD74 L_CHKVAL_2  <-  CHKVAL
+  $DD76 L_CHKVAL_3  <-  CHKVAL
+  $DD78 JERROR  <-  GERR
+  $DD7B FRMEVL  <-  FRMNUM, IF, LET, PARCHK, PRINT2, UNARY
+  $DD81 L_FRMEVL_1  <-  FRMEVL
+  $DD86 FRMEVL_1  <-  FRM_RECURSE
+  $DD95 FRMEVL_2  <-  L_CAT_1
+  $DD98 L_FRMEVL_2_1  <-  L_FRMEVL_2_1
+  $DDB4 L_FRMEVL_2_2  <-  L_FRMEVL_2_1
+  $DDC5 L_FRMEVL_2_3  <-  L_FRMEVL_2_2
+  $DDCD FRM_PRECEDENCE_TEST  <-  L_FRM_RELATIONAL_1
+  $DDD6 NXOP  <-  PREFNC
+  $DDD7 SAVOP  <-  EQUL
+  $DDE4 FRM_RELATIONAL  <-  L_FRMEVL_2_2
+  $DDEE L_FRM_RELATIONAL_1  <-  FRM_RELATIONAL
+  $DDF6 PREFNC  <-  SAVOP
+  $DDFD FRM_RECURSE  <-  SAVOP
+  $DE0D SNTXERR  <-  L_FRMEVL_2_1
+  $DE10 FRM_STACK_1  <-  FRM_RECURSE
+  $DE15 FRM_STACK_2  <-  L_STEP_1
+  $DE20 FRM_STACK_3  <-  L_FOR_1
+  $DE35 NOTMATH  <-  L_FRMEVL_2_2
+  $DE38 GOEX  <-  SAVOP
+  $DE3A FRM_PERFORM_1  <-  FRM_PRECEDENCE_TEST
+  $DE41 L_FRM_PERFORM_1_1  <-  FRM_PERFORM_1
+  $DE43 FRM_PERFORM_2  <-  PREFNC, SAVOP
+  $DE5D EXIT  <-  GOEX
+  $DE60 FRM_ELEMENT  <-  CAT, FRMEVL_1
+  $DE64 L_FRM_ELEMENT_1  <-  L_FRM_ELEMENT_3
+  $DE69 L_FRM_ELEMENT_2  <-  L_FRM_ELEMENT_3
+  $DE6C L_FRM_ELEMENT_3  <-  L_FRM_ELEMENT_1
+  $DE81 STRTXT  <-  INPUT
+  $DE8A L_STRTXT_1  <-  STRTXT
+  $DE90 NOT_  <-  L_FRM_ELEMENT_3
+  $DE98 EQUOP  <-  MEQUU
+  $DE9F L_EQUOP_1  <-  EQUOP
+  $DEA4 FN_  <-  NOT_
+  $DEAB SGN_  <-  FN_
+  $DEB2 PARCHK  <-  FUNCT, L_UNARY_1, SGN_
+  $DEB8 CHKCLS  <-  DEF, L_ARRAY_1, SCREEN, SUBSTRING_SETUP
+  $DEBB CHKOPN  <-  DEF, PARCHK, UNARY
+  $DEBE CHKCOM  <-  COMBYTE, L_INPUT_MORE_1, MIDSTR, NXDIM, UNARY
+  $DEC0 SYNCHR  <-  DEF, DEL, FNC_, IF, INPUT, LET, L_DRWPNT_2, L_FOR_1, L_HFNS_1, L_HPLOT_2, L_LINCOOR_1, ONERR, PLOTFNS
+  $DEC9 SYNERR  <-  BADNAM, ERLIN, JSYN, L_FUNCT_1, PR_TAB_OR_SPC, SNTXERR, SYNCHR, SYNERR_1, SYNERR_2
+  $DECE MIN  <-  L_FRM_ELEMENT_3
+  $DED0 EQUL  <-  NOT_
+  $DED5 FRM_VARIABLE  <-  L_FRM_ELEMENT_3
+  $DEE5 L_FRM_VARIABLE_CALL_1  <-  FRM_VARIABLE_CALL
+  $DEF6 L_FRM_VARIABLE_CALL_2  <-  L_FRM_VARIABLE_CALL_1
+  $DEF9 SCREEN  <-  UNARY
+  $DF0C UNARY  <-  SGN_
+  $DF3A L_UNARY_1  <-  UNARY
+  $DF3F L_UNARY_2  <-  UNARY
+  $DF4F OR  <-  MATHTBL
+  $DF55 ANDOP  <-  MATHTBL
+  $DF5D FALSE  <-  ANDOP
+  $DF60 TRUE  <-  ANDOP, OR
+  $DF65 RELOPS  <-  M_REL
+  $DF7D STRCMP  <-  RELOPS
+  $DFA5 L_STRCMP_1  <-  STRCMP
+  $DFAA STRCMP_1  <-  STRCMP_2
+  $DFB0 NUMCMP  <-  RELOPS
+  $DFB5 STRCMP_2  <-  STRCMP_1
+  $DFC1 CMPDONE  <-  NUMCMP, STRCMP_2
+  $DFCA L_CMPDONE_1  <-  CMPDONE
+  $DFCD PDL  <-  UNFNC
+  $DFD6 NXDIM  <-  DIM
+  $DFD9 DIM  <-  TOKEN_ADDRESS_TABLE
+  $DFE3 PTRGET  <-  DEF, FRM_VARIABLE, GETARYPT, LET, NEXT_1, PROCESS_INPUT_ITEM
+  $DFE8 PTRGET2  <-  DIM
+  $DFEA PTRGET3  <-  FNC_
+  $DFF4 BADNAM  <-  L_PTRGET4_4
+  $DFF7 NAMOK  <-  PTRGET3
+  $E007 PTRGET4  <-  NAMOK
+  $E011 L_PTRGET4_1  <-  PTRGET4
+  $E012 L_PTRGET4_2  <-  L_PTRGET4_2
+  $E01C L_PTRGET4_3  <-  PTRGET4
+  $E026 L_PTRGET4_4  <-  L_PTRGET4_3
+  $E036 L_PTRGET4_5  <-  L_PTRGET4_3
+  $E03D L_PTRGET4_6  <-  L_PTRGET4_4
+  $E046 L_PTRGET4_7  <-  L_PTRGET4_8
+  $E049 L_PTRGET4_8  <-  L_PTRGET4_6
+  $E04F L_PTRGET4_9  <-  L_PTRGET4_8
+  $E059 L_PTRGET4_10  <-  L_PTRGET4_13
+  $E05B L_PTRGET4_11  <-  L_PTRGET4_13
+  $E065 L_PTRGET4_12  <-  L_PTRGET4_11
+  $E073 L_PTRGET4_13  <-  L_PTRGET4_12
+  $E07D ISLETC  <-  L_FRM_ELEMENT_3, L_PTRGET4_2, PTRGET3, PTRGET4
+  $E086 L_ISLETC_1  <-  ISLETC
+  $E087 NAME_NOT_FOUND  <-  L_PTRGET4_11
+  $E09C MAKE_NEW_VARIABLE  <-  NAME_NOT_FOUND
+  $E0B2 L_MAKE_NEW_VARIABLE_1  <-  MAKE_NEW_VARIABLE
+  $E0DE SET_VARPNT_AND_YA  <-  L_PTRGET4_12
+  $E0E8 L_SET_VARPNT_AND_YA_1  <-  SET_VARPNT_AND_YA
+  $E0ED GETARY  <-  L_MAKE_NEW_ARRAY_1, L_USE_OLD_ARRAY_1
+  $E0EF GETARY2  <-  TAPEPNT
+  $E0F9 L_GETARY2_1  <-  GETARY2
+  $E102 MAKINT  <-  L_ARRAY_1
+  $E108 MKINT  <-  CONINT
+  $E10C AYINT  <-  LET2
+  $E119 MI1  <-  MKINT
+  $E11B MI2  <-  AYINT
+  $E11E ARRAY  <-  L_PTRGET4_7
+  $E12C L_ARRAY_1  <-  L_ARRAY_1
+  $E169 L_ARRAY_2  <-  ARRAY
+  $E16D L_ARRAY_3  <-  L_ARRAY_5
+  $E179 L_ARRAY_4  <-  L_ARRAY_3
+  $E188 L_ARRAY_5  <-  L_ARRAY_4
+  $E196 SUBERR  <-  GSE, L_USE_OLD_ARRAY_1
+  $E199 IQERR  <-  GIQ, GOERR, GOIQ, MI1
+  $E19B JER  <-  USE_OLD_ARRAY
+  $E19E USE_OLD_ARRAY  <-  L_ARRAY_4
+  $E1AA L_USE_OLD_ARRAY_1  <-  USE_OLD_ARRAY
+  $E1B8 MAKE_NEW_ARRAY  <-  L_ARRAY_3
+  $E1C1 L_MAKE_NEW_ARRAY_1  <-  MAKE_NEW_ARRAY
+  $E1D5 L_MAKE_NEW_ARRAY_2  <-  L_MAKE_NEW_ARRAY_1
+  $E1DE L_MAKE_NEW_ARRAY_3  <-  L_MAKE_NEW_ARRAY_2
+  $E1E7 L_MAKE_NEW_ARRAY_4  <-  L_MAKE_NEW_ARRAY_5
+  $E1F7 L_MAKE_NEW_ARRAY_5  <-  L_MAKE_NEW_ARRAY_4
+  $E21A L_MAKE_NEW_ARRAY_6  <-  L_MAKE_NEW_ARRAY_5
+  $E229 L_MAKE_NEW_ARRAY_7  <-  L_MAKE_NEW_ARRAY_7, L_MAKE_NEW_ARRAY_8
+  $E22E L_MAKE_NEW_ARRAY_8  <-  L_MAKE_NEW_ARRAY_6
+  $E24B FIND_ARRAY_ELEMENT  <-  L_USE_OLD_ARRAY_1
+  $E253 FAE_1  <-  L_FAE_3_1
+  $E269 GSE  <-  FAE_1
+  $E26C GME  <-  L_MAKE_NEW_ARRAY_5, L_MULTIPLY_SUBS_1_1
+  $E26F FAE_2  <-  FAE_1
+  $E270 FAE_3  <-  FAE_1
+  $E281 L_FAE_3_1  <-  FAE_3
+  $E292 L_FAE_3_2  <-  L_FAE_3_1
+  $E298 L_FAE_3_3  <-  L_FAE_3_2
+  $E2AC RTS_9  <-  ERRDIR, L_MAKE_NEW_ARRAY_8
+  $E2AD MULTIPLY_SUBSCRIPT  <-  FAE_3, L_MAKE_NEW_ARRAY_5
+  $E2B6 MULTIPLY_SUBS_1  <-  L_FAE_3_3
+  $E2C0 L_MULTIPLY_SUBS_1_1  <-  L_MULTIPLY_SUBS_1_2
+  $E2D9 L_MULTIPLY_SUBS_1_2  <-  L_MULTIPLY_SUBS_1_1
+  $E2DE FRE  <-  UNFNC
+  $E2E5 L_FRE_1  <-  FRE
+  $E2F2 GIVAYF  <-  L_FRM_VARIABLE_CALL_1, SNGFLT
+  $E2FF POS  <-  UNFNC
+  $E301 SNGFLT  <-  ASC, LEN, L_EQUOP_1, PDL, PEEK, SCREEN, TRUE
+  $E306 ERRDIR  <-  DEF, GET, L_INPUT_2
+  $E30E UNDFNC  <-  FUNCT
+  $E313 DEF  <-  TOKEN_ADDRESS_TABLE
+  $E341 FNC_  <-  DEF, FUNCT
+  $E354 FUNCT  <-  FN_
+  $E378 L_FUNCT_1  <-  L_FUNCT_1
+  $E3A9 L_FUNCT_2  <-  L_FUNCT_1
+  $E3AF FNCDATA  <-  DEF
+  $E3C5 STR  <-  UNFNC
+  $E3D5 STRINI  <-  L_CAT_1, L_PUTSTR_3, L_STRLT2_6
+  $E3DD STRSPA  <-  CHRSTR, SUBSTRING_3
+  $E3E7 STRLIT  <-  L_STRTXT_1, PRINT2, STR, STROUT
+  $E3ED STRLT2  <-  L_INSTART_4
+  $E3F7 L_STRLT2_1  <-  L_STRLT2_1
+  $E404 L_STRLT2_2  <-  L_STRLT2_1
+  $E408 L_STRLT2_3  <-  L_STRLT2_1
+  $E409 L_STRLT2_4  <-  L_STRLT2_2
+  $E415 L_STRLT2_5  <-  L_STRLT2_4
+  $E41F L_STRLT2_6  <-  L_STRLT2_5
+  $E42A PUTNEW  <-  CHRSTR, L_CAT_1, L_STRLT2_5, L_SUBSTRING_3_1
+  $E432 JERR  <-  L_GETSPA_4
+  $E435 PUTEMP  <-  PUTNEW
+  $E452 GETSPA  <-  STRSPA
+  $E454 L_GETSPA_1  <-  L_GETSPA_4
+  $E45F L_GETSPA_2  <-  L_GETSPA_1
+  $E469 L_GETSPA_3  <-  L_GETSPA_2
+  $E474 L_GETSPA_4  <-  L_GETSPA_2
+  $E484 GARBAG  <-  L_FRE_1, L_GETSPA_4, L_REASON_2
+  $E488 FIND_HIGHEST_STRING  <-  MOVE_HIGHEST_STRING_TO_TOP
+  $E4A0 L_FIND_HIGHEST_STRING_1  <-  L_FIND_HIGHEST_STRING_1
+  $E4A9 L_FIND_HIGHEST_STRING_2  <-  L_FIND_HIGHEST_STRING_1
+  $E4B5 L_FIND_HIGHEST_STRING_3  <-  L_FIND_HIGHEST_STRING_4
+  $E4BD L_FIND_HIGHEST_STRING_4  <-  L_FIND_HIGHEST_STRING_3
+  $E4C2 L_FIND_HIGHEST_STRING_5  <-  L_FIND_HIGHEST_STRING_3
+  $E4CA L_FIND_HIGHEST_STRING_6  <-  L_FIND_HIGHEST_STRING_8
+  $E4CE L_FIND_HIGHEST_STRING_7  <-  L_FIND_HIGHEST_STRING_10
+  $E4D9 L_FIND_HIGHEST_STRING_8  <-  L_FIND_HIGHEST_STRING_7
+  $E50A L_FIND_HIGHEST_STRING_9  <-  L_FIND_HIGHEST_STRING_8
+  $E50C L_FIND_HIGHEST_STRING_10  <-  L_FIND_HIGHEST_STRING_11
+  $E514 L_FIND_HIGHEST_STRING_11  <-  L_FIND_HIGHEST_STRING_10
+  $E519 CHECK_SIMPLE_VARIABLE  <-  L_FIND_HIGHEST_STRING_4
+  $E523 CHECK_VARIABLE  <-  L_FIND_HIGHEST_STRING_1, L_FIND_HIGHEST_STRING_11
+  $E538 L_CHECK_VARIABLE_1  <-  CHECK_VARIABLE
+  $E542 L_CHECK_VARIABLE_2  <-  L_CHECK_VARIABLE_1
+  $E552 CHECK_BUMP  <-  CHECK_SIMPLE_VARIABLE, CHECK_VARIABLE, L_CHECK_VARIABLE_1
+  $E55D CHECK_EXIT  <-  CHECK_BUMP, MOVE_HIGHEST_STRING_TO_TOP
+  $E562 MOVE_HIGHEST_STRING_TO_TOP  <-  L_FIND_HIGHEST_STRING_7
+  $E597 CAT  <-  L_FRMEVL_2_2
+  $E5B7 L_CAT_1  <-  CAT
+  $E5D4 MOVINS  <-  L_CAT_1, L_PUTSTR_3
+  $E5E2 MOVSTR  <-  L_STRLT2_6
+  $E5E6 MOVSTR_1  <-  L_CAT_1, L_SUBSTRING_3_1
+  $E5EA L_MOVSTR_1_1  <-  L_MOVSTR_1_1
+  $E5F3 L_MOVSTR_1_2  <-  MOVSTR_1
+  $E5FC L_MOVSTR_1_3  <-  L_MOVSTR_1_2
+  $E5FD FRESTR  <-  GETSTR
+  $E600 FREFAC  <-  FRE, STRCMP, STRPRT
+  $E604 FRETMP  <-  L_CAT_1, STRCMP, SUBSTRING_3
+  $E62F L_FRETMP_1  <-  FRETMP
+  $E630 L_FRETMP_2  <-  FRETMP
+  $E635 FRETMS  <-  FRETMP, L_PUTSTR_4
+  $E645 L_FRETMS_1  <-  FRETMS
+  $E646 CHRSTR  <-  UNFNC
+  $E65A LEFTSTR  <-  UNFNC
+  $E660 SUBSTRING_1  <-  RIGHTSTR
+  $E666 L_SUBSTRING_1_1  <-  SUBSTRING_1
+  $E667 SUBSTRING_2  <-  L_MIDSTR_1
+  $E668 SUBSTRING_3  <-  L_MIDSTR_1
+  $E67F L_SUBSTRING_3_1  <-  SUBSTRING_3
+  $E686 RIGHTSTR  <-  UNFNC
+  $E691 MIDSTR  <-  UNFNC
+  $E6A2 L_MIDSTR_1  <-  MIDSTR
+  $E6B9 SUBSTRING_SETUP  <-  LEFTSTR, L_MIDSTR_1, RIGHTSTR
+  $E6D6 LEN  <-  UNFNC
+  $E6DC GETSTR  <-  ASC, LEN, VAL
+  $E6E5 ASC  <-  UNFNC
+  $E6F2 GOIQ  <-  ASC, CONINT, GETADR, SUBSTRING_SETUP
+  $E6F5 GTBYTC  <-  PR_TAB_OR_SPC
+  $E6F8 GETBYT  <-  COLOR, COMBYTE, DRWPNT, HCOLOR, HTAB, IN_NUMBER, L_HFNS_1, L_LINCOOR_1, MIDSTR, ONGOTO, PLOTFNS, PR_NUMBER, ROT, SCALE, SPEED, UNARY, VTAB
+  $E6FB CONINT  <-  CHRSTR, PDL
+  $E707 VAL  <-  UNFNC
+  $E70F L_VAL_1  <-  VAL
+  $E727 L_VAL_2  <-  L_VAL_1
+  $E73D POINT  <-  L_INSTART_4, L_STRTXT_1
+  $E746 GTNUM  <-  POKE, WAIT
+  $E74C COMBYTE  <-  WAIT
+  $E752 GETADR  <-  CALL, GTNUM, HFNS, HIMEM, LOMEM, PEEK
+  $E764 PEEK  <-  UNFNC
+  $E77B POKE  <-  TOKEN_ADDRESS_TABLE
+  $E784 WAIT  <-  BELL1, BELL2, TOKEN_ADDRESS_TABLE
+  $E793 L_WAIT_1  <-  WAIT
+  $E797 L_WAIT_2  <-  L_WAIT_2
+  $E79F RTS_10  <-  FADD_2
+  $E7A0 FADDH  <-  L_FOUT_1_9, SIN
+  $E7A7 FSUB  <-  LOG_2, L_ATN_2, SIN
+  $E7AA FSUBT  <-  L_EXP_4, MATHTBL, SIN
+  $E7B9 FADD_1  <-  L_FADD_2_2
+  $E7BE FADD  <-  COS, FADDH, LOG_2, L_SERMAIN_3, NEXT_3, RND, SIN_2
+  $E7C1 FADDT  <-  ADDACC, FSUBT, MATHTBL
+  $E7C6 L_FADDT_1  <-  FADDT
+  $E7CE FADD_2  <-  MUL10
+  $E7EA L_FADD_2_1  <-  FADD_2
+  $E7EE L_FADD_2_2  <-  FADD_2
+  $E7FA FADD_3  <-  FADD_1, FADD_2
+  $E806 L_FADD_3_1  <-  FADD_3
+  $E829 NORMALIZE_FAC_1  <-  FLOAT_2, INT
+  $E82E NORMALIZE_FAC_2  <-  COPY_RESULT_INTO_FAC, L_RND_1, NORMALIZE_FAC_1
+  $E832 L_NORMALIZE_FAC_2_1  <-  L_NORMALIZE_FAC_2_1
+  $E84E ZERO_FAC  <-  NORMALIZE_FAC_4, VAL, ZERO
+  $E850 STA_IN_FAC_SIGN_AND_EXP  <-  FPWRT
+  $E852 STA_IN_FAC_SIGN  <-  L_ADD_EXPONENTS_1_1
+  $E855 FADD_4  <-  FADD_3
+  $E874 NORMALIZE_FAC_3  <-  NORMALIZE_FAC_4
+  $E880 NORMALIZE_FAC_4  <-  L_NORMALIZE_FAC_2_1
+  $E88D NORMALIZE_FAC_5  <-  FADD_4
+  $E88F NORMALIZE_FAC_6  <-  INCREMENT_MANTISSA
+  $E89D RTS_11  <-  NORMALIZE_FAC_5
+  $E89E COMPLEMENT_FAC  <-  NORMALIZE_FAC_1
+  $E8A4 COMPLEMENT_FAC_MANTISSA  <-  QINT
+  $E8C6 INCREMENT_FAC_MANTISSA  <-  INCREMENT_MANTISSA
+  $E8D4 RTS_12  <-  COMPLEMENT_FAC_MANTISSA, INCREMENT_FAC_MANTISSA
+  $E8D5 OVERFLOW  <-  GETEXP, JOV, NORMALIZE_FAC_6
+  $E8DA SHIFT_RIGHT_1  <-  MULTIPLY_1
+  $E8DC SHIFT_RIGHT_2  <-  SHIFT_RIGHT
+  $E8F0 SHIFT_RIGHT  <-  FADD_1, L_QINT_1
+  $E8FD SHIFT_RIGHT_3  <-  SHIFT_RIGHT_4
+  $E903 L_L_1  <-  L
+  $E907 SHIFT_RIGHT_4  <-  L_FADD_2_2, QINT_2
+  $E911 SHIFT_RIGHT_5  <-  SHIFT_RIGHT
+  $E941 LOG  <-  L_FPWRT_2, UNFNC
+  $E948 GIQ  <-  LOG
+  $E94B LOG_2  <-  LOG
+  $E97F FMULT  <-  EXP, L_FOUT_1_3, L_FPWRT_2, L_SERMAIN_2, POLYNOMIAL_ODD, RND
+  $E982 FMULTT  <-  MATHTBL
+  $E987 L_FMULTT_1  <-  FMULTT
+  $E9B0 MULTIPLY_1  <-  L_FMULTT_1
+  $E9B5 MULTIPLY_2  <-  L_FMULTT_1, MULTIPLY_1
+  $E9B8 L_MULTIPLY_2_1  <-  L_MULTIPLY_2_2
+  $E9D4 L_MULTIPLY_2_2  <-  L_MULTIPLY_2_1
+  $E9E2 RTS_13  <-  FMULTT
+  $E9E3 LOAD_ARG_FROM_YA  <-  FADD, FDIV, FMULT, FSUB
+  $EA0E ADD_EXPONENTS  <-  FDIVT, L_FMULTT_1
+  $EA10 ADD_EXPONENTS_1  <-  L_EXP_4
+  $EA1B L_ADD_EXPONENTS_1_1  <-  ADD_EXPONENTS_1
+  $EA26 L_ADD_EXPONENTS_1_2  <-  L_ADD_EXPONENTS_1_1
+  $EA2B OUTOFRNG  <-  L_EXP_2
+  $EA31 ZERO  <-  ADD_EXPONENTS_1, L_ADD_EXPONENTS_1_1
+  $EA36 JOV  <-  ADD_EXPONENTS_1, FDIVT, MUL10, OUTOFRNG
+  $EA39 MUL10  <-  L_FIN_8_14, L_FIN_9_1, L_FOUT_1_7
+  $EA4F L_MUL10_1  <-  MUL10
+  $EA55 DIV10  <-  L_FIN_8_13, L_FOUT_1_8
+  $EA5E DIV  <-  SIN
+  $EA66 FDIV  <-  LOG_2, L_ATN_1, TAN
+  $EA69 FDIVT  <-  DIV, MATHTBL
+  $EA80 L_FDIVT_1  <-  L_FDIVT_4
+  $EA96 L_FDIVT_2  <-  L_FDIVT_1, L_FDIVT_4
+  $EAA3 L_FDIVT_3  <-  L_FDIVT_2, L_FDIVT_6
+  $EAA6 L_FDIVT_4  <-  L_FDIVT_5
+  $EAB4 L_FDIVT_5  <-  L_FDIVT_3
+  $EAD1 L_FDIVT_6  <-  L_FDIVT_2
+  $EAD5 L_FDIVT_7  <-  L_FDIVT_2
+  $EAE1 L_FDIVT_8  <-  FDIVT
+  $EAE6 COPY_RESULT_INTO_FAC  <-  L_FDIVT_7, L_FMULTT_1
+  $EAF9 LOAD_FAC_FROM_YA  <-  DIV, L_FRM_VARIABLE_CALL_2, NEXT_3, RND, SQR, STEP, TAN
+  $EB1E STORE_FAC_IN_TEMP2_ROUNDED  <-  SERMAIN
+  $EB21 STORE_FAC_IN_TEMP1_ROUNDED  <-  POLYNOMIAL_ODD, TAN
+  $EB27 SETFOR  <-  L_LET2_1, NEXT_3
+  $EB2B STORE_FACDB_YX_ROUNDED  <-  GO_MOVMF, L_FPWRT_1, L_FUNCT_1, STORE_FAC_IN_TEMP1_ROUNDED
+  $EB53 COPY_ARG_TO_FAC  <-  FADDT
+  $EB55 MFA  <-  L_FPWRT_2
+  $EB59 L_MFA_1  <-  L_MFA_1
+  $EB63 COPY_FAC_TO_ARG_ROUNDED  <-  ADDACC, DIV10, MUL10, SIN, SQR
+  $EB66 MAF  <-  L_EXP_1
+  $EB68 L_MAF_1  <-  L_MAF_1
+  $EB71 RTS_14  <-  INCREMENT_MANTISSA, ROUND_FAC
+  $EB72 ROUND_FAC  <-  COPY_FAC_TO_ARG_ROUNDED, FDIVT, FRM_STACK_3, LET2, STORE_FACDB_YX_ROUNDED
+  $EB7A INCREMENT_MANTISSA  <-  EXP
+  $EB82 SIGN  <-  FCOMP2, LOG, L_STEP_1, RND, SGN
+  $EB86 SIGN1  <-  FCOMP2
+  $EB88 SIGN2  <-  L_FCOMP2_2
+  $EB8F RTS_15  <-  SIGN, SIGN2
+  $EB90 SGN  <-  UNFNC
+  $EB93 FLOAT  <-  ADDACC, L_CMPDONE_1
+  $EB9B FLOAT_1  <-  GIVAYF
+  $EBA0 FLOAT_2  <-  LINPRT
+  $EBAF ABS  <-  UNFNC
+  $EBB2 FCOMP  <-  AYINT, L_FOUT_1_5, L_FOUT_1_6, L_FPWRT_1, RELOPS
+  $EBB4 FCOMP2  <-  NEXT_3
+  $EBE9 L_FCOMP2_1  <-  FCOMP2
+  $EBEF L_FCOMP2_2  <-  L_FCOMP2_1
+  $EBF2 QINT  <-  GETADR, INT, L_FOUT_1_10, MI2
+  $EC06 L_QINT_1  <-  QINT
+  $EC11 RTS_16  <-  FCOMP2
+  $EC12 QINT_2  <-  L_QINT_1
+  $EC23 INT  <-  L_EXP_3, L_FPWRT_1, SIN, UNFNC
+  $EC40 QINT_3  <-  QINT
+  $EC49 RTS_17  <-  INT
+  $EC4A FIN  <-  INPUTDWTA, L_FRM_ELEMENT_2, L_VAL_2
+  $EC4E L_FIN_1  <-  L_FIN_1
+  $EC5D L_FIN_2  <-  L_FIN_1
+  $EC61 FIN_1  <-  FIN_10, L_FIN_1, L_FIN_9_1
+  $EC64 FIN_2  <-  L_FIN_1
+  $EC66 FIN_3  <-  L_FIN_2
+  $EC85 L_FIN_3_1  <-  FIN_3
+  $EC87 FIN_4  <-  FIN_3, L_GETEXP_2
+  $EC8A FIN_5  <-  FIN_3
+  $EC8C FIN_6  <-  FIN_3
+  $EC98 FIN_10  <-  FIN_3
+  $EC9E FIN_7  <-  FIN_3, FIN_6
+  $ECA0 FIN_8  <-  FIN_6
+  $ECA9 L_FIN_8_13  <-  L_FIN_8_13
+  $ECB2 L_FIN_8_14  <-  FIN_8, L_FIN_8_14
+  $ECB9 L_FIN_8_15  <-  FIN_8, L_FIN_8_13
+  $ECBE L_FIN_8_16  <-  L_FIN_8_15
+  $ECC1 FIN_9  <-  FIN_2
+  $ECC8 L_FIN_9_1  <-  FIN_9
+  $ECD5 ADDACC  <-  LOG_2, L_FIN_9_1
+  $ECE8 GETEXP  <-  FIN_5
+  $ECF7 L_GETEXP_1  <-  GETEXP
+  $ED05 L_GETEXP_2  <-  GETEXP
+  $ED19 INPRT  <-  PRINT_ERROR_LINNUM
+  $ED24 LINPRT  <-  L_LIST_0_6, TRACE_
+  $ED31 GO_STROUT  <-  INPRT
+  $ED34 FOUT  <-  PRINT2, PRINT_FAC
+  $ED36 FOUT_1  <-  STR
+  $ED41 L_FOUT_1_1  <-  FOUT_1
+  $ED4F L_FOUT_1_2  <-  L_FOUT_1_1
+  $ED57 L_FOUT_1_3  <-  L_FOUT_1_2
+  $ED60 L_FOUT_1_4  <-  L_FOUT_1_2
+  $ED62 L_FOUT_1_5  <-  L_FOUT_1_8
+  $ED6D L_FOUT_1_6  <-  L_FOUT_1_7
+  $ED78 L_FOUT_1_7  <-  L_FOUT_1_6
+  $ED7F L_FOUT_1_8  <-  L_FOUT_1_5
+  $ED86 L_FOUT_1_9  <-  L_FOUT_1_6
+  $ED89 L_FOUT_1_10  <-  L_FOUT_1_5
+  $ED9E L_FOUT_2_1  <-  FOUT_2
+  $ED9F L_FOUT_2_2  <-  FOUT_2
+  $EDAA L_FOUT_2_3  <-  L_FOUT_2_2
+  $EDBB L_FOUT_2_4  <-  L_FOUT_2_3
+  $EDBD L_FOUT_2_5  <-  L_FOUT_2_2
+  $EDC1 L_FOUT_2_6  <-  L_FOUT_2_10, L_FOUT_2_6, L_FOUT_2_7
+  $EDE5 L_FOUT_2_7  <-  L_FOUT_2_6
+  $EDE7 L_FOUT_2_8  <-  L_FOUT_2_6
+  $EDEE L_FOUT_2_9  <-  L_FOUT_2_8
+  $EE09 L_FOUT_2_10  <-  L_FOUT_2_9
+  $EE19 L_FOUT_3_1  <-  L_FOUT_3_1
+  $EE26 L_FOUT_3_2  <-  L_FOUT_3_1
+  $EE36 L_FOUT_3_3  <-  L_FOUT_3_2
+  $EE42 L_FOUT_3_4  <-  L_FOUT_3_4
+  $EE57 FOUT_4  <-  L_FOUT_1_1
+  $EE5A FOUT_5  <-  L_FOUT_3_2
+  $EE5F FOUT_6  <-  L_FOUT_3_4
+  $EE8D SQR  <-  UNFNC
+  $EE97 FPWRT  <-  MATHTBL
+  $EEA0 L_FPWRT_1  <-  FPWRT
+  $EEBA L_FPWRT_2  <-  L_FPWRT_1
+  $EED0 NEGOP  <-  ATN, L_ATN_3, L_EXP_4, L_FIN_8_16, M_NEG, SIN_1, SIN_2
+  $EEDA RTS_18  <-  L_FPWRT_2, NEGOP
+  $EF09 EXP  <-  FPWRT, L_FPWRT_2, UNFNC
+  $EF19 L_EXP_1  <-  EXP
+  $EF24 L_EXP_2  <-  L_EXP_3
+  $EF27 L_EXP_3  <-  L_EXP_1
+  $EF37 L_EXP_4  <-  L_EXP_4
+  $EF5C POLYNOMIAL_ODD  <-  LOG_2, L_ATN_2, L_SIN_2_1
+  $EF72 POLYNOMIAL  <-  L_EXP_4
+  $EF76 SERMAIN  <-  POLYNOMIAL_ODD
+  $EF85 L_SERMAIN_1  <-  SERMAIN
+  $EF89 L_SERMAIN_2  <-  L_SERMAIN_3
+  $EF96 L_SERMAIN_3  <-  L_SERMAIN_2
+  $EFA5 RTS_19  <-  RND
+  $EFAE RND  <-  UNFNC
+  $EFCC L_RND_1  <-  RND
+  $EFE7 GO_MOVMF  <-  TAN
+  $EFEA COS  <-  UNFNC
+  $EFF1 SIN  <-  TAN, UNFNC
+  $F023 SIN_1  <-  SIN, TAN_1
+  $F026 SIN_2  <-  SIN
+  $F033 L_SIN_2_1  <-  SIN_2
+  $F03A TAN  <-  UNFNC
+  $F062 TAN_1  <-  TAN
+  $F09E ATN  <-  UNFNC
+  $F0A6 L_ATN_1  <-  ATN
+  $F0B4 L_ATN_2  <-  L_ATN_1
+  $F0C7 L_ATN_3  <-  L_ATN_2
+  $F0CD RTS_20  <-  L_ATN_3
+  $F10B GENERIC_CHRGET  <-  L_GENERIC_CHRGET_1
+  $F111 L_GENERIC_CHRGET_1  <-  GENERIC_CHRGET
+  $F122 L_GENERIC_CHRGET_2  <-  L_GENERIC_CHRGET_1
+  $F128 COLD_START  <-  BASIC
+  $F152 L_COLD_START_1  <-  L_COLD_START_1
+  $F181 L_COLD_START_2  <-  L_COLD_START_2
+  $F195 L_COLD_START_3  <-  L_COLD_START_2
+  $F1B8 L_COLD_START_4  <-  L_COLD_START_3
+  $F1D5 CALL  <-  TOKEN_ADDRESS_TABLE
+  $F1DE IN_NUMBER  <-  TOKEN_ADDRESS_TABLE
+  $F1E5 PR_NUMBER  <-  TOKEN_ADDRESS_TABLE
+  $F1EC PLOTFNS  <-  LINCOOR, PLOT, SCREEN
+  $F206 GOERR  <-  GGERR, HLIN, L_LINCOOR_1, PLOT, PLOTFNS, VLIN, VTAB
+  $F209 LINCOOR  <-  HLIN, VLIN
+  $F218 L_LINCOOR_1  <-  LINCOOR
+  $F225 PLOT  <-  HLINE, TOKEN_ADDRESS_TABLE, VLINE
+  $F232 HLIN  <-  TOKEN_ADDRESS_TABLE
+  $F241 VLIN  <-  TOKEN_ADDRESS_TABLE
+  $F24F COLOR  <-  TOKEN_ADDRESS_TABLE
+  $F256 VTAB  <-  CLEOP1, SCRL3, TABV, TOKEN_ADDRESS_TABLE
+  $F262 SPEED  <-  TOKEN_ADDRESS_TABLE
+  $F26D TRACE  <-  TOKEN_ADDRESS_TABLE
+  $F26F NOTRACE  <-  TOKEN_ADDRESS_TABLE
+  $F273 NORMAL  <-  COLD_START, TOKEN_ADDRESS_TABLE
+  $F277 INVERSE  <-  TOKEN_ADDRESS_TABLE
+  $F279 N_I_  <-  NORMAL
+  $F27B N_I_F_  <-  FLASH
+  $F280 FLASH  <-  TOKEN_ADDRESS_TABLE
+  $F286 HIMEM  <-  TOKEN_ADDRESS_TABLE
+  $F296 JMM  <-  LOMEM
+  $F299 SETHI  <-  HIMEM
+  $F2A6 LOMEM  <-  TOKEN_ADDRESS_TABLE
+  $F2CB ONERR  <-  TOKEN_ADDRESS_TABLE
+  $F2E9 HANDLERR  <-  CONTROL_C_TYPED, ERROR, RESPERR
+  $F318 RESUME  <-  TOKEN_ADDRESS_TABLE
+  $F32E JSYN  <-  DEL
+  $F331 DEL  <-  TOKEN_ADDRESS_TABLE
+  $F357 L_DEL_1  <-  DEL
+  $F365 L_DEL_2  <-  L_DEL_1
+  $F367 L_DEL_3  <-  L_DEL_5
+  $F371 L_DEL_4  <-  L_DEL_3
+  $F377 L_DEL_5  <-  L_DEL_4
+  $F388 L_DEL_6  <-  L_DEL_5
+  $F390 GR  <-  TOKEN_ADDRESS_TABLE
+  $F399 TEXT  <-  TOKEN_ADDRESS_TABLE
+  $F39F STORE  <-  TOKEN_ADDRESS_TABLE
+  $F3AF L_STORE_1  <-  STORE
+  $F3BC RECALL  <-  TOKEN_ADDRESS_TABLE
+  $F3D2 L_RECALL_1  <-  RECALL
+  $F3D8 HGR2  <-  TOKEN_ADDRESS_TABLE
+  $F3E2 HGR  <-  TOKEN_ADDRESS_TABLE
+  $F3EA SETHPG  <-  HGR2
+  $F3FE L_BKGND_1  <-  L_BKGND_1
+  $F411 HPOSN  <-  HPLOT0, L_DRWPNT_2
+  $F441 L_HPOSN_1  <-  L_HPOSN_2
+  $F442 L_HPOSN_2  <-  HPOSN
+  $F457 HPLOT0  <-  HPLOT
+  $F465 MOVE_LEFT_OR_RIGHT  <-  CON_03, MOVEX
+  $F46E LR_1  <-  MOVE_RIGHT
+  $F471 LR_2  <-  MOVE_LEFT_OR_RIGHT
+  $F476 LR_3  <-  LR_2
+  $F478 LR_4  <-  MOVE_RIGHT
+  $F47E COLOR_SHIFT  <-  L_BKGND_1, L_HPOSN_2
+  $F489 L_COLOR_SHIFT_1  <-  COLOR_SHIFT
+  $F48A MOVE_RIGHT  <-  MOVE_LEFT_OR_RIGHT
+  $F49C LRUDX1  <-  L_XDRAW1_2
+  $F49D LRUDX2  <-  L_XDRAW1_3
+  $F4B3 LRUD1  <-  L_DRAW1_2
+  $F4B4 LRUD2  <-  L_DRAW1_3
+  $F4C4 LRUD3  <-  LRUD2, LRUDX2
+  $F4C8 LRUD4  <-  LRUD2, LRUDX2
+  $F4D3 MOVE_UP_OR_DOWN  <-  L_MOVEX2_2
+  $F4EB L_MOVE_UP_OR_DOWN_1  <-  MOVE_UP_OR_DOWN
+  $F4F6 L_MOVE_UP_OR_DOWN_2  <-  L_MOVE_UP_OR_DOWN_1
+  $F4FB L_MOVE_UP_OR_DOWN_3  <-  MOVE_UP_OR_DOWN
+  $F4FD L_MOVE_UP_OR_DOWN_4  <-  L_MOVE_UP_OR_DOWN_2, MOVE_UP_OR_DOWN
+  $F4FF L_MOVE_UP_OR_DOWN_5  <-  MOVE_UP_OR_DOWN
+  $F501 UD_1  <-  CON_04, L_CON_04_3
+  $F505 MOVE_DOWN  <-  MOVE_UP_OR_DOWN
+  $F524 L_CON_04_1  <-  CON_04
+  $F52A L_CON_04_2  <-  CON_04
+  $F52C L_CON_04_3  <-  CON_04, L_CON_04_1
+  $F53A HGLIN  <-  L_HPLOT_2
+  $F550 L_HGLIN_1  <-  HGLIN
+  $F568 L_HGLIN_2  <-  L_HGLIN_1
+  $F57C MOVEX  <-  L_MOVEX2_2
+  $F581 MOVEX2  <-  L_HGLIN_2
+  $F58B L_MOVEX2_1  <-  L_MOVEX2_2
+  $F59E L_MOVEX2_2  <-  L_MOVEX2_1
+  $F5F0 L_HFIND_1  <-  L_HFIND_1
+  $F5FE L_HFIND_2  <-  L_HFIND_1
+  $F600 RTS_22  <-  L_MOVEX2_1
+  $F605 DRAW1  <-  DRAW
+  $F626 L_DRAW1_1  <-  L_DRAW1_4, L_DRAW1_5
+  $F630 L_DRAW1_2  <-  L_DRAW1_4
+  $F63D L_DRAW1_3  <-  L_DRAW1_2
+  $F648 L_DRAW1_4  <-  L_DRAW1_3
+  $F658 L_DRAW1_5  <-  L_DRAW1_4
+  $F661 XDRAW1  <-  XDRAW
+  $F682 L_XDRAW1_1  <-  L_XDRAW1_4, L_XDRAW1_5
+  $F68C L_XDRAW1_2  <-  L_XDRAW1_4
+  $F699 L_XDRAW1_3  <-  L_XDRAW1_2
+  $F6A4 L_XDRAW1_4  <-  L_XDRAW1_3
+  $F6B4 L_XDRAW1_5  <-  L_XDRAW1_4
+  $F6B9 HFNS  <-  HPLOT, L_DRWPNT_2, L_HPLOT_2
+  $F6CD L_HFNS_1  <-  HFNS
+  $F6E6 GGERR  <-  DRWPNT, HCOLOR, HFNS, L_HFNS_1
+  $F6E9 HCOLOR  <-  TOKEN_ADDRESS_TABLE
+  $F6F5 RTS_23  <-  L_HPLOT_1
+  $F6FE HPLOT  <-  TOKEN_ADDRESS_TABLE
+  $F708 L_HPLOT_1  <-  L_HPLOT_2
+  $F70F L_HPLOT_2  <-  HPLOT
+  $F721 ROT  <-  TOKEN_ADDRESS_TABLE
+  $F727 SCALE  <-  TOKEN_ADDRESS_TABLE
+  $F72D DRWPNT  <-  DRAW, XDRAW
+  $F741 L_DRWPNT_1  <-  DRWPNT
+  $F747 L_DRWPNT_2  <-  L_DRWPNT_1
+  $F766 L_DRWPNT_3  <-  L_DRWPNT_2
+  $F769 DRAW  <-  TOKEN_ADDRESS_TABLE
+  $F76F XDRAW  <-  TOKEN_ADDRESS_TABLE
+  $F775 SHLOAD  <-  TOKEN_ADDRESS_TABLE
+  $F796 L_SHLOAD_1  <-  SHLOAD
+  $F7A0 L_SHLOAD_2  <-  L_SHLOAD_1
+  $F7A3 L_SHLOAD_3  <-  L_SHLOAD_1
+  $F7BC TAPEPNT  <-  L_RECALL_1, L_STORE_1
+  $F7D9 GETARYPT  <-  RECALL, STORE
+  $F7E7 HTAB  <-  TOKEN_ADDRESS_TABLE
+  $F7EC L_HTAB_1  <-  L_HTAB_1
+  $F7FA L_HTAB_2  <-  L_HTAB_1
+  $F80C RTMASK  <-  PLOT
+  $F80E PLOT1  <-  HLINE1
+  $F81C HLINE1  <-  HLINE1
+  $F826 VLINEZ  <-  VLINE
+  $F828 VLINE  <-  CLRSC3
+  $F831 RTS1  <-  HLINE1
+  $F836 CLRTOP  <-  SETGR
+  $F838 CLRSC2  <-  CLRSCR
+  $F83C CLRSC3  <-  CLRSC3
+  $F847 GBASCALC  <-  PLOT, SCRN
+  $F856 GBCALC  <-  GBASCALC
+  $F879 SCRN2  <-  IEVEN
+  $F87F RTMSKZ  <-  SCRN2
+  $F882 INSDS1  <-  BREAK, INSTDSP
+  $F89B IEVEN  <-  INSDS2
+  $F8A5 ERR  <-  INSDS2
+  $F8A9 GETFMT  <-  IEVEN
+  $F8BE MNNDX1  <-  MNNDX3
+  $F8C2 MNNDX2  <-  MNNDX2
+  $F8C9 MNNDX3  <-  GETFMT, MNNDX1
+  $F8D0 INSTDSP  <-  LIST2
+  $F8D4 PRNTOP  <-  PRNTBL
+  $F8DB PRNTBL  <-  PRNTBL
+  $F8F5 PRMN1  <-  PRMN2
+  $F8F9 PRMN2  <-  PRMN2
+  $F910 PRADR1  <-  PRADR3
+  $F914 PRADR2  <-  PRADR4
+  $F926 PRADR3  <-  PRADR2
+  $F92A PRADR4  <-  PRADR5
+  $F930 PRADR5  <-  PRADR1
+  $F940 PRNTYX  <-  PRYX2, RELADR
+  $F948 PRBLNK  <-  INSDS1, PRMN2
+  $F94A PRBL2  <-  PRBL2, PRNTBL
+  $F953 PCADJ  <-  LIST2
+  $F956 PCADJ3  <-  RELADR
+  $F95C PCADJ4  <-  PCADJ3
+  $F961 RTS2  <-  PCADJ4
+  $FA40 IRQ  <-  M6502VEC
+  $FA4C BREAK  <-  IRQ
+  $FA62 RESET2  <-  M6502VEC
+  $FA9B LFA9B  <-  LFABA
+  $FAA3 LFAA3  <-  RESET2
+  $FAA6 LFAA6  <-  RESET2
+  $FAAB LFAAB  <-  LFAAB
+  $FABA LFABA  <-  LFAC7
+  $FAC7 LFAC7  <-  LFAC7
+  $FAD7 REGDSP  <-  REGZ
+  $FADA RGDSP1  <-  BREAK
+  $FAE4 RDSP1  <-  RDSP1
+  $FB25 PREAD2  <-  PREAD2
+  $FB2E RTS2D  <-  PREAD2
+  $FB2F INIT  <-  RESET, RESET2
+  $FB4B SETWND  <-  SETTXT
+  $FB60 LFB60  <-  LFAA6
+  $FB65 LFB65  <-  LFB65
+  $FB78 LFB78  <-  COUTZ
+  $FB88 LFB88  <-  LFB88
+  $FB94 LFB94  <-  LFB78, LFB88
+  $FB97 LFB97  <-  LFB9B, LFBA5
+  $FB9B LFB9B  <-  LFBA5
+  $FBA5 LFBA5  <-  ESC
+  $FBC1 BASCALC  <-  VTABZ
+  $FBD0 BSCLC2  <-  BASCALC
+  $FBD9 BELL1  <-  VIDOUT
+  $FBE4 BELL2  <-  BELL2
+  $FBEF RTS2B  <-  BELL1
+  $FBF0 STOADV  <-  VIDOUT
+  $FBF4 ADVANCE  <-  ESC1
+  $FBFC RTS3  <-  BS
+  $FBFD VIDOUT  <-  LFB94
+  $FC10 BS  <-  ESC1
+  $FC1A UP  <-  ESC1
+  $FC24 VTABZ  <-  CLEOP1, LF, SCRL1, SCROLL
+  $FC2B RTS4  <-  ESC1, UP
+  $FC2C ESC1  <-  LFB97
+  $FC46 CLEOP1  <-  CLEOP1, HOME
+  $FC58 HOME  <-  ESC1, LFB60
+  $FC62 CR  <-  ADVANCE, VIDOUT
+  $FC66 LF  <-  ESC1, VIDOUT
+  $FC76 SCRL1  <-  SCRL2
+  $FC8C SCRL2  <-  SCRL2
+  $FC95 SCRL3  <-  SCRL1
+  $FC9C CLREOL  <-  ADDINP, ESC1
+  $FC9E CLEOLZ  <-  CLEOP1, SCRL3
+  $FCA0 CLEOL2  <-  CLEOL2
+  $FCA9 WAIT2  <-  WAIT3
+  $FCAA WAIT3  <-  WAIT3
+  $FCB4 NXTA4  <-  MOVE, VFYOK
+  $FCBA NXTA1  <-  DATAOUT, NXTA4, RD3, WR1
+  $FCC8 RTS4B  <-  NXTA1
+  $FCC9 HEADR  <-  HEADR, READ, WRITE
+  $FCD6 WRBIT  <-  WRBYT2
+  $FCDB ZERDLY  <-  HEADR, WRBIT, ZERDLY
+  $FCE2 ONEDLY  <-  ONEDLY
+  $FCE5 WRTAPE  <-  ZERDLY
+  $FCEC RDBYTE  <-  RD3
+  $FCEE RDBYT2  <-  RDBYT2
+  $FCFA RD2BIT  <-  RDBYT2, READ
+  $FCFD RDBIT  <-  RD2, RD2BIT, RDBIT
+  $FD0C RDKEY  <-  ESC, LFB9B, RDCHAR
+  $FD1B KEYIN  <-  KEYIN2
+  $FD21 KEYIN2  <-  KEYIN
+  $FD2F ESC  <-  RDCHAR
+  $FD35 RDCHAR  <-  NXTCHAR
+  $FD3D NOTCR  <-  ADDINP
+  $FD5F NOTCR1  <-  NOTCR
+  $FD62 CANCEL  <-  NOTCR
+  $FD67 GETLNZ  <-  BCKSPC, MONZ
+  $FD71 BCKSPC  <-  NOTCR
+  $FD75 NXTCHAR  <-  NOTCR1
+  $FD7E CAPTST  <-  NXTCHAR1
+  $FD84 ADDINP  <-  CAPTST
+  $FD8E CROUT  <-  GETLNZ, PRYX2, REGDSP
+  $FD92 PRA1  <-  VFY, XAM
+  $FD96 PRYX2  <-  INSDS1
+  $FDA3 XAM8  <-  BL1
+  $FDAD MODSCHK  <-  DATAOUT
+  $FDB3 XAM  <-  XAMPM
+  $FDB6 DATAOUT  <-  MODSCHK
+  $FDC6 XAMPM  <-  BLANK
+  $FDD1 ADD  <-  XAMPM
+  $FDDA PRBYTE  <-  DATAOUT, PRADR4, PRNTAX, PRNTOP, PRNTX, RDSP1, VFY
+  $FDE5 PRHEXZ  <-  PRBYTE
+  $FDED COUT  <-  ADD, BELL, CANCEL, CROUT, DATAOUT, GETLN, NOTCR, PRADR2, PRBL2, PRERR, PRHEXZ, PRMN2, PRYX2, RDSP1, VFY
+  $FDF6 COUTZ  <-  COUT1
+  $FE00 BL1  <-  CRMON
+  $FE17 RTS5  <-  STOR
+  $FE1D SETMDZ  <-  BLANK
+  $FE22 LT2  <-  LT2
+  $FE2C MOVE  <-  MOVE
+  $FE36 VFY  <-  VFYOK
+  $FE58 VFYOK  <-  VFY
+  $FE63 LIST2  <-  LIST2
+  $FE75 A1PC  <-  GO, LIST1
+  $FE78 A1PCLP  <-  A1PCLP
+  $FE7F A1PCRTS  <-  A1PC
+  $FE84 SETNORM  <-  RESET, RESET2
+  $FE86 SETIFLG  <-  SETINV
+  $FE89 SETKBD  <-  RESET, RESET2
+  $FE93 SETVID  <-  RESET, RESET2
+  $FE9B IOPRT  <-  INPRT
+  $FEA7 IOPRT1  <-  IOPRT
+  $FEA9 IOPRT2  <-  IOPRT
+  $FED4 WR1  <-  WR1
+  $FEED WRBYTE  <-  WR1
+  $FEEF WRBYT2  <-  WRBYT2
+  $FF0A RD2  <-  RD2
+  $FF16 RD3  <-  RD3
+  $FF3A BELL  <-  MON, NOTCR, RD3, RESET2, WR1
+  $FF4C SAV1  <-  BREAK
+  $FF65 MON  <-  BREAK, CHRSRCH
+  $FF69 MONZ  <-  CRMON
+  $FF73 NXTITM  <-  CHRSRCH
+  $FF7A CHRSRCH  <-  CHRSRCH
+  $FF8A DIG  <-  NXTCHR
+  $FF90 NXTBIT  <-  NXTBIT
+  $FF98 NXTBAS  <-  NXTBS2
+  $FFA2 NXTBS2  <-  NXTBAS
+  $FFA7 GETNUM  <-  NXTITM
+  $FFAD NXTCHR  <-  NXTBS2
+  $FFBE TOSUB  <-  CHRSRCH
+  $FFC7 ZMODE  <-  MONZ

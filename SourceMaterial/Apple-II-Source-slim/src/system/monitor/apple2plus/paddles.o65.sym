@@ -1,0 +1,9 @@
+PADDL0, 0xc064, 0, 0x0000
+    paddles.s65 128
+PTRIG, 0xc070, 0, 0x0000
+    paddles.s65 124
+PREAD, 0x0000, 0, 0x0002
+PREAD2, 0x0007, 0, 0x0002
+    paddles.s65 131
+RTS2D, 0x0010, 0, 0x0002
+    paddles.s65 129

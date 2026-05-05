@@ -1,0 +1,42 @@
+KBD, 0xc000, 0, 0x0000
+    keyin.s65 124 127
+KBDSTRB, 0xc010, 0, 0x0000
+    keyin.s65 128
+RDKEY, 0x0000, 0, 0x0002
+    keyin.s65 133 138
+KEYIN, 0x000f, 0, 0x0002
+    keyin.s65 125
+KEYIN2, 0x0015, 0, 0x0002
+    keyin.s65 122
+ESC, 0x0023, 0, 0x0002
+    keyin.s65 140
+LFBA5, 0x0000, 0, 0x0000
+    keyin.s65 135
+RDCHAR, 0x0029, 0, 0x0002
+    keyin.s65 179
+NOTCR, 0x0031, 0, 0x0002
+    keyin.s65 188
+COUT, 0x0000, 0, 0x0000
+    keyin.s65 153 169 173
+BCKSPC, 0x0065, 0, 0x0002
+    keyin.s65 159
+CANCEL, 0x0056, 0, 0x0002
+    keyin.s65 161
+NOTCR1, 0x0053, 0, 0x0002
+    keyin.s65 163
+BELL, 0x0000, 0, 0x0000
+    keyin.s65 164
+NXTCHAR, 0x0069, 0, 0x0002
+    keyin.s65 166
+GETLNZ, 0x005b, 0, 0x0002
+    keyin.s65 176
+CROUT, 0x0000, 0, 0x0000
+    keyin.s65 170
+GETLN, 0x005e, 0, 0x0002
+NXTCHAR1, 0x006c, 0, 0x0002
+CAPTST, 0x0072, 0, 0x0002
+    keyin.s65 181
+ADDINP, 0x0078, 0, 0x0002
+    keyin.s65 184
+CLREOL, 0x0000, 0, 0x0000
+    keyin.s65 189

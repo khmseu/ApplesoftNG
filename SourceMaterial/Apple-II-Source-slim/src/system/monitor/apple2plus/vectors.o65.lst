@@ -1,0 +1,9 @@
+
+vectors.s65
+
+
+  110 T:0000  fb 03                    M6502VEC  .word $03fb           ;NMI VECTOR
+
+  112 T:0002  00 00                              .word RESET2                ;RESET VECTOR
+
+  114 T:0004  00 00                              .word IRQ                ;IRQ VECTOR

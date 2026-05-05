@@ -1,0 +1,402 @@
+
+cmd.s65
+
+
+  109 T:0000                                    ;-----------------------------------------------------------------------
+  110 T:0000                                    ;
+  111 T:0000                                    ; MONITOR COMMANDS
+  112 T:0000                                    ;
+  113 T:0000                                    ; Handles monitor commands, such as L (list) and G (go).
+  114 T:0000                                    ;
+  115 T:0000                                    ;-----------------------------------------------------------------------
+
+  117 T:0000                                    IOADR=$c000
+
+  119 T:0000                                    ; ASCII
+  120 T:0000                                    CTRL_B=$02|%10000000
+  121 T:0000                                    CTRL_C=$03|%10000000
+  122 T:0000                                    CTRL_E=$05|%10000000
+  123 T:0000                                    CTRL_K=$0b|%10000000
+  124 T:0000                                    CTRL_P=$10|%10000000
+  125 T:0000                                    CTRL_Y=$19|%10000000
+
+  129 T:0000  a9 8d                    CROUT     lda #$8d
+  130 T:0002  d0 5b                              bne COUT
+  131 T:0004  a4 3d                    PRA1      ldy $3d           ;PRINT CR,A1 IN HEX
+  132 T:0006  a6 3c                              ldx $3c
+  133 T:0008  20 00 00                 PRYX2     jsr CROUT
+  134 T:000b  20 00 00                           jsr PRNTYX
+  135 T:000e  a0 00                              ldy #$00
+  136 T:0010  a9 ad                              lda #("-"|%10000000)     ;PRINT '-'
+  137 T:0012  4c 5f 00                           jmp COUT
+
+  144 T:0015  a5 3c                    XAM8      lda $3c
+  145 T:0017  09 07                              ora #%00000111             ;SET TO FINISH AT
+  146 T:0019  85 3e                              sta $3e              ;  MOD 8=7
+  147 T:001b  a5 3d                              lda $3d
+  148 T:001d  85 3f                              sta $3f
+  149 T:001f  a5 3c                    MODSCHK   lda $3c
+  150 T:0021  29 07                              and #%00000111
+  151 T:0023  d0 03                              bne DATAOUT
+  152 T:0025  20 04 00                 XAM       jsr PRA1
+  153 T:0028  a9 a0                    DATAOUT   lda #(" "|%10000000)
+  154 T:002a  20 5f 00                           jsr COUT                ;OUTPUT BLANK
+  155 T:002d  b1 3c                              lda ($3c),Y
+  156 T:002f  20 4c 00                           jsr PRBYTE                ;OUTPUT BYTE IN HEX
+  157 T:0032  20 00 00                           jsr NXTA1
+  158 T:0035  90 e8                              bcc MODSCHK             ;CHECK IF TIME TO,
+  159 T:0037  60                       RTS4C     rts                 ;  PRINT ADDR
+
+  161 T:0038  4a                       XAMPM     lsr                 ;DETERMINE IF MON
+  162 T:0039  90 ea                              bcc XAM             ;  MODE IS XAM
+  163 T:003b  4a                                 lsr                    ;  ADD, OR SUB
+  164 T:003c  4a                                 lsr 
+  165 T:003d  a5 3e                              lda $3e
+  166 T:003f  90 02                              bcc ADD
+  167 T:0041  49 ff                              eor #$ff             ;SUB: FORM 2S COMPLEMENT
+  168 T:0043  65 3c                    ADD       adc $3c
+  169 T:0045  48                                 pha 
+  170 T:0046  a9 bd                              lda #("="|%10000000)
+  171 T:0048  20 5f 00                           jsr COUT                ;PRINT =, THEN RESULT
+  172 T:004b  68                                 pla 
+
+  178 T:004c  48                       PRBYTE    pha                 ;PRINT BYTE AS 2 HEX
+  179 T:004d  4a                                 lsr                    ;  DIGITS, DESTROYS A-REG
+  180 T:004e  4a                                 lsr 
+  181 T:004f  4a                                 lsr 
+  182 T:0050  4a                                 lsr 
+  183 T:0051  20 57 00                           jsr PRHEXZ
+  184 T:0054  68                                 pla 
+  185 T:0055  29 0f                    PRHEX     and #%00001111          ;PRINT HEX DIG IN A-REG
+  186 T:0057  09 b0                    PRHEXZ    ora #("0"|%10000000)  ;  LSB'S
+  187 T:0059  c9 ba                              cmp #("9"|%10000000)+1
+  188 T:005b  90 02                              bcc COUT
+  189 T:005d  69 06                              adc #$06
+
+  193 T:005f  6c 36 00                 COUT      jmp ($36)         ;VECTOR TO USER OUTPUT ROUTINE
+  194 T:0062  c9 a0                    COUT1     cmp #(" "|%10000000)
+  195 T:0064  90 02                              bcc COUTZ                ;DONT OUTPUT CTRLS INVERSE
+  196 T:0066  25 32                              and $32              ;MASK WITH INVERSE FLAG
+  197 T:0068  84 35                    COUTZ     sty $35           ;SAV Y-REG
+  198 T:006a  48                                 pha                    ;SAV A-REG
+
+  200 T:006b  20 00 00                           jsr LFB78
+
+  202 T:006e  68                                 pla                    ;RESTORE A-REG
+  203 T:006f  a4 35                              ldy $35              ;  AND Y-REG
+  204 T:0071  60                                 rts                    ;  THEN RETURN
+
+  208 T:0072  c6 34                    BL1       dec $34
+  209 T:0074  f0 9f                              beq XAM8
+
+  211 T:0076  ca                       BLANK     dex                 ;BLANK TO MON
+  212 T:0077  d0 16                              bne SETMDZ                ;AFTER BLANK
+
+  214 T:0079  c9 ba                              cmp #$ba             ;DATA STORE MODE?
+  215 T:007b  d0 bb                              bne XAMPM             ;  NO, XAM, ADD, OR SUB
+  216 T:007d  85 31                    STOR      sta $31           ;KEEP IN STORE MODE
+  217 T:007f  a5 3e                              lda $3e
+  218 T:0081  91 40                              sta ($40),Y          ;STORE AS LOW BYTE AS (A3)
+  219 T:0083  e6 40                              inc $40
+  220 T:0085  d0 02                              bne RTS5                ;INCR A3, RETURN
+  221 T:0087  e6 41                              inc $41
+  222 T:0089  60                       RTS5      rts 
+
+  224 T:008a  a4 34                    SETMODE   ldy $34           ;SAVE CONVERTED :, +,
+  225 T:008c  b9 ff 01                           lda $0200-1,Y      ;  -, . AS MODE.
+  226 T:008f  85 31                    SETMDZ    sta $31
+  227 T:0091  60                                 rts 
+
+  229 T:0092  a2 01                    LT        ldx #$01
+  230 T:0094  b5 3e                    LT2       lda $3e,X         ;COPY A2 (2 BYTES) TO
+  231 T:0096  95 42                              sta $42,X            ;  A4 AND A5
+  232 T:0098  95 44                              sta $44,X
+  233 T:009a  ca                                 dex 
+  234 T:009b  10 f7                              bpl LT2
+  235 T:009d  60                                 rts 
+
+  237 T:009e  b1 3c                    MOVE      lda ($3c),Y       ;MOVE (A1 TO A2) TO
+  238 T:00a0  91 42                              sta ($42),Y          ;  (A4)
+  239 T:00a2  20 00 00                           jsr NXTA4
+  240 T:00a5  90 f7                              bcc MOVE
+  241 T:00a7  60                                 rts 
+
+  243 T:00a8  b1 3c                    VFY       lda ($3c),Y       ;VERIFY (A1 TO A2) WITH
+  244 T:00aa  d1 42                              cmp ($42),Y          ;  (A4)
+  245 T:00ac  f0 1c                              beq VFYOK
+  246 T:00ae  20 04 00                           jsr PRA1
+  247 T:00b1  b1 3c                              lda ($3c),Y
+  248 T:00b3  20 4c 00                           jsr PRBYTE
+  249 T:00b6  a9 a0                              lda #(" "|%10000000)
+  250 T:00b8  20 5f 00                           jsr COUT
+  251 T:00bb  a9 a8                              lda #("("|%10000000)
+  252 T:00bd  20 5f 00                           jsr COUT
+  253 T:00c0  b1 42                              lda ($42),Y
+  254 T:00c2  20 4c 00                           jsr PRBYTE
+  255 T:00c5  a9 a9                              lda #(")"|%10000000)
+  256 T:00c7  20 5f 00                           jsr COUT
+  257 T:00ca  20 00 00                 VFYOK     jsr NXTA4
+  258 T:00cd  90 d9                              bcc VFY
+  259 T:00cf  60                                 rts 
+
+  261 T:00d0  20 e7 00                 LIST1     jsr A1PC             ;MOVE A1 (2 BYTES) TO
+  262 T:00d3  a9 14                              lda #24-4       ;  PC IF SPECD AND
+  263 T:00d5  48                       LIST2     pha                 ;  DISEMBLE 20 INSTRS
+  264 T:00d6  20 00 00                           jsr INSTDSP
+  265 T:00d9  20 00 00                           jsr PCADJ                ;ADJUST PC EACH INSTR
+  266 T:00dc  85 3a                              sta $3a
+  267 T:00de  84 3b                              sty $3b
+  268 T:00e0  68                                 pla 
+  269 T:00e1  38                                 sec 
+  270 T:00e2  e9 01                              sbc #1             ;NEXT OF 20 INSTRS
+  271 T:00e4  d0 ef                              bne LIST2
+  272 T:00e6  60                                 rts 
+
+  274 T:00e7  8a                       A1PC      txa                 ;IF USER SPECD ADR
+  275 T:00e8  f0 07                              beq A1PCRTS                ;  COPY FROM A1 TO PC
+  276 T:00ea  b5 3c                    A1PCLP    lda $3c,X
+  277 T:00ec  95 3a                              sta $3a,X
+  278 T:00ee  ca                                 dex 
+  279 T:00ef  10 f9                              bpl A1PCLP
+  280 T:00f1  60                       A1PCRTS   rts 
+
+  282 T:00f2  a0 3f                    SETINV    ldy #$3f          ;SET FOR INVERSE VID
+  283 T:00f4  d0 02                              bne SETIFLG                ; VIA COUT1
+  284 T:00f6  a0 ff                    SETNORM   ldy #$ff          ;SET FOR NORMAL VID
+  285 T:00f8  84 32                    SETIFLG   sty $32
+  286 T:00fa  60                                 rts 
+
+  288 T:00fb  a9 00                    SETKBD    lda #$00          ;SIMULATE PORT #0 INPUT (IN#0)
+  289 T:00fd  85 3e                    INPORT    sta $3e           ;  SPECIFIED (KEYIN ROUTINE)
+  290 T:00ff  a2 38                    INPRT     ldx #$38
+  291 T:0101  a0 00                              ldy #<KEYIN
+  292 T:0103  d0 08                              bne IOPRT
+  293 T:0105  a9 00                    SETVID    lda #$00          ;SIMULATE PORT #0 OUTPUT (PR#0)
+  294 T:0107  85 3e                    OUTPORT   sta $3e           ;  SPECIFIED (COUT1 ROUTINE)
+  295 T:0109  a2 36                    OUTPRT    ldx #$36
+  296 T:010b  a0 62                              ldy #<COUT1
+  297 T:010d  a5 3e                    IOPRT     lda $3e           ;SET RAM IN/OUT VECTORS
+  298 T:010f  29 0f                              and #%00001111
+  299 T:0111  f0 06                              beq IOPRT1
+  300 T:0113  09 c0                              ora #>IOADR
+  301 T:0115  a0 00                              ldy #$00
+  302 T:0117  f0 02                              beq IOPRT2
+  303 T:0119  a9 00                    IOPRT1    lda #>COUT1
+  304 T:011b  94 00                    IOPRT2    sty $00,X
+  305 T:011d  95 01                              sta $01,X
+  306 T:011f  60                                 rts 
+
+  308 T:0120  ea                                 nop 
+  309 T:0121  ea                                 nop 
+
+  311 T:0122  4c 00 e0                 XBASIC    jmp $e000           ;TO BASIC WITH SCRATCH
+
+  313 T:0125  4c 03 e0                 BASCONT   jmp $e003           ;CONTINUE BASIC
+
+  315 T:0128  20 e7 00                 GO        jsr A1PC          ;ADR TO PC IF SPECD
+  316 T:012b  20 b1 01                           jsr RESTORE                ;RESTORE META REGS
+  317 T:012e  6c 3a 00                           jmp ($3a)            ;GO TO USER SUBR
+
+  319 T:0131  4c 00 00                 REGZ      jmp REGDSP             ;TO REG DISPLAY
+
+  321 T:0134                           TRACE     
+
+  323 T:0134  60                                 rts 
+  324 T:0135  ea                                 nop 
+  325 T:0136  60                                 rts 
+  326 T:0137  ea                       STEPZ     nop 
+  327 T:0138  ea                                 nop 
+  328 T:0139  ea                                 nop 
+  329 T:013a  ea                                 nop 
+  330 T:013b  ea                                 nop 
+
+  333 T:013c  4c f8 03                 USR       jmp $03f8           ;TO USR SUBR AT USRADR
+
+  337 T:013f  a9 40                    WRITE     lda #$40
+  338 T:0141  20 00 00                           jsr HEADR                ;WRITE 10-SEC HEADER
+  339 T:0144  a0 27                              ldy #$27
+  340 T:0146  a2 00                    WR1       ldx #$00
+  341 T:0148  41 3c                              eor ($3c,X)
+  342 T:014a  48                                 pha 
+  343 T:014b  a1 3c                              lda ($3c,X)
+  344 T:014d  20 5f 01                           jsr WRBYTE
+  345 T:0150  20 00 00                           jsr NXTA1
+  346 T:0153  a0 1d                              ldy #$1d
+  347 T:0155  68                                 pla 
+  348 T:0156  90 ee                              bcc WR1
+  349 T:0158  a0 22                              ldy #$22
+  350 T:015a  20 5f 01                           jsr WRBYTE
+  351 T:015d  f0 4d                              beq BELL
+  352 T:015f  a2 10                    WRBYTE    ldx #$10
+  353 T:0161  0a                       WRBYT2    asl 
+  354 T:0162  20 00 00                           jsr WRBIT
+  355 T:0165  d0 fa                              bne WRBYT2
+  356 T:0167  60                                 rts 
+
+  360 T:0168  20 72 00                 CRMON     jsr BL1          ;HANDLE A CR AS BLANK
+  361 T:016b  68                                 pla                    ;  THEN POP STACK
+  362 T:016c  68                                 pla                    ;  AND RTN TO MON
+  363 T:016d  d0 6c                              bne MONZ
+
+  370 T:016f  20 00 00                 READ      jsr RD2BIT             ;FIND TAPEIN EDGE
+  371 T:0172  a9 16                              lda #$16
+  372 T:0174  20 00 00                           jsr HEADR                ;DELAY 3.5 SECONDS
+  373 T:0177  85 2e                              sta $2e              ;INIT CHKSUM=$FF
+  374 T:0179  20 00 00                           jsr RD2BIT                ;FIND TAPEIN EDGE
+  375 T:017c  a0 24                    RD2       ldy #$24          ;LOOK FOR SYNC BIT
+  376 T:017e  20 00 00                           jsr RDBIT                ;  (SHORT 0)
+  377 T:0181  b0 f9                              bcs RD2             ;  LOOP UNTIL FOUND
+  378 T:0183  20 00 00                           jsr RDBIT                ;SKIP SECOND SYNC H-CYCLE
+  379 T:0186  a0 3b                              ldy #$3b             ;INDEX FOR 0/1 TEST
+  380 T:0188  20 00 00                 RD3       jsr RDBYTE             ;READ A BYTE
+  381 T:018b  81 3c                              sta ($3c,X)          ;STORE AT (A1)
+  382 T:018d  45 2e                              eor $2e
+  383 T:018f  85 2e                              sta $2e              ;UPDATE RUNNING CHKSUM
+  384 T:0191  20 00 00                           jsr NXTA1                ;INC A1, COMPARE TO A2
+  385 T:0194  a0 35                              ldy #$35             ;COMPENSATE 0/1 INDEX
+  386 T:0196  90 f0                              bcc RD3             ;LOOP UNTIL DONE
+  387 T:0198  20 00 00                           jsr RDBYTE                ;READ CHKSUM BYTE
+  388 T:019b  c5 2e                              cmp $2e
+  389 T:019d  f0 0d                              beq BELL                ;GOOD, SOUND BELL AND RETURN
+  390 T:019f  a9 c5                    PRERR     lda #("E"|%10000000)
+  391 T:01a1  20 5f 00                           jsr COUT             ;PRINT "ERR", THEN BELL
+  392 T:01a4  a9 d2                              lda #("R"|%10000000)
+  393 T:01a6  20 5f 00                           jsr COUT
+  394 T:01a9  20 5f 00                           jsr COUT
+
+  396 T:01ac  a9 87                    BELL      lda #$87          ;OUTPUT BELL AND RETURN
+  397 T:01ae  4c 5f 00                           jmp COUT
+
+  406 T:01b1  a5 48                    RESTORE   lda $48           ;RESTORE 6502 REG CONTENTS
+  407 T:01b3  48                                 pha                    ;  USED BY DEBUG SOFTWARE
+  408 T:01b4  a5 45                              lda $45
+  409 T:01b6  a6 46                    RESTR1    ldx $46
+  410 T:01b8  a4 47                              ldy $47
+  411 T:01ba  28                                 plp 
+  412 T:01bb  60                                 rts 
+  413 T:01bc  85 45                    SAVE      sta $45           ;SAVE 6502 REG CONTENTS
+  414 T:01be  86 46                    SAV1      stx $46
+  415 T:01c0  84 47                              sty $47
+  416 T:01c2  08                                 php 
+  417 T:01c3  68                                 pla 
+  418 T:01c4  85 48                              sta $48
+  419 T:01c6  ba                                 tsx 
+  420 T:01c7  86 49                              stx $49
+  421 T:01c9  d8                                 cld 
+  422 T:01ca  60                                 rts 
+
+  426 T:01cb  20 f6 00                 RESET     jsr SETNORM          ;NORMAL
+  427 T:01ce  20 00 00                           jsr INIT                ;
+  428 T:01d1  20 05 01                           jsr SETVID             ;PR#0
+  429 T:01d4  20 fb 00                           jsr SETKBD             ;IN#0
+  430 T:01d7  d8                       MON       cld                 ;MUST SET HEX MODE!
+  431 T:01d8  20 ac 01                           jsr BELL
+  432 T:01db  a9 aa                    MONZ      lda #$aa          ;* PROMPT FOR MON
+  433 T:01dd  85 33                              sta $33
+  434 T:01df  20 00 00                           jsr GETLNZ                ;READ A LINE
+  435 T:01e2  20 39 02                           jsr ZMODE                ;CLEAR MON MODE, SCAN IDX
+  436 T:01e5  20 19 02                 NXTITM    jsr GETNUM             ;GET ITEM, NON-HEX
+  437 T:01e8  84 34                              sty $34              ;  CHAR IN A-REG
+  438 T:01ea  a0 17                              ldy #$17             ;  X-REG=0 IF NO HEX INPUT
+  439 T:01ec  88                       CHRSRCH   dey 
+  440 T:01ed  30 e8                              bmi MON             ;NOT FOUND, GO TO MON
+  441 T:01ef  d9 3e 02                           cmp CHRTBL,Y              ;FIND CMND CHAR IN TEL
+  442 T:01f2  d0 f8                              bne CHRSRCH
+  443 T:01f4  20 30 02                           jsr TOSUB                ;FOUND, CALL CORRESPONDING
+  444 T:01f7  a4 34                              ldy $34              ;  SUBROUTINE
+  445 T:01f9  4c e5 01                           jmp NXTITM
+
+  449 T:01fc  a2 03                    DIG       ldx #$03
+  450 T:01fe  0a                                 asl 
+  451 T:01ff  0a                                 asl                    ;GOT HEX DIG,
+  452 T:0200  0a                                 asl                    ;  SHIFT INTO A2
+  453 T:0201  0a                                 asl 
+  454 T:0202  0a                       NXTBIT    asl 
+  455 T:0203  26 3e                              rol $3e
+  456 T:0205  26 3f                              rol $3f
+  457 T:0207  ca                                 dex                    ;LEAVE X=$FF IF DIG
+  458 T:0208  10 f8                              bpl NXTBIT
+  459 T:020a  a5 31                    NXTBAS    lda $31
+  460 T:020c  d0 06                              bne NXTBS2                ;IF MODE IS ZERO
+  461 T:020e  b5 3f                              lda $3f,X            ; THEN COPY A2 TO
+  462 T:0210  95 3d                              sta $3d,X            ; A1 AND A3
+  463 T:0212  95 41                              sta $41,X
+  464 T:0214  e8                       NXTBS2    inx 
+  465 T:0215  f0 f3                              beq NXTBAS
+  466 T:0217  d0 06                              bne NXTCHR
+
+  468 T:0219  a2 00                    GETNUM    ldx #$00          ;CLEAR A2
+  469 T:021b  86 3e                              stx $3e
+  470 T:021d  86 3f                              stx $3f
+  471 T:021f  b9 00 02                 NXTCHR    lda $0200,Y         ;GET CHAR
+  472 T:0222  c8                                 iny 
+  473 T:0223  49 b0                              eor #$b0
+  474 T:0225  c9 0a                              cmp #$0a
+  475 T:0227  90 d3                              bcc DIG             ;IF HEX DIG, THEN
+  476 T:0229  69 88                              adc #$88
+  477 T:022b  c9 fa                              cmp #$fa
+  478 T:022d  b0 cd                              bcs DIG
+  479 T:022f  60                                 rts 
+
+  482 T:0230  a9 01                    TOSUB     lda #>GO        ;PUSH HIGH-ORDER
+  483 T:0232  48                                 pha                    ;  SUBR ADR ON STK
+  484 T:0233  b9 55 02                           lda SUBTBL,Y              ;PUSH LOW-ORDER
+  485 T:0236  48                                 pha                    ;  SUBR ADR ON STK
+  486 T:0237  a5 31                              lda $31
+  487 T:0239  a0 00                    ZMODE     ldy #$00          ;CLR MODE, OLD MODE
+  488 T:023b  84 31                              sty $31              ;  TO A-REG
+  489 T:023d  60                                 rts                    ; GO TO SUBR VIA RTS
+
+  492 T:023e                                    ;DEFINE F(CHR) <(CHR^$B0+$89)
+
+  495 T:023e  bc                       CHRTBL    .byt <((CTRL_C^$b0)+$89)
+  496 T:023f  b2                                 .byt <((CTRL_Y^$b0)+$89)
+  497 T:0240  be                                 .byt <((CTRL_E^$b0)+$89)
+
+  500 T:0241  b2                                 .byt <((CTRL_Y^$b0)+$89)
+
+  503 T:0242  ef                                 .byt <((("V"|%10000000)^$b0)+$89)
+  504 T:0243  c4                                 .byt <((CTRL_K^$b0)+$89)
+
+  507 T:0244  b2                                 .byt <((CTRL_Y^$b0)+$89)
+
+  510 T:0245  a9                                 .byt <((CTRL_P^$b0)+$89)
+  511 T:0246  bb                                 .byt <((CTRL_B^$b0)+$89)
+  512 T:0247  a6                                 .byt <((("-"|%10000000)^$b0)+$89)
+  513 T:0248  a4                                 .byt <((("+"|%10000000)^$b0)+$89)
+  514 T:0249  06                                 .byt <((("M"|%10000000)^$b0)+$89)
+  515 T:024a  95                                 .byt <((("<"|%10000000)^$b0)+$89)
+  516 T:024b  07                                 .byt <((("N"|%10000000)^$b0)+$89)
+  517 T:024c  02                                 .byt <((("I"|%10000000)^$b0)+$89)
+  518 T:024d  05                                 .byt <((("L"|%10000000)^$b0)+$89)
+  519 T:024e  f0                                 .byt <((("W"|%10000000)^$b0)+$89)
+  520 T:024f  00                                 .byt <((("G"|%10000000)^$b0)+$89)
+  521 T:0250  eb                                 .byt <((("R"|%10000000)^$b0)+$89)
+  522 T:0251  93                                 .byt <(((":"|%10000000)^$b0)+$89)
+  523 T:0252  a7                                 .byt <((("."|%10000000)^$b0)+$89)
+  524 T:0253  c6                                 .byt <(($8d^$b0)+$89)
+  525 T:0254  99                                 .byt <(((" "|%10000000)^$b0)+$89)
+
+  527 T:0255  24                       SUBTBL    .byt <BASCONT-1
+  528 T:0256  3b                                 .byt <USR-1
+  529 T:0257  30                                 .byt <REGZ-1
+  530 T:0258  33                                 .byt <TRACE-1
+  531 T:0259  a7                                 .byt <VFY-1
+  532 T:025a  fe                                 .byt <INPRT-1
+  533 T:025b  36                                 .byt <STEPZ-1
+  534 T:025c  08                                 .byt <OUTPRT-1
+  535 T:025d  21                                 .byt <XBASIC-1
+  536 T:025e  89                                 .byt <SETMODE-1
+  537 T:025f  89                                 .byt <SETMODE-1
+  538 T:0260  9d                                 .byt <MOVE-1
+  539 T:0261  91                                 .byt <LT-1
+  540 T:0262  f5                                 .byt <SETNORM-1
+  541 T:0263  f1                                 .byt <SETINV-1
+  542 T:0264  cf                                 .byt <LIST1-1
+  543 T:0265  3e                                 .byt <WRITE-1
+  544 T:0266  27                                 .byt <GO-1
+  545 T:0267  6e                                 .byt <READ-1
+  546 T:0268  89                                 .byt <SETMODE-1
+  547 T:0269  89                                 .byt <SETMODE-1
+  548 T:026a  67                                 .byt <CRMON-1
+  549 T:026b  75                                 .byt <BLANK-1

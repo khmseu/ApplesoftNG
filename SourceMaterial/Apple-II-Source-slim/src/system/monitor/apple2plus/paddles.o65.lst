@@ -1,0 +1,25 @@
+
+paddles.s65
+
+
+  109 T:0000                                    PADDL0=$c064
+  110 T:0000                                    PTRIG=$c070
+
+  112 T:0000                                    ;-----------------------------------------------------------------------
+  113 T:0000                                    ;
+  114 T:0000                                    ; PADDLES
+  115 T:0000                                    ;
+  116 T:0000                                    ; Handles the paddles.
+  117 T:0000                                    ;
+  118 T:0000                                    ;-----------------------------------------------------------------------
+
+  124 T:0000  ad 70 c0                 PREAD     lda PTRIG             ;TRIGGER PADDLES
+  125 T:0003  a0 00                              ldy #$00             ;INIT COUNT
+  126 T:0005  ea                                 nop                    ;COMPENSATE FOR 1ST COUNT
+  127 T:0006  ea                                 nop 
+  128 T:0007  bd 64 c0                 PREAD2    lda PADDL0,X           ;COUNT Y-REG EVERY
+  129 T:000a  10 04                              bpl RTS2D                ;  12 USEC
+  130 T:000c  c8                                 iny 
+  131 T:000d  d0 f8                              bne PREAD2             ;  EXIT AT 255 MAX
+  132 T:000f  88                                 dey 
+  133 T:0010  60                       RTS2D     rts 

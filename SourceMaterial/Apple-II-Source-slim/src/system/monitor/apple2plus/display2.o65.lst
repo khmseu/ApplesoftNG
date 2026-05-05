@@ -1,0 +1,173 @@
+
+display2.s65
+
+
+  109 T:0000                                    ASCBEL=$07|%10000000
+  110 T:0000                                    ASCBS=$08|%10000000
+
+  112 T:0000                                    ;-----------------------------------------------------------------------
+  113 T:0000                                    ;
+  114 T:0000                                    ; DISPLAY AND READ KEYS
+  115 T:0000                                    ;
+  116 T:0000                                    ; Handles reading keypresses, escape, displaying characters, scrolling,
+  117 T:0000                                    ; clearing, etc. (Also includes cassette tape handler.)
+  118 T:0000                                    ;
+  119 T:0000                                    ;-----------------------------------------------------------------------
+
+  125 T:0000                                    SPKR=$c030
+
+  129 T:0000  48                       BASCALC   pha                 ;CALC BASE ADR IN BASL,H
+  130 T:0001  4a                                 lsr                    ;  FOR GIVEN LINE NO
+  131 T:0002  29 03                              and #%00000011             ;  0<=LINE NO.<=$17
+  132 T:0004  09 04                              ora #%00000100             ;ARG=000ABCDE, GENERATE
+  133 T:0006  85 29                              sta $29              ;  BASH=000001CD
+  134 T:0008  68                                 pla                    ;  AND
+  135 T:0009  29 18                              and #%00011000             ;  BASL=EABAB000
+  136 T:000b  90 02                              bcc BSCLC2
+  137 T:000d  69 7f                              adc #$80-1
+  138 T:000f  85 28                    BSCLC2    sta $28
+  139 T:0011  0a                                 asl 
+  140 T:0012  0a                                 asl 
+  141 T:0013  05 28                              ora $28
+  142 T:0015  85 28                              sta $28
+  143 T:0017  60                                 rts 
+
+  147 T:0018  c9 87                    BELL1     cmp #ASCBEL            ;BELL CHAR? (CNTRL-G)
+  148 T:001a  d0 12                              bne RTS2B                ;  NO, RETURN
+  149 T:001c  a9 40                              lda #$40             ;DELAY .01 SECONDS
+  150 T:001e  20 e7 00                           jsr WAIT
+  151 T:0021  a0 c0                              ldy #$c0
+  152 T:0023  a9 0c                    BELL2     lda #$0c          ;TOGGLE SPEAKER AT
+  153 T:0025  20 e7 00                           jsr WAIT                ;  1 KHZ FOR .1 SEC.
+  154 T:0028  ad 30 c0                           lda SPKR
+  155 T:002b  88                                 dey 
+  156 T:002c  d0 f5                              bne BELL2
+  157 T:002e  60                       RTS2B     rts 
+
+  161 T:002f  a4 24                    STOADV    ldy $24           ;CURSOR H INDEX TO Y-REG
+  162 T:0031  91 28                              sta ($28),Y          ;STORE CHAR IN LINE
+  163 T:0033  e6 24                    ADVANCE   inc $24           ;INCREMENT CURSOR H INDEX
+  164 T:0035  a5 24                              lda $24              ;  (MOVE RIGHT)
+  165 T:0037  c5 21                              cmp $21              ;BEYOND WINDOW WIDTH?
+  166 T:0039  b0 66                              bcs CR                ;  YES CR TO NEXT LINE
+  167 T:003b  60                       RTS3      rts                 ;  NO,RETURN
+
+  169 T:003c  c9 a0                    VIDOUT    cmp #$a0          ;CONTROL CHAR?
+  170 T:003e  b0 ef                              bcs STOADV             ;  NO,OUTPUT IT.
+
+  172 T:0040  a8                                 tay                    ;INVERSE VIDEO?
+  173 T:0041  10 ec                              bpl STOADV             ;  YES, OUTPUT IT.
+
+  175 T:0043  c9 8d                              cmp #$8d             ;CR?
+  176 T:0045  f0 5a                              beq CR                ;  YES.
+  177 T:0047  c9 8a                              cmp #$8a             ;LINE FEED?
+  178 T:0049  f0 5a                              beq LF                ;  IF SO, DO IT.
+  179 T:004b  c9 88                              cmp #ASCBS               ;BACK SPACE? (CNTRL-H)
+  180 T:004d  d0 c9                              bne BELL1             ;  NO, CHECK FOR BELL.
+
+  182 T:004f  c6 24                    BS        dec $24           ;DECREMENT CURSOR H INDEX
+  183 T:0051  10 e8                              bpl RTS3             ;IF POS, OK. ELSE MOVE UP
+  184 T:0053  a5 21                              lda $21              ;SET CH TO WNDWDTH-1
+  185 T:0055  85 24                              sta $24
+  186 T:0057  c6 24                              dec $24              ;(RIGHTMOST SCREEN POS)
+  187 T:0059  a5 22                    UP        lda $22           ;CURSOR V INDEX
+  188 T:005b  c5 25                              cmp $25
+  189 T:005d  b0 0b                              bcs RTS4                ;IF TOP LINE THEN RETURN
+  190 T:005f  c6 25                              dec $25              ;DEC CURSOR V-INDEX
+
+  192 T:0061  a5 25                    VTAB      lda $25           ;GET CURSOR V-INDEX
+  193 T:0063  20 00 00                 VTABZ     jsr BASCALC          ;GENERATE BASE ADR
+  194 T:0066  65 20                              adc $20              ;ADD WINDOW LEFT INDEX
+  195 T:0068  85 28                              sta $28              ;TO BASL
+  196 T:006a  60                       RTS4      rts 
+
+  203 T:006b  49 c0                    ESC1      eor #$c0          ;ESC?
+  204 T:006d  f0 28                              beq HOME                ;  IF SO, DO HOME AND CLEAR
+  205 T:006f  69 fd                              adc #$fd             ;ESC-A OR B CHECK
+  206 T:0071  90 c0                              bcc ADVANCE             ;  A, ADVANCE
+  207 T:0073  f0 da                              beq BS             ;  B, BACKSPACE
+  208 T:0075  69 fd                              adc #$fd             ;ESC-C OR D CHECK
+  209 T:0077  90 2c                              bcc LF                ;  C, DOWN
+  210 T:0079  f0 de                              beq UP             ;  D, GO UP
+  211 T:007b  69 fd                              adc #$fd             ;ESC-E OR F CHECK
+  212 T:007d  90 5c                              bcc CLREOL                ;  E, CLEAR TO END OF LINE
+  213 T:007f  d0 e9                              bne RTS4             ;  NOT F, RETURN
+  214 T:0081                                    ;  F, CLEAR TO END OF PAGE
+  215 T:0081  a4 24                    CLREOP    ldy $24           ;CURSOR H TO Y INDEX
+  216 T:0083  a5 25                              lda $25              ;CURSOR V TO A-REGISTER
+  217 T:0085  48                       CLEOP1    pha                 ;SAVE CURRENT LINE ON STK
+  218 T:0086  20 63 00                           jsr VTABZ             ;CALC BASE ADDRESS
+  219 T:0089  20 dd 00                           jsr CLEOLZ                ;CLEAR TO EOL, SET CARRY
+  220 T:008c  a0 00                              ldy #0             ;CLEAR FROM H INDEX=0 FOR REST
+  221 T:008e  68                                 pla                    ;INCREMENT CURRENT LINE
+  222 T:008f  69 00                              adc #0             ;(CARRY IS SET)
+  223 T:0091  c5 23                              cmp $23              ;DONE TO BOTTOM OF WINDOW?
+  224 T:0093  90 f0                              bcc CLEOP1             ;  NO, KEEP CLEARING LINES
+  225 T:0095  b0 ca                              bcs VTAB             ;  YES, TAB TO CURRENT LINE
+
+  229 T:0097  a5 22                    HOME      lda $22           ;INIT CURSOR V
+  230 T:0099  85 25                              sta $25              ;  AND H-INDICES
+  231 T:009b  a0 00                              ldy #0
+  232 T:009d  84 24                              sty $24              ;THEN CLEAR TO END OF PAGE
+  233 T:009f  f0 e4                              beq CLEOP1
+
+  236 T:00a1  a9 00                    CR        lda #0          ;CURSOR TO LEFT OF INDEX
+  237 T:00a3  85 24                              sta $24              ;(RET CURSOR H=0)
+  238 T:00a5  e6 25                    LF        inc $25           ;INCR CURSOR V(DOWN 1 LINE)
+  239 T:00a7  a5 25                              lda $25
+  240 T:00a9  c5 23                              cmp $23              ;OFF SCREEN?
+  241 T:00ab  90 b6                              bcc VTABZ             ;  NO, SET BASE ADDR
+  242 T:00ad  c6 25                              dec $25              ;DECR CURSOR V (BACK TO BOTTOM)
+
+  244 T:00af  a5 22                    SCROLL    lda $22           ;START AT TOP OF SCRL WNDW
+  245 T:00b1  48                                 pha 
+  246 T:00b2  20 63 00                           jsr VTABZ             ;GENERATE BASE ADR
+  247 T:00b5  a5 28                    SCRL1     lda $28           ;COPY BASL,H
+  248 T:00b7  85 2a                              sta $2a              ;  TO BAS2L,H
+  249 T:00b9  a5 29                              lda $29
+  250 T:00bb  85 2b                              sta $2b
+  251 T:00bd  a4 21                              ldy $21              ;INIT Y TO RIGHTMOST INDEX
+  252 T:00bf  88                                 dey                    ;  OF SCROLLING WINDOW
+  253 T:00c0  68                                 pla 
+  254 T:00c1  69 01                              adc #1             ;INCR LINE NUMBER
+  255 T:00c3  c5 23                              cmp $23              ;DONE?
+  256 T:00c5  b0 0d                              bcs SCRL3                ;  YES, FINISH
+  257 T:00c7  48                                 pha 
+  258 T:00c8  20 63 00                           jsr VTABZ             ;FORM BASL,H (BASE ADDR)
+  259 T:00cb  b1 28                    SCRL2     lda ($28),Y       ;MOVE A CHR UP ON LINE
+  260 T:00cd  91 2a                              sta ($2a),Y
+  261 T:00cf  88                                 dey                    ;NEXT CHAR OF LINE
+  262 T:00d0  10 f9                              bpl SCRL2
+  263 T:00d2  30 e1                              bmi SCRL1             ;NEXT LINE (ALWAYS TAKEN)
+
+  265 T:00d4  a0 00                    SCRL3     ldy #0          ;CLEAR BOTTOM LINE
+  266 T:00d6  20 dd 00                           jsr CLEOLZ                ;GET BASE ADDR FOR BOTTOM LINE
+  267 T:00d9  b0 86                              bcs VTAB             ;CARRY IS SET
+  268 T:00db  a4 24                    CLREOL    ldy $24           ;CURSOR H INDEX
+  269 T:00dd  a9 a0                    CLEOLZ    lda #(" "|%10000000)
+  270 T:00df  91 28                    CLEOL2    sta ($28),Y       ;STORE BLANKS FROM 'HERE'
+  271 T:00e1  c8                                 iny                    ;  TO END OF LINES (WNDWDTH)
+  272 T:00e2  c4 21                              cpy $21
+  273 T:00e4  90 f9                              bcc CLEOL2
+  274 T:00e6  60                                 rts 
+
+  278 T:00e7  38                       WAIT      sec 
+  279 T:00e8  48                       WAIT2     pha 
+  280 T:00e9  e9 01                    WAIT3     sbc #1
+  281 T:00eb  d0 fc                              bne WAIT3             ;1.0204 USEC
+  282 T:00ed  68                                 pla                    ;(13+27/2*A+5/2*A*A)
+  283 T:00ee  e9 01                              sbc #1
+  284 T:00f0  d0 f6                              bne WAIT2
+  285 T:00f2  60                                 rts 
+
+  289 T:00f3  e6 42                    NXTA4     inc $42           ;INCR 2-BYTE A4
+  290 T:00f5  d0 02                              bne NXTA1                ;  AND A1
+  291 T:00f7  e6 43                              inc $43
+  292 T:00f9  a5 3c                    NXTA1     lda $3c           ;INCR 2-BYTE A1.
+  293 T:00fb  c5 3e                              cmp $3e
+  294 T:00fd  a5 3d                              lda $3d              ;  AND COMPARE TO A2
+  295 T:00ff  e5 3f                              sbc $3f
+  296 T:0101  e6 3c                              inc $3c              ;  (CARRY SET IF >=)
+  297 T:0103  d0 02                              bne RTS4B
+  298 T:0105  e6 3d                              inc $3d
+  299 T:0107  60                       RTS4B     rts 

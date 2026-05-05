@@ -1,0 +1,77 @@
+
+keyin.s65
+
+
+  109 T:0000                                    KBD=$c000
+  110 T:0000                                    KBDSTRB=$c010
+
+  112 T:0000  a4 24                    RDKEY     ldy $24
+  113 T:0002  b1 28                              lda ($28),Y          ;SET SCREEN TO FLASH
+  114 T:0004  48                                 pha 
+  115 T:0005  29 3f                              and #$3f
+  116 T:0007  09 40                              ora #$40
+  117 T:0009  91 28                              sta ($28),Y
+  118 T:000b  68                                 pla 
+
+  120 T:000c  6c 38 00                           jmp ($38)            ;GO TO USER KEY-IN
+  121 T:000f  e6 4e                    KEYIN     inc $4e
+  122 T:0011  d0 02                              bne KEYIN2                ;INCR RND NUMBER
+  123 T:0013  e6 4f                              inc $4f
+  124 T:0015  2c 00 c0                 KEYIN2    bit KBD             ;KEY DOWN?
+  125 T:0018  10 f5                              bpl KEYIN             ;  LOOP
+  126 T:001a  91 28                              sta ($28),Y          ;REPLACE FLASHING SCREEN
+  127 T:001c  ad 00 c0                           lda KBD                ;GET KEYCODE
+  128 T:001f  2c 10 c0                           bit KBDSTRB                ;CLR KEY STROBE
+  129 T:0022  60                                 rts 
+
+  133 T:0023  20 00 00                 ESC       jsr RDKEY          ;GET KEYCODE
+
+  135 T:0026  20 00 00                           jsr LFBA5
+
+  138 T:0029  20 00 00                 RDCHAR    jsr RDKEY          ;READ KEY
+  139 T:002c  c9 9b                              cmp #$9b             ;ESC?
+  140 T:002e  f0 f3                              beq ESC             ;  YES, DON'T RETURN
+  141 T:0030  60                                 rts 
+
+  148 T:0031  a5 32                    NOTCR     lda $32
+  149 T:0033  48                                 pha 
+  150 T:0034  a9 ff                              lda #$ff
+  151 T:0036  85 32                              sta $32              ;ECHO USER LINE
+  152 T:0038  bd 00 02                           lda $0200,X            ;  NON INVERSE
+  153 T:003b  20 00 00                           jsr COUT
+  154 T:003e  68                                 pla 
+  155 T:003f  85 32                              sta $32
+
+  157 T:0041  bd 00 02                           lda $0200,X
+  158 T:0044  c9 88                              cmp #$88             ;CHECK FOR EDIT KEYS
+  159 T:0046  f0 1d                              beq BCKSPC                ;  BS, CTRL-X
+  160 T:0048  c9 98                              cmp #$98
+  161 T:004a  f0 0a                              beq CANCEL
+  162 T:004c  e0 f8                              cpx #$f8             ;MARGIN?
+  163 T:004e  90 03                              bcc NOTCR1
+  164 T:0050  20 00 00                           jsr BELL                ;  YES, SOUND BELL
+  165 T:0053  e8                       NOTCR1    inx                 ;ADVANCE INPUT INDEX
+  166 T:0054  d0 13                              bne NXTCHAR
+
+  168 T:0056  a9 dc                    CANCEL    lda #("\"|%10000000)  ;BACKSLASH AFTER CANCELLED LINE
+  169 T:0058  20 00 00                           jsr COUT
+  170 T:005b  20 00 00                 GETLNZ    jsr CROUT             ;OUTPUT CR
+
+  172 T:005e  a5 33                    GETLN     lda $33
+  173 T:0060  20 00 00                           jsr COUT                ;OUTPUT PROMPT CHAR
+  174 T:0063  a2 01                              ldx #$01             ;INIT INPUT INDEX
+  175 T:0065  8a                       BCKSPC    txa                 ;  WILL BACKSPACE TO 0
+  176 T:0066  f0 f3                              beq GETLNZ
+  177 T:0068  ca                                 dex 
+
+  179 T:0069  20 29 00                 NXTCHAR   jsr RDCHAR
+  180 T:006c  c9 95                    NXTCHAR1  cmp #$95          ;USE SCREEN CHAR
+  181 T:006e  d0 02                              bne CAPTST                ;  FOR CTRL-U
+  182 T:0070  b1 28                              lda ($28),Y
+  183 T:0072  c9 e0                    CAPTST    cmp #$e0
+  184 T:0074  90 02                              bcc ADDINP                ;CONVERT TO CAPS
+  185 T:0076  29 df                              and #$df
+  186 T:0078  9d 00 02                 ADDINP    sta $0200,X         ;ADD TO INPUT BUF
+  187 T:007b  c9 8d                              cmp #$8d
+  188 T:007d  d0 b2                              bne NOTCR
+  189 T:007f  20 00 00                           jsr CLREOL                ;CLR TO EOL IF CR

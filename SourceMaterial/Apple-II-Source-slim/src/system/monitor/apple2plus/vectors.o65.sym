@@ -1,0 +1,5 @@
+M6502VEC, 0x0000, 0, 0x0002
+RESET2, 0x0000, 0, 0x0000
+    vectors.s65 112
+IRQ, 0x0000, 0, 0x0000
+    vectors.s65 114

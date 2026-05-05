@@ -1,0 +1,55 @@
+
+math.s65
+
+
+  122 T:0000  20 00 00                 LFB60     jsr HOME
+  123 T:0003  a0 08                              ldy #$08
+  124 T:0005  b9 00 00                 LFB65     lda LFB08,Y
+  125 T:0008  99 0e 04                           sta $040e,Y
+  126 T:000b  88                                 dey 
+  127 T:000c  d0 f7                              bne LFB65
+  128 T:000e  60                                 rts 
+  129 T:000f  ad f3 03                           lda $03f3
+  130 T:0012  49 a5                              eor #$a5
+  131 T:0014  8d f4 03                           sta $03f4
+  132 T:0017  60                                 rts 
+  133 T:0018  c9 8d                    LFB78     cmp #$8d
+  134 T:001a  d0 18                              bne LFB94
+  135 T:001c  ac 00 c0                           ldy $c000
+  136 T:001f  10 13                              bpl LFB94
+  137 T:0021  c0 93                              cpy #$93
+  138 T:0023  d0 0f                              bne LFB94
+  139 T:0025  2c 10 c0                           bit $c010
+  140 T:0028  ac 00 c0                 LFB88     ldy $c000
+  141 T:002b  10 fb                              bpl LFB88
+  142 T:002d  c0 83                              cpy #$83
+  143 T:002f  f0 03                              beq LFB94
+  144 T:0031  2c 10 c0                           bit $c010
+  145 T:0034  4c 00 00                 LFB94     jmp VIDOUT
+  146 T:0037  38                       LFB97     sec 
+  147 T:0038  4c 00 00                           jmp ESC1
+  148 T:003b  a8                       LFB9B     tay 
+  149 T:003c  b9 48 fa                           lda $fa48,Y            ; TODO
+  150 T:003f  20 37 00                           jsr LFB97
+  151 T:0042  20 00 00                           jsr RDKEY
+  152 T:0045  c9 ce                    LFBA5     cmp #$ce
+  153 T:0047  b0 ee                              bcs LFB97
+  154 T:0049  c9 c9                              cmp #$c9
+  155 T:004b  90 ea                              bcc LFB97
+  156 T:004d  c9 cc                              cmp #$cc
+  157 T:004f  f0 e6                              beq LFB97
+  158 T:0051  d0 e8                              bne LFB9B
+  159 T:0053  ea                                 nop 
+  160 T:0054  ea                                 nop 
+  161 T:0055  ea                                 nop 
+  162 T:0056  ea                                 nop 
+  163 T:0057  ea                                 nop 
+  164 T:0058  ea                                 nop 
+  165 T:0059  ea                                 nop 
+  166 T:005a  ea                                 nop 
+  167 T:005b  ea                                 nop 
+  168 T:005c  ea                                 nop 
+  169 T:005d  ea                                 nop 
+  170 T:005e  ea                                 nop 
+  171 T:005f  ea                                 nop 
+  172 T:0060  ea                                 nop 

@@ -1,0 +1,52 @@
+IRQ, 0x0000, 0, 0x0002
+BREAK, 0x000c, 0, 0x0002
+    debug.s65 126
+SAV1, 0x0000, 0, 0x0000
+    debug.s65 130
+INSDS1, 0x0000, 0, 0x0000
+    debug.s65 136
+RGDSP1, 0x009a, 0, 0x0002
+    debug.s65 137
+MON, 0x0000, 0, 0x0000
+    debug.s65 138
+RESET2, 0x0022, 0, 0x0002
+SETNORM, 0x0000, 0, 0x0000
+    debug.s65 141
+INIT, 0x0000, 0, 0x0000
+    debug.s65 142
+SETVID, 0x0000, 0, 0x0000
+    debug.s65 143
+SETKBD, 0x0000, 0, 0x0000
+    debug.s65 144
+BELL, 0x0000, 0, 0x0000
+    debug.s65 152
+LFAA6, 0x0066, 0, 0x0002
+    debug.s65 156
+LFAA3, 0x0063, 0, 0x0002
+    debug.s65 158 161
+LFA9B, 0x005b, 0, 0x0002
+    debug.s65 180
+LFB60, 0x0000, 0, 0x0000
+    debug.s65 167
+LFAAB, 0x006b, 0, 0x0002
+    debug.s65 172
+LFAFC, 0x00bc, 0, 0x0002
+    debug.s65 169
+LFABA, 0x007a, 0, 0x0002
+    debug.s65 184
+LFAC7, 0x0087, 0, 0x0002
+    debug.s65 187
+LFB01, 0x00c1, 0, 0x0002
+    debug.s65 183
+REGDSP, 0x0097, 0, 0x0002
+CROUT, 0x0000, 0, 0x0000
+    debug.s65 199
+RDSP1, 0x00a4, 0, 0x0002
+    debug.s65 216
+COUT, 0x0000, 0, 0x0000
+    debug.s65 206 210 212
+RTBL, 0x00d9, 0, 0x0002
+    debug.s65 208
+PRBYTE, 0x0000, 0, 0x0000
+    debug.s65 214
+LFB08, 0x00c8, 0, 0x0002

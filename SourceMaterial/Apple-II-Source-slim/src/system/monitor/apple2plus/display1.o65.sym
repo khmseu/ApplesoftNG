@@ -1,0 +1,22 @@
+TXTCLR, 0xc050, 0, 0x0000
+    display1.s65 142
+TXTSET, 0xc051, 0, 0x0000
+    display1.s65 138
+MIXSET, 0xc053, 0, 0x0000
+    display1.s65 143
+LOWSCR, 0xc054, 0, 0x0000
+    display1.s65 134
+LORES, 0xc056, 0, 0x0000
+    display1.s65 133
+TEXTBOTTOMLINES, 0x0004, 0, 0x0000
+    display1.s65 145
+INIT, 0x0000, 0, 0x0002
+SETTXT, 0x000a, 0, 0x0002
+SETWND, 0x001c, 0, 0x0002
+    display1.s65 140
+SETGR, 0x0011, 0, 0x0002
+CLRTOP, 0x0000, 0, 0x0000
+    display1.s65 144
+TABV, 0x002c, 0, 0x0002
+VTAB, 0x0000, 0, 0x0000
+    display1.s65 158

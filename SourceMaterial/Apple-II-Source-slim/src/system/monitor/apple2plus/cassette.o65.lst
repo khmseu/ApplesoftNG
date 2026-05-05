@@ -1,0 +1,46 @@
+
+cassette.s65
+
+
+  109 T:0000                                    TAPEOUT=$c020
+  110 T:0000                                    TAPEIN=$c060
+
+  112 T:0000  a0 4b                    HEADR     ldy #$4b          ;WRITE A*256 'LONG 1'
+  113 T:0002  20 12 00                           jsr ZERDLY                ;  HALF CYCLES
+  114 T:0005  d0 f9                              bne HEADR             ;  (650 USEC EACH)
+  115 T:0007  69 fe                              adc #$fe
+  116 T:0009  b0 f5                              bcs HEADR             ;THEN A 'SHORT 0'
+  117 T:000b  a0 21                              ldy #$21             ;  (400 USEC)
+  118 T:000d  20 12 00                 WRBIT     jsr ZERDLY             ;WRITE TWO HALF CYCLES
+  119 T:0010  c8                                 iny                    ;  OF 250 USEC ('0')
+  120 T:0011  c8                                 iny                    ;  OR 500 USEC ('0')
+  121 T:0012  88                       ZERDLY    dey 
+  122 T:0013  d0 fd                              bne ZERDLY
+  123 T:0015  90 05                              bcc WRTAPE                ;Y IS COUNT FOR
+  124 T:0017  a0 32                              ldy #$32             ;  TIMING LOOP
+  125 T:0019  88                       ONEDLY    dey 
+  126 T:001a  d0 fd                              bne ONEDLY
+  127 T:001c  ac 20 c0                 WRTAPE    ldy TAPEOUT
+  128 T:001f  a0 2c                              ldy #$2c
+  129 T:0021  ca                                 dex 
+  130 T:0022  60                                 rts 
+
+  134 T:0023  a2 08                    RDBYTE    ldx #$08          ;8 BITS TO READ
+  135 T:0025  48                       RDBYT2    pha                 ;READ TWO TRANSITIONS
+  136 T:0026  20 31 00                           jsr RD2BIT                ;  (FIND EDGE)
+  137 T:0029  68                                 pla 
+  138 T:002a  2a                                 rol                    ;NEXT BIT
+  139 T:002b  a0 3a                              ldy #$3a             ;COUNT FOR SAMPLES
+  140 T:002d  ca                                 dex 
+  141 T:002e  d0 f5                              bne RDBYT2
+  142 T:0030  60                                 rts 
+
+  144 T:0031  20 34 00                 RD2BIT    jsr RDBIT
+  145 T:0034  88                       RDBIT     dey                 ;DECR Y UNTIL
+  146 T:0035  ad 60 c0                           lda TAPEIN                ; TAPE TRANSITION
+  147 T:0038  45 2f                              eor $2f
+  148 T:003a  10 f8                              bpl RDBIT
+  149 T:003c  45 2f                              eor $2f
+  150 T:003e  85 2f                              sta $2f
+  151 T:0040  c0 80                              cpy #$80             ;SET CARRY ON Y
+  152 T:0042  60                                 rts 

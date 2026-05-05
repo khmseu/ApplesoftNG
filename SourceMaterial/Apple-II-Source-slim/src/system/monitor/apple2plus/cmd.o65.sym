@@ -1,0 +1,193 @@
+IOADR, 0xc000, 0, 0x0000
+    cmd.s65 300
+CTRL_B, 0x0082, 0, 0x0000
+    cmd.s65 511
+CTRL_C, 0x0083, 0, 0x0000
+    cmd.s65 495
+CTRL_E, 0x0085, 0, 0x0000
+    cmd.s65 497
+CTRL_K, 0x008b, 0, 0x0000
+    cmd.s65 504
+CTRL_P, 0x0090, 0, 0x0000
+    cmd.s65 510
+CTRL_Y, 0x0099, 0, 0x0000
+    cmd.s65 496 500 507
+CROUT, 0x0000, 0, 0x0002
+    cmd.s65 133
+COUT, 0x005f, 0, 0x0002
+    cmd.s65 250 252 256 391 393 394 397 130 137 154 171 188
+PRA1, 0x0004, 0, 0x0002
+    cmd.s65 152 246
+PRYX2, 0x0008, 0, 0x0002
+PRNTYX, 0x0000, 0, 0x0000
+    cmd.s65 134
+XAM8, 0x0015, 0, 0x0002
+    cmd.s65 209
+MODSCHK, 0x001f, 0, 0x0002
+    cmd.s65 158
+DATAOUT, 0x0028, 0, 0x0002
+    cmd.s65 151
+XAM, 0x0025, 0, 0x0002
+    cmd.s65 162
+PRBYTE, 0x004c, 0, 0x0002
+    cmd.s65 248 254 156
+NXTA1, 0x0000, 0, 0x0000
+    cmd.s65 157 345 384
+RTS4C, 0x0037, 0, 0x0002
+XAMPM, 0x0038, 0, 0x0002
+    cmd.s65 215
+ADD, 0x0043, 0, 0x0002
+    cmd.s65 166
+PRHEXZ, 0x0057, 0, 0x0002
+    cmd.s65 183
+PRHEX, 0x0055, 0, 0x0002
+COUT1, 0x0062, 0, 0x0002
+    cmd.s65 296 303
+COUTZ, 0x0068, 0, 0x0002
+    cmd.s65 195
+LFB78, 0x0000, 0, 0x0000
+    cmd.s65 200
+BL1, 0x0072, 0, 0x0002
+    cmd.s65 360
+BLANK, 0x0076, 0, 0x0002
+    cmd.s65 549
+SETMDZ, 0x008f, 0, 0x0002
+    cmd.s65 212
+STOR, 0x007d, 0, 0x0002
+RTS5, 0x0089, 0, 0x0002
+    cmd.s65 220
+SETMODE, 0x008a, 0, 0x0002
+    cmd.s65 536 537 546 547
+LT, 0x0092, 0, 0x0002
+    cmd.s65 539
+LT2, 0x0094, 0, 0x0002
+    cmd.s65 234
+MOVE, 0x009e, 0, 0x0002
+    cmd.s65 240 538
+NXTA4, 0x0000, 0, 0x0000
+    cmd.s65 239 257
+VFY, 0x00a8, 0, 0x0002
+    cmd.s65 258 531
+VFYOK, 0x00ca, 0, 0x0002
+    cmd.s65 245
+LIST1, 0x00d0, 0, 0x0002
+    cmd.s65 542
+A1PC, 0x00e7, 0, 0x0002
+    cmd.s65 315 261
+LIST2, 0x00d5, 0, 0x0002
+    cmd.s65 271
+INSTDSP, 0x0000, 0, 0x0000
+    cmd.s65 264
+PCADJ, 0x0000, 0, 0x0000
+    cmd.s65 265
+A1PCRTS, 0x00f1, 0, 0x0002
+    cmd.s65 275
+A1PCLP, 0x00ea, 0, 0x0002
+    cmd.s65 279
+SETINV, 0x00f2, 0, 0x0002
+    cmd.s65 541
+SETIFLG, 0x00f8, 0, 0x0002
+    cmd.s65 283
+SETNORM, 0x00f6, 0, 0x0002
+    cmd.s65 426 540
+SETKBD, 0x00fb, 0, 0x0002
+    cmd.s65 429
+INPORT, 0x00fd, 0, 0x0002
+INPRT, 0x00ff, 0, 0x0002
+    cmd.s65 532
+KEYIN, 0x0000, 0, 0x0000
+    cmd.s65 291
+IOPRT, 0x010d, 0, 0x0002
+    cmd.s65 292
+SETVID, 0x0105, 0, 0x0002
+    cmd.s65 428
+OUTPORT, 0x0107, 0, 0x0002
+OUTPRT, 0x0109, 0, 0x0002
+    cmd.s65 534
+IOPRT1, 0x0119, 0, 0x0002
+    cmd.s65 299
+IOPRT2, 0x011b, 0, 0x0002
+    cmd.s65 302
+XBASIC, 0x0122, 0, 0x0002
+    cmd.s65 535
+BASCONT, 0x0125, 0, 0x0002
+    cmd.s65 527
+GO, 0x0128, 0, 0x0002
+    cmd.s65 482 544
+RESTORE, 0x01b1, 0, 0x0002
+    cmd.s65 316
+REGZ, 0x0131, 0, 0x0002
+    cmd.s65 529
+REGDSP, 0x0000, 0, 0x0000
+    cmd.s65 319
+TRACE, 0x0134, 0, 0x0002
+    cmd.s65 530
+STEPZ, 0x0137, 0, 0x0002
+    cmd.s65 533
+USR, 0x013c, 0, 0x0002
+    cmd.s65 528
+WRITE, 0x013f, 0, 0x0002
+    cmd.s65 543
+HEADR, 0x0000, 0, 0x0000
+    cmd.s65 338 372
+WR1, 0x0146, 0, 0x0002
+    cmd.s65 348
+WRBYTE, 0x015f, 0, 0x0002
+    cmd.s65 344 350
+BELL, 0x01ac, 0, 0x0002
+    cmd.s65 431 351 389
+WRBYT2, 0x0161, 0, 0x0002
+    cmd.s65 355
+WRBIT, 0x0000, 0, 0x0000
+    cmd.s65 354
+CRMON, 0x0168, 0, 0x0002
+    cmd.s65 548
+MONZ, 0x01db, 0, 0x0002
+    cmd.s65 363
+READ, 0x016f, 0, 0x0002
+    cmd.s65 545
+RD2BIT, 0x0000, 0, 0x0000
+    cmd.s65 370 374
+RD2, 0x017c, 0, 0x0002
+    cmd.s65 377
+RDBIT, 0x0000, 0, 0x0000
+    cmd.s65 376 378
+RD3, 0x0188, 0, 0x0002
+    cmd.s65 386
+RDBYTE, 0x0000, 0, 0x0000
+    cmd.s65 380 387
+PRERR, 0x019f, 0, 0x0002
+RESTR1, 0x01b6, 0, 0x0002
+SAVE, 0x01bc, 0, 0x0002
+SAV1, 0x01be, 0, 0x0002
+RESET, 0x01cb, 0, 0x0002
+INIT, 0x0000, 0, 0x0000
+    cmd.s65 427
+MON, 0x01d7, 0, 0x0002
+    cmd.s65 440
+GETLNZ, 0x0000, 0, 0x0000
+    cmd.s65 434
+ZMODE, 0x0239, 0, 0x0002
+    cmd.s65 435
+NXTITM, 0x01e5, 0, 0x0002
+    cmd.s65 445
+GETNUM, 0x0219, 0, 0x0002
+    cmd.s65 436
+CHRSRCH, 0x01ec, 0, 0x0002
+    cmd.s65 442
+CHRTBL, 0x023e, 0, 0x0002
+    cmd.s65 441
+TOSUB, 0x0230, 0, 0x0002
+    cmd.s65 443
+DIG, 0x01fc, 0, 0x0002
+    cmd.s65 475 478
+NXTBIT, 0x0202, 0, 0x0002
+    cmd.s65 458
+NXTBAS, 0x020a, 0, 0x0002
+    cmd.s65 465
+NXTBS2, 0x0214, 0, 0x0002
+    cmd.s65 460
+NXTCHR, 0x021f, 0, 0x0002
+    cmd.s65 466
+SUBTBL, 0x0255, 0, 0x0002
+    cmd.s65 484

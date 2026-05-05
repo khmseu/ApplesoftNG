@@ -1,0 +1,231 @@
+
+disasm.s65
+
+
+  108 T:0000                                    ;-----------------------------------------------------------------------
+  109 T:0000                                    ;
+  110 T:0000                                    ; DISASSEMBLER
+  111 T:0000                                    ;
+  112 T:0000                                    ; Handles disassembling 6502 instructions.
+  113 T:0000                                    ;
+  114 T:0000                                    ;-----------------------------------------------------------------------
+
+  120 T:0000  a6 3a                    INSDS1    ldx $3a           ;PRINT PCL,H
+  121 T:0002  a4 3b                              ldy $3b
+  122 T:0004  20 00 00                           jsr PRYX2
+  123 T:0007  20 c6 00                           jsr PRBLNK                ;FOLLOWED BY A BLANK
+  124 T:000a  a1 3a                              lda ($3a,X)          ;GET OP CODE
+  125 T:000c  a8                       INSDS2    tay 
+  126 T:000d  4a                                 lsr                    ;EVEN/ODD TEST
+  127 T:000e  90 09                              bcc IEVEN
+  128 T:0010  6a                                 ror                    ;BIT 1 TEST
+  129 T:0011  b0 10                              bcs ERR                ;XXXXXX11 INVALID OP
+  130 T:0013  c9 a2                              cmp #$a2
+  131 T:0015  f0 0c                              beq ERR                ;OPCODE $89 INVALID
+  132 T:0017  29 87                              and #$87             ;MASK BITS
+  133 T:0019  4a                       IEVEN     lsr                 ;LSB INTO CARRY FOR L/R TEST
+  134 T:001a  aa                                 tax 
+  135 T:001b  bd e0 00                           lda FMT1,X              ;GET FORMAT INDEX BYTE
+  136 T:001e  20 00 00                           jsr SCRN2                ;R/L H-BYTE ON CARRY
+  137 T:0021  d0 04                              bne GETFMT
+  138 T:0023  a0 80                    ERR       ldy #$80          ;SUBSTITUTE $80 FOR INVALID OPS
+  139 T:0025  a9 00                              lda #$00             ;SET PRINT FORMAT INDEX TO 0
+  140 T:0027  aa                       GETFMT    tax 
+  141 T:0028  bd 24 01                           lda FMT2,X              ;INDEX INTO PRINT FORMAT TABLE
+  142 T:002b  85 2e                              sta $2e              ;SAVE FOR ADR FIELD FORMATTING
+  143 T:002d  29 03                              and #$03             ;MASK FOR 2-BIT (LENGTH-1)
+  144 T:002f  85 2f                              sta $2f
+  145 T:0031  98                                 tya                    ;OPCODE
+  146 T:0032  29 8f                              and #$8f             ;MASK FOR 1XXX1010 TEST
+  147 T:0034  aa                                 tax                    ; SAVE IT
+  148 T:0035  98                                 tya                    ;OPCODE TO A AGAIN
+  149 T:0036  a0 03                              ldy #$03
+  150 T:0038  e0 8a                              cpx #$8a
+  151 T:003a  f0 0b                              beq MNNDX3
+  152 T:003c  4a                       MNNDX1    lsr 
+  153 T:003d  90 08                              bcc MNNDX3                ;FORM INDEX INTO MNEMONIC TABLE
+  154 T:003f  4a                                 lsr 
+  155 T:0040  4a                       MNNDX2    lsr                 ;1) 1XXX1010->00101XXX
+  156 T:0041  09 20                              ora #$20             ;2) XXXYYY01->00111XXX
+  157 T:0043  88                                 dey                    ;3) XXXYYY10->00110XXX
+  158 T:0044  d0 fa                              bne MNNDX2             ;4) XXXYY100->00100XXX
+  159 T:0046  c8                                 iny                    ;5) XXXXX000->000XXXXX
+  160 T:0047  88                       MNNDX3    dey 
+  161 T:0048  d0 f2                              bne MNNDX1
+  162 T:004a  60                                 rts 
+
+  166 T:004b  ff ff ff                           .byt $ff,$ff,$ff
+
+  170 T:004e  20 00 00                 INSTDSP   jsr INSDS1          ;GEN FMT, LEN BYTES
+  171 T:0051  48                                 pha                    ;SAVE MNEMONIC TABLE INDEX
+  172 T:0052  b1 3a                    PRNTOP    lda ($3a),Y
+  173 T:0054  20 00 00                           jsr PRBYTE
+  174 T:0057  a2 01                              ldx #1             ;PRINT 2 BLANKS
+  175 T:0059  20 c8 00                 PRNTBL    jsr PRBL2
+  176 T:005c  c4 2f                              cpy $2f              ;PRINT INST (1-3 BYTES)
+  177 T:005e  c8                                 iny                    ;IN A 12 CHR FIELD
+  178 T:005f  90 f1                              bcc PRNTOP
+  179 T:0061  a2 03                              ldx #3             ;CHAR COUNT FOR MNEMONIC PRINT
+  180 T:0063  c0 04                              cpy #4
+  181 T:0065  90 f2                              bcc PRNTBL
+  182 T:0067  68                                 pla                    ;RECOVER MNEMONIC INDEX
+  183 T:0068  a8                                 tay 
+  184 T:0069  b9 3e 01                           lda MNEML,Y
+  185 T:006c  85 2c                              sta $2c              ;FETCH 3-CHAR MNEMONIC
+  186 T:006e  b9 7e 01                           lda MNEMR,Y              ;  (PACKED IN 2-BYTES)
+  187 T:0071  85 2d                              sta $2d
+  188 T:0073  a9 00                    PRMN1     lda #0
+  189 T:0075  a0 05                              ldy #5
+  190 T:0077  06 2d                    PRMN2     asl $2d           ;SHIFT 5 BITS OF
+  191 T:0079  26 2c                              rol $2c              ;  CHARACTER INTO A
+  192 T:007b  2a                                 rol                    ;    (CLEARS CARRY)
+  193 T:007c  88                                 dey 
+  194 T:007d  d0 f8                              bne PRMN2
+  195 T:007f  69 bf                              adc #("?"|%10000000)     ;ADD "?" OFFSET
+  196 T:0081  20 00 00                           jsr COUT                ;OUTPUT A CHAR OF MNEM
+  197 T:0084  ca                                 dex 
+  198 T:0085  d0 ec                              bne PRMN1
+  199 T:0087  20 c6 00                           jsr PRBLNK                ;OUTPUT 3 BLANKS
+  200 T:008a  a4 2f                              ldy $2f
+  201 T:008c  a2 06                              ldx #6             ;CNT FOR 6 FORMAT BITS
+  202 T:008e  e0 03                    PRADR1    cpx #3
+  203 T:0090  f0 1c                              beq PRADR5                ;IF X=3 THEN ADDR.
+  204 T:0092  06 2e                    PRADR2    asl $2e
+  205 T:0094  90 0e                              bcc PRADR3
+  206 T:0096  bd 31 01                           lda CHAR1-1,X
+  207 T:0099  20 00 00                           jsr COUT
+  208 T:009c  bd 37 01                           lda CHAR2-1,X
+  209 T:009f  f0 03                              beq PRADR3
+  210 T:00a1  20 00 00                           jsr COUT
+  211 T:00a4  ca                       PRADR3    dex 
+  212 T:00a5  d0 e7                              bne PRADR1
+  213 T:00a7  60                                 rts 
+  214 T:00a8  88                       PRADR4    dey 
+  215 T:00a9  30 e7                              bmi PRADR2
+  216 T:00ab  20 00 00                           jsr PRBYTE
+  217 T:00ae  a5 2e                    PRADR5    lda $2e
+  218 T:00b0  c9 e8                              cmp #$e8             ;HANDLE REL ADR MODE
+  219 T:00b2  b1 3a                              lda ($3a),Y          ;SPECIAL (PRINT TARGET,
+  220 T:00b4  90 f2                              bcc PRADR4             ;  NOT OFFSET)
+  221 T:00b6  20 d4 00                 RELADR    jsr PCADJ3
+  222 T:00b9  aa                                 tax                    ;PCL,PCH+OFFSET+1 TO A,Y
+  223 T:00ba  e8                                 inx 
+  224 T:00bb  d0 01                              bne PRNTYX                ;+1 TO Y,X
+  225 T:00bd  c8                                 iny 
+
+  227 T:00be  98                       PRNTYX    tya 
+  228 T:00bf  20 00 00                 PRNTAX    jsr PRBYTE             ;OUTPUT TARGET ADR
+  229 T:00c2  8a                       PRNTX     txa                 ;  OF BRANCH AND RETURN
+  230 T:00c3  4c 00 00                           jmp PRBYTE
+
+  234 T:00c6  a2 03                    PRBLNK    ldx #3          ;BLANK COUNT
+  235 T:00c8  a9 a0                    PRBL2     lda #(" "|%10000000)  ;LOAD A SPACE
+  236 T:00ca  20 00 00                           jsr COUT                ;OUTPUT A BLANK
+  237 T:00cd  ca                                 dex 
+  238 T:00ce  d0 f8                              bne PRBL2             ;LOOP UNTIL COUNT=0
+  239 T:00d0  60                                 rts 
+
+  243 T:00d1  38                       PCADJ     sec                 ;0=1-BYTE, 1=2-BYTE
+  244 T:00d2  a5 2f                    PCADJ2    lda $2f           ;  2=3-BYTE
+  245 T:00d4  a4 3b                    PCADJ3    ldy $3b
+  246 T:00d6  aa                                 tax                    ;TEST DISPLACEMENT SIGN
+  247 T:00d7  10 01                              bpl PCADJ4                ;  (FOR REL BRANCH)
+  248 T:00d9  88                                 dey                    ;EXTEND NEG BY DEC PCH
+  249 T:00da  65 3a                    PCADJ4    adc $3a
+  250 T:00dc  90 01                              bcc RTS2                ;PCL+LENGTH(OR DISPL)+1 TO A
+  251 T:00de  c8                                 iny                    ;  CARRY INTO Y (PCH)
+  252 T:00df  60                       RTS2      rts 
+
+  260 T:00e0                                    ; * FMT1 BYTES:    XXXXXXY0 INSTRS
+  261 T:00e0                                    ; * IF Y=0         THEN LEFT HALF BYTE
+  262 T:00e0                                    ; * IF Y=1         THEN RIGHT HALF BYTE
+  263 T:00e0                                    ; *                   (X=INDEX)
+  264 T:00e0  04 20 54 30 0d           FMT1      .byt $04,$20,$54,$30,$0d
+  265 T:00e5  80 04 90 03 22                     .byt $80,$04,$90,$03,$22
+  266 T:00ea  54 33 0d 80 04                     .byt $54,$33,$0d,$80,$04
+  267 T:00ef  90 04 20 54 33                     .byt $90,$04,$20,$54,$33
+  268 T:00f4  0d 80 04 90 04                     .byt $0d,$80,$04,$90,$04
+  269 T:00f9  20 54 3b 0d 80                     .byt $20,$54,$3b,$0d,$80
+  270 T:00fe  04 90 00 22 44                     .byt $04,$90,$00,$22,$44
+  271 T:0103  33 0d c8 44 00                     .byt $33,$0d,$c8,$44,$00
+  272 T:0108  11 22 44 33 0d                     .byt $11,$22,$44,$33,$0d
+  273 T:010d  c8 44 a9 01 22                     .byt $c8,$44,$a9,$01,$22
+  274 T:0112  44 33 0d 80 04                     .byt $44,$33,$0d,$80,$04
+  275 T:0117  90 01 22 44 33                     .byt $90,$01,$22,$44,$33
+  276 T:011c  0d 80 04 90                        .byt $0d,$80,$04,$90
+  277 T:0120  26 31 87 9a                        .byt $26,$31,$87,$9a;$ZZXXXY01 INSTR'S
+
+  279 T:0124  00                       FMT2      .byt $00           ;ERR
+  280 T:0125  21                                 .byt $21              ;IMM
+  281 T:0126  81                                 .byt $81              ;Z-PAGE
+  282 T:0127  82                                 .byt $82              ;ABS
+  283 T:0128  00                                 .byt $00              ;IMPLIED
+  284 T:0129  00                                 .byt $00              ;ACCUMULATOR
+  285 T:012a  59                                 .byt $59              ;(ZPAG,X)
+  286 T:012b  4d                                 .byt $4d              ;(ZPAG),Y
+  287 T:012c  91                                 .byt $91              ;ZPAG,X
+  288 T:012d  92                                 .byt $92              ;ABS,X
+  289 T:012e  86                                 .byt $86              ;ABS,Y
+  290 T:012f  4a                                 .byt $4a              ;(ABS)
+  291 T:0130  85                                 .byt $85              ;ZPAG,Y
+  292 T:0131  9d                                 .byt $9d              ;RELATIVE
+  293 T:0132                           CHAR1     
+  294 T:0132  ac                                 .byt (","|%10000000)
+  295 T:0133  a9                                 .byt (")"|%10000000)
+  296 T:0134  ac                                 .byt (","|%10000000)
+  297 T:0135  a3                                 .byt ("#"|%10000000)
+  298 T:0136  a8                                 .byt ("("|%10000000)
+  299 T:0137  a4                                 .byt ("$"|%10000000)
+
+  301 T:0138  d9                       CHAR2     .byt ("Y"|%10000000)
+  302 T:0139  00                                 .byt 0
+  303 T:013a  d8                                 .byt ("X"|%10000000)
+  304 T:013b  a4                                 .byt ("$"|%10000000)
+  305 T:013c  a4                                 .byt ("$"|%10000000)
+
+  307 T:013d  00                                 .byt 0
+
+  311 T:013e                                    ; * MNEML IS OF FORM:
+  312 T:013e                                    ; *  (A) XXXXX000
+  313 T:013e                                    ; *  (B) XXXYY100
+  314 T:013e                                    ; *  (C) 1XXX1010
+  315 T:013e                                    ; *  (D) XXXYYY10
+  316 T:013e                                    ; *  (E) XXXYYY01
+  317 T:013e                                    ; *      (X=INDEX)
+  318 T:013e  1c 8a 1c 23 5d 8b        MNEML     .byt $1c,$8a,$1c,$23,$5d,$8b
+  319 T:0144  1b a1 9d 8a 1d 23                  .byt $1b,$a1,$9d,$8a,$1d,$23
+  320 T:014a  9d 8b 1d a1 00 29                  .byt $9d,$8b,$1d,$a1,$00,$29
+  321 T:0150  19 ae 69 a8 19 23                  .byt $19,$ae,$69,$a8,$19,$23
+  322 T:0156  24 53 1b 23 24 53                  .byt $24,$53,$1b,$23,$24,$53
+  323 T:015c  19 a1                              .byt $19,$a1        ;(A) FORMAT ABOVE
+
+  325 T:015e  00 1a 5b 5b a5 69                  .byt $00,$1a,$5b,$5b,$a5,$69
+  326 T:0164  24 24                              .byt $24,$24        ;(B) FORMAT
+
+  328 T:0166  ae ae a8 ad 29 00                  .byt $ae,$ae,$a8,$ad,$29,$00
+  329 T:016c  7c 00                              .byt $7c,$00        ;(C) FORMAT
+
+  331 T:016e  15 9c 6d 9c a5 69                  .byt $15,$9c,$6d,$9c,$a5,$69
+  332 T:0174  29 53                              .byt $29,$53        ;(D) FORMAT
+
+  334 T:0176  84 13 34 11 a5 69                  .byt $84,$13,$34,$11,$a5,$69
+  335 T:017c  23 a0                              .byt $23,$a0        ;(E) FORMAT
+
+  337 T:017e  d8 62 5a 48 26 62        MNEMR     .byt $d8,$62,$5a,$48,$26,$62
+  338 T:0184  94 88 54 44 c8 54                  .byt $94,$88,$54,$44,$c8,$54
+  339 T:018a  68 44 e8 94 00 b4                  .byt $68,$44,$e8,$94,$00,$b4
+  340 T:0190  08 84 74 b4 28 6e                  .byt $08,$84,$74,$b4,$28,$6e
+  341 T:0196  74 f4 cc 4a 72 f2                  .byt $74,$f4,$cc,$4a,$72,$f2
+  342 T:019c  a4 8a                              .byt $a4,$8a        ;(A) FORMAT
+
+  344 T:019e  00 aa a2 a2 74 74                  .byt $00,$aa,$a2,$a2,$74,$74
+  345 T:01a4  74 72                              .byt $74,$72        ;(B) FORMAT
+
+  347 T:01a6  44 68 b2 32 b2 00                  .byt $44,$68,$b2,$32,$b2,$00
+  348 T:01ac  22 00                              .byt $22,$00        ;(C) FORMAT
+
+  350 T:01ae  1a 1a 26 26 72 72                  .byt $1a,$1a,$26,$26,$72,$72
+  351 T:01b4  88 c8                              .byt $88,$c8        ;(D) FORMAT
+
+  353 T:01b6  c4 ca 26 48 44 44                  .byt $c4,$ca,$26,$48,$44,$44
+  354 T:01bc  a2 c8                              .byt $a2,$c8        ;(E) FORMAT
