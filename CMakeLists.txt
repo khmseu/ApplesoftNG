@@ -18,6 +18,7 @@ set(SOURCES
     src/core/memory.cpp
     src/platform/console.cpp
     src/core/asm_port_input.cpp
+    src/core/asm_port_nxin.cpp
     src/core/asm_port_strtxt.cpp
     src/core/asm_port_strlit.cpp
     src/core/asm_port_strlt2.cpp
