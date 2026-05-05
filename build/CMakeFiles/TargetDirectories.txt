@@ -1,3 +1,0 @@
-/bigdata/KAI/projects/ApplesoftNG/build/CMakeFiles/ApplesoftClone.dir
-/bigdata/KAI/projects/ApplesoftNG/build/CMakeFiles/edit_cache.dir
-/bigdata/KAI/projects/ApplesoftNG/build/CMakeFiles/rebuild_cache.dir

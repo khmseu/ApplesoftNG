@@ -1,6 +1,0 @@
-# ninja log v5
-3	343	1778016082320379375	CMakeFiles/ApplesoftClone.dir/src/core/memory.cpp.o	acba6a6bd3d811e9
-3	2138	1778016084127315581	CMakeFiles/ApplesoftClone.dir/src/core/interpreter.cpp.o	1ac5321d0c9640b2
-4	4236	1778016086229241374	CMakeFiles/ApplesoftClone.dir/src/platform/console.cpp.o	bd3a2bff59347fed
-1	4689	1778016086665225982	CMakeFiles/ApplesoftClone.dir/src/main.cpp.o	44919afdf98c35cf
-4690	5075	1778016087071211649	ApplesoftClone	fd426caf12139a56

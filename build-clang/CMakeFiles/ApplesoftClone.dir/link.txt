@@ -1,1 +1,0 @@
-/usr/bin/clang++ CMakeFiles/ApplesoftClone.dir/src/main.cpp.o CMakeFiles/ApplesoftClone.dir/src/core/interpreter.cpp.o CMakeFiles/ApplesoftClone.dir/src/core/memory.cpp.o CMakeFiles/ApplesoftClone.dir/src/platform/console.cpp.o -o ApplesoftClone 
