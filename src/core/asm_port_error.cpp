@@ -41,9 +41,69 @@ void LINGET() {
     // TODO(asm-port): consume the line number prefix from the input buffer.
 }
 
+std::uint8_t ReadZeroPageByte(std::uint8_t address) {
+    // TODO(asm-port): read a byte from zero-page storage.
+    (void)address;
+    return 0;
+}
+
+void WriteZeroPageWord(std::uint8_t address, std::uint16_t value) {
+    // TODO(asm-port): write a 16-bit zero-page address in low/high order.
+    (void)address;
+    (void)value;
+}
+
+std::uint16_t ReadZeroPageWord(std::uint8_t address) {
+    const std::uint8_t low = ReadZeroPageByte(address);
+    const std::uint8_t high = ReadZeroPageByte(static_cast<std::uint8_t>(address + 1));
+    return static_cast<std::uint16_t>(high) << 8 | low;
+}
+
+std::uint8_t ReadProgramByte(std::uint16_t address) {
+    // TODO(asm-port): read a byte from the program memory buffer.
+    (void)address;
+    return 0;
+}
+
 bool FNDLIN() {
-    // TODO(asm-port): search for an existing program line matching the current line number.
-    return false;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FNDLIN (inclusive) .. NEW (exclusive)
+    // Name normalization: none (assembler label FNDLIN kept verbatim).
+
+    constexpr std::uint8_t kTXTTAB = 0x67;
+    constexpr std::uint8_t kLOWTR = 0x9b;
+    constexpr std::uint8_t kLINNUM = 0x50;
+
+    const std::uint16_t targetLow = ReadZeroPageByte(kLINNUM);
+    const std::uint16_t targetHigh = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1));
+    std::uint16_t current = ReadZeroPageWord(kTXTTAB);
+
+    while (true) {
+        WriteZeroPageWord(kLOWTR, current);
+
+        const std::uint8_t nextHigh = ReadProgramByte(current + 1);
+        if (nextHigh == 0) {
+            return false;
+        }
+
+        const std::uint8_t currentHigh = ReadProgramByte(current + 3);
+        if (targetHigh < currentHigh) {
+            return false;
+        }
+
+        if (targetHigh == currentHigh) {
+            const std::uint8_t currentLow = ReadProgramByte(current + 2);
+            if (targetLow < currentLow) {
+                return false;
+            }
+            if (targetLow == currentLow) {
+                return true;
+            }
+        }
+
+        const std::uint8_t nextLow = ReadProgramByte(current);
+        current = static_cast<std::uint16_t>(nextHigh) << 8 | nextLow;
+    }
 }
 
 void DeleteExistingLine() {
