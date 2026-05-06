@@ -1,5 +1,6 @@
 #include "core/asm_port_memerr.hpp"
 
+#include "core/asm_port_error.hpp"
 #include "core/asm_port_error_messages.hpp"
 
 namespace applesoft::asm_port {
@@ -9,7 +10,9 @@ std::uint8_t MEMERR() {
     // Labels: MEMERR (inclusive) .. ERROR (exclusive)
     // Name normalization: none (assembler label MEMERR kept verbatim).
 
-    return ERR_MEMFULL;
+    const std::uint8_t x = ERR_MEMFULL;
+    ERROR();
+    return x;
 }
 
 } // namespace applesoft::asm_port
