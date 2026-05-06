@@ -3,9 +3,6 @@
 namespace applesoft::asm_port {
 namespace {
 
-// TODO(asm-port): port REASON label.
-static void REASON(std::uint8_t& /*a*/, std::uint8_t& /*y*/) {}
-
 std::uint16_t pointer_from(std::uint8_t lo, std::uint8_t hi) {
     return static_cast<std::uint16_t>(lo | (static_cast<std::uint16_t>(hi) << 8));
 }
@@ -31,7 +28,11 @@ void copy_page_backward(BLTU2State& state) {
 
 BLTUResult BLTU(BLTUState& state) {
     // BLTU starts by validating/grooming destination via REASON.
-    REASON(state.a, state.y);
+    state.reason.a = state.a;
+    state.reason.y = state.y;
+    const REASONResult reasonResult = REASON(state.reason);
+    state.a = reasonResult.a;
+    state.y = reasonResult.y;
 
     // New top of array storage (STREND) is loaded from adjusted A/Y.
     state.strendLo = state.a;

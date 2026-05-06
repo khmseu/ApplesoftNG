@@ -34,6 +34,7 @@ set(SOURCES
     src/core/asm_port_gtforpnt.cpp
     src/core/asm_port_bltu.cpp
     src/core/asm_port_chkmem.cpp
+    src/core/asm_port_reason.cpp
 )
 
 # Add executable

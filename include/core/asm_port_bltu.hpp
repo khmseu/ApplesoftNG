@@ -3,6 +3,8 @@
 #include <array>
 #include <cstdint>
 
+#include "core/asm_port_reason.hpp"
+
 namespace applesoft::asm_port {
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -13,6 +15,9 @@ struct BLTUState {
     // Inputs carried in A/Y on entry.
     std::uint8_t a = 0;
     std::uint8_t y = 0;
+
+    // Minimal REASON state needed by the BLTU prologue.
+    REASONState reason{};
 
     // Destination state updated by BLTU.
     std::uint8_t strendLo = 0;
