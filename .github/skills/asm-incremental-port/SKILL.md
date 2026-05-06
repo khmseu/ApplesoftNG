@@ -28,6 +28,15 @@ Optional:
 7. Add missing dependency stubs near the new implementation with `TODO(asm-port)` markers.
 8. Build and report the exact files changed.
 
+## Function Address Table Pattern
+If the range is a 6502 jump-table or RTS-dispatch table (a sequence of `.word LABEL` or `.word LABEL-1` entries):
+- The `-1` is a 6502 RTS-dispatch artifact; use plain function pointers in C++.
+- Declare `using <TableName>_fn = <return>(*)(<params>);` for the common handler signature.
+- Implement `<TableName>_fn <TableName>(std::size_t index)` — a lookup that returns the pointer; the **caller** invokes it.
+- Body uses a `static constexpr` array of function pointers.
+- Preserve the per-entry token/label comments.
+- Create stubs for every callee not yet ported, following the standard dummy implementation rules.
+
 ## Definition Of Done
 - Conversion is bounded by requested labels.
 - Behavior and comments from the source range are reflected in code comments.

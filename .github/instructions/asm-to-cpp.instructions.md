@@ -53,6 +53,19 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 - Missing callees have explicit dummy implementations.
 - Project still configures and builds.
 
+## Function Address Table Pattern
+When the conversion window contains a table of `.word LABEL` or `.word LABEL-1` entries (a 6502 jump-table or RTS-dispatch table):
+- The `-1` offset is a 6502 RTS-dispatch artifact; in C++ use the plain function pointer without adjustment.
+- Declare a type alias for the common function signature: `using <TableName>_fn = <return>(*)(<params>);`
+- Implement a single lookup function named after the table label:
+  ```cpp
+  <TableName>_fn <TableName>(std::size_t index);
+  ```
+- The body holds a `static constexpr` array of function pointers indexed from 0.
+- The function returns the pointer; the **caller** is responsible for invoking it.
+- For any callee not yet ported, add a dummy stub with `TODO(asm-port)` following the Dummy Implementation Rules above, with signature matching the type alias.
+- Include a comment mapping each index to the original token/label comment from the source.
+
 ## Hard Boundaries
 - Do not add runtime dependency on files under SourceMaterial.
 - Do not rewrite unrelated files.
