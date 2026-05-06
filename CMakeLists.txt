@@ -16,6 +16,7 @@ set(SOURCES
     src/main.cpp
     src/core/interpreter.cpp
     src/core/memory.cpp
+    src/platform/asm_port_getln.cpp
     src/platform/console.cpp
     src/core/asm_port_inlin.cpp
     src/core/asm_port_inlin2.cpp
