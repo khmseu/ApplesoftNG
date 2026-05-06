@@ -21,7 +21,7 @@ Optional:
 2. Read the bounded range from `start_label` up to but not including `end_label`, including inline comments and comments immediately preceding the range.
 3. Summarize intent in 2-5 bullets before coding.
 4. Implement one C++ function for the range.
-   - If the range does not end in an `RTS`, `JMP`, or unconditional branch, preserve the fall-through into `end_label` by calling the following function at that point.
+   - If the range does not end in an `RTS`, `JMP`, or unconditional branch, preserve the fall-through into `end_label` by calling the following function at that point. Add a checklist item to confirm that the next-label fall-through is modeled explicitly.
 5. Keep label-based naming as-is when legal; otherwise minimally normalize and document mapping.
 6. Choose destination by behavior:
 - language/runtime semantics -> [src/core](../../../src/core)

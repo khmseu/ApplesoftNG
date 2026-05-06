@@ -19,7 +19,7 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 - inline inside the range.
 - immediately preceding the first line in range and semantically attached.
 4. Infer the behavior and data flow from opcodes, branch patterns, and comments.
-   - If the source slice does not end in an unconditional transfer (`RTS`, `JMP`, or unconditional branch), it falls through into the next label. Model that fall-through in C++ by calling the following function at that point.
+   - If the source slice does not end in an unconditional transfer (`RTS`, `JMP`, or unconditional branch), it falls through into the next label. Model that fall-through in C++ by calling the following function at that point, or by returning state that the caller uses to invoke the next label.
 5. Implement one primary C++ function that preserves the original assembler name as much as possible.
 6. Place the function in the appropriate runtime area:
 - interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
@@ -49,6 +49,7 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 
 ## Output Checklist
 - Exactly one bounded behavior slice was ported.
+- If the slice does not end in an unconditional transfer, the implementation explicitly models the fall-through to `end_label` by calling the next function or returning continuation state.
 - Function location matches subsystem boundaries.
 - Original names preserved or minimally normalized with mapping comments.
 - Missing callees have explicit dummy implementations.
