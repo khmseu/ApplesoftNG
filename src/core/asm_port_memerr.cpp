@@ -11,7 +11,7 @@ std::uint8_t MEMERR() {
     // Name normalization: none (assembler label MEMERR kept verbatim).
 
     const std::uint8_t x = ERR_MEMFULL;
-    ERROR();
+    ERROR(x);
     return x;
 }
 
