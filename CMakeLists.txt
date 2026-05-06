@@ -31,6 +31,7 @@ set(SOURCES
     src/core/asm_port_token_name_table.cpp
     src/core/asm_port_error_messages.cpp
     src/core/asm_port_qt_error.cpp
+    src/core/asm_port_gtforpnt.cpp
 )
 
 # Add executable
