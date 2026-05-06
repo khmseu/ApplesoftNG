@@ -19,6 +19,7 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 - inline inside the range.
 - immediately preceding the first line in range and semantically attached.
 4. Infer the behavior and data flow from opcodes, branch patterns, and comments.
+   - If the source slice does not end in an unconditional transfer (`RTS`, `JMP`, or unconditional branch), it falls through into the next label. Model that fall-through in C++ by calling the following function at that point.
 5. Implement one primary C++ function that preserves the original assembler name as much as possible.
 6. Place the function in the appropriate runtime area:
 - interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
