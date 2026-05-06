@@ -1,10 +1,76 @@
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_qt_error.hpp"
 
 #include <string_view>
 
 namespace applesoft::asm_port {
+namespace {
+
+constexpr std::uint8_t RESTART_PROMPT = ']' | 0x80u;
+
+bool isDigit(std::uint8_t ch) {
+    return ch >= '0' && ch <= '9';
+}
+
+std::uint8_t CHRGET() {
+    // TODO(asm-port): read the next character from the current input buffer.
+    return 0;
+}
+
+void SetTextPointer(std::uint8_t lo, std::uint8_t hi) {
+    // TODO(asm-port): update the TXTPTR pointer into the input buffer.
+    (void)lo;
+    (void)hi;
+}
+
+void ClearErrFlag() {
+    // TODO(asm-port): clear the Applesoft ERRFLG state.
+}
+
+void MarkDirectMode() {
+    // TODO(asm-port): record the current execution mode as direct.
+}
+
+void LINGET() {
+    // TODO(asm-port): consume the line number prefix from the input buffer.
+}
+
+bool FNDLIN() {
+    // TODO(asm-port): search for an existing program line matching the current line number.
+    return false;
+}
+
+void DeleteExistingLine() {
+    // TODO(asm-port): delete the existing numbered line and shift later lines down.
+}
+
+void InsertNewLine() {
+    // TODO(asm-port): make room and copy the new numbered line into the program listing.
+}
+
+void PARSE_INPUT_LINE() {
+    // TODO(asm-port): parse the current input line and prepare it for execution.
+}
+
+void TRACE_() {
+    // TODO(asm-port): execute the parsed input line or trace it in the interpreter.
+}
+
+void HandleNumberedLine() {
+    LINGET();
+    PARSE_INPUT_LINE();
+
+    if (FNDLIN()) {
+        DeleteExistingLine();
+    }
+
+    InsertNewLine();
+    FIX_LINKS();
+}
+
+} // namespace
 
 void ERROR(std::uint8_t error_code_offset) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -44,7 +110,30 @@ void RESTART() {
     // Labels: RESTART (inclusive)
     // Name normalization: none (assembler label RESTART kept verbatim).
 
-    // TODO(asm-port): implement Applesoft warm restart from the monitor.
+    CRDO();
+    const Inlin2Result inlin2 = INLIN2(RESTART_PROMPT);
+    SetTextPointer(inlin2.x, inlin2.y);
+    ClearErrFlag();
+
+    const std::uint8_t firstChar = CHRGET();
+    if (firstChar == 0) {
+        RESTART();
+        return;
+    }
+
+    MarkDirectMode();
+
+    if (isDigit(firstChar)) {
+        HandleNumberedLine();
+        return;
+    }
+
+    PARSE_INPUT_LINE();
+    TRACE_();
+}
+
+void FIX_LINKS() {
+    // TODO(asm-port): implement the FIX_LINKS label from the RESTART routine.
 }
 
 void CRDO() {

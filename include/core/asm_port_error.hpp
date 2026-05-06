@@ -20,6 +20,11 @@ void PRINT_ERROR_LINNUM();
 // Name normalization: none (assembler label RESTART kept verbatim).
 void RESTART();
 
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: FIX_LINKS (inclusive)
+// Name normalization: none (assembler label FIX_LINKS kept verbatim).
+void FIX_LINKS();
+
 // Helper stubs for error printing and restart handling.
 void CRDO();
 void STROUT(std::string_view text);
