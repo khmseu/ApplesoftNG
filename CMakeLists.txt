@@ -26,6 +26,7 @@ set(SOURCES
     src/core/asm_port_strlit.cpp
     src/core/asm_port_strlt2.cpp
     src/core/asm_port_token_address_table.cpp
+    src/core/asm_port_unfnc.cpp
 )
 
 # Add executable
