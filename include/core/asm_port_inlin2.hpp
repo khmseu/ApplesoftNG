@@ -15,4 +15,8 @@ struct Inlin2Result {
 // Name normalization: none (assembler label INLIN2 kept verbatim).
 Inlin2Result INLIN2(std::uint8_t x);
 
+// Labels: INCHR (inclusive) .. PARSE_INPUT_LINE (exclusive)
+// Name normalization: none (assembler label INCHR kept verbatim).
+std::uint8_t INCHR();
+
 } // namespace applesoft::asm_port

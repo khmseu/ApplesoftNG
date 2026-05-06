@@ -22,6 +22,9 @@ std::uint8_t read_INPUT_BUFFER_minus_1(std::uint8_t /*index*/) { return 0; }
 // TODO(asm-port): map INPUT_BUFFER-1 indexed write into runtime memory model.
 void write_INPUT_BUFFER_minus_1(std::uint8_t /*index*/, std::uint8_t /*v*/) {}
 
+// TODO(asm-port): implement MON_RDKEY input character read from the monitor.
+std::uint8_t MON_RDKEY() { return 0; }
+
 } // namespace
 
 Inlin2Result INLIN2(std::uint8_t x) {
@@ -50,6 +53,14 @@ Inlin2Result INLIN2(std::uint8_t x) {
         static_cast<std::uint8_t>((kInputBufferAddress - 1u) & 0xffu),
         static_cast<std::uint8_t>(((kInputBufferAddress - 1u) >> 8) & 0xffu)
     };
+}
+
+std::uint8_t INCHR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: INCHR (inclusive) .. PARSE_INPUT_LINE (exclusive)
+    // Name normalization: none (assembler label INCHR kept verbatim).
+
+    return MON_RDKEY();
 }
 
 } // namespace applesoft::asm_port
