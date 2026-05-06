@@ -10,8 +10,13 @@ constexpr std::uint16_t kInputBufferAddress = 0x0200;
 // TODO(asm-port): map MON_PROMPT write into runtime memory model.
 void write_MON_PROMPT(std::uint8_t /*v*/) {}
 
-// TODO(asm-port): port MON_GETLN monitor call; return line length in X.
-std::uint8_t MON_GETLN() { return 0; }
+// TODO(asm-port): port GETLN monitor call; return line length in X.
+std::uint8_t GETLN() { return 0; }
+
+// MON_GETLN is a monitor alias for GETLN.
+std::uint8_t MON_GETLN() {
+    return GETLN();
+}
 
 // TODO(asm-port): map INPUT_BUFFER indexed write into runtime memory model.
 void write_INPUT_BUFFER(std::uint8_t /*index*/, std::uint8_t /*v*/) {}
@@ -22,8 +27,13 @@ std::uint8_t read_INPUT_BUFFER_minus_1(std::uint8_t /*index*/) { return 0; }
 // TODO(asm-port): map INPUT_BUFFER-1 indexed write into runtime memory model.
 void write_INPUT_BUFFER_minus_1(std::uint8_t /*index*/, std::uint8_t /*v*/) {}
 
-// TODO(asm-port): implement MON_RDKEY input character read from the monitor.
-std::uint8_t MON_RDKEY() { return 0; }
+// TODO(asm-port): port RDKEY monitor call; read a key from the monitor.
+std::uint8_t RDKEY() { return 0; }
+
+// MON_RDKEY is a monitor alias for RDKEY.
+std::uint8_t MON_RDKEY() {
+    return RDKEY();
+}
 
 } // namespace
 

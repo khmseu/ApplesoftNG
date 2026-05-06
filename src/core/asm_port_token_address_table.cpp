@@ -34,7 +34,11 @@ static void HPLOT()            {} // TODO(asm-port): HPLOT
 static void DRAW()             {} // TODO(asm-port): DRAW
 static void XDRAW()            {} // TODO(asm-port): XDRAW
 static void HTAB()             {} // TODO(asm-port): HTAB
-static void MON_HOME()         {} // TODO(asm-port): MON_HOME (monitor clear-screen at $FC58)
+static void HOME()             {} // TODO(asm-port): HOME monitor routine alias for MON_HOME.
+static void MON_HOME() {
+    HOME();
+}
+// TODO(asm-port): MON_HOME (monitor clear-screen at $FC58)
 static void ROT()              {} // TODO(asm-port): ROT
 static void SCALE()            {} // TODO(asm-port): SCALE
 static void SHLOAD()           {} // TODO(asm-port): SHLOAD

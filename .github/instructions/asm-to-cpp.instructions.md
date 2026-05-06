@@ -35,6 +35,7 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 - Keep assembler symbol names verbatim when valid in C++.
 - If a symbol is not a valid C++ identifier, minimally normalize it (for example `.` to `_`) and document original symbol in a comment.
 - Prefer keeping capitalization consistent with source labels.
+- Treat `MON_xyz` labels as monitor aliases for `xyz`; implement them by forwarding to the corresponding monitor handler or by preserving the alias mapping in comments rather than inventing new unrelated semantics.
 
 ## Dummy Implementation Rules
 - Create stubs only for missing dependencies required by the converted function.
