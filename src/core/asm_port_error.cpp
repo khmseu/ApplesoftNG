@@ -132,8 +132,81 @@ void RESTART() {
     TRACE_();
 }
 
+namespace {
+
+struct LineAddress {
+    std::uint8_t lo = 0;
+    std::uint8_t hi = 0;
+};
+
+std::uint16_t ToWord(LineAddress address) {
+    return static_cast<std::uint16_t>(address.hi) << 8 | address.lo;
+}
+
+LineAddress FromWord(std::uint16_t value) {
+    return LineAddress{static_cast<std::uint8_t>(value & 0xff), static_cast<std::uint8_t>(value >> 8)};
+}
+
+void SETPTRS() {
+    // TODO(asm-port): initialize the program listing pointers before FIX_LINKS scans the program.
+}
+
+LineAddress GetTextTableAddress() {
+    // TODO(asm-port): return the current TXTTAB pointer into the program listing.
+    return LineAddress{};
+}
+
+bool IsEndOfProgram(LineAddress current) {
+    // The original FIX_LINKS loop terminates by jumping to RESTART after processing
+    // the final program line. A zero address is the safest sentinel for now.
+    return current.lo == 0 && current.hi == 0;
+}
+
+std::uint8_t ReadProgramByte(LineAddress base, std::uint8_t offset) {
+    // TODO(asm-port): read a byte from the program memory buffer at base+offset.
+    (void)base;
+    (void)offset;
+    return 0;
+}
+
+LineAddress AdvanceToNextLine(LineAddress current) {
+    // The original FIX_LINKS routine scans from the current line until it finds the
+    // end-of-line marker, then computes the address of the next line.
+    std::uint8_t offset = 4;
+    while (ReadProgramByte(current, offset) != 0) {
+        ++offset;
+    }
+
+    const std::uint16_t nextAddress = ToWord(current) + static_cast<std::uint16_t>(offset) + 1u;
+    return FromWord(nextAddress);
+}
+
+void WriteForwardPointer(LineAddress current, LineAddress next) {
+    // TODO(asm-port): write the low/high bytes of 'next' into the current line's forward-pointer header.
+    (void)current;
+    (void)next;
+}
+
+} // namespace
+
 void FIX_LINKS() {
-    // TODO(asm-port): implement the FIX_LINKS label from the RESTART routine.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FIX_LINKS (inclusive) .. INLIN (exclusive)
+    // Name normalization: none (assembler label FIX_LINKS kept verbatim).
+
+    SETPTRS();
+
+    LineAddress current = GetTextTableAddress();
+    while (true) {
+        if (IsEndOfProgram(current)) {
+            RESTART();
+            return;
+        }
+
+        const LineAddress next = AdvanceToNextLine(current);
+        WriteForwardPointer(current, next);
+        current = next;
+    }
 }
 
 void CRDO() {
