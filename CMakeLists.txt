@@ -32,6 +32,7 @@ set(SOURCES
     src/core/asm_port_error_messages.cpp
     src/core/asm_port_qt_error.cpp
     src/core/asm_port_gtforpnt.cpp
+    src/core/asm_port_bltu.cpp
 )
 
 # Add executable
