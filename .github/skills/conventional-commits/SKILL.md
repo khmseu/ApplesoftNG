@@ -1,12 +1,12 @@
 ---
 name: conventional-commits
-description: "Use when writing, reviewing, linting, or automating commit messages with the Conventional Commits 1.0.0 specification, including type/scope syntax, breaking change signaling, and SemVer/changelog workflows."
+description: "Use when writing or reviewing commit messages with the Conventional Commits 1.0.0 specification."
 context: fork
 ---
 
 # Conventional Commits
 
-Use this skill when creating commit message policies, reviewing commit quality, or integrating commit-driven release automation.
+Use this skill for Conventional Commits tasks across policy writing, commit review, and automation setup.
 
 This skill is based on official documentation:
 - https://www.conventionalcommits.org/en/v1.0.0/
@@ -25,6 +25,7 @@ This skill covers:
 
 ### Message Structure
 
+- Apply rules in this priority order: 1) valid Conventional Commits header syntax, 2) correct breaking-change signaling, 3) body/footer detail for human and automation needs.
 - Use the canonical structure:
 
 ```text
@@ -43,7 +44,7 @@ This skill covers:
 ### Types and Scope
 
 - Use `feat` for new features and `fix` for bug fixes.
-- Use additional types (`docs`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`, etc.) consistently per team policy.
+- Use additional types (`docs`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`, etc.) from your repository's documented allowlist (for example, in `CONTRIBUTING.md`); if no allowlist exists, use exactly this default set and ensure each commit uses one valid type from it.
 - Use scope as a noun indicating affected subsystem, for example `feat(parser): ...`.
 - Prefer splitting mixed changes into multiple commits rather than forcing one ambiguous type.
 
