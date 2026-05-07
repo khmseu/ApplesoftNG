@@ -69,6 +69,12 @@ void ENDX();
 void CONT();
 void SAVE();
 void LOAD();
+void RUN();
+void GOSUB();
+void GO_TO_LINE();
+void GOTO();
+void POP();
+void RETURN();
 void VARTIO();
 void PROGIO();
 void STOP_impl(bool shouldPrintBreak);
@@ -127,6 +133,13 @@ std::uint16_t ReadLineNumberFromTextPointer();
 void AdvanceTextPointerToNextLine();
 bool IsRunningMode();
 bool IsTraceEnabled();
+std::uint8_t REMN();
+bool FL1(std::uint8_t startLo, std::uint8_t startHi);
+std::uint8_t PopByteFromStack();
+bool ReturnWasFromPOPContext();
+std::uint8_t PeekTopControlTokenAfterGTFORPNT();
+void PULL3();
+void RTS_5();
 void OUTSP();
 void EXECUTE_STATEMENT();
 void PushForPntFrame();
@@ -1165,20 +1178,6 @@ void PROGIO() {
     (void)kMON_A2H;
 }
 
-void GOTO() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: GOTO (inclusive) .. GOSUB (exclusive)
-    // Name normalization: none (assembler label GOTO kept verbatim).
-    //
-    // Parses a line number and searches for it in the program.
-    // Sets TXTPTR to the start of the found line, or raises error if not found.
-
-    // TODO(asm-port): Parse the line number from current TXTPTR using LINGET.
-    // TODO(asm-port): Determine search direction based on current line number.
-    // TODO(asm-port): Call FL1 or FNDLIN to search for the target line.
-    // TODO(asm-port): Set TXTPTR to the found line address, or error if not found.
-}
-
 void RUN() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: RUN (inclusive) .. GOSUB (exclusive)
@@ -1190,7 +1189,6 @@ void RUN() {
     // - If line number specified: clears variables (CLEARC) then searches for and jumps to that line
 
     constexpr std::uint8_t kCURLIN_hi = 0x76;
-    constexpr std::uint8_t kCURLIN_lo = 0x75;
     
     // Decrement CURLIN+1 to mark as running (6502: dec CURLIN+1)
     std::uint8_t curlinHi = ReadZeroPageByte(kCURLIN_hi);
@@ -1208,10 +1206,7 @@ void RUN() {
     // Line number specified: clear variables then go to that line
     CLEARC();
     
-    // TODO(asm-port): Parse line number and search for it (shared with GOTO)
-    // For now, call GOTO directly since it handles the line number parsing and search.
-    // After GOTO returns, TXTPTR points to the start of the target line.
-    GOTO();
+    GO_TO_LINE();
 }
 
 void GOSUB() {
@@ -1225,25 +1220,165 @@ void GOSUB() {
     // - Falls through to shared GO_TO_LINE logic to find and execute the target line
     // - On RETURN, restores execution state from the stack frame
 
-    constexpr std::uint8_t kTXTPTR_lo = 0xb8;
-    constexpr std::uint8_t kTXTPTR_hi = 0xb9;
-    constexpr std::uint8_t kCURLIN_lo = 0x75;
-    constexpr std::uint8_t kCURLIN_hi = 0x76;
+    constexpr std::uint8_t kTXTPTR = 0xb8;
+    constexpr std::uint8_t kCURLIN = 0x75;
     constexpr std::uint8_t kTOKEN_GOSUB = 0xb0;
-    
-    // TODO(asm-port): Check stack space using CHKMEM (6502: lda #3, jsr CHKMEM).
-    // TODO(asm-port): Push return frame onto 6502 stack in reverse order:
-    //   pha (TXTPTR+1)
-    //   pha (TXTPTR+0)
-    //   pha (CURLIN+1)
-    //   pha (CURLIN+0)
-    //   pha (TOKEN_GOSUB = 0xB0)
-    //
-    // This will save the current execution state so that a RETURN statement
-    // can restore it after executing the subroutine.
-    
-    // Call GOTO to parse the line number and set TXTPTR to the target line
+
+    CHKMEMState chkmemState{};
+    chkmemState.a = 3;
+    chkmemState.stackPointer = ReadStackPointer();
+    const auto chkmemResult = CHKMEM(chkmemState);
+    if (!chkmemResult.ok) {
+        return;
+    }
+
+    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kTXTPTR + 1)));
+    PushByteToStack(ReadZeroPageByte(kTXTPTR));
+    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1)));
+    PushByteToStack(ReadZeroPageByte(kCURLIN));
+    PushByteToStack(kTOKEN_GOSUB);
+
+    // Fall-through in ROM from GOSUB to GO_TO_LINE.
+    GO_TO_LINE();
+}
+
+void GO_TO_LINE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: GO_TO_LINE (inclusive) .. GOTO (exclusive)
+    // Name normalization: none (assembler label GO_TO_LINE kept verbatim).
+
+    (void)CHRGOT();
     GOTO();
+    NEWSTT();
+}
+
+void GOTO() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: GOTO (inclusive) .. POP (exclusive)
+    // Name normalization: none (assembler label GOTO kept verbatim).
+
+    constexpr std::uint8_t kCURLIN = 0x75;
+    constexpr std::uint8_t kLINNUM = 0x50;
+    constexpr std::uint8_t kTXTPTR = 0xb8;
+    constexpr std::uint8_t kTXTTAB = 0x67;
+    constexpr std::uint8_t kLOWTR = 0x9b;
+
+    LINGET();
+    const std::uint8_t remnOffset = REMN();
+
+    const std::uint8_t currentPage = ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1));
+    const std::uint8_t targetPage = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1));
+
+    std::uint8_t startLo = 0;
+    std::uint8_t startHi = 0;
+    if (currentPage >= targetPage) {
+        startLo = ReadZeroPageByte(kTXTTAB);
+        startHi = ReadZeroPageByte(static_cast<std::uint8_t>(kTXTTAB + 1));
+    } else {
+        const std::uint16_t start = static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + remnOffset + 1u);
+        startLo = static_cast<std::uint8_t>(start & 0xffu);
+        startHi = static_cast<std::uint8_t>(start >> 8);
+    }
+
+    if (!FL1(startLo, startHi)) {
+        ERROR(ERR_UNDEFSTAT);
+        return;
+    }
+
+    const std::uint16_t destination = static_cast<std::uint16_t>(ReadZeroPageWord(kLOWTR) - 1u);
+    WriteZeroPageWord(kTXTPTR, destination);
+}
+
+void POP() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: POP (inclusive) .. RETURN (exclusive)
+    // Name normalization: none (assembler label POP kept verbatim).
+
+    constexpr std::uint8_t kFORPNT = 0x85;
+    constexpr std::uint8_t kTOKEN_GOSUB = 0xb0;
+
+    if (!IsStatementEndOfParsedInput()) {
+        RTS_5();
+        return;
+    }
+
+    // Preserve original ROM bug: writes $FF to FORPNT low byte, not FORPNT+1.
+    WriteZeroPageByte(kFORPNT, 0xffu);
+
+    GTFORPNTState gtforpntState{};
+    const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
+    SetStackPointer(gtforpntResult.x);
+
+    if (PeekTopControlTokenAfterGTFORPNT() == kTOKEN_GOSUB) {
+        // Fall-through in ROM from POP to RETURN when top frame is GOSUB.
+        RETURN();
+        return;
+    }
+
+    ERROR(ERR_NOGOSUB);
+}
+
+void RETURN() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: RETURN (inclusive) .. DATA (exclusive)
+    // Name normalization: none (assembler label RETURN kept verbatim).
+
+    constexpr std::uint8_t kCURLIN = 0x75;
+    constexpr std::uint8_t kTXTPTR = 0xb8;
+
+    (void)PopByteFromStack(); // discard GOSUB token
+    const std::uint8_t maybeCurlinLo = PopByteFromStack();
+
+    if (ReturnWasFromPOPContext()) {
+        PULL3();
+        return;
+    }
+
+    WriteZeroPageByte(kCURLIN, maybeCurlinLo);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1), PopByteFromStack());
+    WriteZeroPageByte(kTXTPTR, PopByteFromStack());
+    WriteZeroPageByte(static_cast<std::uint8_t>(kTXTPTR + 1), PopByteFromStack());
+}
+
+void RTS_5() {
+    // Shared RTS target for GOTO/POP in ROM.
+}
+
+void PULL3() {
+    (void)PopByteFromStack();
+    (void)PopByteFromStack();
+    (void)PopByteFromStack();
+}
+
+std::uint8_t REMN() {
+    // TODO(asm-port): port REMN label and return Y offset to end-of-line.
+    return 0;
+}
+
+bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
+    // TODO(asm-port): port FL1 line-search helper and set LOWTR on success.
+    (void)startLo;
+    (void)startHi;
+    return false;
+}
+
+std::uint8_t PopByteFromStack() {
+    // TODO(asm-port): pop and return one byte from the 6502 runtime stack.
+    return 0;
+}
+
+bool ReturnWasFromPOPContext() {
+    // TODO(asm-port): model CPY #<(TOKEN_POP*2) context check from RETURN.
+    return false;
+}
+
+std::uint8_t PeekTopControlTokenAfterGTFORPNT() {
+    // TODO(asm-port): recover A register/token result from GTFORPNT scan.
+    return 0;
+}
+
+void DATA() {
+    // TODO(asm-port): port DATA label body (DATA..ADDON range).
 }
 
 void MON_WRITE() {

@@ -18,6 +18,8 @@ void SAVE();
 void RUN();
 void GOSUB();
 void GOTO();
+void POP();
+void DATA();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
@@ -26,7 +28,6 @@ void GOTO();
 
 void FOR();
 static void NEXT()             {} // TODO(asm-port): NEXT
-static void DATA()             {} // TODO(asm-port): DATA
 static void INPUT()            {} // TODO(asm-port): INPUT
 static void DEL()              {} // TODO(asm-port): DEL
 static void DIM()              {} // TODO(asm-port): DIM
@@ -60,7 +61,6 @@ static void NORMAL()           {} // TODO(asm-port): NORMAL
 static void INVERSE()          {} // TODO(asm-port): INVERSE
 static void FLASH()            {} // TODO(asm-port): FLASH
 static void COLOR()            {} // TODO(asm-port): COLOR
-static void POP()              {} // TODO(asm-port): POP (also handles RETURN token $B1)
 static void VTAB()             {} // TODO(asm-port): VTAB
 static void HIMEM()            {} // TODO(asm-port): HIMEM
 static void LOMEM()            {} // TODO(asm-port): LOMEM
