@@ -11,13 +11,14 @@ bool NEW();
 void LIST();
 void RESTORE();
 void STOP();
+void ENDX();
+void CONT();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
 // Each will be replaced when its label range is converted.
 // ---------------------------------------------------------------------------
 
-static void ENDX()             {} // TODO(asm-port): ENDX
 void FOR();
 static void NEXT()             {} // TODO(asm-port): NEXT
 static void DATA()             {} // TODO(asm-port): DATA
@@ -77,7 +78,6 @@ static void SAVE()             {} // TODO(asm-port): SAVE
 static void DEF()              {} // TODO(asm-port): DEF
 static void POKE()             {} // TODO(asm-port): POKE
 static void PRINT()            {} // TODO(asm-port): PRINT
-static void CONT()             {} // TODO(asm-port): CONT
 static void CLEAR_Handler()    { CLEAR(); }
 static void GET()              {} // TODO(asm-port): GET
 static void NEW_Handler()      { NEW(); }

@@ -70,9 +70,15 @@ void RESTORE();
 void SETDA(std::uint16_t dataPointer);
 void CONTROL_C_TYPED();
 void STOP();
+void ENDX();
+void CONT();
+void STOP_impl(bool shouldPrintBreak);
+void ENDX_impl(bool shouldPrintBreak);
 void EXECUTE_STATEMENT_1();
 std::uint8_t CurrentStatementChar();
 void SYNERR();
+
+void PRINT_ERROR_LINNUM(std::string_view prefix = QT_ERROR(QT_ERROR_INDEX));
 
 void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
     // TODO(asm-port): write a byte into program memory at the given address.
@@ -972,13 +978,100 @@ void CONTROL_C_TYPED() {
         return;
     }
 
-    // Fall through from CONTROL_C_TYPED to the STOP statement.
-    STOP();
+    // Control-C attempts to fall through to the STOP/END handler with an
+    // implicit "break" condition.
+    STOP_impl(true);
 }
 
 void STOP() {
-    // TODO(asm-port): implement Applesoft STOP statement behavior.
+    STOP_impl(false);
 }
+
+void STOP_impl(bool shouldPrintBreak) {
+    if (!IsStatementEndOfParsedInput()) {
+        return;
+    }
+
+    ENDX_impl(shouldPrintBreak);
+}
+
+void ENDX() {
+    ENDX_impl(false);
+}
+
+void ENDX_impl(bool shouldPrintBreak) {
+    if (!IsStatementEndOfParsedInput()) {
+        return;
+    }
+
+    constexpr std::uint8_t kTXTPTR = 0xb8;
+    constexpr std::uint8_t kTXTPTR_plus_1 = 0xb9;
+    constexpr std::uint8_t kCURLIN = 0x75;
+    constexpr std::uint8_t kCURLIN_plus_1 = 0x76;
+    constexpr std::uint8_t kOLDTEXT = 0x79;
+    constexpr std::uint8_t kOLDTEXT_plus_1 = 0x7a;
+    constexpr std::uint8_t kOLDLIN = 0x77;
+    constexpr std::uint8_t kOLDLIN_plus_1 = 0x78;
+
+    const std::uint8_t txPtrLo = ReadZeroPageByte(kTXTPTR);
+    const std::uint8_t txPtrHi = ReadZeroPageByte(kTXTPTR_plus_1);
+    const std::uint8_t currentPageHi = ReadZeroPageByte(kCURLIN_plus_1);
+
+    if (static_cast<std::uint8_t>(currentPageHi + 1u) != 0u) {
+        WriteZeroPageByte(kOLDTEXT, txPtrLo);
+        WriteZeroPageByte(kOLDTEXT_plus_1, txPtrHi);
+        WriteZeroPageByte(kOLDLIN, ReadZeroPageByte(kCURLIN));
+        WriteZeroPageByte(kOLDLIN_plus_1, currentPageHi);
+    }
+
+    PopReturnAddress();
+    PopReturnAddress();
+
+    if (shouldPrintBreak) {
+        PRINT_ERROR_LINNUM(QT_ERROR(QT_BREAK_INDEX));
+        return;
+    }
+
+    RESTART();
+}
+
+void PRINT_ERROR_LINNUM(std::string_view prefix) {
+    STROUT(prefix);
+
+    if (IsDirectMode()) {
+        RESTART();
+        return;
+    }
+
+    INPRT();
+    RESTART();
+}
+
+void CONT() {
+    if (!IsStatementEndOfParsedInput()) {
+        return;
+    }
+
+    constexpr std::uint8_t kOLDTEXT = 0x79;
+    constexpr std::uint8_t kOLDTEXT_plus_1 = 0x7a;
+    constexpr std::uint8_t kOLDLIN = 0x77;
+    constexpr std::uint8_t kOLDLIN_plus_1 = 0x78;
+    constexpr std::uint8_t kTXTPTR = 0xb8;
+    constexpr std::uint8_t kTXTPTR_plus_1 = 0xb9;
+    constexpr std::uint8_t kCURLIN = 0x75;
+    constexpr std::uint8_t kCURLIN_plus_1 = 0x76;
+
+    if (ReadZeroPageByte(kOLDTEXT_plus_1) == 0) {
+        ERROR(ERR_CANTCONT);
+        return;
+    }
+
+    WriteZeroPageByte(kTXTPTR, ReadZeroPageByte(kOLDTEXT));
+    WriteZeroPageByte(kTXTPTR_plus_1, ReadZeroPageByte(kOLDTEXT_plus_1));
+    WriteZeroPageByte(kCURLIN, ReadZeroPageByte(kOLDLIN));
+    WriteZeroPageByte(kCURLIN_plus_1, ReadZeroPageByte(kOLDLIN_plus_1));
+}
+
 void SYNERR() {
     // TODO(asm-port): handle a syntax error from the statement parser.
 }

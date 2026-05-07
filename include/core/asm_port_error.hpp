@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/asm_port_qt_error.hpp"
+
 #include <cstdint>
 #include <string_view>
 
@@ -13,7 +15,7 @@ void ERROR(std::uint8_t error_code_offset);
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: PRINT_ERROR_LINNUM (inclusive) .. RESTART (exclusive)
 // Name normalization: none (assembler label PRINT_ERROR_LINNUM kept verbatim).
-void PRINT_ERROR_LINNUM();
+void PRINT_ERROR_LINUM(std::string_view prefix = QT_ERROR(QT_ERROR_INDEX));
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: RESTART (inclusive)
