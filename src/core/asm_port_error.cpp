@@ -47,16 +47,114 @@ std::uint8_t ReadZeroPageByte(std::uint8_t address) {
     return 0;
 }
 
-void WriteZeroPageWord(std::uint8_t address, std::uint16_t value) {
-    // TODO(asm-port): write a 16-bit zero-page address in low/high order.
+void WriteZeroPageByte(std::uint8_t address, std::uint8_t value) {
+    // TODO(asm-port): write a byte to zero-page storage.
     (void)address;
     (void)value;
+}
+
+void WriteZeroPageWord(std::uint8_t address, std::uint16_t value) {
+    WriteZeroPageByte(address, static_cast<std::uint8_t>(value & 0xffu));
+    WriteZeroPageByte(static_cast<std::uint8_t>(address + 1), static_cast<std::uint8_t>(value >> 8));
 }
 
 std::uint16_t ReadZeroPageWord(std::uint8_t address) {
     const std::uint8_t low = ReadZeroPageByte(address);
     const std::uint8_t high = ReadZeroPageByte(static_cast<std::uint8_t>(address + 1));
     return static_cast<std::uint16_t>(high) << 8 | low;
+}
+
+void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
+    // TODO(asm-port): write a byte into program memory at the given address.
+    (void)address;
+    (void)value;
+}
+
+void SetStackPointer(std::uint8_t value) {
+    // TODO(asm-port): set the 6502 stack pointer.
+    (void)value;
+}
+
+bool IsStatementEndOfParsedInput() {
+    // TODO(asm-port): determine whether the current statement has no trailing text.
+    return true;
+}
+
+bool NEW_impl();
+void SCRTCH_impl();
+bool SETPTRS_impl();
+bool CLEAR_impl();
+void CLEARC_impl();
+void STXTPT_impl();
+
+bool NEW_impl() {
+    if (!IsStatementEndOfParsedInput()) {
+        return false;
+    }
+
+    SCRTCH_impl();
+    return true;
+}
+
+void SCRTCH_impl() {
+    constexpr std::uint8_t kTXTTAB = 0x67;
+    constexpr std::uint8_t kLOCK = 0xd6;
+    constexpr std::uint8_t kVARTAB = 0x69;
+    constexpr std::uint8_t kPRGEND = 0xaf;
+    constexpr std::uint8_t kARYTAB = 0x6b;
+    constexpr std::uint8_t kSTREND = 0x6d;
+    constexpr std::uint8_t kMEMSIZ = 0x73;
+    constexpr std::uint8_t kFRETOP = 0x6f;
+
+    const std::uint16_t programStart = ReadZeroPageWord(kTXTTAB);
+    WriteZeroPageByte(kLOCK, 0);
+    WriteProgramByte(programStart, 0);
+    WriteProgramByte(static_cast<std::uint16_t>(programStart + 1), 0);
+
+    const std::uint16_t nextFree = static_cast<std::uint16_t>(programStart + 2);
+    WriteZeroPageWord(kVARTAB, nextFree);
+    WriteZeroPageWord(kPRGEND, nextFree);
+    WriteZeroPageWord(kFRETOP, ReadZeroPageWord(kMEMSIZ));
+    WriteZeroPageWord(kARYTAB, ReadZeroPageWord(kVARTAB));
+    WriteZeroPageWord(kSTREND, ReadZeroPageWord(kVARTAB));
+
+    SETPTRS_impl();
+}
+
+bool SETPTRS_impl() {
+    STXTPT_impl();
+    return CLEAR_impl();
+}
+
+bool CLEAR_impl() {
+    if (!IsStatementEndOfParsedInput()) {
+        return false;
+    }
+
+    CLEARC_impl();
+    return true;
+}
+
+void CLEARC_impl() {
+    constexpr std::uint8_t kMEMSIZ = 0x73;
+    constexpr std::uint8_t kFRETOP = 0x6f;
+    constexpr std::uint8_t kVARTAB = 0x69;
+    constexpr std::uint8_t kARYTAB = 0x6b;
+    constexpr std::uint8_t kSTREND = 0x6d;
+
+    WriteZeroPageWord(kFRETOP, ReadZeroPageWord(kMEMSIZ));
+    WriteZeroPageWord(kARYTAB, ReadZeroPageWord(kVARTAB));
+    WriteZeroPageWord(kSTREND, ReadZeroPageWord(kVARTAB));
+    RESTORE();
+    STKINI();
+}
+
+void STXTPT_impl() {
+    constexpr std::uint8_t kTXTTAB = 0x67;
+    constexpr std::uint8_t kTXTPTR = 0xb8;
+
+    const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
+    WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(textTable - 1u));
 }
 
 std::uint8_t ReadProgramByte(std::uint16_t address) {
@@ -262,6 +360,30 @@ void HandleNumberedLine() {
 
 } // namespace
 
+bool NEW() {
+    return NEW_impl();
+}
+
+bool SETPTRS() {
+    return SETPTRS_impl();
+}
+
+bool CLEAR() {
+    return CLEAR_impl();
+}
+
+void SCRTCH() {
+    SCRTCH_impl();
+}
+
+void CLEARC() {
+    CLEARC_impl();
+}
+
+void STXTPT() {
+    STXTPT_impl();
+}
+
 void ERROR(std::uint8_t error_code_offset) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: ERROR (inclusive) .. PRINT_ERROR_LINNUM (exclusive)
@@ -337,13 +459,9 @@ LineAddress FromWord(std::uint16_t value) {
     return LineAddress{static_cast<std::uint8_t>(value & 0xff), static_cast<std::uint8_t>(value >> 8)};
 }
 
-void SETPTRS() {
-    // TODO(asm-port): initialize the program listing pointers before FIX_LINKS scans the program.
-}
-
 LineAddress GetTextTableAddress() {
-    // TODO(asm-port): return the current TXTTAB pointer into the program listing.
-    return LineAddress{};
+    constexpr std::uint8_t kTXTTAB = 0x67;
+    return FromWord(ReadZeroPageWord(kTXTTAB));
 }
 
 bool IsEndOfProgram(LineAddress current) {
@@ -413,7 +531,15 @@ void INPRT() {
 }
 
 void STKINI() {
-    // TODO(asm-port): restore stack/frame pointers and clean up after error printing.
+    constexpr std::uint8_t kTEMPPT = 0x52;
+    constexpr std::uint8_t kTEMPST = 0x55;
+    constexpr std::uint8_t kOLDTEXT_plus_1 = 0x7a;
+    constexpr std::uint8_t kSUBFLG = 0x14;
+
+    WriteZeroPageByte(kTEMPPT, kTEMPST);
+    SetStackPointer(0xf8);
+    WriteZeroPageByte(kOLDTEXT_plus_1, 0);
+    WriteZeroPageByte(kSUBFLG, 0);
 }
 
 void HANDLERR() {

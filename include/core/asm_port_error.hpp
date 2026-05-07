@@ -21,6 +21,11 @@ void PRINT_ERROR_LINNUM();
 void RESTART();
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: RESTORE (inclusive)
+// Name normalization: none (assembler label RESTORE kept verbatim).
+void RESTORE();
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: FIX_LINKS (inclusive)
 // Name normalization: none (assembler label FIX_LINKS kept verbatim).
 void FIX_LINKS();

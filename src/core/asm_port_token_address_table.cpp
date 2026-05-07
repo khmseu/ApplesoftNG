@@ -6,6 +6,9 @@
 
 namespace applesoft::asm_port {
 
+bool CLEAR();
+bool NEW();
+
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
 // Each will be replaced when its label range is converted.
@@ -61,7 +64,7 @@ static void LET()              {} // TODO(asm-port): LET
 static void GOTO()             {} // TODO(asm-port): GOTO
 static void RUN()              {} // TODO(asm-port): RUN
 static void IF()               {} // TODO(asm-port): IF
-static void RESTORE()          {} // TODO(asm-port): RESTORE
+void RESTORE()          {} // TODO(asm-port): RESTORE
 static void AMPERSAND_VECTOR() {} // TODO(asm-port): & dispatch (JMP vector at $03F5)
 static void GOSUB()            {} // TODO(asm-port): GOSUB
 static void REM()              {} // TODO(asm-port): REM
@@ -75,9 +78,9 @@ static void POKE()             {} // TODO(asm-port): POKE
 static void PRINT()            {} // TODO(asm-port): PRINT
 static void CONT()             {} // TODO(asm-port): CONT
 static void LIST()             {} // TODO(asm-port): LIST
-static void CLEAR()            {} // TODO(asm-port): CLEAR
+static void CLEAR_Handler()    { CLEAR(); }
 static void GET()              {} // TODO(asm-port): GET
-static void NEW()              {} // TODO(asm-port): NEW
+static void NEW_Handler()      { NEW(); }
 
 // ---------------------------------------------------------------------------
 // Branch table for Applesoft statement tokens $80–$BF.
@@ -148,9 +151,9 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         PRINT,            // [58] $BA...186...PRINT
         CONT,             // [59] $BB...187...CONT
         LIST,             // [60] $BC...188...LIST
-        CLEAR,            // [61] $BD...189...CLEAR
+        CLEAR_Handler,    // [61] $BD...189...CLEAR
         GET,              // [62] $BE...190...GET
-        NEW,              // [63] $BF...191...NEW
+        NEW_Handler,      // [63] $BF...191...NEW
     };
     return table[index];
 }
