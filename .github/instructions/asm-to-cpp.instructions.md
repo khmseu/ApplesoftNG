@@ -17,9 +17,10 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 2. Extract the range that starts at `start_label` and stops immediately before `end_label`.
 3. Include comments that are:
 - inline inside the range.
-- immediately preceding the first line in range and semantically attached.
+- immediately preceding the first line in range and directly describing the range behavior.
 4. Infer the behavior and data flow from opcodes, branch patterns, and comments.
    - If the source slice does not end in an unconditional transfer (`RTS`, `JMP`, or unconditional branch), it falls through into the next label. Model that fall-through in C++ by calling the following function at that point, or by returning state that the caller uses to invoke the next label.
+  - If a label is `MON_xyz`, treat it as an alias for monitor label `xyz` and implement it immediately as a forwarder function (do not leave alias-only comments without code).
 5. Implement one primary C++ function that preserves the original assembler name as much as possible.
 6. Place the function in the appropriate runtime area:
 - interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
@@ -35,7 +36,12 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 - Keep assembler symbol names verbatim when valid in C++.
 - If a symbol is not a valid C++ identifier, minimally normalize it (for example `.` to `_`) and document original symbol in a comment.
 - Prefer keeping capitalization consistent with source labels.
-- Treat `MON_xyz` labels as monitor aliases for `xyz`; implement them by forwarding to the corresponding monitor handler or by preserving the alias mapping in comments rather than inventing new unrelated semantics.
+- Treat `MON_xyz` labels as monitor aliases for `xyz`; always implement them immediately as direct forwarders to the corresponding monitor handler.
+
+## Fixed-Address Variable Rules
+- Route all fixed-address state reads/writes through `ApplesoftVariables` (`variables()` / `variables_const()` and their byte/word accessors).
+- Do not mirror fixed addresses with separate globals, file-scope statics, or ad-hoc structs when `ApplesoftVariables` already represents them.
+- When a needed fixed address is missing, add it to `ApplesoftVariables` first, then use the accessors from ported code.
 
 ## Dummy Implementation Rules
 - Create stubs only for missing dependencies required by the converted function.
@@ -54,6 +60,7 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 - Function location matches subsystem boundaries.
 - Original names preserved or minimally normalized with mapping comments.
 - Missing callees have explicit dummy implementations.
+- Any fixed-address global state access uses `ApplesoftVariables` accessors.
 - Project still configures and builds.
 
 ## Function Address Table Pattern
@@ -73,3 +80,4 @@ When the conversion window contains a table of `.word LABEL` or `.word LABEL-1` 
 - Do not add runtime dependency on files under SourceMaterial.
 - Do not rewrite unrelated files.
 - Do not expand scope beyond the two-label window unless required for compile correctness.
+- Do not bypass `ApplesoftVariables` for fixed-address global state.
