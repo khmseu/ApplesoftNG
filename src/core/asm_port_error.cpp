@@ -125,7 +125,8 @@ void FRM_STACK_2();
 void FRM_STACK_3();
 void MON_WRITE();
 void MON_READ();
-void DATAN();
+void ADDON(std::uint8_t offset);
+std::uint8_t DATAN();
 void GOEND();
 bool IsEndOfLineAtTextPointer();
 bool IsEndOfProgramAtTextPointer();
@@ -380,43 +381,14 @@ void PrintListLine(LineAddress current) {
 
 bool FNDLIN() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FNDLIN (inclusive) .. NEW (exclusive)
+    // Labels: FNDLIN (inclusive) .. FL1 (exclusive)
     // Name normalization: none (assembler label FNDLIN kept verbatim).
 
     constexpr std::uint8_t kTXTTAB = 0x67;
-    constexpr std::uint8_t kLOWTR = 0x9b;
-    constexpr std::uint8_t kLINNUM = 0x50;
 
-    const std::uint16_t targetLow = ReadZeroPageByte(kLINNUM);
-    const std::uint16_t targetHigh = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1));
-    std::uint16_t current = ReadZeroPageWord(kTXTTAB);
-
-    while (true) {
-        WriteZeroPageWord(kLOWTR, current);
-
-        const std::uint8_t nextHigh = ReadProgramByte(current + 1);
-        if (nextHigh == 0) {
-            return false;
-        }
-
-        const std::uint8_t currentHigh = ReadProgramByte(current + 3);
-        if (targetHigh < currentHigh) {
-            return false;
-        }
-
-        if (targetHigh == currentHigh) {
-            const std::uint8_t currentLow = ReadProgramByte(current + 2);
-            if (targetLow < currentLow) {
-                return false;
-            }
-            if (targetLow == currentLow) {
-                return true;
-            }
-        }
-
-        const std::uint8_t nextLow = ReadProgramByte(current);
-        current = static_cast<std::uint16_t>(nextHigh) << 8 | nextLow;
-    }
+    const std::uint16_t start = ReadZeroPageWord(kTXTTAB);
+    // Assembler falls through from FNDLIN directly into FL1 with A=TXTTAB, X=TXTTAB+1.
+    return FL1(static_cast<std::uint8_t>(start & 0xffu), static_cast<std::uint8_t>(start >> 8));
 }
 
 void DeleteExistingLine() {
@@ -874,8 +846,52 @@ void FRM_STACK_3() {
     // TODO(asm-port): consume the current frame data and continue at STEP.
 }
 
-void DATAN() {
-    // TODO(asm-port): scan ahead from the current statement to the next token.
+std::uint8_t ScanAheadOffset(std::uint8_t terminator) {
+    constexpr std::uint8_t kTXTPTR = 0xb8;
+    constexpr std::uint8_t kCHARAC = 0x0d;
+    constexpr std::uint8_t kENDCHR = 0x0e;
+
+    WriteZeroPageByte(kCHARAC, terminator);
+    std::uint8_t offset = 0;
+    WriteZeroPageByte(kENDCHR, 0);
+
+    while (true) {
+        const std::uint8_t previousEnd = ReadZeroPageByte(kENDCHR);
+        const std::uint8_t previousCharac = ReadZeroPageByte(kCHARAC);
+        WriteZeroPageByte(kCHARAC, previousEnd);
+        WriteZeroPageByte(kENDCHR, previousCharac);
+
+        while (true) {
+            const std::uint8_t ch = ReadProgramByte(static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + offset));
+            if (ch == 0 || ch == ReadZeroPageByte(kENDCHR)) {
+                return offset;
+            }
+
+            ++offset;
+            if (ch == static_cast<std::uint8_t>('"')) {
+                break;
+            }
+        }
+    }
+}
+
+void ADDON(std::uint8_t offset) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ADDON (inclusive) .. DATAN (exclusive)
+    // Name normalization: none (assembler label ADDON kept verbatim).
+
+    constexpr std::uint8_t kTXTPTR = 0xb8;
+
+    const std::uint16_t advanced = static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + offset);
+    WriteZeroPageWord(kTXTPTR, advanced);
+}
+
+std::uint8_t DATAN() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: DATAN (inclusive) .. REMN (exclusive)
+    // Name normalization: none (assembler label DATAN kept verbatim).
+
+    return ScanAheadOffset(static_cast<std::uint8_t>(':'));
 }
 
 void GOEND() {
@@ -1345,21 +1361,62 @@ void RTS_5() {
 }
 
 void PULL3() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PULL3 (inclusive) .. IF (exclusive)
+    // Name normalization: none (assembler label PULL3 kept verbatim).
+
     (void)PopByteFromStack();
     (void)PopByteFromStack();
     (void)PopByteFromStack();
 }
 
 std::uint8_t REMN() {
-    // TODO(asm-port): port REMN label and return Y offset to end-of-line.
-    return 0;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: REMN (inclusive) .. PULL3 (exclusive)
+    // Name normalization: none (assembler label REMN kept verbatim).
+
+    return ScanAheadOffset(0);
 }
 
 bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
-    // TODO(asm-port): port FL1 line-search helper and set LOWTR on success.
-    (void)startLo;
-    (void)startHi;
-    return false;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FL1 (inclusive) .. NEW (exclusive)
+    // Name normalization: none (assembler label FL1 kept verbatim).
+
+    constexpr std::uint8_t kLOWTR = 0x9b;
+    constexpr std::uint8_t kLINNUM = 0x50;
+
+    const std::uint8_t targetLo = ReadZeroPageByte(kLINNUM);
+    const std::uint8_t targetHi = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1));
+
+    std::uint16_t current = static_cast<std::uint16_t>(static_cast<std::uint16_t>(startHi) << 8) | startLo;
+
+    while (true) {
+        WriteZeroPageWord(kLOWTR, current);
+
+        const std::uint8_t nextHi = ReadProgramByte(static_cast<std::uint16_t>(current + 1u));
+        if (nextHi == 0) {
+            return false;
+        }
+
+        const std::uint8_t lineHi = ReadProgramByte(static_cast<std::uint16_t>(current + 3u));
+        if (targetHi < lineHi) {
+            return false;
+        }
+
+        if (targetHi == lineHi) {
+            const std::uint8_t lineLo = ReadProgramByte(static_cast<std::uint16_t>(current + 2u));
+            if (targetLo < lineLo) {
+                return false;
+            }
+            if (targetLo == lineLo) {
+                return true;
+            }
+        }
+
+        const std::uint8_t nextLo = ReadProgramByte(current);
+        current = static_cast<std::uint16_t>(static_cast<std::uint16_t>(nextHi) << 8) | nextLo;
+    }
 }
 
 std::uint8_t PopByteFromStack() {
@@ -1378,7 +1435,12 @@ std::uint8_t PeekTopControlTokenAfterGTFORPNT() {
 }
 
 void DATA() {
-    // TODO(asm-port): port DATA label body (DATA..ADDON range).
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: DATA (inclusive) .. ADDON (exclusive)
+    // Name normalization: none (assembler label DATA kept verbatim).
+
+    const std::uint8_t offset = DATAN();
+    ADDON(offset);
 }
 
 void MON_WRITE() {
