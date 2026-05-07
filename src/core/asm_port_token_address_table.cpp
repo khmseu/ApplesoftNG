@@ -8,6 +8,7 @@ namespace applesoft::asm_port {
 
 bool CLEAR();
 bool NEW();
+void LIST();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
@@ -77,7 +78,6 @@ static void DEF()              {} // TODO(asm-port): DEF
 static void POKE()             {} // TODO(asm-port): POKE
 static void PRINT()            {} // TODO(asm-port): PRINT
 static void CONT()             {} // TODO(asm-port): CONT
-static void LIST()             {} // TODO(asm-port): LIST
 static void CLEAR_Handler()    { CLEAR(); }
 static void GET()              {} // TODO(asm-port): GET
 static void NEW_Handler()      { NEW(); }

@@ -8,7 +8,6 @@
 #include <string_view>
 
 namespace applesoft::asm_port {
-namespace {
 
 constexpr std::uint8_t RESTART_PROMPT = ']' | 0x80u;
 constexpr std::size_t kTokenCount = 107;
@@ -161,6 +160,56 @@ std::uint8_t ReadProgramByte(std::uint16_t address) {
     // TODO(asm-port): read a byte from the program memory buffer.
     (void)address;
     return 0;
+}
+
+struct LineAddress;
+std::uint8_t ReadProgramByte(LineAddress base, std::uint8_t offset);
+std::uint16_t ToWord(LineAddress address);
+bool IsEndOfProgram(LineAddress current);
+LineAddress AdvanceToNextLine(LineAddress current);
+
+std::uint8_t CHRGOT();
+struct LineAddress {
+    std::uint8_t lo = 0;
+    std::uint8_t hi = 0;
+};
+
+LineAddress FromWord(std::uint16_t value);
+
+bool ISCNTC();
+void LINPRT();
+void OUTDO();
+std::uint8_t GETCHR();
+
+struct LineNumber {
+    std::uint8_t lo = 0;
+    std::uint8_t hi = 0;
+};
+
+bool IsLineNumberGreater(LineNumber current, LineNumber limit) {
+    if (current.hi != limit.hi) {
+        return current.hi > limit.hi;
+    }
+    return current.lo > limit.lo;
+}
+
+LineNumber ReadProgramLineNumber(LineAddress current) {
+    return LineNumber{ReadProgramByte(current, 2), ReadProgramByte(current, 3)};
+}
+
+void PrintListLine(LineAddress current) {
+    std::uint8_t offset = 4;
+    while (true) {
+        const std::uint8_t ch = ReadProgramByte(current, offset);
+        if (ch == 0) {
+            break;
+        }
+
+        // TODO(asm-port): reproduce LIST token/keyword conversion and output
+        // behavior from the original Applesoft source.
+        OUTDO();
+        ++offset;
+    }
 }
 
 bool FNDLIN() {
@@ -346,6 +395,53 @@ void TRACE_() {
     // TODO(asm-port): execute the parsed input line or trace it in the interpreter.
 }
 
+void LIST() {
+    constexpr std::uint8_t kLOWTR = 0x9b;
+    constexpr std::uint8_t kLINNUM = 0x50;
+    constexpr std::uint8_t kMON_CH = 0x24;
+
+    if (!IsStatementEndOfParsedInput()) {
+        return;
+    }
+
+    LINGET();
+    FNDLIN();
+
+    const std::uint8_t rangeChar = CHRGOT();
+    if (rangeChar == static_cast<std::uint8_t>('-') || rangeChar == static_cast<std::uint8_t>(',')) {
+        CHRGET();
+        LINGET();
+    }
+
+    LineNumber endRange{ReadZeroPageByte(kLINNUM), ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1))};
+    if (endRange.lo == 0 && endRange.hi == 0) {
+        endRange.lo = 0xff;
+        endRange.hi = 0xff;
+    }
+
+    LineAddress current = FromWord(ReadZeroPageWord(kLOWTR));
+    while (!IsEndOfProgram(current)) {
+        if (ISCNTC()) {
+            break;
+        }
+
+        CRDO();
+        const LineNumber currentLine = ReadProgramLineNumber(current);
+        if (IsLineNumberGreater(currentLine, endRange)) {
+            break;
+        }
+
+        LINPRT();
+        WriteZeroPageByte(kMON_CH, 5);
+        PrintListLine(current);
+
+        current = AdvanceToNextLine(current);
+        WriteZeroPageWord(kLOWTR, ToWord(current));
+    }
+
+    CRDO();
+}
+
 void HandleNumberedLine() {
     LINGET();
     PARSE_INPUT_LINE();
@@ -357,8 +453,6 @@ void HandleNumberedLine() {
     InsertNewLine();
     FIX_LINKS();
 }
-
-} // namespace
 
 bool NEW() {
     return NEW_impl();
@@ -444,13 +538,6 @@ void RESTART() {
     TRACE_();
 }
 
-namespace {
-
-struct LineAddress {
-    std::uint8_t lo = 0;
-    std::uint8_t hi = 0;
-};
-
 std::uint16_t ToWord(LineAddress address) {
     return static_cast<std::uint16_t>(address.hi) << 8 | address.lo;
 }
@@ -495,8 +582,6 @@ void WriteForwardPointer(LineAddress current, LineAddress next) {
     (void)next;
 }
 
-} // namespace
-
 void FIX_LINKS() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: FIX_LINKS (inclusive) .. INLIN (exclusive)
@@ -540,6 +625,26 @@ void STKINI() {
     SetStackPointer(0xf8);
     WriteZeroPageByte(kOLDTEXT_plus_1, 0);
     WriteZeroPageByte(kSUBFLG, 0);
+}
+
+void OUTDO() {
+    // TODO(asm-port): write the current output character from the Applesoft line
+    // printer to the console.
+}
+
+void LINPRT() {
+    // TODO(asm-port): print the current Applesoft line number during LIST.
+}
+
+std::uint8_t GETCHR() {
+    // TODO(asm-port): fetch the next keyword character from the Applesoft token
+    // table during LIST output.
+    return 0;
+}
+
+bool ISCNTC() {
+    // TODO(asm-port): detect whether a Control-C interrupt was typed.
+    return false;
 }
 
 void HANDLERR() {

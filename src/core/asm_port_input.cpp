@@ -2,11 +2,13 @@
 #include "core/asm_port_strtxt.hpp"
 
 namespace applesoft::asm_port {
+
+// TODO(asm-port): port CHRGOT label.
+std::uint8_t CHRGOT() { return 0; }
+
 namespace {
 
 // --- Dummy callees for incremental porting ---
-// TODO(asm-port): port CHRGOT label.
-std::uint8_t CHRGOT() { return 0; }
 
 // TODO(asm-port): port SYNCHR label.
 void SYNCHR(std::uint8_t /*expected*/) {}
