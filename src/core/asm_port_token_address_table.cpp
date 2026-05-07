@@ -15,6 +15,9 @@ void ENDX();
 void CONT();
 void LOAD();
 void SAVE();
+void RUN();
+void GOSUB();
+void GOTO();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
@@ -67,11 +70,8 @@ static void RECALL()           {} // TODO(asm-port): RECALL
 static void STORE()            {} // TODO(asm-port): STORE
 static void SPEED()            {} // TODO(asm-port): SPEED
 static void LET()              {} // TODO(asm-port): LET
-static void GOTO()             {} // TODO(asm-port): GOTO
-static void RUN()              {} // TODO(asm-port): RUN
 static void IF()               {} // TODO(asm-port): IF
 static void AMPERSAND_VECTOR() {} // TODO(asm-port): & dispatch (JMP vector at $03F5)
-static void GOSUB()            {} // TODO(asm-port): GOSUB
 static void REM()              {} // TODO(asm-port): REM
 static void ONGOTO()           {} // TODO(asm-port): ONGOTO
 static void WAIT()             {} // TODO(asm-port): WAIT

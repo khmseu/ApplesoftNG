@@ -1165,6 +1165,87 @@ void PROGIO() {
     (void)kMON_A2H;
 }
 
+void GOTO() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: GOTO (inclusive) .. GOSUB (exclusive)
+    // Name normalization: none (assembler label GOTO kept verbatim).
+    //
+    // Parses a line number and searches for it in the program.
+    // Sets TXTPTR to the start of the found line, or raises error if not found.
+
+    // TODO(asm-port): Parse the line number from current TXTPTR using LINGET.
+    // TODO(asm-port): Determine search direction based on current line number.
+    // TODO(asm-port): Call FL1 or FNDLIN to search for the target line.
+    // TODO(asm-port): Set TXTPTR to the found line address, or error if not found.
+}
+
+void RUN() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: RUN (inclusive) .. GOSUB (exclusive)
+    // Name normalization: none (assembler label RUN kept verbatim).
+    //
+    // Executes the "RUN" command:
+    // - Modifies CURLIN+1 to mark running mode (converts $FF direct mode to $FE)
+    // - If no line number specified: starts execution at beginning of program (SETPTRS)
+    // - If line number specified: clears variables (CLEARC) then searches for and jumps to that line
+
+    constexpr std::uint8_t kCURLIN_hi = 0x76;
+    constexpr std::uint8_t kCURLIN_lo = 0x75;
+    
+    // Decrement CURLIN+1 to mark as running (6502: dec CURLIN+1)
+    std::uint8_t curlinHi = ReadZeroPageByte(kCURLIN_hi);
+    WriteZeroPageByte(kCURLIN_hi, static_cast<std::uint8_t>(curlinHi - 1));
+    
+    // Check if there's a line number argument following RUN
+    // (CHRGET sets Z flag if no more input; CHRGOT returns current char)
+    const std::uint8_t currentChar = CHRGOT();
+    if (currentChar == 0) {
+        // No line number: start at beginning of program
+        SETPTRS();
+        return;
+    }
+    
+    // Line number specified: clear variables then go to that line
+    CLEARC();
+    
+    // TODO(asm-port): Parse line number and search for it (shared with GOTO)
+    // For now, call GOTO directly since it handles the line number parsing and search.
+    // After GOTO returns, TXTPTR points to the start of the target line.
+    GOTO();
+}
+
+void GOSUB() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: GOSUB (inclusive) .. GO_TO_LINE (exclusive)
+    // Name normalization: none (assembler label GOSUB kept verbatim).
+    //
+    // Executes the "GOSUB" command:
+    // - Checks stack space for the return frame (7 bytes)
+    // - Pushes return frame containing: TXTPTR (2), CURLIN (2), TOKEN_GOSUB (1)
+    // - Falls through to shared GO_TO_LINE logic to find and execute the target line
+    // - On RETURN, restores execution state from the stack frame
+
+    constexpr std::uint8_t kTXTPTR_lo = 0xb8;
+    constexpr std::uint8_t kTXTPTR_hi = 0xb9;
+    constexpr std::uint8_t kCURLIN_lo = 0x75;
+    constexpr std::uint8_t kCURLIN_hi = 0x76;
+    constexpr std::uint8_t kTOKEN_GOSUB = 0xb0;
+    
+    // TODO(asm-port): Check stack space using CHKMEM (6502: lda #3, jsr CHKMEM).
+    // TODO(asm-port): Push return frame onto 6502 stack in reverse order:
+    //   pha (TXTPTR+1)
+    //   pha (TXTPTR+0)
+    //   pha (CURLIN+1)
+    //   pha (CURLIN+0)
+    //   pha (TOKEN_GOSUB = 0xB0)
+    //
+    // This will save the current execution state so that a RETURN statement
+    // can restore it after executing the subroutine.
+    
+    // Call GOTO to parse the line number and set TXTPTR to the target line
+    GOTO();
+}
+
 void MON_WRITE() {
     // TODO(asm-port): port monitor tape write handler used by SAVE.
 }
