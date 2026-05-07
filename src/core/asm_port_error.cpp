@@ -1,5 +1,7 @@
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_chkmem.hpp"
+#include "core/asm_port_gtforpnt.hpp"
 #include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_qt_error.hpp"
 #include "core/asm_port_token_name_table.hpp"
@@ -86,6 +88,44 @@ bool CLEAR_impl();
 void CLEARC_impl();
 void STXTPT_impl();
 
+std::uint8_t ReadStackPointer();
+void PopReturnAddress();
+void PushByteToStack(std::uint8_t value);
+void PushTextPointerAddress();
+void PushCurrentLineNumber();
+void PushTokenTo(std::uint8_t token);
+void ApplyFacSign();
+void SetBranchTargetToSTEP();
+void LOAD_FAC_FROM_YA();
+void SYNCHR(std::uint8_t expected);
+void CHKNUM();
+void FRMNUM();
+void SIGN();
+void FRM_STACK_2();
+void FRM_STACK_3();
+void DATAN();
+void GOEND();
+bool IsEndOfLineAtTextPointer();
+bool IsEndOfProgramAtTextPointer();
+std::uint16_t ReadLineNumberFromTextPointer();
+void AdvanceTextPointerToNextLine();
+bool IsRunningMode();
+bool IsTraceEnabled();
+void OUTSP();
+void EXECUTE_STATEMENT();
+void PushForPntFrame();
+
+std::uint8_t CHRGOT();
+bool ISCNTC();
+void LINPRT();
+void OUTDO();
+
+void LET();
+void FOR();
+void STEP();
+void NEWSTT();
+void TRACE_();
+
 bool NEW_impl() {
     if (!IsStatementEndOfParsedInput()) {
         return false;
@@ -154,6 +194,103 @@ void STXTPT_impl() {
 
     const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
     WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(textTable - 1u));
+}
+
+void FOR() {
+    constexpr std::uint8_t kSUBFLG = 0x14;
+    constexpr std::uint8_t kTOKEN_TO = 0x00; // TODO(asm-port): actual Applesoft "TO" token value.
+
+    WriteZeroPageByte(kSUBFLG, 0x80);
+    LET();
+
+    GTFORPNTState gtforpntState{};
+    const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
+    if (gtforpntResult.found) {
+        SetStackPointer(static_cast<std::uint8_t>(gtforpntResult.x + 15));
+    }
+
+    PopReturnAddress();
+    PopReturnAddress();
+
+    CHKMEMState chkmemState{};
+    chkmemState.a = 9;
+    chkmemState.stackPointer = ReadStackPointer();
+    const auto chkmemResult = CHKMEM(chkmemState);
+    if (!chkmemResult.ok) {
+        return;
+    }
+
+    DATAN();
+    PushTextPointerAddress();
+    PushCurrentLineNumber();
+    PushTokenTo(kTOKEN_TO);
+    SYNCHR(kTOKEN_TO);
+    CHKNUM();
+    FRMNUM();
+    ApplyFacSign();
+    SetBranchTargetToSTEP();
+    FRM_STACK_3();
+}
+
+void STEP() {
+    constexpr std::uint8_t kTOKEN_STEP = 0x00; // TODO(asm-port): actual Applesoft "STEP" token value.
+
+    LOAD_FAC_FROM_YA();
+    if (CHRGOT() == kTOKEN_STEP) {
+        CHRGET();
+        FRMNUM();
+    }
+
+    SIGN();
+    FRM_STACK_2();
+    PushForPntFrame();
+    NEWSTT();
+}
+
+void NEWSTT() {
+    constexpr std::uint8_t kREMSTK = 0xf8;
+    constexpr std::uint8_t kTXTPTR = 0xb8;
+    constexpr std::uint8_t kCURLIN = 0x75;
+    constexpr std::uint8_t kOLDTEXT_lo = 0x79;
+
+    WriteZeroPageByte(kREMSTK, ReadStackPointer());
+
+    if (ISCNTC()) {
+        return;
+    }
+
+    if (ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1)) != 0xffu) {
+        WriteZeroPageWord(kOLDTEXT_lo, ReadZeroPageWord(kTXTPTR));
+    } else {
+        WriteZeroPageWord(kOLDTEXT_lo, 0);
+    }
+
+    if (IsEndOfLineAtTextPointer()) {
+        if (IsEndOfProgramAtTextPointer()) {
+            GOEND();
+            return;
+        }
+    }
+
+    WriteZeroPageWord(kCURLIN, ReadLineNumberFromTextPointer());
+    AdvanceTextPointerToNextLine();
+    TRACE_();
+}
+
+void TRACE_() {
+    constexpr std::uint8_t kTRCFLG = 0xf2;
+
+    if ((ReadZeroPageByte(kTRCFLG) & 0x80u) != 0u) {
+        if (IsRunningMode()) {
+            OUTDO();
+            LINPRT();
+            OUTSP();
+        }
+    }
+
+    CHRGET();
+    EXECUTE_STATEMENT();
+    NEWSTT();
 }
 
 std::uint8_t ReadProgramByte(std::uint16_t address) {
@@ -389,10 +526,6 @@ void PARSE_INPUT_LINE() {
 
     write_INPUT_BUFFER_minus_5(outputIndex, 0);
     SetTextPointerToInputBufferMinus1();
-}
-
-void TRACE_() {
-    // TODO(asm-port): execute the parsed input line or trace it in the interpreter.
 }
 
 void LIST() {
@@ -645,6 +778,123 @@ std::uint8_t GETCHR() {
 bool ISCNTC() {
     // TODO(asm-port): detect whether a Control-C interrupt was typed.
     return false;
+}
+
+std::uint8_t ReadStackPointer() {
+    // TODO(asm-port): return the current 6502 stack pointer value.
+    return 0;
+}
+
+void PopReturnAddress() {
+    // TODO(asm-port): discard the most recently pushed return address bytes.
+}
+
+void PushByteToStack(std::uint8_t /*value*/) {
+    // TODO(asm-port): push a byte onto the Applesoft 6502 stack.
+}
+
+void PushTextPointerAddress() {
+    // TODO(asm-port): push the current TXTPTR address on the Applesoft stack.
+}
+
+void PushCurrentLineNumber() {
+    // TODO(asm-port): push CURLIN and CURLIN+1 onto the Applesoft stack.
+}
+
+void PushTokenTo(std::uint8_t /*token*/) {
+    // TODO(asm-port): push a statement token value onto the Applesoft stack.
+}
+
+void ApplyFacSign() {
+    // TODO(asm-port): update FAC+1 with the signed value produced by FRMNUM.
+}
+
+void SetBranchTargetToSTEP() {
+    // TODO(asm-port): set the indirect jump target used by FRM_STACK_3 to STEP.
+}
+
+void LOAD_FAC_FROM_YA() {
+    // TODO(asm-port): load the constant 1.0 into FAC from the Y,A pointer.
+}
+
+void SYNCHR(std::uint8_t /*expected*/) {
+    // TODO(asm-port): require a specific statement token from the parsed input.
+}
+
+void CHKNUM() {
+    // TODO(asm-port): enforce numeric semantics for the current expression.
+}
+
+void FRMNUM() {
+    // TODO(asm-port): convert the parsed numeric expression into FAC format.
+}
+
+void SIGN() {
+    // TODO(asm-port): normalize the sign of the current FAC value.
+}
+
+void FRM_STACK_2() {
+    // TODO(asm-port): prepare FOR frame storage on the Applesoft stack.
+}
+
+void FRM_STACK_3() {
+    // TODO(asm-port): consume the current frame data and continue at STEP.
+}
+
+void DATAN() {
+    // TODO(asm-port): scan ahead from the current statement to the next token.
+}
+
+void GOEND() {
+    // TODO(asm-port): handle end-of-program flow for NEXT statements.
+}
+
+bool IsEndOfLineAtTextPointer() {
+    // TODO(asm-port): return true when TXTPTR is at the end of the current line.
+    return false;
+}
+
+bool IsEndOfProgramAtTextPointer() {
+    // TODO(asm-port): return true when there is no next line after TXTPTR.
+    return false;
+}
+
+std::uint16_t ReadLineNumberFromTextPointer() {
+    // TODO(asm-port): read the line number stored at the current TXTPTR.
+    return 0;
+}
+
+void AdvanceTextPointerToNextLine() {
+    // TODO(asm-port): advance TXTPTR to the start of the next BASIC line.
+}
+
+bool IsRunningMode() {
+    // TODO(asm-port): determine whether the interpreter is currently running.
+    return false;
+}
+
+bool IsTraceEnabled() {
+    // TODO(asm-port): inspect the TRCFLG flag from zero page.
+    return false;
+}
+
+void OUTSP() {
+    // TODO(asm-port): output the trace-space separator after the line number.
+}
+
+void EXECUTE_STATEMENT() {
+    // TODO(asm-port): dispatch and execute the current statement token.
+}
+
+void PushForPntFrame() {
+    constexpr std::uint8_t kFORPNT = 0x85;
+    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kFORPNT + 1)));
+    PushByteToStack(ReadZeroPageByte(kFORPNT));
+    PushTokenTo(TOKEN_FOR);
+}
+
+void LET() {
+    // TODO(asm-port): evaluate a variable assignment and store its address into FORPNT.
 }
 
 void HANDLERR() {

@@ -16,7 +16,7 @@ void LIST();
 // ---------------------------------------------------------------------------
 
 static void ENDX()             {} // TODO(asm-port): ENDX
-static void FOR()              {} // TODO(asm-port): FOR
+void FOR();
 static void NEXT()             {} // TODO(asm-port): NEXT
 static void DATA()             {} // TODO(asm-port): DATA
 static void INPUT()            {} // TODO(asm-port): INPUT
