@@ -4,6 +4,7 @@
 #include "core/asm_port_gtforpnt.hpp"
 #include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_qt_error.hpp"
+#include "core/asm_port_token_address_table.hpp"
 #include "core/asm_port_token_name_table.hpp"
 
 #include <optional>
@@ -64,6 +65,14 @@ std::uint16_t ReadZeroPageWord(std::uint8_t address) {
     const std::uint8_t high = ReadZeroPageByte(static_cast<std::uint8_t>(address + 1));
     return static_cast<std::uint16_t>(high) << 8 | low;
 }
+
+void RESTORE();
+void SETDA(std::uint16_t dataPointer);
+void CONTROL_C_TYPED();
+void STOP();
+void EXECUTE_STATEMENT_1();
+std::uint8_t CurrentStatementChar();
+void SYNERR();
 
 void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
     // TODO(asm-port): write a byte into program memory at the given address.
@@ -776,8 +785,16 @@ std::uint8_t GETCHR() {
 }
 
 bool ISCNTC() {
-    // TODO(asm-port): detect whether a Control-C interrupt was typed.
-    return false;
+    constexpr std::uint8_t kKEYBOARD = 0xc0; // TODO(asm-port): actual KEYBOARD zero-page address.
+    constexpr std::uint8_t kCTRL_C_CODE = 0x83;
+
+    if (ReadZeroPageByte(kKEYBOARD) != kCTRL_C_CODE) {
+        return false;
+    }
+
+    INCHR();
+    CONTROL_C_TYPED();
+    return true;
 }
 
 std::uint8_t ReadStackPointer() {
@@ -934,7 +951,34 @@ void COLON_() {
 
     SYNERR();
 }
+void RESTORE() {
+    constexpr std::uint8_t kTXTTAB = 0x67;
+    const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
+    const std::uint16_t dataPointer = static_cast<std::uint16_t>(textTable - 1u);
+    SETDA(dataPointer);
+}
 
+void SETDA(std::uint16_t dataPointer) {
+    constexpr std::uint8_t kDATPTR = 0x7d;
+    WriteZeroPageWord(kDATPTR, dataPointer);
+}
+
+void CONTROL_C_TYPED() {
+    constexpr std::uint8_t kERRFLG = 0xd8;
+    const std::uint8_t errFlags = ReadZeroPageByte(kERRFLG);
+
+    if ((errFlags & 0x80u) == 0u) {
+        HANDLERR();
+        return;
+    }
+
+    // Fall through from CONTROL_C_TYPED to the STOP statement.
+    STOP();
+}
+
+void STOP() {
+    // TODO(asm-port): implement Applesoft STOP statement behavior.
+}
 void SYNERR() {
     // TODO(asm-port): handle a syntax error from the statement parser.
 }

@@ -9,6 +9,8 @@ namespace applesoft::asm_port {
 bool CLEAR();
 bool NEW();
 void LIST();
+void RESTORE();
+void STOP();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
@@ -65,11 +67,9 @@ static void LET()              {} // TODO(asm-port): LET
 static void GOTO()             {} // TODO(asm-port): GOTO
 static void RUN()              {} // TODO(asm-port): RUN
 static void IF()               {} // TODO(asm-port): IF
-void RESTORE()          {} // TODO(asm-port): RESTORE
 static void AMPERSAND_VECTOR() {} // TODO(asm-port): & dispatch (JMP vector at $03F5)
 static void GOSUB()            {} // TODO(asm-port): GOSUB
 static void REM()              {} // TODO(asm-port): REM
-static void STOP()             {} // TODO(asm-port): STOP
 static void ONGOTO()           {} // TODO(asm-port): ONGOTO
 static void WAIT()             {} // TODO(asm-port): WAIT
 static void LOAD()             {} // TODO(asm-port): LOAD
