@@ -3,6 +3,7 @@
 #include "core/asm_port_chkmem.hpp"
 #include "core/asm_port_gtforpnt.hpp"
 #include "core/asm_port_inlin2.hpp"
+#include "core/applesoft_variables.hpp"
 #include "core/asm_port_qt_error.hpp"
 #include "core/asm_port_token_address_table.hpp"
 #include "core/asm_port_token_name_table.hpp"
@@ -26,17 +27,15 @@ std::uint8_t CHRGET() {
 }
 
 void SetTextPointer(std::uint8_t lo, std::uint8_t hi) {
-    // TODO(asm-port): update the TXTPTR pointer into the input buffer.
-    (void)lo;
-    (void)hi;
+    variables().writeWord(0x00b8u, static_cast<std::uint16_t>((static_cast<std::uint16_t>(hi) << 8) | lo));
 }
 
 void ClearErrFlag() {
-    // TODO(asm-port): clear the Applesoft ERRFLG state.
+    variables().writeByte(0x00d8u, 0);
 }
 
 void MarkDirectMode() {
-    // TODO(asm-port): record the current execution mode as direct.
+    variables().writeByte(0x0076u, 0xffu);
 }
 
 void LINGET() {
@@ -44,15 +43,11 @@ void LINGET() {
 }
 
 std::uint8_t ReadZeroPageByte(std::uint8_t address) {
-    // TODO(asm-port): read a byte from zero-page storage.
-    (void)address;
-    return 0;
+    return variables_const().readByte(address);
 }
 
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value) {
-    // TODO(asm-port): write a byte to zero-page storage.
-    (void)address;
-    (void)value;
+    variables().writeByte(address, value);
 }
 
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value) {
@@ -72,6 +67,10 @@ void CONTROL_C_TYPED();
 void STOP();
 void ENDX();
 void CONT();
+void SAVE();
+void LOAD();
+void VARTIO();
+void PROGIO();
 void STOP_impl(bool shouldPrintBreak);
 void ENDX_impl(bool shouldPrintBreak);
 void EXECUTE_STATEMENT_1();
@@ -118,6 +117,8 @@ void FRMNUM();
 void SIGN();
 void FRM_STACK_2();
 void FRM_STACK_3();
+void MON_WRITE();
+void MON_READ();
 void DATAN();
 void GOEND();
 bool IsEndOfLineAtTextPointer();
@@ -414,15 +415,11 @@ void InsertNewLine() {
 }
 
 std::uint8_t read_INPUT_BUFFER(std::uint8_t index) {
-    // TODO(asm-port): read a byte from INPUT_BUFFER + index in the runtime input buffer.
-    (void)index;
-    return 0;
+    return variables_const().readByte(static_cast<std::uint16_t>(0x0200u + index));
 }
 
 void write_INPUT_BUFFER_minus_5(std::uint8_t index, std::uint8_t value) {
-    // TODO(asm-port): write a byte to INPUT_BUFFER-5 + index in the runtime output buffer.
-    (void)index;
-    (void)value;
+    variables().writeByte(static_cast<std::uint16_t>(0x01fbu + index), value);
 }
 
 void SetTextPointerToInputBufferMinus1() {
@@ -1048,6 +1045,11 @@ void PRINT_ERROR_LINNUM(std::string_view prefix) {
 }
 
 void CONT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: CONT (inclusive) .. SAVE (exclusive)
+    // Name normalization: none (assembler label CONT kept verbatim).
+    // Internal label mapping: "bne RTS_4" is modeled as an early return.
+
     if (!IsStatementEndOfParsedInput()) {
         return;
     }
@@ -1070,6 +1072,105 @@ void CONT() {
     WriteZeroPageByte(kTXTPTR_plus_1, ReadZeroPageByte(kOLDTEXT_plus_1));
     WriteZeroPageByte(kCURLIN, ReadZeroPageByte(kOLDLIN));
     WriteZeroPageByte(kCURLIN_plus_1, ReadZeroPageByte(kOLDLIN_plus_1));
+}
+
+void SAVE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SAVE (inclusive) .. LOAD (exclusive)
+    // Name normalization: none (assembler label SAVE kept verbatim).
+
+    constexpr std::uint8_t kPRGEND = 0xaf;
+    constexpr std::uint8_t kTXTTAB = 0x67;
+    constexpr std::uint8_t kLINNUM = 0x50;
+
+    const std::uint16_t programEnd = ReadZeroPageWord(kPRGEND);
+    const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
+    const std::uint16_t programLength = static_cast<std::uint16_t>(programEnd - textTable);
+    WriteZeroPageWord(kLINNUM, programLength);
+
+    VARTIO();
+    MON_WRITE();
+    PROGIO();
+    MON_WRITE();
+}
+
+void LOAD() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: LOAD (inclusive) .. VARTIO (exclusive)
+    // Name normalization: none (assembler label LOAD kept verbatim).
+
+    constexpr std::uint8_t kLINNUM = 0x50;
+    constexpr std::uint8_t kTXTTAB = 0x67;
+    constexpr std::uint8_t kVARTAB = 0x69;
+    constexpr std::uint8_t kTEMPPT = 0x52;
+    constexpr std::uint8_t kLOCK = 0xd6;
+
+    VARTIO();
+    MON_READ();
+
+    const std::uint16_t endAddress =
+        static_cast<std::uint16_t>(ReadZeroPageWord(kTXTTAB) + ReadZeroPageWord(kLINNUM));
+    WriteZeroPageWord(kVARTAB, endAddress);
+
+    WriteZeroPageByte(kLOCK, ReadZeroPageByte(kTEMPPT));
+
+    PROGIO();
+    MON_READ();
+
+    if ((ReadZeroPageByte(kLOCK) & 0x80u) != 0u) {
+        (void)SETPTRS();
+        return;
+    }
+
+    FIX_LINKS();
+}
+
+void VARTIO() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: VARTIO (inclusive) .. PROGIO (exclusive)
+    // Name normalization: none (assembler label VARTIO kept verbatim).
+
+    constexpr std::uint8_t kLINNUM = 0x50;
+    constexpr std::uint8_t kTEMPPT = 0x52;
+    constexpr std::uint8_t kLOCK = 0xd6;
+    constexpr std::uint8_t kMON_A1L = 0x3c;
+    constexpr std::uint8_t kMON_A1H = 0x3d;
+    constexpr std::uint8_t kMON_A2L = 0x3e;
+    constexpr std::uint8_t kMON_A2H = 0x3f;
+
+    WriteZeroPageByte(kMON_A1L, kLINNUM);
+    WriteZeroPageByte(kMON_A1H, 0x00);
+    WriteZeroPageByte(kMON_A2L, kTEMPPT);
+    WriteZeroPageByte(kMON_A2H, 0x00);
+    WriteZeroPageByte(kLOCK, 0x00);
+}
+
+void PROGIO() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PROGIO (inclusive) .. RUN (exclusive)
+    // Name normalization: none (assembler label PROGIO kept verbatim).
+
+    constexpr std::uint8_t kTXTTAB = 0x67;
+    constexpr std::uint8_t kVARTAB = 0x69;
+    constexpr std::uint8_t kMON_A1L = 0x3c;
+    constexpr std::uint8_t kMON_A1H = 0x3d;
+    constexpr std::uint8_t kMON_A2L = 0x3e;
+    constexpr std::uint8_t kMON_A2H = 0x3f;
+
+    WriteZeroPageWord(kMON_A1L, ReadZeroPageWord(kTXTTAB));
+    WriteZeroPageWord(kMON_A2L, ReadZeroPageWord(kVARTAB));
+
+    // Keep symbolic names visible for monitor register parity.
+    (void)kMON_A1H;
+    (void)kMON_A2H;
+}
+
+void MON_WRITE() {
+    // TODO(asm-port): port monitor tape write handler used by SAVE.
+}
+
+void MON_READ() {
+    // TODO(asm-port): port monitor tape read handler used by LOAD.
 }
 
 void SYNERR() {

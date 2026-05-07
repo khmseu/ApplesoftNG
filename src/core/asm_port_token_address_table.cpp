@@ -13,6 +13,8 @@ void RESTORE();
 void STOP();
 void ENDX();
 void CONT();
+void LOAD();
+void SAVE();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
@@ -73,8 +75,6 @@ static void GOSUB()            {} // TODO(asm-port): GOSUB
 static void REM()              {} // TODO(asm-port): REM
 static void ONGOTO()           {} // TODO(asm-port): ONGOTO
 static void WAIT()             {} // TODO(asm-port): WAIT
-static void LOAD()             {} // TODO(asm-port): LOAD
-static void SAVE()             {} // TODO(asm-port): SAVE
 static void DEF()              {} // TODO(asm-port): DEF
 static void POKE()             {} // TODO(asm-port): POKE
 static void PRINT()            {} // TODO(asm-port): PRINT

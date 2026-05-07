@@ -1,5 +1,6 @@
 #include "core/asm_port_strtxt.hpp"
 
+#include "core/applesoft_variables.hpp"
 #include "core/asm_port_strlit.hpp"
 
 #include <cstdint>
@@ -7,14 +8,17 @@
 namespace applesoft::asm_port {
 namespace {
 
-// TODO(asm-port): map TXTPTR low byte access to interpreter memory/register state.
-std::uint8_t read_TXTPTR_low() { return 0; }
+std::uint8_t read_TXTPTR_low() {
+    return variables_const().readByte(0x00b8u);
+}
 
-// TODO(asm-port): map TXTPTR high byte access to interpreter memory/register state.
-std::uint8_t read_TXTPTR_high() { return 0; }
+std::uint8_t read_TXTPTR_high() {
+    return variables_const().readByte(0x00b9u);
+}
 
-// TODO(asm-port): read CPU carry flag from arithmetic state.
-bool read_carry_flag() { return false; }
+bool read_carry_flag() {
+    return variables_const().carryFlag;
+}
 
 // TODO(asm-port): port POINT label.
 void POINT() {}

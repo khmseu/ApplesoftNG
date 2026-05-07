@@ -1,5 +1,6 @@
 #include "core/asm_port_strlit.hpp"
 
+#include "core/applesoft_variables.hpp"
 #include "core/asm_port_strlt2.hpp"
 
 #include <cstdint>
@@ -7,11 +8,13 @@
 namespace applesoft::asm_port {
 namespace {
 
-// TODO(asm-port): map CHARAC register-backed variable.
-void write_CHARAC(std::uint8_t /*v*/) {}
+void write_CHARAC(std::uint8_t v) {
+    variables().writeByte(0x000du, v);
+}
 
-// TODO(asm-port): map ENDCHR register-backed variable.
-void write_ENDCHR(std::uint8_t /*v*/) {}
+void write_ENDCHR(std::uint8_t v) {
+    variables().writeByte(0x000eu, v);
+}
 
 } // namespace
 

@@ -1,4 +1,5 @@
 #include "core/asm_port_inlin2.hpp"
+#include "core/applesoft_variables.hpp"
 
 #include <cstdint>
 
@@ -7,8 +8,9 @@ namespace {
 
 constexpr std::uint16_t kInputBufferAddress = 0x0200;
 
-// TODO(asm-port): map MON_PROMPT write into runtime memory model.
-void write_MON_PROMPT(std::uint8_t /*v*/) {}
+void write_MON_PROMPT(std::uint8_t v) {
+    variables().writeByte(0x0033u, v);
+}
 
 // TODO(asm-port): port GETLN monitor call; return line length in X.
 std::uint8_t GETLN() { return 0; }
@@ -18,14 +20,17 @@ std::uint8_t MON_GETLN() {
     return GETLN();
 }
 
-// TODO(asm-port): map INPUT_BUFFER indexed write into runtime memory model.
-void write_INPUT_BUFFER(std::uint8_t /*index*/, std::uint8_t /*v*/) {}
+void write_INPUT_BUFFER(std::uint8_t index, std::uint8_t v) {
+    variables().writeByte(static_cast<std::uint16_t>(kInputBufferAddress + index), v);
+}
 
-// TODO(asm-port): map INPUT_BUFFER-1 indexed read into runtime memory model.
-std::uint8_t read_INPUT_BUFFER_minus_1(std::uint8_t /*index*/) { return 0; }
+std::uint8_t read_INPUT_BUFFER_minus_1(std::uint8_t index) {
+    return variables_const().readByte(static_cast<std::uint16_t>((kInputBufferAddress - 1u) + index));
+}
 
-// TODO(asm-port): map INPUT_BUFFER-1 indexed write into runtime memory model.
-void write_INPUT_BUFFER_minus_1(std::uint8_t /*index*/, std::uint8_t /*v*/) {}
+void write_INPUT_BUFFER_minus_1(std::uint8_t index, std::uint8_t v) {
+    variables().writeByte(static_cast<std::uint16_t>((kInputBufferAddress - 1u) + index), v);
+}
 
 // TODO(asm-port): port RDKEY monitor call; read a key from the monitor.
 std::uint8_t RDKEY() { return 0; }

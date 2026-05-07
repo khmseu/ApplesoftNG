@@ -1,7 +1,10 @@
 #include "core/asm_port_input.hpp"
+#include "core/applesoft_variables.hpp"
 #include "core/asm_port_strtxt.hpp"
 
 namespace applesoft::asm_port {
+
+void CONTROL_C_TYPED();
 
 // TODO(asm-port): port CHRGOT label.
 std::uint8_t CHRGOT() { return 0; }
@@ -25,14 +28,13 @@ void ERRDIR() {}
 // TODO(asm-port): port INLIN label.
 void INLIN() {}
 
-// TODO(asm-port): wire INPUT_BUFFER-1 write to runtime memory model.
-void write_INPUT_BUFFER_minus_1(std::uint8_t /*v*/) {}
+void write_INPUT_BUFFER_minus_1(std::uint8_t v) {
+    variables().writeByte(0x01ffu, v);
+}
 
-// TODO(asm-port): wire INPUT_BUFFER read to runtime memory model.
-std::uint8_t read_INPUT_BUFFER_0() { return 0; }
-
-// TODO(asm-port): port CONTROL_C_TYPED label.
-void CONTROL_C_TYPED() {}
+std::uint8_t read_INPUT_BUFFER_0() {
+    return variables_const().readByte(0x0200u);
+}
 
 } // namespace
 

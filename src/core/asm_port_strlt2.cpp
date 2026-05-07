@@ -1,39 +1,51 @@
 #include "core/asm_port_strlt2.hpp"
 
+#include "core/applesoft_variables.hpp"
+
 #include <cstdint>
 
 namespace applesoft::asm_port {
 namespace {
 
-// TODO(asm-port): map CHARAC register-backed variable.
-std::uint8_t read_CHARAC() { return 0; }
+std::uint8_t read_CHARAC() {
+    return variables_const().readByte(0x000du);
+}
 
-// TODO(asm-port): map ENDCHR register-backed variable.
-std::uint8_t read_ENDCHR() { return 0; }
+std::uint8_t read_ENDCHR() {
+    return variables_const().readByte(0x000eu);
+}
 
-// TODO(asm-port): map memory reads to interpreter memory model.
-std::uint8_t read_byte(std::uint16_t /*address*/) { return 0; }
+std::uint8_t read_byte(std::uint16_t address) {
+    return variables_const().readByte(address);
+}
 
-// TODO(asm-port): map STRNG1 pointer low byte.
-void write_STRNG1_low(std::uint8_t /*v*/) {}
+void write_STRNG1_low(std::uint8_t v) {
+    variables().writeByte(0x00abu, v);
+}
 
-// TODO(asm-port): map STRNG1 pointer high byte.
-void write_STRNG1_high(std::uint8_t /*v*/) {}
+void write_STRNG1_high(std::uint8_t v) {
+    variables().writeByte(0x00acu, v);
+}
 
-// TODO(asm-port): map FAC length storage.
-void write_FAC(std::uint8_t /*v*/) {}
+void write_FAC(std::uint8_t v) {
+    variables().writeByte(0x009du, v);
+}
 
-// TODO(asm-port): map FAC+1 storage.
-void write_FAC_plus_1(std::uint8_t /*v*/) {}
+void write_FAC_plus_1(std::uint8_t v) {
+    variables().writeByte(0x009eu, v);
+}
 
-// TODO(asm-port): map FAC+2 storage.
-void write_FAC_plus_2(std::uint8_t /*v*/) {}
+void write_FAC_plus_2(std::uint8_t v) {
+    variables().writeByte(0x009fu, v);
+}
 
-// TODO(asm-port): map STRNG2 pointer low byte.
-void write_STRNG2_low(std::uint8_t /*v*/) {}
+void write_STRNG2_low(std::uint8_t v) {
+    variables().writeByte(0x00adu, v);
+}
 
-// TODO(asm-port): map STRNG2 pointer high byte.
-void write_STRNG2_high(std::uint8_t /*v*/) {}
+void write_STRNG2_high(std::uint8_t v) {
+    variables().writeByte(0x00aeu, v);
+}
 
 // TODO(asm-port): port STRINI label.
 void STRINI(std::uint8_t /*length*/) {}
