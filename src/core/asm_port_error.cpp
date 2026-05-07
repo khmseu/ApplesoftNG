@@ -882,8 +882,61 @@ void OUTSP() {
     // TODO(asm-port): output the trace-space separator after the line number.
 }
 
+std::uint8_t CurrentStatementChar() {
+    // TODO(asm-port): return the current statement character at the parser cursor.
+    return 0;
+}
+
 void EXECUTE_STATEMENT() {
-    // TODO(asm-port): dispatch and execute the current statement token.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: EXECUTE_STATEMENT (inclusive) .. EXECUTE_STATEMENT_1 (exclusive)
+    // Name normalization: none (assembler label EXECUTE_STATEMENT kept verbatim).
+
+    if (CurrentStatementChar() == 0) {
+        // EMPTY STATEMENT: fall through to caller behavior.
+        return;
+    }
+
+    EXECUTE_STATEMENT_1();
+}
+
+void EXECUTE_STATEMENT_1() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: EXECUTE_STATEMENT_1 (inclusive) .. COLON_ (exclusive)
+    // Name normalization: none (assembler label EXECUTE_STATEMENT_1 kept verbatim).
+
+    const std::uint8_t ch = CurrentStatementChar();
+    if ((ch & 0x80u) == 0u) {
+        LET();
+        return;
+    }
+
+    const std::uint8_t tokenIndex = static_cast<std::uint8_t>(ch - kTokenBase);
+    if (tokenIndex >= 0x40u) {
+        SYNERR();
+        return;
+    }
+
+    CHRGET();
+    const TOKEN_ADDRESS_TABLE_fn handler = TOKEN_ADDRESS_TABLE(static_cast<std::size_t>(tokenIndex));
+    handler();
+}
+
+void COLON_() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: COLON_ (inclusive) .. RESTORE (exclusive)
+    // Name normalization: none (assembler label COLON_ kept verbatim).
+
+    if (CurrentStatementChar() == static_cast<std::uint8_t>(':' )) {
+        TRACE_();
+        return;
+    }
+
+    SYNERR();
+}
+
+void SYNERR() {
+    // TODO(asm-port): handle a syntax error from the statement parser.
 }
 
 void PushForPntFrame() {
