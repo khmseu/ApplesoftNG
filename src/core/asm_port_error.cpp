@@ -38,8 +38,43 @@ void MarkDirectMode() {
     variables().writeByte(0x0076u, 0xffu);
 }
 
+std::uint8_t ReadZeroPageByte(std::uint8_t address);
+void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
+void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
+std::uint16_t ReadZeroPageWord(std::uint8_t address);
+std::uint8_t CHRGOT();
+void SYNERR();
+
 void LINGET() {
-    // TODO(asm-port): consume the line number prefix from the input buffer.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: LINGET (inclusive) .. LET (exclusive)
+    // Name normalization: none (assembler label LINGET kept verbatim).
+
+    constexpr std::uint8_t kLINNUM = 0x50;
+    constexpr std::uint8_t kINDEX = 0x5e;
+    constexpr std::uint8_t kCHARAC = 0x0d;
+
+    WriteZeroPageWord(kLINNUM, 0);
+
+    std::uint8_t current = CHRGOT();
+    while (isDigit(current)) {
+        const std::uint8_t digit = static_cast<std::uint8_t>(current - static_cast<std::uint8_t>('0'));
+        WriteZeroPageByte(kCHARAC, digit);
+
+        const std::uint8_t lineHigh = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1));
+        WriteZeroPageByte(kINDEX, lineHigh);
+
+        // Preserve ROM overflow guard (line number exceeds 63999).
+        if (lineHigh >= 0x19u) {
+            SYNERR();
+            return;
+        }
+
+        const std::uint16_t value = ReadZeroPageWord(kLINNUM);
+        WriteZeroPageWord(kLINNUM, static_cast<std::uint16_t>(value * 10u + digit));
+
+        current = CHRGET();
+    }
 }
 
 std::uint8_t ReadZeroPageByte(std::uint8_t address) {
@@ -151,10 +186,16 @@ void LINPRT();
 void OUTDO();
 
 void LET();
+void IF();
+void REM();
+void IF_TRUE();
+void ONGOTO();
 void FOR();
 void STEP();
 void NEWSTT();
 void TRACE_();
+void FRMEVL();
+std::uint8_t GETBYT();
 
 bool NEW_impl() {
     if (!IsStatementEndOfParsedInput()) {
@@ -1443,6 +1484,85 @@ void DATA() {
     ADDON(offset);
 }
 
+void IF() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: IF (inclusive) .. REM (exclusive)
+    // Name normalization: none (assembler label IF kept verbatim).
+
+    constexpr std::uint8_t kTOKEN_GOTO = 0xabu;
+    constexpr std::uint8_t kTOKEN_THEN = 0xc4u;
+    constexpr std::uint8_t kFAC = 0x9d;
+
+    FRMEVL();
+    if (CHRGOT() != kTOKEN_GOTO) {
+        SYNCHR(kTOKEN_THEN);
+    }
+
+    if (ReadZeroPageByte(kFAC) != 0u) {
+        IF_TRUE();
+        return;
+    }
+
+    // False IF falls through to REM in ROM.
+    REM();
+}
+
+void REM() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: REM (inclusive) .. IF_TRUE (exclusive)
+    // Name normalization: none (assembler label REM kept verbatim).
+
+    const std::uint8_t offset = REMN();
+    ADDON(offset);
+}
+
+void IF_TRUE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: IF_TRUE (inclusive) .. ONGOTO (exclusive)
+    // Name normalization: none (assembler label IF_TRUE kept verbatim).
+
+    if (CHRGOT() >= kTokenBase) {
+        EXECUTE_STATEMENT();
+        return;
+    }
+
+    GOTO();
+}
+
+void ONGOTO() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ONGOTO (inclusive) .. LINGET (exclusive)
+    // Name normalization: none (assembler label ONGOTO kept verbatim).
+
+    constexpr std::uint8_t kTOKEN_GOSUB = 0xb0u;
+    constexpr std::uint8_t kTOKEN_GOTO = 0xabu;
+    constexpr std::uint8_t kFAC_PLUS_4 = 0xa1;
+
+    const std::uint8_t token = GETBYT();
+    if (token != kTOKEN_GOSUB && token != kTOKEN_GOTO) {
+        SYNERR();
+        return;
+    }
+
+    while (true) {
+        const std::uint8_t selector = ReadZeroPageByte(kFAC_PLUS_4);
+        WriteZeroPageByte(kFAC_PLUS_4, static_cast<std::uint8_t>(selector - 1u));
+
+        if (selector == 1u) {
+            EXECUTE_STATEMENT_1();
+            return;
+        }
+
+        CHRGET();
+        LINGET();
+        if (CHRGOT() == static_cast<std::uint8_t>(',')) {
+            continue;
+        }
+
+        return;
+    }
+}
+
 void MON_WRITE() {
     // TODO(asm-port): port monitor tape write handler used by SAVE.
 }
@@ -1464,6 +1584,15 @@ void PushForPntFrame() {
 
 void LET() {
     // TODO(asm-port): evaluate a variable assignment and store its address into FORPNT.
+}
+
+void FRMEVL() {
+    // TODO(asm-port): evaluate an expression into FAC.
+}
+
+std::uint8_t GETBYT() {
+    // TODO(asm-port): parse byte argument and leave selector in FAC+4.
+    return 0;
 }
 
 void HANDLERR() {

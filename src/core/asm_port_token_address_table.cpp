@@ -20,6 +20,10 @@ void GOSUB();
 void GOTO();
 void POP();
 void DATA();
+void LET();
+void IF();
+void REM();
+void ONGOTO();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
@@ -69,11 +73,7 @@ static void RESUME()           {} // TODO(asm-port): RESUME
 static void RECALL()           {} // TODO(asm-port): RECALL
 static void STORE()            {} // TODO(asm-port): STORE
 static void SPEED()            {} // TODO(asm-port): SPEED
-static void LET()              {} // TODO(asm-port): LET
-static void IF()               {} // TODO(asm-port): IF
 static void AMPERSAND_VECTOR() {} // TODO(asm-port): & dispatch (JMP vector at $03F5)
-static void REM()              {} // TODO(asm-port): REM
-static void ONGOTO()           {} // TODO(asm-port): ONGOTO
 static void WAIT()             {} // TODO(asm-port): WAIT
 static void DEF()              {} // TODO(asm-port): DEF
 static void POKE()             {} // TODO(asm-port): POKE
