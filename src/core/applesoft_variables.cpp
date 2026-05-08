@@ -44,7 +44,9 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     switch (address) {
     case 0x000d: return CHARAC;
     case 0x000e: return ENDCHR;
+    case 0x0011: return VALTYP;
     case 0x0014: return SUBFLG;
+    case 0x0015: return INPUTFLG;
     case 0x0024: return MON_CH;
     case 0x0033: return MON_PROMPT;
     case 0x003c: return lowByte(MON_A1);
@@ -54,6 +56,8 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case 0x0050: return lowByte(LINNUM);
     case 0x0051: return highByte(LINNUM);
     case 0x0052: return TEMPPT;
+    case 0x005e: return lowByte(INDEX);
+    case 0x005f: return highByte(INDEX);
     case 0x0067: return lowByte(TXTTAB);
     case 0x0068: return highByte(TXTTAB);
     case 0x0069: return lowByte(VARTAB);
@@ -72,6 +76,8 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case 0x0078: return highByte(OLDLIN);
     case 0x0079: return lowByte(OLDTEXT);
     case 0x007a: return highByte(OLDTEXT);
+    case 0x007b: return lowByte(DATLIN);
+    case 0x007c: return highByte(DATLIN);
     case 0x007d: return lowByte(DATPTR);
     case 0x007e: return highByte(DATPTR);
     case 0x0085: return lowByte(FORPNT);
@@ -94,7 +100,9 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case 0x00b9: return highByte(TXTPTR);
     case 0x00d6: return LOCK;
     case 0x00d8: return ERRFLG;
+    case 0x00f1: return SPEEDZ;
     case 0x00f2: return TRCFLG;
+    case 0x00f3: return FLASH_BIT;
     case 0x00f8: return REMSTK;
     default: return 0;
     }
@@ -114,7 +122,9 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     switch (address) {
     case 0x000d: CHARAC = value; return;
     case 0x000e: ENDCHR = value; return;
+    case 0x0011: VALTYP = value; return;
     case 0x0014: SUBFLG = value; return;
+    case 0x0015: INPUTFLG = value; return;
     case 0x0024: MON_CH = value; return;
     case 0x0033: MON_PROMPT = value; return;
     case 0x003c: setLowByte(MON_A1, value); return;
@@ -124,6 +134,8 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case 0x0050: setLowByte(LINNUM, value); return;
     case 0x0051: setHighByte(LINNUM, value); return;
     case 0x0052: TEMPPT = value; return;
+    case 0x005e: setLowByte(INDEX, value); return;
+    case 0x005f: setHighByte(INDEX, value); return;
     case 0x0067: setLowByte(TXTTAB, value); return;
     case 0x0068: setHighByte(TXTTAB, value); return;
     case 0x0069: setLowByte(VARTAB, value); return;
@@ -142,6 +154,8 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case 0x0078: setHighByte(OLDLIN, value); return;
     case 0x0079: setLowByte(OLDTEXT, value); return;
     case 0x007a: setHighByte(OLDTEXT, value); return;
+    case 0x007b: setLowByte(DATLIN, value); return;
+    case 0x007c: setHighByte(DATLIN, value); return;
     case 0x007d: setLowByte(DATPTR, value); return;
     case 0x007e: setHighByte(DATPTR, value); return;
     case 0x0085: setLowByte(FORPNT, value); return;
@@ -164,7 +178,9 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case 0x00b9: setHighByte(TXTPTR, value); return;
     case 0x00d6: LOCK = value; return;
     case 0x00d8: ERRFLG = value; return;
+    case 0x00f1: SPEEDZ = value; return;
     case 0x00f2: TRCFLG = value; return;
+    case 0x00f3: FLASH_BIT = value; return;
     case 0x00f8: REMSTK = value; return;
     default: return;
     }

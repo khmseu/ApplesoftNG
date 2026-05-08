@@ -1,4 +1,6 @@
 #include "core/asm_port_error.hpp"
+#include "core/asm_port_print.hpp"
+#include "platform/asm_port_outdo.hpp"
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_chkmem.hpp"
 #include "core/asm_port_gtforpnt.hpp"
@@ -783,12 +785,10 @@ void FIX_LINKS() {
     }
 }
 
-void CRDO() {
-    // TODO(asm-port): print a carriage return or perform monitor return behavior.
-}
-
 void STROUT(std::string_view text) {
     // TODO(asm-port): print the given string to the Applesoft console.
+    // This overload is a high-level convenience bridge used by the error-printing
+    // code.  It is distinct from STROUT(uint8_t a, uint8_t y) in asm_port_print.
     (void)text;
 }
 
@@ -976,10 +976,6 @@ bool IsRunningMode() {
 bool IsTraceEnabled() {
     // TODO(asm-port): inspect the TRCFLG flag from zero page.
     return false;
-}
-
-void OUTSP() {
-    // TODO(asm-port): output the trace-space separator after the line number.
 }
 
 std::uint8_t CurrentStatementChar() {
@@ -1767,10 +1763,6 @@ bool IsOnErr() {
 bool IsDirectMode() {
     // TODO(asm-port): return true when the interpreter is in direct mode.
     return false;
-}
-
-void OUTQUES() {
-    // TODO(asm-port): print the question mark prompt after an error.
 }
 
 } // namespace applesoft::asm_port

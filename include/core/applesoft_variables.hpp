@@ -8,12 +8,15 @@ namespace applesoft::asm_port {
 class ApplesoftVariables {
 public:
     // Zero-page and fixed-address variables currently used in the C++ ports.
+    std::uint8_t VALTYP = 0;      // $11  string flag: $ff = string, $00 = float
     std::uint8_t SUBFLG = 0;      // $14
+    std::uint8_t INPUTFLG = 0;    // $15  $00=INPUT, $40=GET, $98=READ
     std::uint8_t MON_CH = 0;      // $24
     std::uint8_t MON_PROMPT = 0;  // $33
 
     std::uint16_t MON_A1 = 0;     // $3c/$3d
     std::uint16_t MON_A2 = 0;     // $3e/$3f
+    std::uint16_t INDEX = 0;      // $5e/$5f scratch pointer (string data address)
     std::uint16_t LINNUM = 0;     // $50/$51
     std::uint8_t TEMPPT = 0;      // $52
     std::uint16_t TXTTAB = 0;     // $67/$68
@@ -25,6 +28,7 @@ public:
     std::uint16_t CURLIN = 0;     // $75/$76
     std::uint16_t OLDLIN = 0;     // $77/$78
     std::uint16_t OLDTEXT = 0;    // $79/$7a
+    std::uint16_t DATLIN = 0;     // $7b/$7c line number of current DATA statement
     std::uint16_t DATPTR = 0;     // $7d/$7e
     std::uint16_t FORPNT = 0;     // $85/$86
     std::uint16_t LOWTR = 0;      // $9b/$9c
@@ -37,6 +41,8 @@ public:
     std::uint8_t LOCK = 0;        // $d6
     std::uint8_t ERRFLG = 0;      // $d8
     std::uint8_t TRCFLG = 0;      // $f2
+    std::uint8_t SPEEDZ = 0;      // $f1  complement of speed value
+    std::uint8_t FLASH_BIT = 0;   // $f3  $40=flash mode, $00=normal
     std::uint8_t REMSTK = 0;      // $f8
     std::uint8_t CHARAC = 0;      // $0d
     std::uint8_t ENDCHR = 0;      // $0e

@@ -17,6 +17,7 @@ set(SOURCES
     src/core/interpreter.cpp
     src/core/memory.cpp
     src/platform/asm_port_getln.cpp
+    src/platform/asm_port_outdo.cpp
     src/platform/console.cpp
     src/core/asm_port_inlin.cpp
     src/core/asm_port_inlin2.cpp
@@ -38,6 +39,7 @@ set(SOURCES
     src/core/asm_port_memerr.cpp
     src/core/applesoft_variables.cpp
     src/core/asm_port_error.cpp
+    src/core/asm_port_print.cpp
 )
 
 # Add executable
