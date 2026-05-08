@@ -20,6 +20,7 @@ void GOSUB();
 void GOTO();
 void POP();
 void DATA();
+void GET();
 void LET();
 void IF();
 void REM();
@@ -79,7 +80,7 @@ static void DEF()              {} // TODO(asm-port): DEF
 static void POKE()             {} // TODO(asm-port): POKE
 static void PRINT()            {} // TODO(asm-port): PRINT
 static void CLEAR_Handler()    { CLEAR(); }
-static void GET()              {} // TODO(asm-port): GET
+static void GET_Handler()      { GET(); }
 static void NEW_Handler()      { NEW(); }
 
 // ---------------------------------------------------------------------------
@@ -152,7 +153,7 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         CONT,             // [59] $BB...187...CONT
         LIST,             // [60] $BC...188...LIST
         CLEAR_Handler,    // [61] $BD...189...CLEAR
-        GET,              // [62] $BE...190...GET
+        GET_Handler,      // [62] $BE...190...GET
         NEW_Handler,      // [63] $BF...191...NEW
     };
     return table[index];
