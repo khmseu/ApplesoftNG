@@ -4,21 +4,30 @@
 
 namespace applesoft::asm_port {
 
-enum class InputDispatch : std::uint8_t {
-    ContinueAt_INPUT_FLAG_ZERO = 0,
-    ControlCTyped = 1
-};
-
-enum class InputErrorSource : std::uint8_t {
-    FromInput = 0,
-    FromRead = 1,
-    FromGet = 2
-};
-
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: INPUT (inclusive) .. NXIN (exclusive)
 // Name normalization: none (assembler label INPUT kept verbatim).
-InputDispatch INPUT();
+void INPUT();
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: NXIN (inclusive) .. READ (exclusive)
+// Name normalization: none (assembler label NXIN kept verbatim).
+void NXIN();
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: READ (inclusive) .. INPUT_FLAG_ZERO (exclusive)
+// Name normalization: none (assembler label READ kept verbatim).
+void READ();
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: INPUT_FLAG_ZERO (inclusive) .. PROCESS_INPUT_LIST (exclusive)
+// Name normalization: none (assembler label INPUT_FLAG_ZERO kept verbatim).
+void INPUT_FLAG_ZERO(std::uint16_t input_ptr);
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: PROCESS_INPUT_LIST (inclusive) .. NEXT (exclusive)
+// Name normalization: none (assembler label PROCESS_INPUT_LIST kept verbatim).
+void PROCESS_INPUT_LIST(std::uint16_t input_ptr, std::uint8_t input_flag);
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: INPUTERR (inclusive) .. READERR (exclusive)

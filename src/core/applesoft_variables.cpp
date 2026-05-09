@@ -33,6 +33,10 @@ void ApplesoftVariables::setHighByte(std::uint16_t& target, std::uint8_t value) 
 }
 
 std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
+    if (address == 0x01ffu) {
+        return INPUT_BUFFER_MINUS_1;
+    }
+
     if (address >= 0x0200u && address <= 0x02ffu) {
         return INPUT_BUFFER_PAGE[address - 0x0200u];
     }
@@ -80,8 +84,12 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case 0x007c: return highByte(DATLIN);
     case 0x007d: return lowByte(DATPTR);
     case 0x007e: return highByte(DATPTR);
+    case 0x007f: return lowByte(INPTR);
+    case 0x0080: return highByte(INPTR);
     case 0x0085: return lowByte(FORPNT);
     case 0x0086: return highByte(FORPNT);
+    case 0x0087: return lowByte(TXPSV);
+    case 0x0088: return highByte(TXPSV);
     case 0x009b: return lowByte(LOWTR);
     case 0x009c: return highByte(LOWTR);
     case 0x009d: return FAC[0];
@@ -109,6 +117,11 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
 }
 
 void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
+    if (address == 0x01ffu) {
+        INPUT_BUFFER_MINUS_1 = value;
+        return;
+    }
+
     if (address >= 0x0200u && address <= 0x02ffu) {
         INPUT_BUFFER_PAGE[address - 0x0200u] = value;
         return;
@@ -158,8 +171,12 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case 0x007c: setHighByte(DATLIN, value); return;
     case 0x007d: setLowByte(DATPTR, value); return;
     case 0x007e: setHighByte(DATPTR, value); return;
+    case 0x007f: setLowByte(INPTR, value); return;
+    case 0x0080: setHighByte(INPTR, value); return;
     case 0x0085: setLowByte(FORPNT, value); return;
     case 0x0086: setHighByte(FORPNT, value); return;
+    case 0x0087: setLowByte(TXPSV, value); return;
+    case 0x0088: setHighByte(TXPSV, value); return;
     case 0x009b: setLowByte(LOWTR, value); return;
     case 0x009c: setHighByte(LOWTR, value); return;
     case 0x009d: FAC[0] = value; return;

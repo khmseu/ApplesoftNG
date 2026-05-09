@@ -1,7 +1,12 @@
 #include "core/asm_port_input.hpp"
-#include "core/applesoft_variables.hpp"
-#include "core/asm_port_strtxt.hpp"
 
+#include "core/applesoft_variables.hpp"
+#include "core/asm_port_nxin.hpp"
+#include "core/asm_port_print.hpp"
+#include "core/asm_port_strtxt.hpp"
+#include "platform/asm_port_outdo.hpp"
+
+#include <cstdint>
 #include <string_view>
 
 namespace applesoft::asm_port {
@@ -16,16 +21,15 @@ std::uint8_t CHRGOT() { return 0; }
 
 namespace {
 
-// --- Dummy callees for incremental porting ---
+constexpr std::uint16_t kINPUT_BUFFER_MINUS_1 = 0x01ffu;
+constexpr std::uint16_t kINPUT_BUFFER = 0x0200u;
+constexpr std::uint16_t kINPUT_BUFFER_PLUS_1 = 0x0201u;
+
+// TODO(asm-port): port CHRGET label.
+std::uint8_t CHRGET_INPUT() { return 0; }
 
 // TODO(asm-port): port SYNCHR label.
 void SYNCHR(std::uint8_t /*expected*/) {}
-
-// TODO(asm-port): port STRPRT label.
-void STRPRT() {}
-
-// TODO(asm-port): port OUTQUES label.
-void OUTQUES() {}
 
 // TODO(asm-port): port ERRDIR label.
 void ERRDIR() {}
@@ -36,60 +40,165 @@ void INLIN() {}
 // TODO(asm-port): pop one byte from the emulated 6502 stack.
 void popStackByte() {}
 
-// TODO(asm-port): port PROCESS_INPUT_LIST label.
-void PROCESS_INPUT_LIST() {}
+// TODO(asm-port): port PTRGET label.
+std::uint16_t PTRGET() { return 0; }
 
-void write_INPUT_BUFFER_minus_1(std::uint8_t v) {
-    variables().writeByte(0x01ffu, v);
-}
+// TODO(asm-port): monitor key input path used by GET mode in PROCESS_INPUT_LIST.
+std::uint8_t MON_RDKEY() { return 0; }
 
-std::uint8_t read_INPUT_BUFFER_0() {
-    return variables_const().readByte(0x0200u);
+// TODO(asm-port): parse quoted/unquoted string input path.
+void parseStringInputAndStore() {}
+
+// TODO(asm-port): parse numeric input and assign variable.
+void parseNumericInputAndStore() {}
+
+// TODO(asm-port): FINDATA scanner path (within PROCESS_INPUT_LIST..NEXT range).
+void FINDATA() {}
+
+// TODO(asm-port): comma checker used between input variables.
+void CHKCOM() {}
+
+// TODO(asm-port): DATPTR setter (SETDA label).
+void SETDA(std::uint16_t data_ptr) {
+    variables().DATPTR = data_ptr;
 }
 
 } // namespace
 
-InputDispatch INPUT() {
-    // "INPUT" statement
-    // Check for optional prompt string.
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: INPUT (inclusive) .. NXIN (exclusive)
+// Name normalization: none (assembler label INPUT kept verbatim).
+void INPUT() {
+    // Optional prompt string: INPUT "prompt";...
     if (CHRGOT() == static_cast<std::uint8_t>('"')) {
-        // INPUT "prompt"; ...
         STRTXT();
-        SYNCHR(static_cast<std::uint8_t>(';'));
+        SYNCHR(static_cast<std::uint8_t>(';' & 0x7fu));
         STRPRT();
     } else {
-        // No string prompt => print "?"
         OUTQUES();
     }
 
     // Illegal in direct mode.
     ERRDIR();
 
-    // Prime input buffer with comma at INPUT_BUFFER-1.
-    write_INPUT_BUFFER_minus_1(static_cast<std::uint8_t>(','));
-
-    // Read a line into input buffer.
+    // Prime input buffer and read a line.
+    variables().writeByte(kINPUT_BUFFER_MINUS_1, static_cast<std::uint8_t>(',' & 0x7fu));
     INLIN();
 
-    // If first char is CTRL-C ($03), dispatch control-break path.
-    if (read_INPUT_BUFFER_0() == static_cast<std::uint8_t>(0x03)) {
+    // CTRL-C abort path.
+    if (variables_const().readByte(kINPUT_BUFFER) == 0x03u) {
         CONTROL_C_TYPED();
-        return InputDispatch::ControlCTyped;
+        return;
     }
 
-    // Fall-through target in original is INPUT_FLAG_ZERO (outside this slice).
-    return InputDispatch::ContinueAt_INPUT_FLAG_ZERO;
+    // Falls through to INPUT_FLAG_ZERO in ROM.
+    INPUT_FLAG_ZERO(kINPUT_BUFFER_MINUS_1);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: READ (inclusive) .. INPUT_FLAG_ZERO (exclusive)
+// Name normalization: none (assembler label READ kept verbatim).
+void READ() {
+    const std::uint16_t input_ptr = variables_const().DATPTR;
+
+    // A=$98 then .byt $2c skips INPUT_FLAG_ZERO's lda #0 in ROM.
+    // Model direct entry into PROCESS_INPUT_LIST with READ mode flag.
+    PROCESS_INPUT_LIST(input_ptr, 0x98u);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: INPUT_FLAG_ZERO (inclusive) .. PROCESS_INPUT_LIST (exclusive)
+// Name normalization: none (assembler label INPUT_FLAG_ZERO kept verbatim).
+void INPUT_FLAG_ZERO(std::uint16_t input_ptr) {
+    PROCESS_INPUT_LIST(input_ptr, 0x00u);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: PROCESS_INPUT_LIST (inclusive) .. NEXT (exclusive)
+// Name normalization: none (assembler label PROCESS_INPUT_LIST kept verbatim).
+void PROCESS_INPUT_LIST(std::uint16_t input_ptr, std::uint8_t input_flag) {
+    // sta INPUTFLG / stx INPTR / sty INPTR+1
+    variables().INPUTFLG = input_flag;
+    variables().INPTR = input_ptr;
+
+    while (true) {
+        // PROCESS_INPUT_ITEM: jsr PTRGET / sta FORPNT / sty FORPNT+1
+        variables().FORPNT = PTRGET();
+
+        // Save current program TXTPTR and switch TXTPTR to input source.
+        variables().TXPSV = variables_const().TXTPTR;
+        variables().TXTPTR = variables_const().INPTR;
+
+        // jsr CHRGOT
+        std::uint8_t current = CHRGOT();
+        if (current == 0u) {
+            // Empty input source branch.
+            if ((variables_const().INPUTFLG & 0x40u) != 0u) {
+                // GET mode: fetch single key and treat as one-char input buffer.
+                const std::uint8_t ch = static_cast<std::uint8_t>(MON_RDKEY() & 0x7fu);
+                variables().writeByte(kINPUT_BUFFER, ch);
+                variables().TXTPTR = kINPUT_BUFFER_MINUS_1;
+            } else if ((variables_const().INPUTFLG & 0x80u) != 0u) {
+                // READ mode: scan for next DATA item.
+                FINDATA();
+                variables().TXTPTR = variables_const().INPTR;
+            } else {
+                // INPUT mode: prompt and read another line.
+                OUTQUES();
+                NXIN();
+                variables().TXTPTR = kINPUT_BUFFER_MINUS_1;
+            }
+        }
+
+        // INSTART: advance to first token/char in source.
+        current = CHRGET_INPUT();
+        (void)current;
+
+        // String vs numeric assignment paths.
+        if ((variables_const().VALTYP & 0x80u) != 0u) {
+            parseStringInputAndStore();
+        } else {
+            parseNumericInputAndStore();
+        }
+
+        // INPUT_MORE: expect EOL/colon or comma separator.
+        const std::uint8_t sep = CHRGOT();
+        if (sep != 0u && sep != static_cast<std::uint8_t>(',' & 0x7fu)) {
+            INPUTERR();
+            return;
+        }
+
+        // Save updated source pointer and restore program pointer.
+        variables().INPTR = variables_const().TXTPTR;
+        variables().TXTPTR = variables_const().TXPSV;
+
+        // Next program token: end of statement, comma, or syntax issue.
+        const std::uint8_t next_program_char = CHRGOT();
+        if (next_program_char == 0u) {
+            // INPDONE path.
+            if ((variables_const().INPUTFLG & 0x80u) != 0u) {
+                // READ: store advanced data pointer.
+                SETDA(variables_const().INPTR);
+            } else {
+                // INPUT: if trailing chars remain, print "?EXTRA IGNORED".
+                if (variables_const().readByte(variables_const().INPTR) != 0u) {
+                    STROUT("?EXTRA IGNORED\r");
+                }
+            }
+            return;
+        }
+
+        CHKCOM();
+        // Continue to PROCESS_INPUT_ITEM for the next variable.
+    }
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: ERLIN (inclusive) .. INPERR (exclusive)
 // Name normalization: none (assembler label ERLIN kept verbatim).
 void ERLIN(std::uint8_t a, std::uint8_t y) {
-    // sta CURLIN / sty CURLIN+1
-    variables().CURLIN = static_cast<std::uint16_t>(
-        static_cast<std::uint16_t>(y) << 8 | a);
-
-    // jmp SYNERR
+    variables().CURLIN =
+        static_cast<std::uint16_t>(static_cast<std::uint16_t>(y) << 8 | a);
     SYNERR();
 }
 
@@ -97,7 +206,6 @@ void ERLIN(std::uint8_t a, std::uint8_t y) {
 // Labels: READERR (inclusive) .. ERLIN (exclusive)
 // Name normalization: none (assembler label READERR kept verbatim).
 void READERR() {
-    // lda DATLIN / ldy DATLIN+1 then fall through to ERLIN.
     ERLIN(
         static_cast<std::uint8_t>(variables_const().DATLIN & 0xffu),
         static_cast<std::uint8_t>(variables_const().DATLIN >> 8));
@@ -107,18 +215,13 @@ void READERR() {
 // Labels: RESPERR (inclusive) .. GET (exclusive)
 // Name normalization: none (assembler label RESPERR kept verbatim).
 void RESPERR() {
-    // bit ERRFLG / bpl L_RESPERR_1
     if ((variables_const().ERRFLG & 0x80u) != 0u) {
-        // ldx #254 / jmp HANDLERR
         // TODO(asm-port): propagate X=254 into HANDLERR once register model is shared.
         HANDLERR();
         return;
     }
 
-    // lda #<ERR_REENTRY / ldy #>ERR_REENTRY / jsr STROUT
     STROUT("?REENTER\r");
-
-    // lda OLDTEXT / ldy OLDTEXT+1 / sta TXTPTR / sty TXTPTR+1 / rts
     variables().TXTPTR = variables_const().OLDTEXT;
 }
 
@@ -126,7 +229,6 @@ void RESPERR() {
 // Labels: INPERR (inclusive) .. RESPERR (exclusive)
 // Name normalization: none (assembler label INPERR kept verbatim).
 void INPERR() {
-    // pla, then fall through into RESPERR.
     popStackByte();
     RESPERR();
 }
@@ -135,19 +237,17 @@ void INPERR() {
 // Labels: INPUTERR (inclusive) .. READERR (exclusive)
 // Name normalization: none (assembler label INPUTERR kept verbatim).
 void INPUTERR() {
-    // lda INPUTFLG / beq RESPERR / bmi READERR / ldy #$ff / bne ERLIN(always)
-    const std::uint8_t inputFlag = variables_const().INPUTFLG;
-    if (inputFlag == 0u) {
+    const std::uint8_t input_flag = variables_const().INPUTFLG;
+    if (input_flag == 0u) {
         RESPERR();
         return;
     }
 
-    if ((inputFlag & 0x80u) != 0u) {
+    if ((input_flag & 0x80u) != 0u) {
         READERR();
         return;
     }
 
-    // GET path: line number = $ffff then jump to ERLIN.
     ERLIN(0xffu, 0xffu);
 }
 
@@ -155,18 +255,13 @@ void INPUTERR() {
 // Labels: GET (inclusive) .. INPUT (exclusive)
 // Name normalization: none (assembler label GET kept verbatim).
 void GET() {
-    // jsr ERRDIR — illegal in direct mode
     ERRDIR();
 
-    // ldx #<(INPUT_BUFFER+1) / ldy #>(INPUT_BUFFER+1)
-    // a9 #0 / sta INPUT_BUFFER+1
-    variables().writeByte(0x0201u, 0u);
+    // Simulate GET input source at INPUT_BUFFER+1 containing 0 terminator.
+    variables().writeByte(kINPUT_BUFFER_PLUS_1, 0u);
 
-    // a9 #$40 / jsr PROCESS_INPUT_LIST
-    variables().INPUTFLG = 0x40u;
-    PROCESS_INPUT_LIST();
-
-    // rts
+    // Route directly to PROCESS_INPUT_LIST with GET mode ($40).
+    PROCESS_INPUT_LIST(kINPUT_BUFFER_PLUS_1, 0x40u);
 }
 
 } // namespace applesoft::asm_port

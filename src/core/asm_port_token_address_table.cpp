@@ -21,6 +21,8 @@ void GOTO();
 void POP();
 void DATA();
 void GET();
+void INPUT();
+void READ();
 void LET();
 void IF();
 void REM();
@@ -33,10 +35,10 @@ void ONGOTO();
 
 void FOR();
 static void NEXT()             {} // TODO(asm-port): NEXT
-static void INPUT()            {} // TODO(asm-port): INPUT
+static void INPUT_Handler()    { INPUT(); }
 static void DEL()              {} // TODO(asm-port): DEL
 static void DIM()              {} // TODO(asm-port): DIM
-static void READ()             {} // TODO(asm-port): READ
+static void READ_Handler()     { READ(); }
 static void GR()               {} // TODO(asm-port): GR
 static void TEXT()             {} // TODO(asm-port): TEXT
 static void PR_NUMBER()        {} // TODO(asm-port): PR_NUMBER
@@ -95,10 +97,10 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         FOR,              // [1]  $81...129...FOR
         NEXT,             // [2]  $82...130...NEXT
         DATA,             // [3]  $83...131...DWTA
-        INPUT,            // [4]  $84...132...INPUT
+        INPUT_Handler,    // [4]  $84...132...INPUT
         DEL,              // [5]  $85...133...DEL
         DIM,              // [6]  $86...134...DIM
-        READ,             // [7]  $87...135...READ
+        READ_Handler,     // [7]  $87...135...READ
         GR,               // [8]  $88...136...GR
         TEXT,             // [9]  $89...137...TEXT
         PR_NUMBER,        // [10] $8A...138...PR#

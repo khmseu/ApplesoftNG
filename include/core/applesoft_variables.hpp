@@ -30,7 +30,9 @@ public:
     std::uint16_t OLDTEXT = 0;    // $79/$7a
     std::uint16_t DATLIN = 0;     // $7b/$7c line number of current DATA statement
     std::uint16_t DATPTR = 0;     // $7d/$7e
+    std::uint16_t INPTR = 0;      // $7f/$80 input pointer
     std::uint16_t FORPNT = 0;     // $85/$86
+    std::uint16_t TXPSV = 0;      // $87/$88 saved TXTPTR during input parsing
     std::uint16_t LOWTR = 0;      // $9b/$9c
     std::array<std::uint8_t, 5> FAC{}; // $9d..$a1
     std::uint8_t FAC_SIGN = 0;    // $a2
@@ -48,6 +50,7 @@ public:
     std::uint8_t ENDCHR = 0;      // $0e
 
     // Non-zero-page fixed addresses currently used.
+    std::uint8_t INPUT_BUFFER_MINUS_1 = 0; // $01ff
     std::uint8_t KEYBOARD = 0;    // $c000 (memory-mapped keyboard latch)
     std::array<std::uint8_t, 256> INPUT_BUFFER_PAGE{}; // $0200..$02ff
 
