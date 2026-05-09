@@ -195,6 +195,7 @@ void REM();
 void IF_TRUE();
 void ONGOTO();
 void FOR();
+void NEXT();
 void STEP();
 void NEWSTT();
 void TRACE_();
@@ -313,6 +314,94 @@ void FOR() {
     ApplyFacSign();
     SetBranchTargetToSTEP();
     FRM_STACK_3();
+}
+
+namespace {
+
+// TODO(asm-port): provide stack-page reads wired to the 6502 runtime stack.
+std::uint8_t readStackByteAt(std::uint8_t /*x*/, std::uint8_t /*plus*/) {
+    return 0;
+}
+
+// TODO(asm-port): port FADD label.
+void FADD() {}
+
+// TODO(asm-port): port FCOMP2 label.
+void FCOMP2() {}
+
+// TODO(asm-port): decide branch condition after comparing FOR value with end value.
+bool NEXT_shouldTerminateLoop() {
+    return false;
+}
+
+} // namespace
+
+void NEXT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: NEXT (inclusive) .. FRMNUM (exclusive)
+    // Name normalization: none (assembler label NEXT kept verbatim).
+
+    constexpr std::uint8_t kFORPNT = 0x85;
+    constexpr std::uint8_t kCURLIN = 0x75;
+    constexpr std::uint8_t kTXTPTR = 0xb8;
+
+    // d0 04 / NEXT_1 jsr PTRGET / NEXT_2 sta FORPNT, sty FORPNT+1
+    // No-variable NEXT case is represented by FORPNT+1 = 0.
+    if (CHRGOT() == 0u) {
+        WriteZeroPageByte(static_cast<std::uint8_t>(kFORPNT + 1), 0u);
+    } else {
+        const std::uint16_t varPtr = PTRGET();
+        WriteZeroPageWord(kFORPNT, varPtr);
+    }
+
+    // jsr GTFORPNT
+    GTFORPNTState gtforpntState{};
+    gtforpntState.forpntLo = ReadZeroPageByte(kFORPNT);
+    gtforpntState.forpntHi = ReadZeroPageByte(static_cast<std::uint8_t>(kFORPNT + 1));
+    // TODO(asm-port): populate gtforpntState.stackPage from runtime stack memory.
+
+    const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
+    if (!gtforpntResult.found) {
+        // Ldx #ERR_NOFOR / jmp ERROR via GERR/JERROR path.
+        ERROR(ERR_NOFOR);
+        return;
+    }
+
+    // NEXT_3: txs
+    SetStackPointer(gtforpntResult.x);
+
+    // STEP arithmetic path (LOAD_FAC_FROM_YA / FADD / SETFOR / FCOMP2).
+    // Stack offsets follow ROM comments; helpers are placeholders until stack
+    // memory and FAC math ports are fully wired.
+    LOAD_FAC_FROM_YA();
+    WriteZeroPageByte(0xa2u, readStackByteAt(gtforpntResult.x, 9u)); // FAC_SIGN
+    WriteZeroPageWord(kFORPNT, ReadZeroPageWord(kFORPNT));
+    FADD();
+    SETFOR();
+    FCOMP2();
+
+    if (!NEXT_shouldTerminateLoop()) {
+        // Restore line/TXTPTR from FOR frame and jump NEWSTT.
+        WriteZeroPageByte(kCURLIN, readStackByteAt(gtforpntResult.x, 15u));
+        WriteZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1), readStackByteAt(gtforpntResult.x, 16u));
+        WriteZeroPageByte(kTXTPTR, readStackByteAt(gtforpntResult.x, 18u));
+        WriteZeroPageByte(static_cast<std::uint8_t>(kTXTPTR + 1), readStackByteAt(gtforpntResult.x, 17u));
+        NEWSTT();
+        return;
+    }
+
+    // L_NEXT_3_2: pop FOR frame, then continue NEWSTT unless another variable
+    // follows in NEXT var-list (NEXT I,J,...).
+    SetStackPointer(static_cast<std::uint8_t>(gtforpntResult.x + 18u));
+
+    if (CHRGOT() != static_cast<std::uint8_t>(',')) {
+        NEWSTT();
+        return;
+    }
+
+    CHRGET();
+    // jsr NEXT_1 (does not return in ROM when comma-separated variables remain).
+    NEXT();
 }
 
 void STEP() {

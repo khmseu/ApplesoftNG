@@ -12,6 +12,7 @@ void LIST();
 void RESTORE();
 void STOP();
 void ENDX();
+void NEXT();
 void CONT();
 void LOAD();
 void SAVE();
@@ -34,7 +35,7 @@ void ONGOTO();
 // ---------------------------------------------------------------------------
 
 void FOR();
-static void NEXT()             {} // TODO(asm-port): NEXT
+static void NEXT_Handler()     { NEXT(); }
 static void INPUT_Handler()    { INPUT(); }
 static void DEL()              {} // TODO(asm-port): DEL
 static void DIM()              {} // TODO(asm-port): DIM
@@ -95,7 +96,7 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
     static constexpr TOKEN_ADDRESS_TABLE_fn table[] = {
         ENDX,             // [0]  $80...128...END
         FOR,              // [1]  $81...129...FOR
-        NEXT,             // [2]  $82...130...NEXT
+        NEXT_Handler,     // [2]  $82...130...NEXT
         DATA,             // [3]  $83...131...DWTA
         INPUT_Handler,    // [4]  $84...132...INPUT
         DEL,              // [5]  $85...133...DEL
