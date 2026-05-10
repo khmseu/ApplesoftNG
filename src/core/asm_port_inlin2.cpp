@@ -33,12 +33,12 @@ void write_INPUT_BUFFER_minus_1(std::uint8_t index, std::uint8_t v) {
 // TODO(asm-port): port RDKEY monitor call; read a key from the monitor.
 std::uint8_t RDKEY() { return 0; }
 
+} // namespace
+
 // MON_RDKEY is a monitor alias for RDKEY.
 std::uint8_t MON_RDKEY() {
     return RDKEY();
 }
-
-} // namespace
 
 Inlin2Result INLIN2(std::uint8_t x) {
     // READ A LINE, AND STRIP OFF SIGN BITS.

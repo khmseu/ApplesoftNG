@@ -5,6 +5,10 @@
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_strtxt.hpp"
 #include "platform/asm_port_outdo.hpp"
+#include "core/asm_port_error.hpp"
+#include "core/asm_port_input.hpp"
+#include "core/asm_port_inlin.hpp"
+#include "core/asm_port_inlin2.hpp"
 
 #include <cstdint>
 #include <string_view>
@@ -35,16 +39,16 @@ void SYNCHR(std::uint8_t /*expected*/) {}
 void ERRDIR() {}
 
 // TODO(asm-port): port INLIN label.
-void INLIN() {}
+// void INLIN() {}
 
 // TODO(asm-port): pop one byte from the emulated 6502 stack.
 void popStackByte() {}
 
 // TODO(asm-port): port PTRGET label.
-std::uint16_t PTRGET() { return 0; }
+// std::uint16_t PTRGET() { return 0; }
 
 // TODO(asm-port): monitor key input path used by GET mode in PROCESS_INPUT_LIST.
-std::uint8_t MON_RDKEY() { return 0; }
+// std::uint8_t MON_RDKEY() { return 0; }
 
 // TODO(asm-port): parse quoted/unquoted string input path.
 void parseStringInputAndStore() {}
@@ -56,7 +60,7 @@ void parseNumericInputAndStore() {}
 void FINDATA() {}
 
 // TODO(asm-port): comma checker used between input variables.
-void CHKCOM() {}
+// void CHKCOM() {}
 
 // TODO(asm-port): DATPTR setter (SETDA label).
 void SETDA(std::uint16_t data_ptr) {

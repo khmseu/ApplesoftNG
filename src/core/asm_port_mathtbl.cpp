@@ -9,6 +9,7 @@
 // The -1 RTS-dispatch offset is dropped; callers invoke entry.handler directly.
 
 #include "core/asm_port_mathtbl.hpp"
+#include "core/asm_port_error.hpp"
 
 namespace applesoft::asm_port {
 
@@ -21,7 +22,7 @@ static void FSUBT()  {} // TODO(asm-port): FSUBT  $C9...201...-
 static void FMULTT() {} // TODO(asm-port): FMULTT $CA...202...*
 static void FDIVT()  {} // TODO(asm-port): FDIVT  $CB...203.../
 static void FPWRT()  {} // TODO(asm-port): FPWRT  $CC...204...^
-static void ANDOP()  {} // TODO(asm-port): ANDOP  $CD...205...AND
+// static void ANDOP()  {} // TODO(asm-port): ANDOP  $CD...205...AND
 static void OR_op()  {} // TODO(asm-port): OR     $CE...206...OR  (OR_op: OR is a C++ keyword)
 static void NEGOP()  {} // TODO(asm-port): NEGOP  $CF...207...>
 static void EQUOP()  {} // TODO(asm-port): EQUOP  $D0...208...=

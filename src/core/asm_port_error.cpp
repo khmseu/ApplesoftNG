@@ -187,7 +187,7 @@ void PushForPntFrame();
 std::uint8_t CHRGOT();
 bool ISCNTC();
 void LINPRT();
-void OUTDO();
+// void OUTDO();
 std::uint8_t MEMERR();
 
 void LET();
@@ -204,7 +204,7 @@ void NEWSTT();
 void TRACE_();
 void FRMEVL();
 std::uint8_t GETBYT();
-std::uint16_t PTRGET();
+// std::uint16_t PTRGET();
 bool CHKVAL(std::uint8_t savedValTyp);
 void ROUND_FAC();
 void AYINT();
@@ -398,7 +398,7 @@ std::int8_t FCOMP(std::uint16_t /*argAddress*/) {
 }
 
 // TODO(asm-port): port FREFAC label.
-void FREFAC() {}
+// void FREFAC() {}
 
 // TODO(asm-port): port FRETMP label.
 void FRETMP() {}
@@ -558,7 +558,7 @@ void TRACE_() {
 
     if ((ReadZeroPageByte(kTRCFLG) & 0x80u) != 0u) {
         if (IsRunningMode()) {
-            OUTDO();
+            OUTDO('#'&0x7fu);
             LINPRT();
             OUTSP();
         }
@@ -591,7 +591,7 @@ LineAddress FromWord(std::uint16_t value);
 
 bool ISCNTC();
 void LINPRT();
-void OUTDO();
+// void OUTDO();
 std::uint8_t GETCHR();
 
 struct LineNumber {
@@ -620,7 +620,7 @@ void PrintListLine(LineAddress current) {
 
         // TODO(asm-port): reproduce LIST token/keyword conversion and output
         // behavior from the original Applesoft source.
-        OUTDO();
+        OUTDO(ch&0x7fu);
         ++offset;
     }
 }
@@ -1001,10 +1001,10 @@ void STKINI() {
     WriteZeroPageByte(kSUBFLG, 0);
 }
 
-void OUTDO() {
-    // TODO(asm-port): write the current output character from the Applesoft line
-    // printer to the console.
-}
+// void OUTDO() {
+//     // TODO(asm-port): write the current output character from the Applesoft line
+//     // printer to the console.
+// }
 
 void LINPRT() {
     // TODO(asm-port): print the current Applesoft line number during LIST.

@@ -6,6 +6,13 @@ namespace applesoft::asm_port {
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 
+// FREFAC: dereference the string descriptor at FAC[3]/FAC[4], optionally
+// release the temporary descriptor, store the data pointer in INDEX, and
+// return the string length.
+// TODO(asm-port): FRETMS (temporary-release part) not yet implemented.
+ std::uint8_t FREFAC() ;
+
+
 // Labels: STRPRT (inclusive) .. OUTSP (exclusive)
 // Name normalization: none (assembler label STRPRT kept verbatim).
 // Prints the string whose descriptor is in FAC[3]/FAC[4] by calling FREFAC to

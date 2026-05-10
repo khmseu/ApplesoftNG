@@ -12,7 +12,6 @@ Generated from C++ source definitions in `src` and `tests`.
 | AdvanceToNextLine                 | src/core/asm_port_error.cpp               |  943 | real   |
 | AMPERSAND_VECTOR                  | src/core/asm_port_token_address_table.cpp |   81 | stub   |
 | ANDOP                             | src/core/asm_port_error.cpp               | 2031 | real   |
-| ANDOP                             | src/core/asm_port_mathtbl.cpp             |   24 | stub   |
 | ApplyFacSign                      | src/core/asm_port_error.cpp               | 1057 | stub   |
 | ARRAY                             | src/core/asm_port_error.cpp               | 2411 | real   |
 | ASC                               | src/core/asm_port_unfnc.cpp               |   39 | stub   |
@@ -26,7 +25,6 @@ Generated from C++ source definitions in `src` and `tests`.
 | C_ZERO                            | src/core/asm_port_error.cpp               | 2289 | real   |
 | CALL                              | src/core/asm_port_token_address_table.cpp |   48 | stub   |
 | CHKCOM                            | src/core/asm_port_error.cpp               | 1097 | real   |
-| CHKCOM                            | src/core/asm_port_input.cpp               |   59 | stub   |
 | CHKMEM                            | src/core/asm_port_chkmem.cpp              |   16 | real   |
 | CHKNUM                            | src/core/asm_port_error.cpp               | 1073 | real   |
 | CHKSTR                            | src/core/asm_port_error.cpp               | 1085 | real   |
@@ -98,7 +96,6 @@ Generated from C++ source definitions in `src` and `tests`.
 | FOUT                              | src/core/asm_port_print.cpp               |   30 | stub   |
 | FPWRT                             | src/core/asm_port_mathtbl.cpp             |   23 | stub   |
 | FRE                               | src/core/asm_port_unfnc.cpp               |   23 | stub   |
-| FREFAC                            | src/core/asm_port_error.cpp               |  401 | stub   |
 | FREFAC                            | src/core/asm_port_print.cpp               |   51 | real   |
 | FRETMP                            | src/core/asm_port_error.cpp               |  404 | stub   |
 | FRETMS                            | src/core/asm_port_error.cpp               | 2538 | stub   |
@@ -148,8 +145,6 @@ Generated from C++ source definitions in `src` and `tests`.
 | IN_NUMBER                         | src/core/asm_port_token_address_table.cpp |   47 | stub   |
 | INCHR                             | src/core/asm_port_inlin2.cpp              |   73 | real   |
 | INLIN                             | src/core/asm_port_inlin.cpp               |    7 | real   |
-| INLIN                             | src/core/asm_port_input.cpp               |   38 | stub   |
-| INLIN                             | src/core/asm_port_nxin.cpp                |   10 | stub   |
 | INLIN2                            | src/core/asm_port_inlin2.cpp              |   45 | real   |
 | INPERR                            | src/core/asm_port_input.cpp               |  231 | real   |
 | INPRT                             | src/core/asm_port_error.cpp               |  988 | stub   |
@@ -207,7 +202,6 @@ Generated from C++ source definitions in `src` and `tests`.
 | MON_HOME                          | src/core/asm_port_token_address_table.cpp |   60 | real   |
 | MON_PREAD                         | src/core/asm_port_error.cpp               |  413 | stub   |
 | MON_RDKEY                         | src/core/asm_port_inlin2.cpp              |   39 | real   |
-| MON_RDKEY                         | src/core/asm_port_input.cpp               |   47 | stub   |
 | MON_READ                          | src/core/asm_port_error.cpp               | 1804 | stub   |
 | MON_SCRN                          | src/core/asm_port_error.cpp               |  391 | stub   |
 | MON_WAIT                          | src/platform/asm_port_outdo.cpp           |   30 | stub   |
@@ -236,7 +230,6 @@ Generated from C++ source definitions in `src` and `tests`.
 | ONGOTO                            | src/core/asm_port_error.cpp               | 1766 | real   |
 | OR                                | src/core/asm_port_error.cpp               | 2014 | real   |
 | OR_op                             | src/core/asm_port_mathtbl.cpp             |   25 | stub   |
-| OUTDO                             | src/core/asm_port_error.cpp               | 1004 | stub   |
 | OUTDO                             | src/platform/asm_port_outdo.cpp           |   39 | real   |
 | OUTQUES                           | src/platform/asm_port_outdo.cpp           |   75 | real   |
 | OUTSP                             | src/platform/asm_port_outdo.cpp           |   67 | real   |
@@ -273,7 +266,6 @@ Generated from C++ source definitions in `src` and `tests`.
 | PROCESS_INPUT_LIST                | src/core/asm_port_input.cpp               |  119 | real   |
 | PROGIO                            | src/core/asm_port_error.cpp               | 1452 | real   |
 | PTRGET                            | src/core/asm_port_error.cpp               | 1946 | real   |
-| PTRGET                            | src/core/asm_port_input.cpp               |   44 | stub   |
 | PTRGET2                           | src/core/asm_port_error.cpp               | 2165 | real   |
 | PTRGET3                           | src/core/asm_port_error.cpp               | 2173 | real   |
 | PTRGET4                           | src/core/asm_port_error.cpp               | 2222 | real   |

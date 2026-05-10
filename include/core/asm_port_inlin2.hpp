@@ -10,6 +10,12 @@ struct Inlin2Result {
     std::uint8_t y;
 };
 
+
+// MON_RDKEY is a monitor alias for RDKEY.
+std::uint8_t MON_RDKEY() ;
+
+
+
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: INLIN2 (inclusive) .. INCHR (exclusive)
 // Name normalization: none (assembler label INLIN2 kept verbatim).

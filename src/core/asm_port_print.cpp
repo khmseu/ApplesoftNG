@@ -48,7 +48,7 @@ static std::uint8_t GTBYTC() { return 0; }
 // release the temporary descriptor, store the data pointer in INDEX, and
 // return the string length.
 // TODO(asm-port): FRETMS (temporary-release part) not yet implemented.
-static std::uint8_t FREFAC() {
+ std::uint8_t FREFAC() {
     // FAC[3] = lo byte, FAC[4] = hi byte of descriptor pointer
     const std::uint8_t desc_lo = variables_const().FAC[3];
     const std::uint8_t desc_hi = variables_const().FAC[4];

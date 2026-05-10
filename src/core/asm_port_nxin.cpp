@@ -15,7 +15,7 @@ void NXIN() {
     OUTQUES();
 
     // Original code tail-jumps to INLIN.
-    INLIN();
+    // INLIN();
 }
 
 } // namespace applesoft::asm_port

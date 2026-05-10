@@ -7,6 +7,25 @@
 
 namespace applesoft::asm_port {
 
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ANDOP (inclusive) .. FALSE (exclusive)
+    // Name normalization: none (assembler label ANDOP kept verbatim).
+    void ANDOP() ;
+
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: CHKCOM (inclusive) .. SYNCHR (exclusive)
+    // Name normalization: none (assembler label CHKCOM kept verbatim).
+    void CHKCOM() ;
+
+
+
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PTRGET (inclusive) .. PTRGET2 (exclusive)
+    // Name normalization: none (assembler label PTRGET kept verbatim).
+std::uint16_t PTRGET() ;
+
+
+
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: ERROR (inclusive) .. PRINT_ERROR_LINNUM (exclusive)
 // Name normalization: none (assembler label ERROR kept verbatim).
