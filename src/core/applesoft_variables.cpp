@@ -51,6 +51,7 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case 0x0011: return VALTYP;
     case 0x0014: return SUBFLG;
     case 0x0015: return INPUTFLG;
+    case 0x0016: return CPRMASK;
     case 0x0024: return MON_CH;
     case 0x0033: return MON_PROMPT;
     case 0x003c: return lowByte(MON_A1);
@@ -90,6 +91,7 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case 0x0086: return highByte(FORPNT);
     case 0x0087: return lowByte(TXPSV);
     case 0x0088: return highByte(TXPSV);
+    case 0x0089: return CPRTYP;
     case 0x009b: return lowByte(LOWTR);
     case 0x009c: return highByte(LOWTR);
     case 0x009d: return FAC[0];
@@ -98,6 +100,12 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case 0x00a0: return FAC[3];
     case 0x00a1: return FAC[4];
     case 0x00a2: return FAC_SIGN;
+    case 0x00a5: return ARG[0];
+    case 0x00a6: return ARG[1];
+    case 0x00a7: return ARG[2];
+    case 0x00a8: return ARG[3];
+    case 0x00a9: return ARG[4];
+    case 0x00aa: return ARG[5];
     case 0x00ab: return lowByte(STRNG1);
     case 0x00ac: return highByte(STRNG1);
     case 0x00ad: return lowByte(STRNG2);
@@ -108,6 +116,7 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case 0x00b9: return highByte(TXTPTR);
     case 0x00d6: return LOCK;
     case 0x00d8: return ERRFLG;
+    case 0x00f0: return FIRST;
     case 0x00f1: return SPEEDZ;
     case 0x00f2: return TRCFLG;
     case 0x00f3: return FLASH_BIT;
@@ -138,6 +147,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case 0x0011: VALTYP = value; return;
     case 0x0014: SUBFLG = value; return;
     case 0x0015: INPUTFLG = value; return;
+    case 0x0016: CPRMASK = value; return;
     case 0x0024: MON_CH = value; return;
     case 0x0033: MON_PROMPT = value; return;
     case 0x003c: setLowByte(MON_A1, value); return;
@@ -177,6 +187,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case 0x0086: setHighByte(FORPNT, value); return;
     case 0x0087: setLowByte(TXPSV, value); return;
     case 0x0088: setHighByte(TXPSV, value); return;
+    case 0x0089: CPRTYP = value; return;
     case 0x009b: setLowByte(LOWTR, value); return;
     case 0x009c: setHighByte(LOWTR, value); return;
     case 0x009d: FAC[0] = value; return;
@@ -185,6 +196,12 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case 0x00a0: FAC[3] = value; return;
     case 0x00a1: FAC[4] = value; return;
     case 0x00a2: FAC_SIGN = value; return;
+    case 0x00a5: ARG[0] = value; return;
+    case 0x00a6: ARG[1] = value; return;
+    case 0x00a7: ARG[2] = value; return;
+    case 0x00a8: ARG[3] = value; return;
+    case 0x00a9: ARG[4] = value; return;
+    case 0x00aa: ARG[5] = value; return;
     case 0x00ab: setLowByte(STRNG1, value); return;
     case 0x00ac: setHighByte(STRNG1, value); return;
     case 0x00ad: setLowByte(STRNG2, value); return;
@@ -195,6 +212,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case 0x00b9: setHighByte(TXTPTR, value); return;
     case 0x00d6: LOCK = value; return;
     case 0x00d8: ERRFLG = value; return;
+    case 0x00f0: FIRST = value; return;
     case 0x00f1: SPEEDZ = value; return;
     case 0x00f2: TRCFLG = value; return;
     case 0x00f3: FLASH_BIT = value; return;

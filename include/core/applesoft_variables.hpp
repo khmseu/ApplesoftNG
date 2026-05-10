@@ -11,6 +11,7 @@ public:
     std::uint8_t VALTYP = 0;      // $11  string flag: $ff = string, $00 = float
     std::uint8_t SUBFLG = 0;      // $14
     std::uint8_t INPUTFLG = 0;    // $15  $00=INPUT, $40=GET, $98=READ
+    std::uint8_t CPRMASK = 0;     // $16  relational comparison mask
     std::uint8_t MON_CH = 0;      // $24
     std::uint8_t MON_PROMPT = 0;  // $33
 
@@ -33,15 +34,18 @@ public:
     std::uint16_t INPTR = 0;      // $7f/$80 input pointer
     std::uint16_t FORPNT = 0;     // $85/$86
     std::uint16_t TXPSV = 0;      // $87/$88 saved TXTPTR during input parsing
+    std::uint8_t CPRTYP = 0;      // $89  relational operator flags
     std::uint16_t LOWTR = 0;      // $9b/$9c
     std::array<std::uint8_t, 5> FAC{}; // $9d..$a1
     std::uint8_t FAC_SIGN = 0;    // $a2
+    std::array<std::uint8_t, 6> ARG{}; // $a5..$aa
     std::uint16_t STRNG1 = 0;     // $ab/$ac
     std::uint16_t STRNG2 = 0;     // $ad/$ae
     std::uint16_t PRGEND = 0;     // $af/$b0
     std::uint16_t TXTPTR = 0;     // $b8/$b9
     std::uint8_t LOCK = 0;        // $d6
     std::uint8_t ERRFLG = 0;      // $d8
+    std::uint8_t FIRST = 0;       // $f0
     std::uint8_t TRCFLG = 0;      // $f2
     std::uint8_t SPEEDZ = 0;      // $f1  complement of speed value
     std::uint8_t FLASH_BIT = 0;   // $f3  $40=flash mode, $00=normal

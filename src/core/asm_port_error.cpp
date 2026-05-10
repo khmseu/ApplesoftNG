@@ -120,7 +120,8 @@ void EXECUTE_STATEMENT_1();
 std::uint8_t CurrentStatementChar();
 void SYNERR();
 
-void PRINT_ERROR_LINNUM(std::string_view prefix = QT_ERROR(QT_ERROR_INDEX));
+void PRINT_ERROR_LINNUM();
+void PRINT_ERROR_LINNUM(std::string_view prefix);
 
 void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
     // TODO(asm-port): write a byte into program memory at the given address.
@@ -156,6 +157,7 @@ void SetBranchTargetToSTEP();
 void LOAD_FAC_FROM_YA();
 void SYNCHR(std::uint8_t expected);
 void CHKNUM();
+void CHKSTR();
 void FRMNUM();
 void SIGN();
 void FRM_STACK_2();
@@ -209,6 +211,17 @@ void SETFOR();
 void STRINI(std::uint8_t length);
 void MOVINS();
 void FRETMS();
+void SCREEN();
+void UNARY();
+void OR();
+void ANDOP();
+void FALSE();
+void TRUE();
+void RELOPS();
+void STRCMP();
+void NUMCMP();
+void CMPDONE();
+void CHKCOM();
 
 bool NEW_impl() {
     if (!IsStatementEndOfParsedInput()) {
@@ -332,6 +345,46 @@ void FCOMP2() {}
 // TODO(asm-port): decide branch condition after comparing FOR value with end value.
 bool NEXT_shouldTerminateLoop() {
     return false;
+}
+
+std::int8_t gNumericCompareResult = 0;
+bool gNumericCompareCarry = false;
+std::uint8_t gFloatInput = 0;
+
+// TODO(asm-port): port PLOTFNS label.
+void PLOTFNS() {}
+
+// TODO(asm-port): port MON_SCRN monitor handler.
+std::uint8_t MON_SCRN(std::uint8_t /*row*/, std::uint8_t /*column*/) {
+    return 0;
+}
+
+// TODO(asm-port): port FCOMP label.
+std::int8_t FCOMP(std::uint16_t /*argAddress*/) {
+    return 0;
+}
+
+// TODO(asm-port): port FREFAC label.
+void FREFAC() {}
+
+// TODO(asm-port): port FRETMP label.
+void FRETMP() {}
+
+// TODO(asm-port): port FLOAT label.
+void FLOAT() {}
+
+void SNGFLT(std::uint8_t value) {
+    // TODO(asm-port): replace with true SNGFLT conversion routine.
+    WriteZeroPageByte(0x9du, value);
+    WriteZeroPageByte(0x9eu, 0u);
+    WriteZeroPageByte(0x9fu, 0u);
+    WriteZeroPageByte(0xa0u, 0u);
+    WriteZeroPageByte(0xa1u, 0u);
+}
+
+// TODO(asm-port): compare temporary ARG and FAC strings and return -1/0/1.
+std::int8_t CompareArgAndFacStrings() {
+    return 0;
 }
 
 } // namespace
@@ -967,11 +1020,38 @@ void SYNCHR(std::uint8_t /*expected*/) {
 }
 
 void CHKNUM() {
-    // TODO(asm-port): enforce numeric semantics for the current expression.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: CHKNUM (inclusive) .. CHKSTR (exclusive)
+    // Name normalization: none (assembler label CHKNUM kept verbatim).
+
+    constexpr std::uint8_t kVALTYP = 0x11;
+    const bool facIsString = (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u;
+    if (facIsString) {
+        ERROR(ERR_BADTYPE);
+    }
+}
+
+void CHKSTR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: CHKSTR (inclusive) .. CHKVAL (exclusive)
+    // Name normalization: none (assembler label CHKSTR kept verbatim).
+
+    constexpr std::uint8_t kVALTYP = 0x11;
+    const bool facIsString = (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u;
+    if (!facIsString) {
+        ERROR(ERR_BADTYPE);
+    }
 }
 
 void FRMNUM() {
-    // TODO(asm-port): convert the parsed numeric expression into FAC format.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FRMNUM (inclusive) .. FRMEVL (exclusive)
+    // Name normalization: none (assembler label FRMNUM kept verbatim).
+    //
+    // FRMNUM does JSR FRMEVL and falls through into CHKNUM in ROM.
+
+    FRMEVL();
+    CHKNUM();
 }
 
 void SIGN() {
@@ -1810,9 +1890,180 @@ std::uint16_t PTRGET() {
 }
 
 bool CHKVAL(std::uint8_t savedValTyp) {
-    // TODO(asm-port): port CHKVAL type compatibility check.
-    (void)savedValTyp;
-    return false;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: CHKVAL (inclusive) .. FRMEVL (exclusive)
+    // Name normalization: none (assembler label CHKVAL kept verbatim).
+
+    constexpr std::uint8_t kVALTYP = 0x11;
+
+    const bool facIsString = (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u;
+    const bool expectedString = (savedValTyp & 0x80u) != 0u;
+
+    if (facIsString != expectedString) {
+        ERROR(ERR_BADTYPE);
+        return false;
+    }
+
+    return facIsString;
+}
+
+void SCREEN() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SCREEN (inclusive) .. UNARY (exclusive)
+    // Name normalization: none (assembler label SCREEN kept verbatim).
+
+    constexpr std::uint8_t kFIRST = 0xf0;
+
+    CHRGET();
+    PLOTFNS();
+
+    // PLOTFNS returns row in X and column in FIRST in ROM.
+    const std::uint8_t row = ReadZeroPageByte(kFIRST);
+    const std::uint8_t column = ReadZeroPageByte(kFIRST);
+    const std::uint8_t color = MON_SCRN(row, column);
+
+    SNGFLT(color);
+    SYNCHR(static_cast<std::uint8_t>(')'));
+}
+
+void UNARY() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: UNARY (inclusive) .. OR (exclusive)
+    // Name normalization: none (assembler label UNARY kept verbatim).
+
+    constexpr std::uint8_t kTOKEN_SCRN = 0xd7u;
+
+    if (CHRGOT() == kTOKEN_SCRN) {
+        // ROM branches back to SCREEN for SCRN(.
+        SCREEN();
+        return;
+    }
+
+    CHRGET();
+
+    // TODO(asm-port): complete unary-function dispatch through UNFNC/JMPADRS.
+    FRMEVL();
+    CHKNUM();
+}
+
+void OR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: OR (inclusive) .. ANDOP (exclusive)
+    // Name normalization: none (assembler label OR kept verbatim).
+
+    constexpr std::uint8_t kARG = 0xa5;
+    constexpr std::uint8_t kFAC = 0x9d;
+
+    if ((ReadZeroPageByte(kARG) | ReadZeroPageByte(kFAC)) != 0u) {
+        TRUE();
+        return;
+    }
+
+    // Fall-through in ROM from OR to ANDOP.
+    ANDOP();
+}
+
+void ANDOP() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ANDOP (inclusive) .. FALSE (exclusive)
+    // Name normalization: none (assembler label ANDOP kept verbatim).
+
+    constexpr std::uint8_t kARG = 0xa5;
+    constexpr std::uint8_t kFAC = 0x9d;
+
+    if (ReadZeroPageByte(kARG) == 0u || ReadZeroPageByte(kFAC) == 0u) {
+        FALSE();
+        return;
+    }
+
+    // Fall-through in ROM from ANDOP to TRUE.
+    TRUE();
+}
+
+void FALSE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FALSE (inclusive) .. TRUE (exclusive)
+    // Name normalization: none (assembler label FALSE kept verbatim).
+
+    SNGFLT(0u);
+}
+
+void TRUE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: TRUE (inclusive) .. RELOPS (exclusive)
+    // Name normalization: none (assembler label TRUE kept verbatim).
+
+    SNGFLT(1u);
+}
+
+void RELOPS() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: RELOPS (inclusive) .. STRCMP (exclusive)
+    // Name normalization: none (assembler label RELOPS kept verbatim).
+
+    constexpr std::uint8_t kCPRTYP = 0x89;
+    constexpr std::uint16_t kARG = 0x00a5u;
+
+    const std::uint8_t compareTypeFlags = ReadZeroPageByte(kCPRTYP);
+    if (CHKVAL(compareTypeFlags)) {
+        // Carry set in ROM indicates string compare path.
+        STRCMP();
+        return;
+    }
+
+    gNumericCompareResult = FCOMP(kARG);
+    gNumericCompareCarry = gNumericCompareResult >= 0;
+    NUMCMP();
+}
+
+void STRCMP() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: STRCMP (inclusive) .. NUMCMP (exclusive)
+    // Name normalization: none (assembler label STRCMP kept verbatim).
+
+    constexpr std::uint8_t kVALTYP = 0x11;
+    constexpr std::uint8_t kCPRTYP = 0x89;
+
+    WriteZeroPageByte(kVALTYP, 0u);
+    WriteZeroPageByte(kCPRTYP, static_cast<std::uint8_t>(ReadZeroPageByte(kCPRTYP) - 1u));
+
+    FREFAC();
+    FRETMP();
+
+    gNumericCompareResult = CompareArgAndFacStrings();
+    gNumericCompareCarry = gNumericCompareResult >= 0;
+    NUMCMP();
+}
+
+void NUMCMP() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: NUMCMP (inclusive) .. CMPDONE (exclusive)
+    // Name normalization: none (assembler label NUMCMP kept verbatim).
+
+    // ROM reaches CMPDONE with C set only when compare result was negative.
+    gNumericCompareCarry = (gNumericCompareResult < 0);
+    CMPDONE();
+}
+
+void CMPDONE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: CMPDONE (inclusive) .. PDL (exclusive)
+    // Name normalization: none (assembler label CMPDONE kept verbatim).
+
+    constexpr std::uint8_t kCPRMASK = 0x16;
+
+    std::int16_t x = static_cast<std::int16_t>(gNumericCompareResult) + 1;
+    if (x < 0) {
+        x = 0;
+    }
+
+    std::uint8_t a = static_cast<std::uint8_t>(x & 0xff);
+    a = static_cast<std::uint8_t>((a << 1) | (gNumericCompareCarry ? 1u : 0u));
+    a = static_cast<std::uint8_t>(a & ReadZeroPageByte(kCPRMASK));
+
+    gFloatInput = (a == 0u) ? 0u : 1u;
+    SNGFLT(gFloatInput);
+    FLOAT();
 }
 
 void ROUND_FAC() {
