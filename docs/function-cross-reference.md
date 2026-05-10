@@ -116,7 +116,6 @@ Generated from C++ source definitions in `src` and `tests`.
 | GETARY2                           | src/core/asm_port_error.cpp               | 2327 | real   |
 | GETBYT                            | src/core/asm_port_error.cpp               | 1941 | stub   |
 | GETCHR                            | src/core/asm_port_error.cpp               | 1013 | stub   |
-| GETLN                             | src/core/asm_port_inlin2.cpp              |   16 | stub   |
 | GETLN                             | src/platform/asm_port_getln.cpp           |   37 | real   |
 | GETLNZ                            | src/platform/asm_port_getln.cpp           |   27 | stub   |
 | getMemory                         | src/core/interpreter.cpp                  |   32 | real   |
@@ -239,7 +238,6 @@ Generated from C++ source definitions in `src` and `tests`.
 | OR_op                             | src/core/asm_port_mathtbl.cpp             |   25 | stub   |
 | OUTDO                             | src/core/asm_port_error.cpp               | 1004 | stub   |
 | OUTDO                             | src/platform/asm_port_outdo.cpp           |   39 | real   |
-| OUTQUES                           | src/core/asm_port_nxin.cpp                |    7 | stub   |
 | OUTQUES                           | src/platform/asm_port_outdo.cpp           |   75 | real   |
 | OUTSP                             | src/platform/asm_port_outdo.cpp           |   67 | real   |
 | PARSE_INPUT_LINE                  | src/core/asm_port_error.cpp               |  708 | real   |

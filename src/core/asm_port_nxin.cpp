@@ -1,10 +1,9 @@
 #include "core/asm_port_nxin.hpp"
 
+#include "platform/asm_port_outdo.hpp"
+
 namespace applesoft::asm_port {
 namespace {
-
-// TODO(asm-port): port OUTQUES label.
-void OUTQUES() {}
 
 // TODO(asm-port): port INLIN label.
 void INLIN() {}

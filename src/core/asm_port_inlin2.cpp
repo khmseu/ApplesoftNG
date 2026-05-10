@@ -1,5 +1,6 @@
 #include "core/asm_port_inlin2.hpp"
 #include "core/applesoft_variables.hpp"
+#include "platform/asm_port_getln.hpp"
 
 #include <cstdint>
 
@@ -11,9 +12,6 @@ constexpr std::uint16_t kInputBufferAddress = 0x0200;
 void write_MON_PROMPT(std::uint8_t v) {
     variables().writeByte(0x0033u, v);
 }
-
-// TODO(asm-port): port GETLN monitor call; return line length in X.
-std::uint8_t GETLN() { return 0; }
 
 // MON_GETLN is a monitor alias for GETLN.
 std::uint8_t MON_GETLN() {
