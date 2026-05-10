@@ -20,7 +20,6 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
 
-
 # ---------------------------------------------------------------------------
 # 6502 mnemonic / directive tables
 # ---------------------------------------------------------------------------
@@ -31,19 +30,27 @@ MNEMONICS: Set[str] = set(
     "tay tsx txa txs tya".split()
 )
 
-BRANCH_MNEMONICS: Set[str] = {
-    "bcc", "bcs", "beq", "bne", "bmi", "bpl", "bvc", "bvs"
-}
+BRANCH_MNEMONICS: Set[str] = {"bcc", "bcs", "beq", "bne", "bmi", "bpl", "bvc", "bvs"}
 
 # xa65-style assembler directives that may emit bytes
 DIRECTIVES: Set[str] = {
-    ".word", ".byte", ".res", ".dw", ".db", ".text", ".asc",
-    ".end", ".dword", ".dsb", ".bin", ".align",
+    ".word",
+    ".byte",
+    ".res",
+    ".dw",
+    ".db",
+    ".text",
+    ".asc",
+    ".end",
+    ".dword",
+    ".dsb",
+    ".bin",
+    ".align",
 }
 
 # Default ROM bases for Apple II
 DEFAULT_PARENT_BASES = {
-    "Applesoft":         0xD000,
+    "Applesoft": 0xD000,
     "Autostart-Monitor": 0xF800,
 }
 
@@ -55,29 +62,37 @@ DEFAULT_PARENT_BASES = {
 class Label:
     name: str
     module: str
-    local_addr: int                # address within the module (T:XXXX)
-    rom_addr: int                  # absolute ROM address
-    src_line: int                  # source line number where defined
+    local_addr: int  # address within the module (T:XXXX)
+    rom_addr: int  # absolute ROM address
+    src_line: int  # source line number where defined
     is_jsr_target: bool = False
     is_jmp_target: bool = False
     is_branch_target: bool = False
     is_jumptable_entry: bool = False
     is_exported: bool = False
     is_imported: bool = False
-    label_only: bool = False       # appears alone, may be data
-    is_constant: bool = False      # LABEL=value style
-    references: Set[str] = field(default_factory=set)   # callers (label names)
+    label_only: bool = False  # appears alone, may be data
+    is_constant: bool = False  # LABEL=value style
+    references: Set[str] = field(default_factory=set)  # callers (label names)
 
     def kinds(self) -> List[str]:
         k = []
-        if self.is_exported:        k.append("EXPORT")
-        if self.is_imported:        k.append("IMPORT")
-        if self.is_jsr_target:      k.append("JSR")
-        if self.is_jmp_target:      k.append("JMP")
-        if self.is_branch_target:   k.append("BRANCH")
-        if self.is_jumptable_entry: k.append("JTABLE")
-        if self.is_constant:        k.append("CONST")
-        if self.label_only:         k.append("LABEL")
+        if self.is_exported:
+            k.append("EXPORT")
+        if self.is_imported:
+            k.append("IMPORT")
+        if self.is_jsr_target:
+            k.append("JSR")
+        if self.is_jmp_target:
+            k.append("JMP")
+        if self.is_branch_target:
+            k.append("BRANCH")
+        if self.is_jumptable_entry:
+            k.append("JTABLE")
+        if self.is_constant:
+            k.append("CONST")
+        if self.label_only:
+            k.append("LABEL")
         return k
 
 
@@ -87,9 +102,9 @@ class Instruction:
     local_addr: int
     rom_addr: int
     raw_bytes: List[str]
-    label: Optional[str]            # label defined on this line (if any)
-    mnemonic: Optional[str]         # lower-case opcode or '.word' etc.
-    operand: str                    # raw operand string, may be empty
+    label: Optional[str]  # label defined on this line (if any)
+    mnemonic: Optional[str]  # lower-case opcode or '.word' etc.
+    operand: str  # raw operand string, may be empty
     comment: str
     module: str
 
@@ -97,13 +112,13 @@ class Instruction:
 @dataclass
 class Module:
     name: str
-    parent: str                     # "Applesoft" / "Autostart-Monitor"
-    order: int                      # global ROM order
-    base_addr: int = 0              # set after layout
+    parent: str  # "Applesoft" / "Autostart-Monitor"
+    order: int  # global ROM order
+    base_addr: int = 0  # set after layout
     size: int = 0
     labels: Dict[str, Label] = field(default_factory=dict)
     instructions: List[Instruction] = field(default_factory=list)
-    sym_exports: Dict[str, int] = field(default_factory=dict)   # name -> addr
+    sym_exports: Dict[str, int] = field(default_factory=dict)  # name -> addr
     sym_imports: Set[str] = field(default_factory=set)
 
 
@@ -129,7 +144,7 @@ def parse_sym_file(path: str) -> Tuple[Dict[str, int], Set[str]]:
         for line in f:
             m = SYM_LINE_RE.match(line)
             if not m:
-                continue                       # cross-reference body line
+                continue  # cross-reference body line
             name, addr_hex, flags_hex = m.group(1), m.group(2), m.group(3)
             addr = int(addr_hex, 16)
             flags = int(flags_hex, 16)
@@ -178,16 +193,21 @@ def parse_lst_line(line: str):
     m = LST_LINE_RE.match(line)
     if not m:
         return None
-    lineno     = int(m.group(1))
-    addr       = int(m.group(2), 16)
-    raw_bytes  = m.group(3).split()
-    rest_raw   = m.group(4)
+    lineno = int(m.group(1))
+    addr = int(m.group(2), 16)
+    raw_bytes = m.group(3).split()
+    rest_raw = m.group(4)
     rest, comment = _strip_comment(rest_raw)
     if not rest:
         return {
-            "lineno": lineno, "addr": addr, "bytes": raw_bytes,
-            "label": None, "mnemonic": None, "operand": "",
-            "comment": comment, "is_constant": False,
+            "lineno": lineno,
+            "addr": addr,
+            "bytes": raw_bytes,
+            "label": None,
+            "mnemonic": None,
+            "operand": "",
+            "comment": comment,
+            "is_constant": False,
         }
 
     # constant definition LABEL=value
@@ -198,9 +218,14 @@ def parse_lst_line(line: str):
         if "=" in first_tok:
             name, _, val = first_tok.partition("=")
             return {
-                "lineno": lineno, "addr": addr, "bytes": raw_bytes,
-                "label": name, "mnemonic": None, "operand": val.strip(),
-                "comment": comment, "is_constant": True,
+                "lineno": lineno,
+                "addr": addr,
+                "bytes": raw_bytes,
+                "label": name,
+                "mnemonic": None,
+                "operand": val.strip(),
+                "comment": comment,
+                "is_constant": True,
             }
 
     tokens = rest.split(None, 2)
@@ -230,9 +255,14 @@ def parse_lst_line(line: str):
                 operand = " ".join(tokens[1:])
 
     return {
-        "lineno": lineno, "addr": addr, "bytes": raw_bytes,
-        "label": label, "mnemonic": mnemonic, "operand": operand,
-        "comment": comment, "is_constant": False,
+        "lineno": lineno,
+        "addr": addr,
+        "bytes": raw_bytes,
+        "label": label,
+        "mnemonic": mnemonic,
+        "operand": operand,
+        "comment": comment,
+        "is_constant": False,
     }
 
 
@@ -305,8 +335,7 @@ def parse_modules_md(path: str) -> List[Tuple[str, str]]:
 # ---------------------------------------------------------------------------
 # Module parsing (combine lst + sym)
 # ---------------------------------------------------------------------------
-def load_module(name: str, parent: str, order: int,
-                data_dir: str) -> Module:
+def load_module(name: str, parent: str, order: int, data_dir: str) -> Module:
     mod = Module(name=name, parent=parent, order=order)
     lst_path = os.path.join(data_dir, f"{name}.lst")
     sym_path = os.path.join(data_dir, f"{name}.sym")
@@ -329,7 +358,7 @@ def load_module(name: str, parent: str, order: int,
             ins = Instruction(
                 src_line=parsed["lineno"],
                 local_addr=parsed["addr"],
-                rom_addr=parsed["addr"],          # patched later
+                rom_addr=parsed["addr"],  # patched later
                 raw_bytes=parsed["bytes"],
                 label=parsed["label"],
                 mnemonic=parsed["mnemonic"],
@@ -353,8 +382,9 @@ def load_module(name: str, parent: str, order: int,
                         local_addr=parsed["addr"],
                         rom_addr=parsed["addr"],
                         src_line=parsed["lineno"],
-                        label_only=(parsed["mnemonic"] is None
-                                    and not parsed["is_constant"]),
+                        label_only=(
+                            parsed["mnemonic"] is None and not parsed["is_constant"]
+                        ),
                         is_constant=parsed["is_constant"],
                     )
     mod.size = max_end
@@ -364,10 +394,10 @@ def load_module(name: str, parent: str, order: int,
 # ---------------------------------------------------------------------------
 # Layout (assign rom_addr to each module + every label / instruction)
 # ---------------------------------------------------------------------------
-def layout_modules(modules: List[Module],
-                   parent_bases: Dict[str, int]) -> None:
-    cursors: Dict[str, int] = {p: parent_bases.get(p, 0)
-                               for p in {m.parent for m in modules}}
+def layout_modules(modules: List[Module], parent_bases: Dict[str, int]) -> None:
+    cursors: Dict[str, int] = {
+        p: parent_bases.get(p, 0) for p in {m.parent for m in modules}
+    }
     for mod in modules:
         base = cursors.get(mod.parent, 0)
         mod.base_addr = base
@@ -421,8 +451,7 @@ class Analyzer:
                     for tgt in extract_word_targets(ins.operand):
                         self._mark(tgt, "jtable", from_label)
 
-    def _enclosing_label(self, mod: Module,
-                         ins: Instruction) -> Optional[str]:
+    def _enclosing_label(self, mod: Module, ins: Instruction) -> Optional[str]:
         """The most recent label in this module at or before ins."""
         # quick linear search backward isn't needed; we can use ins.label or
         # traverse instructions earlier.  Pre-computing is faster for big
@@ -438,15 +467,18 @@ class Analyzer:
             mod._label_cache = cache
         return cache.get(id(ins))
 
-    def _mark(self, name: Optional[str], kind: str,
-              src_label: Optional[str]) -> None:
+    def _mark(self, name: Optional[str], kind: str, src_label: Optional[str]) -> None:
         if not name or name not in self.global_labels:
             return
         lab = self.global_labels[name]
-        if kind == "jsr":     lab.is_jsr_target = True
-        elif kind == "jmp":   lab.is_jmp_target = True
-        elif kind == "branch":lab.is_branch_target = True
-        elif kind == "jtable":lab.is_jumptable_entry = True
+        if kind == "jsr":
+            lab.is_jsr_target = True
+        elif kind == "jmp":
+            lab.is_jmp_target = True
+        elif kind == "branch":
+            lab.is_branch_target = True
+        elif kind == "jtable":
+            lab.is_jumptable_entry = True
         if src_label:
             lab.references.add(src_label)
 
@@ -461,13 +493,10 @@ class Analyzer:
 #   group(1) = leading "  6396 " (line-num + spaces)
 #   group(2) = 4..6 hex digits of T:XXXX
 #   group(3) = everything after the address
-COMBINED_LINE_RE = re.compile(
-    r"^(\s*\d+\s+T:)([0-9a-fA-F]+)(.*)$"
-)
+COMBINED_LINE_RE = re.compile(r"^(\s*\d+\s+T:)([0-9a-fA-F]+)(.*)$")
 
 
-def write_combined_lst(modules: List[Module], data_dir: str,
-                       out_path: str) -> None:
+def write_combined_lst(modules: List[Module], data_dir: str, out_path: str) -> None:
     """Concatenate every module's .lst into one file in ROM order, with each
     'T:XXXX' rewritten to the absolute ROM address used by the report."""
     total_lines = 0
@@ -492,8 +521,7 @@ def write_combined_lst(modules: List[Module], data_dir: str,
                 f"; ----------------------------------------------------\n"
             )
             base = mod.base_addr
-            with open(lst_path, "r", encoding="utf-8",
-                      errors="replace") as f:
+            with open(lst_path, "r", encoding="utf-8", errors="replace") as f:
                 for line in f:
                     m = COMBINED_LINE_RE.match(line)
                     if m:
@@ -507,8 +535,10 @@ def write_combined_lst(modules: List[Module], data_dir: str,
                         line = f"{m.group(1)}{addr_str}{m.group(3)}\n"
                     out.write(line)
                     total_lines += 1
-    print(f"Combined listing written to {out_path} "
-          f"({total_lines} lines from {len(modules)} modules)")
+    print(
+        f"Combined listing written to {out_path} "
+        f"({total_lines} lines from {len(modules)} modules)"
+    )
 
 
 def _hdr(title: str) -> str:
@@ -516,8 +546,7 @@ def _hdr(title: str) -> str:
     return f"\n{title}\n{bar}\n"
 
 
-def write_report(modules: List[Module], analyzer: Analyzer,
-                 out_stream) -> None:
+def write_report(modules: List[Module], analyzer: Analyzer, out_stream) -> None:
     write = out_stream.write
     write("6502 Assembly Analyzer  -  Apple II ROM report\n")
     write("=" * 60 + "\n")
@@ -535,16 +564,20 @@ def write_report(modules: List[Module], analyzer: Analyzer,
             write(f"  ${full:04X}  {name:<24} {kinds}\n")
 
     # 2. JSR-discovered subroutines
-    jsr_labels = [l for l in analyzer.global_labels.values()
-                  if l.is_jsr_target]
+    jsr_labels = [l for l in analyzer.global_labels.values() if l.is_jsr_target]
     write(_hdr(f"2. SUBROUTINES DISCOVERED VIA JSR ({len(jsr_labels)})"))
     for lab in sorted(jsr_labels, key=lambda l: l.rom_addr):
-        write(f"  ${lab.rom_addr:04X}  {lab.name:<24} "
-              f"[{lab.module}]  callers={len(lab.references)}\n")
+        write(
+            f"  ${lab.rom_addr:04X}  {lab.name:<24} "
+            f"[{lab.module}]  callers={len(lab.references)}\n"
+        )
 
     # 3. JMP-discovered labels
-    jmp_labels = [l for l in analyzer.global_labels.values()
-                  if l.is_jmp_target and not l.is_jsr_target]
+    jmp_labels = [
+        l
+        for l in analyzer.global_labels.values()
+        if l.is_jmp_target and not l.is_jsr_target
+    ]
     write(_hdr(f"3. JMP-ONLY TARGETS ({len(jmp_labels)})"))
     for lab in sorted(jmp_labels, key=lambda l: l.rom_addr):
         write(f"  ${lab.rom_addr:04X}  {lab.name:<24} [{lab.module}]\n")
@@ -560,18 +593,20 @@ def write_report(modules: List[Module], analyzer: Analyzer,
     for mod in modules:
         if not mod.labels and not mod.size:
             continue
-        write(f"\n--- {mod.parent} :: {mod.name}   "
-              f"base=${mod.base_addr:04X}  size=${mod.size:04X} ---\n")
-        labs = sorted(mod.labels.values(),
-                      key=lambda l: (l.local_addr, l.src_line))
+        write(
+            f"\n--- {mod.parent} :: {mod.name}   "
+            f"base=${mod.base_addr:04X}  size=${mod.size:04X} ---\n"
+        )
+        labs = sorted(mod.labels.values(), key=lambda l: (l.local_addr, l.src_line))
         for l in labs:
-            write(f"  ${l.rom_addr:04X}  {l.name:<26} "
-                  f"[{','.join(l.kinds()) or '-'}]\n")
+            write(
+                f"  ${l.rom_addr:04X}  {l.name:<26} "
+                f"[{','.join(l.kinds()) or '-'}]\n"
+            )
 
     # 6. Call graph (compact)
     write(_hdr("6. CALL GRAPH (callee  <- callers)"))
-    callees = sorted(analyzer.global_labels.values(),
-                     key=lambda l: l.rom_addr)
+    callees = sorted(analyzer.global_labels.values(), key=lambda l: l.rom_addr)
     for lab in callees:
         if not lab.references:
             continue
@@ -582,8 +617,12 @@ def write_report(modules: List[Module], analyzer: Analyzer,
 # ---------------------------------------------------------------------------
 # Top-level driver
 # ---------------------------------------------------------------------------
-def run(data_dir: str, modules_md: str, out_path: Optional[str],
-        combined_lst: Optional[str] = None) -> None:
+def run(
+    data_dir: str,
+    modules_md: str,
+    out_path: Optional[str],
+    combined_lst: Optional[str] = None,
+) -> None:
     mod_specs = parse_modules_md(modules_md)
     if not mod_specs:
         raise SystemExit(f"No modules found in {modules_md}")
@@ -609,14 +648,18 @@ def run(data_dir: str, modules_md: str, out_path: Optional[str],
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--data-dir", default=".",
-                    help="Directory containing .lst and .sym files")
-    ap.add_argument("--modules", default="modules.md",
-                    help="Path to modules.md")
-    ap.add_argument("-o", "--output", default=None,
-                    help="Write report to file instead of stdout")
-    ap.add_argument("--combined-lst", default=None,
-                    help="Write a combined .lst with absolute addresses")
+    ap.add_argument(
+        "--data-dir", default=".", help="Directory containing .lst and .sym files"
+    )
+    ap.add_argument("--modules", default="modules.md", help="Path to modules.md")
+    ap.add_argument(
+        "-o", "--output", default=None, help="Write report to file instead of stdout"
+    )
+    ap.add_argument(
+        "--combined-lst",
+        default=None,
+        help="Write a combined .lst with absolute addresses",
+    )
     args = ap.parse_args()
     run(args.data_dir, args.modules, args.output, args.combined_lst)
 

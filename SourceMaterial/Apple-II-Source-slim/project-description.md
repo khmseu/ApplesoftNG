@@ -3,6 +3,7 @@
 ## Project Goal
 
 Convert 6502 assembly language source code (for Apple II ROMs) into a structured, modular representation that can be used to:
+
 1. Identify all subroutines/functions and their entry points
 2. Map the call graph (which functions call which)
 3. Organize code by ROM module
@@ -15,6 +16,7 @@ The project processes output from the **xa65 6502 assembler**.
 ### Module Organization
 
 The Apple II ROM is organized into modules:
+
 - **Applesoft**: Large BASIC interpreter (~10KB)
   - **Applesoft** module
 - **Monitor**: Debugger/monitor (~2KB)
@@ -27,8 +29,9 @@ Each module or submodule is a separate `.lst` and `.sym` file pair.
 **Format**: Line-by-line assembly listing with addresses and opcodes
 
 **Example**:
+
 ```
-1356 T:0431               PRINT_ERROR_LINNUM 
+1356 T:0431               PRINT_ERROR_LINNUM
 1357 T:0431  20 3a 0b               jsr STROUT
 1358 T:0434  a9 00                  lda #$00
 1359 T:0436  85 91                  sta JMPADRS+1
@@ -43,6 +46,7 @@ or:
 ```
 
 **Structure**:
+
 - Column 1: Line number (sequential)
 - Column 2: `T:XXXX` - 16-bit address in hex (T: prefix means "Text" or code section)
 - Column 3: Hex bytes of the instruction (variable number)
@@ -50,6 +54,7 @@ or:
 - After `;`: Comment
 
 **Key Elements to Extract**:
+
 - **Labels**: Appear on their own line with an address, e.g., `PRINT_ERROR_LINNUM`, or together with an instruction
 - **Instructions**: `jsr`, `jmp`, `bne`, `beq`, `lda`, `sta`, etc.
 - **Operands**: Label names, addresses, or immediate values
@@ -60,6 +65,7 @@ or:
 **Format**: Exported symbols with their addresses and a cross reference
 
 **Example**:
+
 ```
 GOWARM, 0x0000, 0, 0x0000
 STROUT, 0x0F3A, 0, 0x0000
@@ -68,10 +74,12 @@ CHRGOT, 0x0F86, 0, 0x0000
 ```
 
 **Structure**:
+
 - `LABEL, 0xADDRESS, 0, 0x0000` - comma-separated, label, address in hex with `0x` prefix, a constant `0`, and flags for linking and relocation again with `0x` prefix; flags&0x0002 = 0 (import) or 2 (export)
 - cross reference lines, for example `applesoft.s65 6372 6373 6378 6379 6380 6381` found in applesoft.s65 (applesoft.o65.lst) on lines 6372, 6373, 6378, 6379, 6380, 6381
 
 **Key Elements**:
+
 - **Exported symbols**: Public entry points defined in the symbol table
 - **Addresses**: Hex format with `0x` prefix
 
@@ -80,6 +88,7 @@ CHRGOT, 0x0F86, 0, 0x0000
 **Format**: Markdown list of modules in ROM order
 
 **Example**:
+
 ```markdown
 # Modules
 
@@ -148,6 +157,7 @@ The analyzer generates a report showing:
 ## xa65 Assembler Documentation
 
 **xa65** is a 6502 cross-assembler. Key features:
+
 - Produces `.lst` (listing) files with addresses and opcodes
 - Produces `.sym` (symbol) files with exported symbols
 - Uses `T:XXXX` notation for text/code section addresses
@@ -159,6 +169,7 @@ The analyzer generates a report showing:
 ## Problem Statement
 
 **Current Challenge**: The analyzer must correctly:
+
 1. Parse both Applesoft (large, single file) and Monitor (multiple small files) formats (all of wich together form the ROM image)
 2. Identify all labels and their addresses
 3. Track which module each label belongs to
