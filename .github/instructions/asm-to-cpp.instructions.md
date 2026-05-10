@@ -7,45 +7,58 @@ applyTo: "SourceMaterial/Apple-II-Source-slim/**/*.lst,SourceMaterial/Apple-II-S
 Use these instructions when converting a bounded assembler segment into C++.
 
 ## Required Inputs
+
 - `start_label`: first label of the conversion window, inclusive.
 - `end_label`: last label of the conversion window, exclusive.
 
 Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II-Source-slim](../../SourceMaterial/Apple-II-Source-slim).
 
 ## Mandatory Workflow
+
 1. Locate both labels and confirm they are in the same source listing region.
 2. Extract the range that starts at `start_label` and stops immediately before `end_label`.
 3. Before coding, consult [docs/function-cross-reference.md](../../docs/function-cross-reference.md) and the [# Function Cross Reference](../../docs/function-cross-reference.md#function-cross-reference) section to determine which functions in this window are already ported, which are still stubs/placeholders, and where each function is implemented.
 4. Include comments that are:
+
 - inline inside the range.
 - immediately preceding the first line in range and directly describing the range behavior.
+
 5. Infer the behavior and data flow from opcodes, branch patterns, and comments.
    - If the source slice does not end in an unconditional transfer (`RTS`, `JMP`, or unconditional branch), it falls through into the next label. Model that fall-through in C++ by calling the following function at that point, or by returning state that the caller uses to invoke the next label.
-  - If a label is `MON_xyz`, treat it as an alias for monitor label `xyz` and implement it immediately as a forwarder function (do not leave alias-only comments without code).
+
+- If a label is `MON_xyz`, treat it as an alias for monitor label `xyz` and implement it immediately as a forwarder function (do not leave alias-only comments without code).
+
 6. Implement one primary C++ function that preserves the original assembler name as much as possible.
 7. Place the function in the appropriate runtime area:
+
 - interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
 - console or machine-facing I/O behavior: [src/platform](../../src/platform) and [include/platform](../../include/platform)
+
 8. Add a short provenance comment above the function with:
+
 - source listing path
 - start/end labels
 - any normalization done to keep name valid in C++
+
 9. If callees are not implemented yet, add dummy implementations in the same subsystem.
 10. Update [docs/function-cross-reference.md](../../docs/function-cross-reference.md) after the port so it reflects new implementations and current stub/real status.
 11. Ensure build remains green after each increment.
 
 ## Naming Rules
+
 - Keep assembler symbol names verbatim when valid in C++.
 - If a symbol is not a valid C++ identifier, minimally normalize it (for example `.` to `_`) and document original symbol in a comment.
 - Prefer keeping capitalization consistent with source labels.
 - Treat `MON_xyz` labels as monitor aliases for `xyz`; always implement them immediately as direct forwarders to the corresponding monitor handler.
 
 ## Fixed-Address Variable Rules
+
 - Route all fixed-address state reads/writes through `ApplesoftVariables` (`variables()` / `variables_const()` and their byte/word accessors).
 - Do not mirror fixed addresses with separate globals, file-scope statics, or ad-hoc structs when `ApplesoftVariables` already represents them.
 - When a needed fixed address is missing, add it to `ApplesoftVariables` first, then use the accessors from ported code.
 
 ## Dummy Implementation Rules
+
 - Create stubs only for missing dependencies required by the converted function.
 - Use the original assembler-like name for stub function names.
 - Add `TODO(asm-port)` in each stub with the source label to be ported later.
@@ -57,6 +70,7 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 - class/struct values: `{}`
 
 ## Output Checklist
+
 - Exactly one bounded behavior slice was ported.
 - If the slice does not end in an unconditional transfer, the implementation explicitly models the fall-through to `end_label` by calling the next function or returning continuation state.
 - Function location matches subsystem boundaries.
@@ -67,7 +81,9 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 - Project still configures and builds.
 
 ## Function Address Table Pattern
+
 When the conversion window contains a table of `.word LABEL` or `.word LABEL-1` entries (a 6502 jump-table or RTS-dispatch table):
+
 - The `-1` offset is a 6502 RTS-dispatch artifact; in C++ use the plain function pointer without adjustment.
 - Declare a type alias for the common function signature: `using <TableName>_fn = <return>(*)(<params>);`
 - Implement a single lookup function named after the table label:
@@ -80,6 +96,7 @@ When the conversion window contains a table of `.word LABEL` or `.word LABEL-1` 
 - Include a comment mapping each index to the original token/label comment from the source.
 
 ## Hard Boundaries
+
 - Do not add runtime dependency on files under SourceMaterial.
 - Do not rewrite unrelated files.
 - Do not expand scope beyond the two-label window unless required for compile correctness.

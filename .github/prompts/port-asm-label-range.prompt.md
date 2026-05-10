@@ -4,10 +4,12 @@
 # Port one historical assembler segment to C++ using the repo conversion rules
 
 Required input:
+
 - `start_label` (inclusive)
 - `end_label` (exclusive)
 
 Execution contract:
+
 1. Find both labels in [SourceMaterial/Apple-II-Source-slim](../../SourceMaterial/Apple-II-Source-slim).
    - If either label is missing, invalid, or not in the same listing region, return an error that names the failing label and stop.
 2. Read the range from `start_label` up to but not including `end_label`, and the comments immediately preceding the range.
@@ -20,13 +22,16 @@ Execution contract:
 9. Route all fixed-address global state access through `ApplesoftVariables` (`variables()` / `variables_const()` accessors); if a fixed address is missing there, add it before using it.
 10. Preserve assembler naming unless it conflicts with C++ identifier rules.
 11. Place implementation in correct subsystem:
+
 - [src/core](../../src/core) for interpreter/runtime behavior
 - [src/platform](../../src/platform) for console/monitor behavior
+
 12. If required callees are missing, add dummy implementations with `TODO(asm-port)`.
 13. Update [docs/function-cross-reference.md](../../docs/function-cross-reference.md) so the new implementation and current stub/real state are captured.
 14. Build and report status.
 
 Response format:
+
 - Labels and source file located.
 - Behavior summary.
 - Files changed.

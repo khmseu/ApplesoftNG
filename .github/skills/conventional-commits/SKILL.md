@@ -9,12 +9,14 @@ context: fork
 Use this skill for Conventional Commits tasks across policy writing, commit review, and automation setup.
 
 This skill is based on official documentation:
+
 - https://www.conventionalcommits.org/en/v1.0.0/
 - https://www.conventionalcommits.org/en/about/
 
 ## Domain Focus
 
 This skill covers:
+
 - Correct Conventional Commits message structure
 - Type, scope, description, body, and footer rules
 - Breaking change signaling (`!` and `BREAKING CHANGE:`)
@@ -132,6 +134,7 @@ Refs: 676104e, a215868
 ## Output Expectations
 
 When helping with Conventional Commits tasks, prefer guidance that:
+
 - preserves strict parseability for tooling
 - aligns type semantics with actual change impact
 - makes breaking changes explicit and migration-friendly
