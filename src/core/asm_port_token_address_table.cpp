@@ -24,6 +24,7 @@ void DATA();
 void GET();
 void INPUT();
 void READ();
+void DIM();
 void LET();
 void IF();
 void REM();
@@ -38,7 +39,7 @@ void FOR();
 static void NEXT_Handler()     { NEXT(); }
 static void INPUT_Handler()    { INPUT(); }
 static void DEL()              {} // TODO(asm-port): DEL
-static void DIM()              {} // TODO(asm-port): DIM
+static void DIM_Handler()      { DIM(); }
 static void READ_Handler()     { READ(); }
 static void GR()               {} // TODO(asm-port): GR
 static void TEXT()             {} // TODO(asm-port): TEXT
@@ -100,7 +101,7 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         DATA,             // [3]  $83...131...DWTA
         INPUT_Handler,    // [4]  $84...132...INPUT
         DEL,              // [5]  $85...133...DEL
-        DIM,              // [6]  $86...134...DIM
+        DIM_Handler,      // [6]  $86...134...DIM
         READ_Handler,     // [7]  $87...135...READ
         GR,               // [8]  $88...136...GR
         TEXT,             // [9]  $89...137...TEXT

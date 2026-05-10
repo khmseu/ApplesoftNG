@@ -8,7 +8,10 @@ namespace applesoft::asm_port {
 class ApplesoftVariables {
 public:
     // Zero-page and fixed-address variables currently used in the C++ ports.
+    std::uint8_t NUMDIM = 0;      // $0f  number of dimensions
+    std::uint8_t DIMFLG = 0;      // $10  DIM-call flag
     std::uint8_t VALTYP = 0;      // $11  string flag: $ff = string, $00 = float
+    std::uint8_t VALTYP_PLUS_1 = 0; // $12  integer type flag
     std::uint8_t SUBFLG = 0;      // $14
     std::uint8_t INPUTFLG = 0;    // $15  $00=INPUT, $40=GET, $98=READ
     std::uint8_t CPRMASK = 0;     // $16  relational comparison mask
@@ -35,6 +38,11 @@ public:
     std::uint16_t FORPNT = 0;     // $85/$86
     std::uint16_t TXPSV = 0;      // $87/$88 saved TXTPTR during input parsing
     std::uint8_t CPRTYP = 0;      // $89  relational operator flags
+    std::uint16_t DSCPTR = 0;     // $8c/$8d
+    std::uint16_t JMPADRS = 0;    // $90/$91 (JMPADRS+1,+2)
+    std::uint16_t ARYPNT = 0;     // $94/$95
+    std::uint16_t HIGHTR = 0;     // $96/$97
+    std::uint8_t INDX = 0;        // $99
     std::uint16_t LOWTR = 0;      // $9b/$9c
     std::array<std::uint8_t, 5> FAC{}; // $9d..$a1
     std::uint8_t FAC_SIGN = 0;    // $a2
@@ -45,6 +53,9 @@ public:
     std::uint16_t TXTPTR = 0;     // $b8/$b9
     std::uint8_t LOCK = 0;        // $d6
     std::uint8_t ERRFLG = 0;      // $d8
+    std::uint16_t VARNAM = 0;     // $81/$82
+    std::uint16_t VARPNT = 0;     // $83/$84
+    std::array<std::uint8_t, 4> RESULT{}; // $62..$65
     std::uint8_t FIRST = 0;       // $f0
     std::uint8_t TRCFLG = 0;      // $f2
     std::uint8_t SPEEDZ = 0;      // $f1  complement of speed value
