@@ -1,7 +1,7 @@
 ---
 ---
 
-Port one historical assembler segment to C++ using the repo conversion rules.
+# Port one historical assembler segment to C++ using the repo conversion rules
 
 Required input:
 - `start_label` (inclusive)
@@ -11,7 +11,7 @@ Execution contract:
 1. Find both labels in [SourceMaterial/Apple-II-Source-slim](../../SourceMaterial/Apple-II-Source-slim).
    - If either label is missing, invalid, or not in the same listing region, return an error that names the failing label and stop.
 2. Read the range from `start_label` up to but not including `end_label`, and the comments immediately preceding the range.
-3. Consult [docs/function-cross-reference.md](../../docs/function-cross-reference.md), specifically [# Function Cross Reference](../../docs/function-cross-reference.md#function-cross-reference), to identify which functions in the target range are already ported, which are placeholders, and where each one is currently implemented.
+3. Consult [docs/function-cross-reference.md](../../docs/function-cross-reference.md), to identify which functions in the target range are already ported, which are placeholders, and where each one is currently implemented.
 4. Provide a one-sentence summary of the behavior.
 5. Implement one C++ function that reproduces the behavior.
 6. If the range does not end in an `RTS`, `JMP`, or unconditional branch, model fall-through into `end_label` by calling the following function or by returning continuation state that the caller uses to invoke the next label.

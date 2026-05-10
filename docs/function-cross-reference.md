@@ -237,7 +237,9 @@ Generated from C++ source definitions in `src` and `tests`.
 | ONGOTO                            | src/core/asm_port_error.cpp               | 1766 | real   |
 | OR                                | src/core/asm_port_error.cpp               | 2014 | real   |
 | OR_op                             | src/core/asm_port_mathtbl.cpp             |   25 | stub   |
+| OUTDO                             | src/core/asm_port_error.cpp               | 1004 | stub   |
 | OUTDO                             | src/platform/asm_port_outdo.cpp           |   39 | real   |
+| OUTQUES                           | src/core/asm_port_nxin.cpp                |    7 | stub   |
 | OUTQUES                           | src/platform/asm_port_outdo.cpp           |   75 | real   |
 | OUTSP                             | src/platform/asm_port_outdo.cpp           |   67 | real   |
 | PARSE_INPUT_LINE                  | src/core/asm_port_error.cpp               |  708 | real   |
@@ -370,7 +372,7 @@ Generated from C++ source definitions in `src` and `tests`.
 | STRINI                            | src/core/asm_port_strlt2.cpp              |   51 | stub   |
 | STRLIT                            | src/core/asm_port_strlit.cpp              |   24 | real   |
 | STRLT2                            | src/core/asm_port_strlt2.cpp              |   61 | real   |
-| STROUT                            | src/core/asm_port_error.cpp               |  981 | real   |
+| STROUT                            | src/core/asm_port_error.cpp               |  981 | stub   |
 | STROUT                            | src/core/asm_port_print.cpp               |  109 | real   |
 | STRPRT                            | src/core/asm_port_print.cpp               |   83 | real   |
 | STRTXT                            | src/core/asm_port_strtxt.cpp              |   28 | real   |
