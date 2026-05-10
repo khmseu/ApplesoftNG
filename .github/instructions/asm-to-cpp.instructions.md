@@ -15,22 +15,24 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 ## Mandatory Workflow
 1. Locate both labels and confirm they are in the same source listing region.
 2. Extract the range that starts at `start_label` and stops immediately before `end_label`.
-3. Include comments that are:
+3. Before coding, consult [docs/function-cross-reference.md](../../docs/function-cross-reference.md) and the [# Function Cross Reference](../../docs/function-cross-reference.md#function-cross-reference) section to determine which functions in this window are already ported, which are still stubs/placeholders, and where each function is implemented.
+4. Include comments that are:
 - inline inside the range.
 - immediately preceding the first line in range and directly describing the range behavior.
-4. Infer the behavior and data flow from opcodes, branch patterns, and comments.
+5. Infer the behavior and data flow from opcodes, branch patterns, and comments.
    - If the source slice does not end in an unconditional transfer (`RTS`, `JMP`, or unconditional branch), it falls through into the next label. Model that fall-through in C++ by calling the following function at that point, or by returning state that the caller uses to invoke the next label.
   - If a label is `MON_xyz`, treat it as an alias for monitor label `xyz` and implement it immediately as a forwarder function (do not leave alias-only comments without code).
-5. Implement one primary C++ function that preserves the original assembler name as much as possible.
-6. Place the function in the appropriate runtime area:
+6. Implement one primary C++ function that preserves the original assembler name as much as possible.
+7. Place the function in the appropriate runtime area:
 - interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
 - console or machine-facing I/O behavior: [src/platform](../../src/platform) and [include/platform](../../include/platform)
-7. Add a short provenance comment above the function with:
+8. Add a short provenance comment above the function with:
 - source listing path
 - start/end labels
 - any normalization done to keep name valid in C++
-8. If callees are not implemented yet, add dummy implementations in the same subsystem.
-9. Ensure build remains green after each increment.
+9. If callees are not implemented yet, add dummy implementations in the same subsystem.
+10. Update [docs/function-cross-reference.md](../../docs/function-cross-reference.md) after the port so it reflects new implementations and current stub/real status.
+11. Ensure build remains green after each increment.
 
 ## Naming Rules
 - Keep assembler symbol names verbatim when valid in C++.
@@ -61,6 +63,7 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 - Original names preserved or minimally normalized with mapping comments.
 - Missing callees have explicit dummy implementations.
 - Any fixed-address global state access uses `ApplesoftVariables` accessors.
+- [docs/function-cross-reference.md](../../docs/function-cross-reference.md) has been updated to reflect this port.
 - Project still configures and builds.
 
 ## Function Address Table Pattern
