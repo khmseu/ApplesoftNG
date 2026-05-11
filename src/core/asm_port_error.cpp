@@ -120,11 +120,29 @@ void SYNERR();
 void PRINT_ERROR_LINNUM();
 void PRINT_ERROR_LINNUM(std::string_view prefix);
 
+std::uint8_t ReadProgramByte(std::uint16_t address);
+
 void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
     // TODO(asm-port): write a byte into program memory at the given address.
     (void)address;
     (void)value;
 }
+
+struct ProgramPointer {
+    std::uint16_t address = 0;
+
+    std::uint8_t read(std::uint16_t offset = 0) const {
+        return ReadProgramByte(static_cast<std::uint16_t>(address + offset));
+    }
+
+    void write(std::uint8_t value, std::uint16_t offset = 0) const {
+        WriteProgramByte(static_cast<std::uint16_t>(address + offset), value);
+    }
+
+    ProgramPointer advanced(std::uint16_t offset) const {
+        return ProgramPointer{static_cast<std::uint16_t>(address + offset)};
+    }
+};
 
 void SetStackPointer(std::uint8_t value) {
     // TODO(asm-port): set the 6502 stack pointer.
@@ -273,12 +291,12 @@ void SCRTCH_impl() {
     constexpr std::uint8_t kMEMSIZ = 0x73;
     constexpr std::uint8_t kFRETOP = 0x6f;
 
-    const std::uint16_t programStart = ReadZeroPageWord(kTXTTAB);
+    const ProgramPointer programStart{ReadZeroPageWord(kTXTTAB)};
     WriteZeroPageByte(kLOCK, 0);
-    WriteProgramByte(programStart, 0);
-    WriteProgramByte(static_cast<std::uint16_t>(programStart + 1), 0);
+    programStart.write(0);
+    programStart.write(0, 1u);
 
-    const std::uint16_t nextFree = static_cast<std::uint16_t>(programStart + 2);
+    const std::uint16_t nextFree = programStart.advanced(2u).address;
     WriteZeroPageWord(kVARTAB, nextFree);
     WriteZeroPageWord(kPRGEND, nextFree);
     WriteZeroPageWord(kFRETOP, ReadZeroPageWord(kMEMSIZ));
@@ -576,22 +594,6 @@ std::uint8_t ReadProgramByte(std::uint16_t address) {
     (void)address;
     return 0;
 }
-
-struct ProgramPointer {
-    std::uint16_t address = 0;
-
-    std::uint8_t read(std::uint16_t offset = 0) const {
-        return ReadProgramByte(static_cast<std::uint16_t>(address + offset));
-    }
-
-    void write(std::uint8_t value, std::uint16_t offset = 0) const {
-        WriteProgramByte(static_cast<std::uint16_t>(address + offset), value);
-    }
-
-    ProgramPointer advanced(std::uint16_t offset) const {
-        return ProgramPointer{static_cast<std::uint16_t>(address + offset)};
-    }
-};
 
 bool IsEndOfProgram(ProgramPointer currentPtr);
 ProgramPointer AdvanceToNextLine(ProgramPointer currentPtr);
