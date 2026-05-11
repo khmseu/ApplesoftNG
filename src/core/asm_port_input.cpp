@@ -200,13 +200,13 @@ void PROCESS_INPUT_LIST(std::uint16_t input_ptr, std::uint8_t input_flag) {
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: ERLIN (inclusive) .. INPERR (exclusive)
 // Name normalization: none (assembler label ERLIN kept verbatim).
-void ERLIN(std::uint8_t a, std::uint8_t y) {
-    variables().CURLIN = ApplesoftVariables::makeWord(a, y);
+void ERLIN(std::uint16_t lineNumber) {
+    variables().CURLIN = lineNumber;
     SYNERR();
 }
 
-void ERLIN(std::uint16_t lineNumber) {
-    ERLIN(ApplesoftVariables::lowByte(lineNumber), ApplesoftVariables::highByte(lineNumber));
+void ERLIN(std::uint8_t a, std::uint8_t y) {
+    ERLIN(ApplesoftVariables::makeWord(a, y));
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
