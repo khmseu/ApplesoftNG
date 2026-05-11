@@ -594,10 +594,10 @@ struct ProgramPointer {
 };
 
 struct LineAddress;
-std::uint8_t ReadProgramByte(LineAddress base, std::uint8_t offset);
 std::uint16_t ToWord(LineAddress address);
 bool IsEndOfProgram(LineAddress current);
-LineAddress AdvanceToNextLine(LineAddress current);
+bool IsEndOfProgram(ProgramPointer currentPtr);
+ProgramPointer AdvanceToNextLine(ProgramPointer currentPtr);
 
 std::uint8_t CHRGOT();
 struct LineAddress {
@@ -624,13 +624,11 @@ bool IsLineNumberGreater(LineNumber current, LineNumber limit) {
     return current.lo > limit.lo;
 }
 
-LineNumber ReadProgramLineNumber(LineAddress current) {
-    const ProgramPointer currentPtr{ToWord(current)};
+LineNumber ReadProgramLineNumber(ProgramPointer currentPtr) {
     return LineNumber{currentPtr.read(2u), currentPtr.read(3u)};
 }
 
-void PrintListLine(LineAddress current) {
-    const ProgramPointer currentPtr{ToWord(current)};
+void PrintListLine(ProgramPointer currentPtr) {
     std::uint8_t offset = 4;
     while (true) {
         const std::uint8_t ch = currentPtr.read(offset);
@@ -814,24 +812,24 @@ void LIST() {
         endRange.hi = 0xff;
     }
 
-    LineAddress current = FromWord(ReadZeroPageWord(kLOWTR));
-    while (!IsEndOfProgram(current)) {
+    ProgramPointer currentPtr{ReadZeroPageWord(kLOWTR)};
+    while (!IsEndOfProgram(currentPtr)) {
         if (ISCNTC()) {
             break;
         }
 
         CRDO();
-        const LineNumber currentLine = ReadProgramLineNumber(current);
+        const LineNumber currentLine = ReadProgramLineNumber(currentPtr);
         if (IsLineNumberGreater(currentLine, endRange)) {
             break;
         }
 
         LINPRT();
         WriteZeroPageByte(kMON_CH, 5);
-        PrintListLine(current);
+        PrintListLine(currentPtr);
 
-        current = AdvanceToNextLine(current);
-        WriteZeroPageWord(kLOWTR, ToWord(current));
+        currentPtr = AdvanceToNextLine(currentPtr);
+        WriteZeroPageWord(kLOWTR, currentPtr.address);
     }
 
     CRDO();
@@ -952,27 +950,29 @@ bool IsEndOfProgram(LineAddress current) {
     return current.lo == 0 && current.hi == 0;
 }
 
-std::uint8_t ReadProgramByte(LineAddress base, std::uint8_t offset) {
-    return ProgramPointer{ToWord(base)}.read(offset);
+bool IsEndOfProgram(ProgramPointer currentPtr) {
+    return currentPtr.address == 0;
 }
 
-LineAddress AdvanceToNextLine(LineAddress current) {
+ProgramPointer AdvanceToNextLine(ProgramPointer currentPtr) {
     // The original FIX_LINKS routine scans from the current line until it finds the
     // end-of-line marker, then computes the address of the next line.
-    const ProgramPointer currentPtr{ToWord(current)};
     std::uint8_t offset = 4;
     while (currentPtr.read(offset) != 0) {
         ++offset;
     }
 
-    const std::uint16_t nextAddress = currentPtr.advanced(static_cast<std::uint16_t>(offset) + 1u).address;
-    return FromWord(nextAddress);
+    return currentPtr.advanced(static_cast<std::uint16_t>(offset) + 1u);
 }
 
 void WriteForwardPointer(LineAddress current, LineAddress next) {
     // TODO(asm-port): write the low/high bytes of 'next' into the current line's forward-pointer header.
     (void)current;
     (void)next;
+}
+
+void WriteForwardPointer(ProgramPointer currentPtr, ProgramPointer nextPtr) {
+    WriteForwardPointer(FromWord(currentPtr.address), FromWord(nextPtr.address));
 }
 
 void FIX_LINKS() {
@@ -982,16 +982,16 @@ void FIX_LINKS() {
 
     SETPTRS();
 
-    LineAddress current = GetTextTableAddress();
+    ProgramPointer currentPtr{ToWord(GetTextTableAddress())};
     while (true) {
-        if (IsEndOfProgram(current)) {
+        if (IsEndOfProgram(currentPtr)) {
             RESTART();
             return;
         }
 
-        const LineAddress next = AdvanceToNextLine(current);
-        WriteForwardPointer(current, next);
-        current = next;
+        const ProgramPointer nextPtr = AdvanceToNextLine(currentPtr);
+        WriteForwardPointer(currentPtr, nextPtr);
+        currentPtr = nextPtr;
     }
 }
 
