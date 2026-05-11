@@ -588,6 +588,10 @@ struct ProgramPointer {
         return ReadProgramByte(static_cast<std::uint16_t>(address + offset));
     }
 
+    void write(std::uint8_t value, std::uint16_t offset = 0) const {
+        WriteProgramByte(static_cast<std::uint16_t>(address + offset), value);
+    }
+
     ProgramPointer advanced(std::uint16_t offset) const {
         return ProgramPointer{static_cast<std::uint16_t>(address + offset)};
     }
@@ -972,7 +976,8 @@ void WriteForwardPointer(LineAddress current, LineAddress next) {
 }
 
 void WriteForwardPointer(ProgramPointer currentPtr, ProgramPointer nextPtr) {
-    WriteForwardPointer(FromWord(currentPtr.address), FromWord(nextPtr.address));
+    currentPtr.write(ApplesoftVariables::lowByte(nextPtr.address), 0u);
+    currentPtr.write(ApplesoftVariables::highByte(nextPtr.address), 1u);
 }
 
 void FIX_LINKS() {
