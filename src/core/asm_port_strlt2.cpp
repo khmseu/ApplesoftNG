@@ -20,7 +20,7 @@ std::uint8_t read_byte(std::uint16_t address) {
 }
 
 std::uint16_t address_from_ya(std::uint8_t low, std::uint8_t high) {
-    return static_cast<std::uint16_t>(static_cast<std::uint16_t>(high) << 8 | low);
+    return ApplesoftVariables::makeWord(low, high);
 }
 
 void write_STRNG1(std::uint16_t value) {

@@ -1,4 +1,5 @@
 #include "core/asm_port_gtforpnt.hpp"
+#include "core/applesoft_variables.hpp"
 
 namespace applesoft::asm_port {
 namespace {
@@ -10,8 +11,9 @@ std::uint8_t stack_at(const GTFORPNTState& state, std::uint8_t x, std::uint8_t p
 }
 
 std::uint16_t stack_word_at(const GTFORPNTState& state, std::uint8_t x, std::uint8_t plus) {
-    return static_cast<std::uint16_t>(static_cast<std::uint16_t>(stack_at(state, x, static_cast<std::uint8_t>(plus + 1u))) << 8 |
-                                      stack_at(state, x, plus));
+    return ApplesoftVariables::makeWord(
+        stack_at(state, x, plus),
+        stack_at(state, x, static_cast<std::uint8_t>(plus + 1u)));
 }
 
 } // namespace

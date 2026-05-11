@@ -23,10 +23,6 @@ bool isDigit(std::uint8_t ch) {
     return ch >= '0' && ch <= '9';
 }
 
-std::uint16_t MakeWord(std::uint8_t low, std::uint8_t high) {
-    return static_cast<std::uint16_t>(static_cast<std::uint16_t>(high) << 8 | low);
-}
-
 std::uint8_t CHRGET() {
     // TODO(asm-port): read the next character from the current input buffer.
     return 0;
@@ -37,7 +33,7 @@ void SetTextPointer(std::uint16_t address) {
 }
 
 void SetTextPointer(std::uint8_t lo, std::uint8_t hi) {
-    SetTextPointer(MakeWord(lo, hi));
+    SetTextPointer(ApplesoftVariables::makeWord(lo, hi));
 }
 
 void ClearErrFlag() {
@@ -376,7 +372,7 @@ std::uint8_t readStackByteAt(std::uint8_t /*x*/, std::uint8_t /*plus*/) {
 }
 
 std::uint16_t readStackWordAt(std::uint8_t x, std::uint8_t lowOffset, std::uint8_t highOffset) {
-    return MakeWord(readStackByteAt(x, lowOffset), readStackByteAt(x, highOffset));
+    return ApplesoftVariables::makeWord(readStackByteAt(x, lowOffset), readStackByteAt(x, highOffset));
 }
 
 // TODO(asm-port): port FADD label.
@@ -1654,7 +1650,7 @@ std::uint8_t REMN() {
     return ScanAheadOffset(0);
 }
 
-bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
+bool FL1(std::uint16_t startAddress) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: FL1 (inclusive) .. NEW (exclusive)
     // Name normalization: none (assembler label FL1 kept verbatim).
@@ -1665,7 +1661,7 @@ bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
     const std::uint8_t targetLo = ReadZeroPageByte(kLINNUM);
     const std::uint8_t targetHi = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1));
 
-    std::uint16_t current = static_cast<std::uint16_t>(static_cast<std::uint16_t>(startHi) << 8) | startLo;
+    std::uint16_t current = startAddress;
 
     while (true) {
         WriteZeroPageWord(kLOWTR, current);
@@ -1695,8 +1691,8 @@ bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
     }
 }
 
-bool FL1(std::uint16_t startAddress) {
-    return FL1(ApplesoftVariables::lowByte(startAddress), ApplesoftVariables::highByte(startAddress));
+bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
+    return FL1(ApplesoftVariables::makeWord(startLo, startHi));
 }
 
 std::uint8_t PopByteFromStack() {
