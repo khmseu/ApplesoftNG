@@ -1082,8 +1082,25 @@ void LOAD_FAC_FROM_YA() {
     // TODO(asm-port): load the constant 1.0 into FAC from the Y,A pointer.
 }
 
-void SYNCHR(std::uint8_t /*expected*/) {
-    // TODO(asm-port): require a specific statement token from the parsed input.
+void SYNCHR(std::uint8_t expected) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SYNCHR (inclusive) .. CHKNUM (exclusive)
+    // Name normalization: none (assembler label SYNCHR kept verbatim).
+    //
+    // Require a specific statement token from the parsed input.
+    // Read current character from TXTPTR, compare with expected, advance if match, error if not.
+
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    
+    const std::uint16_t txtPtr = ReadZeroPageWord(kTXTPTR);
+    const std::uint8_t current = variables_const().pointer(txtPtr).read(0u);
+    
+    if (current != expected) {
+        ERROR(ERR_SYNTAX);
+    }
+    
+    // Advance TXTPTR by 1
+    WriteZeroPageWord(kTXTPTR, txtPtr + 1u);
 }
 
 void CHKNUM() {
@@ -2656,6 +2673,62 @@ void UNDFNC() {
     // Name normalization: none (assembler label UNDFNC kept verbatim).
 
     ERROR(ERR_UNDEFFUNC);
+}
+
+void DEF() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: DEF (inclusive) .. FNC_ (exclusive)
+    // Name normalization: none (assembler label DEF kept verbatim).
+    //
+    // "DEF" STATEMENT
+    // Parse DEF FN name (arg) = expression
+    // TODO(asm-port): complete implementation
+
+    // TODO(asm-port): port DEF label - parse function definition statement
+}
+
+void FNC_() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FNC_ (inclusive) .. FUNCT (exclusive)
+    // Name normalization: none (assembler label FNC_ kept verbatim).
+    //
+    // Common routine for both DEF and FN parsing.
+    // Parse "FN" token, function name. Save address in FNCNAM.
+    // TODO(asm-port): complete implementation
+
+    // TODO(asm-port): port FNC_ label - common FN name parsing routine
+}
+
+void FUNCT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FUNCT (inclusive) .. FNCDATA (exclusive)
+    // Name normalization: none (assembler label FUNCT kept verbatim).
+    //
+    // "FN" FUNCTION CALL
+    // Parse FN name, argument expression, evaluate and return result.
+    // TODO(asm-port): complete implementation
+
+    // TODO(asm-port): port FUNCT label - FN function call implementation
+}
+
+void FNCDATA() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FNCDATA (inclusive) .. STR (exclusive)
+    // Name normalization: none (assembler label FNCDATA kept verbatim).
+    //
+    // STORE FIVE BYTES FROM STACK AT (FNCNAM)
+    // Pop 5 bytes from stack and store at (FNCNAM) with Y-indexed addressing.
+    // TODO(asm-port): complete implementation
+
+    // TODO(asm-port): port FNCDATA label - store 5-byte FAC to function storage
+}
+
+void PARCHK() {
+    // TODO(asm-port): parse "(expression)" - validate open paren, evaluate expression, validate close paren.
+}
+
+void STORE_FACDB_YX_ROUNDED() {
+    // TODO(asm-port): store 5-byte FAC to address in Y,X with rounding.
 }
 
 void SETFOR() {

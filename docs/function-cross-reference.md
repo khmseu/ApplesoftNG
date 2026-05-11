@@ -56,6 +56,7 @@ returning, or contains `TODO(asm-port)`.
 | DATA                              | src/core/asm_port_error.cpp               | 1711 | real   |
 | DATA                              | src/core/asm_port_token_address_table.cpp |   23 | stub   |
 | DATAN                             | src/core/asm_port_error.cpp               | 1176 | stub   |
+| DEF                               | src/core/asm_port_error.cpp               | 2678 | stub   |
 | DeleteExistingLine                | src/core/asm_port_error.cpp               |  654 | stub   |
 | DIM                               | src/core/asm_port_error.cpp               | 2148 | real   |
 | DIM                               | src/core/asm_port_token_address_table.cpp |   27 | stub   |
@@ -78,6 +79,8 @@ returning, or contains `TODO(asm-port)`.
 | FIX_LINKS                         | src/core/asm_port_error.cpp               |  956 | stub   |
 | FL1                               | src/core/asm_port_error.cpp               | 1692 | stub   |
 | FLOAT                             | src/core/asm_port_error.cpp               |  432 | stub   |
+| FNC\_                             | src/core/asm_port_error.cpp               | 2690 | stub   |
+| FNCDATA                           | src/core/asm_port_error.cpp               | 2714 | stub   |
 | FNDLIN                            | src/core/asm_port_error.cpp               |  643 | real   |
 | FOR                               | src/core/asm_port_error.cpp               |  350 | stub   |
 | FOR                               | src/core/asm_port_token_address_table.cpp |   38 | stub   |
@@ -88,6 +91,7 @@ returning, or contains `TODO(asm-port)`.
 | FRM_STACK_3                       | src/core/asm_port_error.cpp               | 1131 | stub   |
 | FRMEVL                            | src/core/asm_port_error.cpp               | 1933 | stub   |
 | FRMNUM                            | src/core/asm_port_error.cpp               | 1112 | real   |
+| FUNCT                             | src/core/asm_port_error.cpp               | 2702 | stub   |
 | GARBAG                            | src/core/asm_port_reason.cpp              |   14 | stub   |
 | GET                               | src/core/asm_port_input.cpp               |  258 | real   |
 | GET                               | src/core/asm_port_token_address_table.cpp |   24 | stub   |
@@ -223,6 +227,7 @@ returning, or contains `TODO(asm-port)`.
 | PrintListLine                     | src/core/asm_port_error.cpp               |  628 | stub   |
 | PROCESS_INPUT_LIST                | src/core/asm_port_input.cpp               |  123 | stub   |
 | PROGIO                            | src/core/asm_port_error.cpp               | 1449 | stub   |
+| PARCHK                            | src/core/asm_port_error.cpp               | 2726 | stub   |
 | PTRGET                            | src/core/asm_port_error.cpp               | 1942 | real   |
 | PTRGET2                           | src/core/asm_port_error.cpp               | 2161 | real   |
 | PTRGET3                           | src/core/asm_port_error.cpp               | 2169 | real   |
@@ -297,6 +302,7 @@ returning, or contains `TODO(asm-port)`.
 | STOP                              | src/core/asm_port_error.cpp               | 1295 | real   |
 | STOP                              | src/core/asm_port_token_address_table.cpp |   13 | stub   |
 | STOP_impl                         | src/core/asm_port_error.cpp               | 1299 | real   |
+| STORE_FACDB_YX_ROUNDED            | src/core/asm_port_error.cpp               | 2730 | stub   |
 | STRCMP                            | src/core/asm_port_error.cpp               | 2080 | stub   |
 | STRINI                            | src/core/asm_port_error.cpp               | 2525 | stub   |
 | STRINI                            | src/core/asm_port_strlt2.cpp              |   35 | stub   |
