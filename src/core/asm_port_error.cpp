@@ -1165,8 +1165,8 @@ void ADDON(std::uint8_t offset) {
 
     constexpr std::uint8_t kTXTPTR = 0xb8;
 
-    const std::uint16_t advanced = static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + offset);
-    WriteZeroPageWord(kTXTPTR, advanced);
+    const ProgramPointer textPtr{ReadZeroPageWord(kTXTPTR)};
+    WriteZeroPageWord(kTXTPTR, textPtr.advanced(offset).address);
 }
 
 std::uint8_t DATAN() {
@@ -1405,9 +1405,9 @@ void LOAD() {
     VARTIO();
     MON_READ();
 
-    const std::uint16_t endAddress =
-        static_cast<std::uint16_t>(ReadZeroPageWord(kTXTTAB) + ReadZeroPageWord(kLINNUM));
-    WriteZeroPageWord(kVARTAB, endAddress);
+    const ProgramPointer textTablePtr{ReadZeroPageWord(kTXTTAB)};
+    const std::uint16_t programLength = ReadZeroPageWord(kLINNUM);
+    WriteZeroPageWord(kVARTAB, textTablePtr.advanced(programLength).address);
 
     WriteZeroPageByte(kLOCK, ReadZeroPageByte(kTEMPPT));
 
