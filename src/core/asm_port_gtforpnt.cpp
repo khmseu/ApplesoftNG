@@ -6,21 +6,25 @@ namespace {
 
 constexpr std::uint8_t kFrameSize = 18;
 
+std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
+    return static_cast<std::uint8_t>(lhs + rhs);
+}
+
 std::uint8_t stack_at(const GTFORPNTState& state, std::uint8_t x, std::uint8_t plus) {
-    return state.stackPage[static_cast<std::uint8_t>(x + plus)];
+    return state.stackPage[add_u8(x, plus)];
 }
 
 std::uint16_t stack_word_at(const GTFORPNTState& state, std::uint8_t x, std::uint8_t plus) {
     return ApplesoftVariables::makeWord(
         stack_at(state, x, plus),
-        stack_at(state, x, static_cast<std::uint8_t>(plus + 1u)));
+        stack_at(state, x, add_u8(plus, 1u)));
 }
 
 } // namespace
 
 GTFORPNTResult GTFORPNT(std::uint8_t stackPointer, GTFORPNTState& state) {
     // TSX + 4: skip return address and caller context to first candidate frame.
-    std::uint8_t x = static_cast<std::uint8_t>(stackPointer + 4);
+    std::uint8_t x = add_u8(stackPointer, 4u);
 
     while (x != 0) {
         // FRAME MARKER at STACK+1,X must be TOKEN_FOR ($81).
@@ -39,7 +43,7 @@ GTFORPNTResult GTFORPNT(std::uint8_t stackPointer, GTFORPNTState& state) {
         }
 
         // Advance to next frame candidate, wrapping in 8-bit space exactly as 6502.
-        x = static_cast<std::uint8_t>(x + kFrameSize);
+        x = add_u8(x, kFrameSize);
     }
 
     return GTFORPNTResult{false, x};
