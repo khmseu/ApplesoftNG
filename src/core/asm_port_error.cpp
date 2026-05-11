@@ -920,7 +920,7 @@ void RESTART() {
 }
 
 std::uint16_t ToWord(LineAddress address) {
-    return static_cast<std::uint16_t>(address.hi) << 8 | address.lo;
+    return ApplesoftVariables::makeWord(address.lo, address.hi);
 }
 
 LineAddress FromWord(std::uint16_t value) {
@@ -1045,6 +1045,19 @@ void PopReturnAddress() {
 
 void PushByteToStack(std::uint8_t /*value*/) {
     // TODO(asm-port): push a byte onto the Applesoft 6502 stack.
+}
+
+void PushWordToStack(std::uint16_t value) {
+    // Push word big-endian (hi first) per 6502 stack convention.
+    PushByteToStack(ApplesoftVariables::highByte(value));
+    PushByteToStack(ApplesoftVariables::lowByte(value));
+}
+
+std::uint16_t PopWordFromStack() {
+    // Pop word in reverse order: lo byte popped first, then hi.
+    const std::uint8_t lo = PopByteFromStack();
+    const std::uint8_t hi = PopByteFromStack();
+    return ApplesoftVariables::makeWord(lo, hi);
 }
 
 void PushTextPointerAddress() {
@@ -1520,10 +1533,8 @@ void GOSUB() {
     const std::uint16_t textPointer = ReadZeroPageWord(kTXTPTR);
     const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
 
-    PushByteToStack(ApplesoftVariables::highByte(textPointer));
-    PushByteToStack(ApplesoftVariables::lowByte(textPointer));
-    PushByteToStack(ApplesoftVariables::highByte(currentLine));
-    PushByteToStack(ApplesoftVariables::lowByte(currentLine));
+    PushWordToStack(textPointer);
+    PushWordToStack(currentLine);
     PushByteToStack(kTOKEN_GOSUB);
 
     // Fall-through in ROM from GOSUB to GO_TO_LINE.
@@ -1611,18 +1622,14 @@ void RETURN() {
     constexpr std::uint8_t kTXTPTR = 0xb8;
 
     (void)PopByteFromStack(); // discard GOSUB token
-    const std::uint8_t currentLineLo = PopByteFromStack();
+    const std::uint16_t currentLine = PopWordFromStack();
 
     if (ReturnWasFromPOPContext()) {
         PULL3();
         return;
     }
 
-    const std::uint16_t currentLine =
-        static_cast<std::uint16_t>(PopByteFromStack()) << 8 | currentLineLo;
-    const std::uint8_t textPointerLo = PopByteFromStack();
-    const std::uint16_t textPointer =
-        static_cast<std::uint16_t>(PopByteFromStack()) << 8 | textPointerLo;
+    const std::uint16_t textPointer = PopWordFromStack();
 
     WriteZeroPageWord(kCURLIN, currentLine);
     WriteZeroPageWord(kTXTPTR, textPointer);
@@ -1687,7 +1694,7 @@ bool FL1(std::uint16_t startAddress) {
         }
 
         const std::uint8_t nextLo = ReadProgramByte(current);
-        current = static_cast<std::uint16_t>(static_cast<std::uint16_t>(nextHi) << 8) | nextLo;
+        current = ApplesoftVariables::makeWord(nextLo, nextHi);
     }
 }
 
