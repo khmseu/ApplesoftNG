@@ -268,7 +268,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
 std::uint16_t ApplesoftVariables::readWord(std::uint16_t address) const {
     const std::uint8_t low = readByte(address);
     const std::uint8_t high = readByte(static_cast<std::uint16_t>(address + 1u));
-    return static_cast<std::uint16_t>(static_cast<std::uint16_t>(high) << 8 | low);
+    return makeWord(low, high);
 }
 
 void ApplesoftVariables::writeWord(std::uint16_t address, std::uint16_t value) {

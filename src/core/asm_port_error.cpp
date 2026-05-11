@@ -924,7 +924,7 @@ std::uint16_t ToWord(LineAddress address) {
 }
 
 LineAddress FromWord(std::uint16_t value) {
-    return LineAddress{static_cast<std::uint8_t>(value & 0xff), static_cast<std::uint8_t>(value >> 8)};
+    return LineAddress{ApplesoftVariables::lowByte(value), ApplesoftVariables::highByte(value)};
 }
 
 LineAddress GetTextTableAddress() {
