@@ -148,7 +148,7 @@ static void print_list_loop(std::uint8_t a, bool expr_cr) {
                 FOUT();
                 // jsr STRLIT — wrap buffer as FAC string descriptor.
                 // TODO(asm-port): pass actual (a, y) from FOUT output buffer.
-                STRLIT(0u, 0u);
+                STRLIT(0x0000u);
                 // jmp PR_STRING (which calls STRPRT then re-enters PRINT)
                 STRPRT();
             }

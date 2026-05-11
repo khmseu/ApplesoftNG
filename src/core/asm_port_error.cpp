@@ -32,10 +32,6 @@ void SetTextPointer(std::uint16_t address) {
     variables().writeWord(0x00b8u, address);
 }
 
-void SetTextPointer(std::uint8_t lo, std::uint8_t hi) {
-    SetTextPointer(ApplesoftVariables::makeWord(lo, hi));
-}
-
 void ClearErrFlag() {
     variables().writeByte(0x00d8u, 0);
 }
