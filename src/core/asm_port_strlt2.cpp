@@ -15,10 +15,6 @@ std::uint8_t read_ENDCHR() {
     return variables_const().readByte(0x000eu);
 }
 
-std::uint8_t read_byte(std::uint16_t address) {
-    return variables_const().readByte(address);
-}
-
 void write_STRNG1(std::uint16_t value) {
     variables().writeWord(0x00abu, value);
 }
@@ -55,6 +51,7 @@ void STRLT2(std::uint16_t address) {
     // AND TERMINATED BY $00, (CHARAC), OR (ENDCHR)
 
     const std::uint16_t start = address;
+    const auto startPtr = variables_const().pointer(start);
     write_STRNG1(start);
     write_FAC_pointer(start);
 
@@ -63,7 +60,7 @@ void STRLT2(std::uint16_t address) {
 
     // Find end of string, terminated by $00 or alternate terminators.
     while (true) {
-        const std::uint8_t ch = read_byte(static_cast<std::uint16_t>(start + length));
+        const std::uint8_t ch = startPtr.read(length);
         if (ch == 0) {
             break;
         }
@@ -80,7 +77,7 @@ void STRLT2(std::uint16_t address) {
 
     write_FAC(length);
 
-    const std::uint16_t endAddress = static_cast<std::uint16_t>(start + length);
+    const std::uint16_t endAddress = startPtr.advanced(length).address();
     write_STRNG2(endAddress);
 
     // If source is not on page 0 or page 2, branch directly to PUTNEW.

@@ -7,6 +7,58 @@ namespace applesoft::asm_port {
 
 class ApplesoftVariables {
 public:
+    class ConstBytePointer {
+    public:
+        ConstBytePointer(const ApplesoftVariables* vars, std::uint16_t address)
+            : vars_(vars), address_(address) {}
+
+        std::uint8_t read(std::uint16_t offset = 0) const {
+            return vars_->readByte(static_cast<std::uint16_t>(address_ + offset));
+        }
+
+        std::uint16_t address() const {
+            return address_;
+        }
+
+        ConstBytePointer advanced(std::uint16_t offset) const {
+            return ConstBytePointer(vars_, static_cast<std::uint16_t>(address_ + offset));
+        }
+
+    private:
+        const ApplesoftVariables* vars_ = nullptr;
+        std::uint16_t address_ = 0;
+    };
+
+    class BytePointer {
+    public:
+        BytePointer(ApplesoftVariables* vars, std::uint16_t address)
+            : vars_(vars), address_(address) {}
+
+        std::uint8_t read(std::uint16_t offset = 0) const {
+            return vars_->readByte(static_cast<std::uint16_t>(address_ + offset));
+        }
+
+        void write(std::uint8_t value, std::uint16_t offset = 0) {
+            vars_->writeByte(static_cast<std::uint16_t>(address_ + offset), value);
+        }
+
+        std::uint16_t address() const {
+            return address_;
+        }
+
+        BytePointer advanced(std::uint16_t offset) const {
+            return BytePointer(vars_, static_cast<std::uint16_t>(address_ + offset));
+        }
+
+        ConstBytePointer asConst() const {
+            return ConstBytePointer(vars_, address_);
+        }
+
+    private:
+        ApplesoftVariables* vars_ = nullptr;
+        std::uint16_t address_ = 0;
+    };
+
     // Zero-page and fixed-address variables currently used in the C++ ports.
     std::uint8_t NUMDIM = 0;      // $0f  number of dimensions
     std::uint8_t DIMFLG = 0;      // $10  DIM-call flag
@@ -77,6 +129,14 @@ public:
 
     std::uint16_t readWord(std::uint16_t address) const;
     void writeWord(std::uint16_t address, std::uint16_t value);
+
+    ConstBytePointer pointer(std::uint16_t address) const {
+        return ConstBytePointer(this, address);
+    }
+
+    BytePointer pointer(std::uint16_t address) {
+        return BytePointer(this, address);
+    }
 
     static std::uint8_t lowByte(std::uint16_t value);
     static std::uint8_t highByte(std::uint16_t value);
