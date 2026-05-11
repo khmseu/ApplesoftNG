@@ -42,7 +42,6 @@ void READERR();
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: ERLIN (inclusive) .. INPERR (exclusive)
 // Name normalization: none (assembler label ERLIN kept verbatim).
-void ERLIN(std::uint8_t a, std::uint8_t y);
 void ERLIN(std::uint16_t lineNumber);
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst

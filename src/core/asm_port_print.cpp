@@ -107,10 +107,6 @@ void STROUT(std::uint16_t address) {
     STRPRT();
 }
 
-void STROUT(std::uint8_t a, std::uint8_t y) {
-    STROUT(ApplesoftVariables::makeWord(a, y));
-}
-
 // ---------------------------------------------------------------------------
 // Internal helper: shared PRINT list loop body
 // ---------------------------------------------------------------------------

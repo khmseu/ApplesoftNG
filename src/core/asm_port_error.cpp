@@ -969,7 +969,7 @@ void FIX_LINKS() {
 void STROUT(std::string_view text) {
     // TODO(asm-port): print the given string to the Applesoft console.
     // This overload is a high-level convenience bridge used by the error-printing
-    // code.  It is distinct from STROUT(uint8_t a, uint8_t y) in asm_port_print.
+    // code.  It is distinct from STROUT(std::uint16_t address) in asm_port_print.
     (void)text;
 }
 

@@ -205,10 +205,6 @@ void ERLIN(std::uint16_t lineNumber) {
     SYNERR();
 }
 
-void ERLIN(std::uint8_t a, std::uint8_t y) {
-    ERLIN(ApplesoftVariables::makeWord(a, y));
-}
-
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: READERR (inclusive) .. ERLIN (exclusive)
 // Name normalization: none (assembler label READERR kept verbatim).

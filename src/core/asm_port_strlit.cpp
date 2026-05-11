@@ -32,8 +32,4 @@ void STRLIT(std::uint16_t address) {
     STRLT2(address);
 }
 
-void STRLIT(std::uint8_t a, std::uint8_t y) {
-    STRLIT(ApplesoftVariables::makeWord(a, y));
-}
-
 } // namespace applesoft::asm_port

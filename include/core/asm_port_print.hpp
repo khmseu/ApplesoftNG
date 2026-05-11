@@ -24,7 +24,6 @@ void STRPRT();
 // Name normalization: none (assembler label STROUT kept verbatim).
 // Makes the string at address (a=lo, y=hi) into a FAC descriptor via STRLIT,
 // then falls through to STRPRT.
-void STROUT(std::uint8_t a, std::uint8_t y);
 void STROUT(std::uint16_t address);
 
 // Labels: PR_STRING (inclusive) .. PRINT (exclusive)

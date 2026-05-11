@@ -95,8 +95,4 @@ void STRLT2(std::uint16_t address) {
     PUTNEW();
 }
 
-void STRLT2(std::uint8_t a, std::uint8_t y) {
-    STRLT2(ApplesoftVariables::makeWord(a, y));
-}
-
 } // namespace applesoft::asm_port
