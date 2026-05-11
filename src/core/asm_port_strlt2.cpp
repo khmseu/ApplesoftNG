@@ -19,6 +19,10 @@ std::uint8_t read_byte(std::uint16_t address) {
     return variables_const().readByte(address);
 }
 
+std::uint16_t address_from_ya(std::uint8_t low, std::uint8_t high) {
+    return static_cast<std::uint16_t>(static_cast<std::uint16_t>(high) << 8 | low);
+}
+
 void write_STRNG1(std::uint16_t value) {
     variables().writeWord(0x00abu, value);
 }
@@ -54,7 +58,7 @@ void STRLT2(std::uint8_t a, std::uint8_t y) {
     // BUILD A DESCRIPTOR FOR STRING STARTING AT Y,A
     // AND TERMINATED BY $00, (CHARAC), OR (ENDCHR)
 
-    const std::uint16_t start = static_cast<std::uint16_t>((static_cast<std::uint16_t>(y) << 8) | a);
+    const std::uint16_t start = address_from_ya(a, y);
     write_STRNG1(start);
     write_FAC_pointer(start);
 

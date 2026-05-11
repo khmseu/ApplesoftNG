@@ -50,8 +50,7 @@ static std::uint8_t GTBYTC() { return 0; }
 // TODO(asm-port): FRETMS (temporary-release part) not yet implemented.
  std::uint8_t FREFAC() {
     const std::uint16_t descriptorAddress =
-        static_cast<std::uint16_t>(static_cast<std::uint16_t>(variables_const().FAC[4]) << 8 |
-                                   variables_const().FAC[3]);
+        ApplesoftVariables::makeWord(variables_const().FAC[3], variables_const().FAC[4]);
 
     // String descriptor layout: [length, data_lo, data_hi]
     const std::uint8_t length = variables_const().readByte(descriptorAddress);

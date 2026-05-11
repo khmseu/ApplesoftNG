@@ -24,6 +24,10 @@ std::uint8_t ApplesoftVariables::highByte(std::uint16_t value) {
     return static_cast<std::uint8_t>((value >> 8) & 0xffu);
 }
 
+std::uint16_t ApplesoftVariables::makeWord(std::uint8_t low, std::uint8_t high) {
+    return static_cast<std::uint16_t>(static_cast<std::uint16_t>(high) << 8 | low);
+}
+
 void ApplesoftVariables::setLowByte(std::uint16_t& target, std::uint8_t value) {
     target = static_cast<std::uint16_t>((target & 0xff00u) | value);
 }

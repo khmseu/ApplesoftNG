@@ -1,4 +1,5 @@
 #include "core/asm_port_bltu.hpp"
+#include "core/applesoft_variables.hpp"
 
 namespace applesoft::asm_port {
 namespace {
@@ -26,7 +27,7 @@ BLTUResult BLTU(BLTUState& state) {
     state.y = reasonResult.y;
 
     // New top of array storage (STREND) is loaded from adjusted A/Y.
-    state.setStrend(static_cast<std::uint16_t>(static_cast<std::uint16_t>(state.y) << 8 | state.a));
+    state.setStrend(ApplesoftVariables::makeWord(state.a, state.y));
 
     // Execution falls through to BLTU2 in the original ROM.
     return BLTUResult{state.a, state.y};

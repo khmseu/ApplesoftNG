@@ -23,6 +23,10 @@ bool isDigit(std::uint8_t ch) {
     return ch >= '0' && ch <= '9';
 }
 
+std::uint16_t MakeWord(std::uint8_t low, std::uint8_t high) {
+    return static_cast<std::uint16_t>(static_cast<std::uint16_t>(high) << 8 | low);
+}
+
 std::uint8_t CHRGET() {
     // TODO(asm-port): read the next character from the current input buffer.
     return 0;
@@ -33,7 +37,7 @@ void SetTextPointer(std::uint16_t address) {
 }
 
 void SetTextPointer(std::uint8_t lo, std::uint8_t hi) {
-    SetTextPointer(static_cast<std::uint16_t>(static_cast<std::uint16_t>(hi) << 8 | lo));
+    SetTextPointer(MakeWord(lo, hi));
 }
 
 void ClearErrFlag() {
@@ -371,6 +375,10 @@ std::uint8_t readStackByteAt(std::uint8_t /*x*/, std::uint8_t /*plus*/) {
     return 0;
 }
 
+std::uint16_t readStackWordAt(std::uint8_t x, std::uint8_t lowOffset, std::uint8_t highOffset) {
+    return MakeWord(readStackByteAt(x, lowOffset), readStackByteAt(x, highOffset));
+}
+
 // TODO(asm-port): port FADD label.
 void FADD() {}
 
@@ -488,12 +496,8 @@ void NEXT() {
 
     if (!NEXT_shouldTerminateLoop()) {
         // Restore line/TXTPTR from FOR frame and jump NEWSTT.
-        const std::uint16_t restoredLine =
-            static_cast<std::uint16_t>(readStackByteAt(gtforpntResult.x, 16u)) << 8 |
-            readStackByteAt(gtforpntResult.x, 15u);
-        const std::uint16_t restoredTextPointer =
-            static_cast<std::uint16_t>(readStackByteAt(gtforpntResult.x, 17u)) << 8 |
-            readStackByteAt(gtforpntResult.x, 18u);
+        const std::uint16_t restoredLine = readStackWordAt(gtforpntResult.x, 15u, 16u);
+        const std::uint16_t restoredTextPointer = readStackWordAt(gtforpntResult.x, 18u, 17u);
         WriteZeroPageWord(kCURLIN, restoredLine);
         WriteZeroPageWord(kTXTPTR, restoredTextPointer);
         NEWSTT();

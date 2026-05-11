@@ -80,6 +80,7 @@ public:
 
     static std::uint8_t lowByte(std::uint16_t value);
     static std::uint8_t highByte(std::uint16_t value);
+    static std::uint16_t makeWord(std::uint8_t low, std::uint8_t high);
     static void setLowByte(std::uint16_t& target, std::uint8_t value);
     static void setHighByte(std::uint16_t& target, std::uint8_t value);
 };

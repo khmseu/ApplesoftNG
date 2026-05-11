@@ -201,8 +201,7 @@ void PROCESS_INPUT_LIST(std::uint16_t input_ptr, std::uint8_t input_flag) {
 // Labels: ERLIN (inclusive) .. INPERR (exclusive)
 // Name normalization: none (assembler label ERLIN kept verbatim).
 void ERLIN(std::uint8_t a, std::uint8_t y) {
-    variables().CURLIN =
-        static_cast<std::uint16_t>(static_cast<std::uint16_t>(y) << 8 | a);
+    variables().CURLIN = ApplesoftVariables::makeWord(a, y);
     SYNERR();
 }
 
