@@ -1,48 +1,62 @@
-# unification problems
+# Unification Problems
 
-## **STUB + REAL DUPLICATES** (18 cases)
+## **STUB + REAL DUPLICATES**
 
-Unification problem: Stubs shadow real implementations or have mismatched signatures.
+Unification problem: stubs shadow real implementations, or a function has no
+real implementation at all despite appearing in multiple modules.
 
-| Function     | Stub Location                              | Real Location | Problem                                                                                                     |
-| ------------ | ------------------------------------------ | ------------- | ----------------------------------------------------------------------------------------------------------- |
-| **CHRGET**   | error.cpp:26, print.cpp:17 (both stubs!)   | -             | TWO stubs, NO real; both modules need the real implementation                                               |
-| **CHRGOT**   | input.cpp:20, print.cpp:21 (both stubs!)   | -             | TWO stubs, NO real; architecture split between input & print                                                |
-| **ERROR**    | unfnc.cpp:24                               | error.cpp:857 | Stub in unfnc module shadows error handler; zero-arg vs error-code-arg                                      |
-| **FRMEVL**   | error.cpp:1937, print.cpp:25 (both stubs!) | -             | TWO stubs, NO real; both modules declare but don't implement                                                |
-| **HANDLERR** | error.cpp:2542, print.cpp:38 (both stubs!) | -             | TWO stubs, NO real; both modules defer to nonexistent handler                                               |
-| **STROUT**   | error.cpp:981                              | print.cpp:109 | **Signature mismatch**: string_view version in error vs (uint8, uint8) in print—**two different functions** |
-| **SYNCHR**   | error.cpp:1069, input.cpp:32 (both stubs!) | -             | TWO stubs, NO real                                                                                          |
-| **SYNERR**   | error.cpp:1808, print.cpp:34 (both stubs!) | -             | TWO stubs, NO real                                                                                          |
+| Function          | Stub Location(s)             | Real Location | Problem                                                                                                                     |
+| ----------------- | ---------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **CHRGET**        | error.cpp:26                 | —             | Stub only; no real implementation anywhere. Must port the zero-page self-modifying CHRGET logic.                            |
+| **CHRGOT**        | input.cpp:24                 | error.cpp:606 | Real exists in error.cpp. Stub in input.cpp should be removed; callers in input.cpp should include the real header.         |
+| **FRMEVL**        | error.cpp:1933               | —             | Stub only; no real. Expression evaluator not yet ported.                                                                    |
+| **HANDLERR**      | error.cpp:2538, input.cpp:19 | —             | Two stubs, no real. ON ERR handler not yet ported.                                                                          |
+| **STROUT**        | error.cpp:976, input.cpp:21  | print.cpp:103 | Two stubs shadow the real in print.cpp. Both stub sites should call the print.cpp implementation directly.                  |
+| **SYNCHR**        | error.cpp:1076, input.cpp:36 | —             | Two stubs, no real. Token-syntax check not yet ported.                                                                      |
+| **SYNERR**        | error.cpp:1807, input.cpp:20 | —             | Two stubs, no real. Syntax-error handler not yet ported.                                                                    |
+| **ERROR** (unfnc) | unfnc.cpp static `ERROR()`   | error.cpp:871 | Static stub in unfnc dispatch table. The SCRN( token slot ($D7) dispatches to the local static, not the real ERROR handler. |
 
 ---
 
-## **MULTIPLE REAL DEFINITIONS** (5 cases)
+## **MULTIPLE REAL DEFINITIONS**
 
-Unification problem: Legitimate overloads vs. accidental duplicates; distinct semantics.
+Unification problem: legitimate overloads vs. accidental cross-module duplicates.
 
-| Function               | Real Locations                                                             | Problem                                                                                                                     |
-| ---------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| **MEMERR**             | chkmem.cpp:9 (CHKMEMState&), memerr.cpp:8 (), reason.cpp:19 (REASONState&) | **Three different signatures**—**intentional state-machine overloads**, not duplicates; names poorly distinguish by context |
-| **PRINT_ERROR_LINNUM** | error.cpp:1339 (string_view prefix), error.cpp:874 ()                      | **Overload intended**: one with prefix, one without; both real implementations in same file                                 |
-| **ReadProgramByte**    | error.cpp:572 (uint16), error.cpp:936 (LineAddress, uint8)                 | **Legitimate overload**: address-space abstraction; 6502 address vs. structured LineAddress                                 |
-| **SETDA**              | error.cpp:1268 (uint16 dataPointer), input.cpp:62 (uint16 data_ptr)        | **Likely duplicate**: same purpose & signature, split between modules; one should call the other                            |
-| **execute**            | interpreter.cpp:11, interpreter.cpp:16                                     | **Multiple real in same file** (Google Test overload artifact, not application code)                                        |
+| Function               | Real Locations                                                                     | Problem                                                                                                                      |
+| ---------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **MEMERR**             | chkmem.cpp:9 (`CHKMEMState&`), memerr.cpp:8 (`()`), reason.cpp:19 (`REASONState&`) | **Three different signatures — intentional state-machine overloads**, not duplicates; names poorly distinguish context.      |
+| **PRINT_ERROR_LINNUM** | error.cpp:888 (`()`), error.cpp:1341 (`string_view prefix`)                        | **Overload intended**: one bare, one with prefix. Both real, same file. No action needed.                                    |
+| **SETDA**              | error.cpp:1276 (`uint16`), input.cpp:66 (`uint16`)                                 | **Cross-module duplicate**: same purpose and equivalent signature. One should call the other or they should be consolidated. |
+| **REM**                | error.cpp:1743 (real handler), token_address_table.cpp:30 (table entry)            | **Not a conflict**: the token_address_table.cpp entry is an address-table reference, not a competing implementation.         |
 
 ---
 
 ## **OBSERVATIONS & SUMMARY**
 
-### **Worst categories:**
+### Changes since previous version
 
-1. **Stub-only modules with NO real** (11 symbols: `CHRGET`, `CHRGOT`, `FRMEVL`, `HANDLERR`, `INLIN` stubs, `SYNCHR`, `SYNERR`, plus `INPRT`/`LINPRT` misclassified)  
-   → **Action**: Remove local stubs; include real implementation's header; direct call.
+- **CHRGOT** partially resolved: `error.cpp:606` is now a real implementation.
+  The stub in `input.cpp:24` remains and should be removed.
+- **HANDLERR** and **SYNERR** stubs moved from `print.cpp` to `input.cpp`
+  (no functional change; both remain unresolved).
+- **STROUT** now has two stubs (`error.cpp:976` + `input.cpp:21`) vs. one
+  previously. The `input.cpp` stub is new and equally needs to forward to
+  `print.cpp`'s real.
+- **FRMEVL** `print.cpp` stub removed; only `error.cpp:1933` stub remains.
+- **CHRGET** `print.cpp` stub removed; only `error.cpp:26` stub remains.
+- `GetTextTableAddress` renamed to `GetTextTablePointer` (error.cpp:931).
 
-2. **State-machine overloads** (`MEMERR`, `ReadProgramByte`)  
-   → **Action**: Keep; rename or document context-dependent use clearly.
+### Worst categories
 
-3. **Same-module duplicates** (`PRINT_ERROR_LINNUM`)  
-   → **Action**: Consolidate to single implementation + overload, or rename one to clarify intent.
+1. **Stub-only with no real** (`CHRGET`, `FRMEVL`, `HANDLERR`, `SYNCHR`, `SYNERR`)
+   → Port the assembly logic; remove duplicate stubs once a real is available.
 
-4. **Cross-module duplicates** (`SETDA`, `PTRGET`)  
-   → **Action**: Identify canonical version; have the other call it or consolidate.
+2. **Stubs shadowing an existing real** (`CHRGOT` in input.cpp, `STROUT` in
+   error.cpp and input.cpp)
+   → Delete stubs; add include of the real implementation's header.
+
+3. **Cross-module duplicates** (`SETDA`)
+   → Identify canonical; have the other call it or consolidate into one module.
+
+4. **State-machine overloads** (`MEMERR`)
+   → Keep; document context-dependent use clearly or rename per context.
