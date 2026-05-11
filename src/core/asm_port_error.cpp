@@ -28,8 +28,12 @@ std::uint8_t CHRGET() {
     return 0;
 }
 
+void SetTextPointer(std::uint16_t address) {
+    variables().writeWord(0x00b8u, address);
+}
+
 void SetTextPointer(std::uint8_t lo, std::uint8_t hi) {
-    variables().writeWord(0x00b8u, static_cast<std::uint16_t>((static_cast<std::uint16_t>(hi) << 8) | lo));
+    SetTextPointer(static_cast<std::uint16_t>(static_cast<std::uint16_t>(hi) << 8 | lo));
 }
 
 void ClearErrFlag() {
@@ -88,14 +92,11 @@ void WriteZeroPageByte(std::uint8_t address, std::uint8_t value) {
 }
 
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value) {
-    WriteZeroPageByte(address, static_cast<std::uint8_t>(value & 0xffu));
-    WriteZeroPageByte(static_cast<std::uint8_t>(address + 1), static_cast<std::uint8_t>(value >> 8));
+    variables().writeWord(address, value);
 }
 
 std::uint16_t ReadZeroPageWord(std::uint8_t address) {
-    const std::uint8_t low = ReadZeroPageByte(address);
-    const std::uint8_t high = ReadZeroPageByte(static_cast<std::uint8_t>(address + 1));
-    return static_cast<std::uint16_t>(high) << 8 | low;
+    return variables_const().readWord(address);
 }
 
 void RESTORE();
@@ -174,6 +175,7 @@ void AdvanceTextPointerToNextLine();
 bool IsRunningMode();
 bool IsTraceEnabled();
 std::uint8_t REMN();
+bool FL1(std::uint16_t startAddress);
 bool FL1(std::uint8_t startLo, std::uint8_t startHi);
 std::uint8_t PopByteFromStack();
 bool ReturnWasFromPOPContext();
@@ -486,10 +488,14 @@ void NEXT() {
 
     if (!NEXT_shouldTerminateLoop()) {
         // Restore line/TXTPTR from FOR frame and jump NEWSTT.
-        WriteZeroPageByte(kCURLIN, readStackByteAt(gtforpntResult.x, 15u));
-        WriteZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1), readStackByteAt(gtforpntResult.x, 16u));
-        WriteZeroPageByte(kTXTPTR, readStackByteAt(gtforpntResult.x, 18u));
-        WriteZeroPageByte(static_cast<std::uint8_t>(kTXTPTR + 1), readStackByteAt(gtforpntResult.x, 17u));
+        const std::uint16_t restoredLine =
+            static_cast<std::uint16_t>(readStackByteAt(gtforpntResult.x, 16u)) << 8 |
+            readStackByteAt(gtforpntResult.x, 15u);
+        const std::uint16_t restoredTextPointer =
+            static_cast<std::uint16_t>(readStackByteAt(gtforpntResult.x, 17u)) << 8 |
+            readStackByteAt(gtforpntResult.x, 18u);
+        WriteZeroPageWord(kCURLIN, restoredLine);
+        WriteZeroPageWord(kTXTPTR, restoredTextPointer);
         NEWSTT();
         return;
     }
@@ -632,9 +638,8 @@ bool FNDLIN() {
 
     constexpr std::uint8_t kTXTTAB = 0x67;
 
-    const std::uint16_t start = ReadZeroPageWord(kTXTTAB);
     // Assembler falls through from FNDLIN directly into FL1 with A=TXTTAB, X=TXTTAB+1.
-    return FL1(static_cast<std::uint8_t>(start & 0xffu), static_cast<std::uint8_t>(start >> 8));
+    return FL1(ReadZeroPageWord(kTXTTAB));
 }
 
 void DeleteExistingLine() {
@@ -655,7 +660,7 @@ void write_INPUT_BUFFER_minus_5(std::uint8_t index, std::uint8_t value) {
 
 void SetTextPointerToInputBufferMinus1() {
     // TODO(asm-port): compute the actual INPUT_BUFFER-1 address in the runtime model.
-    SetTextPointer(0xffu, 0x01u);
+    SetTextPointer(0x01ffu);
 }
 
 struct TokenMatch {
@@ -894,7 +899,7 @@ void RESTART() {
 
     CRDO();
     const Inlin2Result inlin2 = INLIN2(RESTART_PROMPT);
-    SetTextPointer(inlin2.x, inlin2.y);
+    SetTextPointer(static_cast<std::uint16_t>(static_cast<std::uint16_t>(inlin2.y) << 8 | inlin2.x));
     ClearErrFlag();
 
     const std::uint8_t firstChar = CHRGET();
@@ -1306,23 +1311,17 @@ void ENDX_impl(bool shouldPrintBreak) {
     }
 
     constexpr std::uint8_t kTXTPTR = 0xb8;
-    constexpr std::uint8_t kTXTPTR_plus_1 = 0xb9;
     constexpr std::uint8_t kCURLIN = 0x75;
-    constexpr std::uint8_t kCURLIN_plus_1 = 0x76;
     constexpr std::uint8_t kOLDTEXT = 0x79;
-    constexpr std::uint8_t kOLDTEXT_plus_1 = 0x7a;
     constexpr std::uint8_t kOLDLIN = 0x77;
-    constexpr std::uint8_t kOLDLIN_plus_1 = 0x78;
 
-    const std::uint8_t txPtrLo = ReadZeroPageByte(kTXTPTR);
-    const std::uint8_t txPtrHi = ReadZeroPageByte(kTXTPTR_plus_1);
-    const std::uint8_t currentPageHi = ReadZeroPageByte(kCURLIN_plus_1);
+    const std::uint16_t textPointer = ReadZeroPageWord(kTXTPTR);
+    const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
+    const std::uint8_t currentPageHi = ApplesoftVariables::highByte(currentLine);
 
     if (static_cast<std::uint8_t>(currentPageHi + 1u) != 0u) {
-        WriteZeroPageByte(kOLDTEXT, txPtrLo);
-        WriteZeroPageByte(kOLDTEXT_plus_1, txPtrHi);
-        WriteZeroPageByte(kOLDLIN, ReadZeroPageByte(kCURLIN));
-        WriteZeroPageByte(kOLDLIN_plus_1, currentPageHi);
+        WriteZeroPageWord(kOLDTEXT, textPointer);
+        WriteZeroPageWord(kOLDLIN, currentLine);
     }
 
     PopReturnAddress();
@@ -1361,21 +1360,16 @@ void CONT() {
     constexpr std::uint8_t kOLDTEXT = 0x79;
     constexpr std::uint8_t kOLDTEXT_plus_1 = 0x7a;
     constexpr std::uint8_t kOLDLIN = 0x77;
-    constexpr std::uint8_t kOLDLIN_plus_1 = 0x78;
     constexpr std::uint8_t kTXTPTR = 0xb8;
-    constexpr std::uint8_t kTXTPTR_plus_1 = 0xb9;
     constexpr std::uint8_t kCURLIN = 0x75;
-    constexpr std::uint8_t kCURLIN_plus_1 = 0x76;
 
     if (ReadZeroPageByte(kOLDTEXT_plus_1) == 0) {
         ERROR(ERR_CANTCONT);
         return;
     }
 
-    WriteZeroPageByte(kTXTPTR, ReadZeroPageByte(kOLDTEXT));
-    WriteZeroPageByte(kTXTPTR_plus_1, ReadZeroPageByte(kOLDTEXT_plus_1));
-    WriteZeroPageByte(kCURLIN, ReadZeroPageByte(kOLDLIN));
-    WriteZeroPageByte(kCURLIN_plus_1, ReadZeroPageByte(kOLDLIN_plus_1));
+    WriteZeroPageWord(kTXTPTR, ReadZeroPageWord(kOLDTEXT));
+    WriteZeroPageWord(kCURLIN, ReadZeroPageWord(kOLDLIN));
 }
 
 void SAVE() {
@@ -1523,10 +1517,13 @@ void GOSUB() {
         return;
     }
 
-    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kTXTPTR + 1)));
-    PushByteToStack(ReadZeroPageByte(kTXTPTR));
-    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1)));
-    PushByteToStack(ReadZeroPageByte(kCURLIN));
+    const std::uint16_t textPointer = ReadZeroPageWord(kTXTPTR);
+    const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
+
+    PushByteToStack(ApplesoftVariables::highByte(textPointer));
+    PushByteToStack(ApplesoftVariables::lowByte(textPointer));
+    PushByteToStack(ApplesoftVariables::highByte(currentLine));
+    PushByteToStack(ApplesoftVariables::lowByte(currentLine));
     PushByteToStack(kTOKEN_GOSUB);
 
     // Fall-through in ROM from GOSUB to GO_TO_LINE.
@@ -1560,18 +1557,14 @@ void GOTO() {
     const std::uint8_t currentPage = ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1));
     const std::uint8_t targetPage = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1));
 
-    std::uint8_t startLo = 0;
-    std::uint8_t startHi = 0;
+    std::uint16_t start = 0;
     if (currentPage >= targetPage) {
-        startLo = ReadZeroPageByte(kTXTTAB);
-        startHi = ReadZeroPageByte(static_cast<std::uint8_t>(kTXTTAB + 1));
+        start = ReadZeroPageWord(kTXTTAB);
     } else {
-        const std::uint16_t start = static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + remnOffset + 1u);
-        startLo = static_cast<std::uint8_t>(start & 0xffu);
-        startHi = static_cast<std::uint8_t>(start >> 8);
+        start = static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + remnOffset + 1u);
     }
 
-    if (!FL1(startLo, startHi)) {
+    if (!FL1(start)) {
         ERROR(ERR_UNDEFSTAT);
         return;
     }
@@ -1618,17 +1611,21 @@ void RETURN() {
     constexpr std::uint8_t kTXTPTR = 0xb8;
 
     (void)PopByteFromStack(); // discard GOSUB token
-    const std::uint8_t maybeCurlinLo = PopByteFromStack();
+    const std::uint8_t currentLineLo = PopByteFromStack();
 
     if (ReturnWasFromPOPContext()) {
         PULL3();
         return;
     }
 
-    WriteZeroPageByte(kCURLIN, maybeCurlinLo);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1), PopByteFromStack());
-    WriteZeroPageByte(kTXTPTR, PopByteFromStack());
-    WriteZeroPageByte(static_cast<std::uint8_t>(kTXTPTR + 1), PopByteFromStack());
+    const std::uint16_t currentLine =
+        static_cast<std::uint16_t>(PopByteFromStack()) << 8 | currentLineLo;
+    const std::uint8_t textPointerLo = PopByteFromStack();
+    const std::uint16_t textPointer =
+        static_cast<std::uint16_t>(PopByteFromStack()) << 8 | textPointerLo;
+
+    WriteZeroPageWord(kCURLIN, currentLine);
+    WriteZeroPageWord(kTXTPTR, textPointer);
 }
 
 void RTS_5() {
@@ -1692,6 +1689,10 @@ bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
         const std::uint8_t nextLo = ReadProgramByte(current);
         current = static_cast<std::uint16_t>(static_cast<std::uint16_t>(nextHi) << 8) | nextLo;
     }
+}
+
+bool FL1(std::uint16_t startAddress) {
+    return FL1(ApplesoftVariables::lowByte(startAddress), ApplesoftVariables::highByte(startAddress));
 }
 
 std::uint8_t PopByteFromStack() {
@@ -1886,8 +1887,7 @@ void PUTSTR() {
         return variables_const().readByte(static_cast<std::uint16_t>(facDescriptor + offset));
     };
 
-    std::uint8_t dscLow = ReadZeroPageByte(kFAC_PLUS_3);
-    std::uint8_t dscHigh = ReadZeroPageByte(kFAC_PLUS_4);
+    std::uint16_t descriptorPointer = ReadZeroPageWord(kFAC_PLUS_3);
 
     const std::uint8_t descDataHigh = readDescriptorByte(2);
     const std::uint8_t fretopHigh = ReadZeroPageByte(static_cast<std::uint8_t>(kFRETOP + 1));
@@ -1905,10 +1905,7 @@ void PUTSTR() {
     }
 
     if (!useExistingDescriptor) {
-        const std::uint8_t vartabHigh = ReadZeroPageByte(static_cast<std::uint8_t>(kVARTAB + 1));
-        if (dscHigh > vartabHigh) {
-            descriptorIsVariable = true;
-        } else if (dscHigh == vartabHigh && dscLow >= ReadZeroPageByte(kVARTAB)) {
+        if (descriptorPointer >= ReadZeroPageWord(kVARTAB)) {
             descriptorIsVariable = true;
         }
     }
@@ -1917,12 +1914,10 @@ void PUTSTR() {
         STRINI(readDescriptorByte(0));
         WriteZeroPageWord(kSTRNG1, ReadZeroPageWord(kDSCPTR));
         MOVINS();
-        dscLow = kFAC_PLUS_3;
-        dscHigh = 0;
+        descriptorPointer = kFAC_PLUS_3;
     }
 
-    WriteZeroPageByte(kDSCPTR, dscLow);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kDSCPTR + 1), dscHigh);
+    WriteZeroPageWord(kDSCPTR, descriptorPointer);
 
     FRETMS();
 

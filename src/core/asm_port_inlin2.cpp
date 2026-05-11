@@ -61,10 +61,11 @@ Inlin2Result INLIN2(std::uint8_t x) {
     }
 
     // A=0, YX points at INPUT_BUFFER-1.
+    const std::uint16_t inputBufferMinus1 = static_cast<std::uint16_t>(kInputBufferAddress - 1u);
     return Inlin2Result{
         0,
-        static_cast<std::uint8_t>((kInputBufferAddress - 1u) & 0xffu),
-        static_cast<std::uint8_t>(((kInputBufferAddress - 1u) >> 8) & 0xffu)
+        ApplesoftVariables::lowByte(inputBufferMinus1),
+        ApplesoftVariables::highByte(inputBufferMinus1)
     };
 }
 

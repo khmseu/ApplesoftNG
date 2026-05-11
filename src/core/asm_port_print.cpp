@@ -49,19 +49,14 @@ static std::uint8_t GTBYTC() { return 0; }
 // return the string length.
 // TODO(asm-port): FRETMS (temporary-release part) not yet implemented.
  std::uint8_t FREFAC() {
-    // FAC[3] = lo byte, FAC[4] = hi byte of descriptor pointer
-    const std::uint8_t desc_lo = variables_const().FAC[3];
-    const std::uint8_t desc_hi = variables_const().FAC[4];
-    const std::uint16_t desc_addr =
-        static_cast<std::uint16_t>(static_cast<std::uint16_t>(desc_hi) << 8 | desc_lo);
+    const std::uint16_t descriptorAddress =
+        static_cast<std::uint16_t>(static_cast<std::uint16_t>(variables_const().FAC[4]) << 8 |
+                                   variables_const().FAC[3]);
 
     // String descriptor layout: [length, data_lo, data_hi]
-    const std::uint8_t length  = variables_const().readByte(desc_addr);
-    const std::uint8_t data_lo = variables_const().readByte(static_cast<std::uint16_t>(desc_addr + 1u));
-    const std::uint8_t data_hi = variables_const().readByte(static_cast<std::uint16_t>(desc_addr + 2u));
+    const std::uint8_t length = variables_const().readByte(descriptorAddress);
 
-    variables().INDEX =
-        static_cast<std::uint16_t>(static_cast<std::uint16_t>(data_hi) << 8 | data_lo);
+    variables().INDEX = variables_const().readWord(static_cast<std::uint16_t>(descriptorAddress + 1u));
 
     return length;
 }

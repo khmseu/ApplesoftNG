@@ -206,13 +206,15 @@ void ERLIN(std::uint8_t a, std::uint8_t y) {
     SYNERR();
 }
 
+void ERLIN(std::uint16_t lineNumber) {
+    ERLIN(ApplesoftVariables::lowByte(lineNumber), ApplesoftVariables::highByte(lineNumber));
+}
+
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: READERR (inclusive) .. ERLIN (exclusive)
 // Name normalization: none (assembler label READERR kept verbatim).
 void READERR() {
-    ERLIN(
-        static_cast<std::uint8_t>(variables_const().DATLIN & 0xffu),
-        static_cast<std::uint8_t>(variables_const().DATLIN >> 8));
+    ERLIN(variables_const().DATLIN);
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
