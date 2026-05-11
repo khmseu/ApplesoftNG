@@ -1323,7 +1323,7 @@ void ENDX_impl(bool shouldPrintBreak) {
     const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
     const std::uint8_t currentPageHi = ApplesoftVariables::highByte(currentLine);
 
-    if (static_cast<std::uint8_t>(currentPageHi + 1u) != 0u) {
+    if (add_u8(currentPageHi, 1u) != 0u) {
         WriteZeroPageWord(kOLDTEXT, textPointer);
         WriteZeroPageWord(kOLDLIN, currentLine);
     }
