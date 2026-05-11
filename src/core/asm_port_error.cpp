@@ -625,13 +625,15 @@ bool IsLineNumberGreater(LineNumber current, LineNumber limit) {
 }
 
 LineNumber ReadProgramLineNumber(LineAddress current) {
-    return LineNumber{ReadProgramByte(current, 2), ReadProgramByte(current, 3)};
+    const ProgramPointer currentPtr{ToWord(current)};
+    return LineNumber{currentPtr.read(2u), currentPtr.read(3u)};
 }
 
 void PrintListLine(LineAddress current) {
+    const ProgramPointer currentPtr{ToWord(current)};
     std::uint8_t offset = 4;
     while (true) {
-        const std::uint8_t ch = ReadProgramByte(current, offset);
+        const std::uint8_t ch = currentPtr.read(offset);
         if (ch == 0) {
             break;
         }
