@@ -708,7 +708,7 @@ std::optional<TokenMatch> MatchToken(std::uint8_t index) {
             }
         }
 
-        std::uint8_t tokenCode = static_cast<std::uint8_t>(kTokenBase + i);
+        std::uint8_t tokenCode = add_u8(kTokenBase, static_cast<std::uint8_t>(i));
         if (!best || token.size() > best->length) {
             best = TokenMatch{tokenCode,
                               static_cast<std::uint8_t>(token.size()),
