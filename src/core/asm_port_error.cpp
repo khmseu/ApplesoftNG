@@ -581,6 +581,18 @@ std::uint8_t ReadProgramByte(std::uint16_t address) {
     return 0;
 }
 
+struct ProgramPointer {
+    std::uint16_t address = 0;
+
+    std::uint8_t read(std::uint16_t offset = 0) const {
+        return ReadProgramByte(static_cast<std::uint16_t>(address + offset));
+    }
+
+    ProgramPointer advanced(std::uint16_t offset) const {
+        return ProgramPointer{static_cast<std::uint16_t>(address + offset)};
+    }
+};
+
 struct LineAddress;
 std::uint8_t ReadProgramByte(LineAddress base, std::uint8_t offset);
 std::uint16_t ToWord(LineAddress address);
@@ -948,12 +960,13 @@ std::uint8_t ReadProgramByte(LineAddress base, std::uint8_t offset) {
 LineAddress AdvanceToNextLine(LineAddress current) {
     // The original FIX_LINKS routine scans from the current line until it finds the
     // end-of-line marker, then computes the address of the next line.
+    const ProgramPointer currentPtr{ToWord(current)};
     std::uint8_t offset = 4;
-    while (ReadProgramByte(current, offset) != 0) {
+    while (currentPtr.read(offset) != 0) {
         ++offset;
     }
 
-    const std::uint16_t nextAddress = ToWord(current) + static_cast<std::uint16_t>(offset) + 1u;
+    const std::uint16_t nextAddress = currentPtr.advanced(static_cast<std::uint16_t>(offset) + 1u).address;
     return FromWord(nextAddress);
 }
 
@@ -1159,7 +1172,8 @@ std::uint8_t ScanAheadOffset(std::uint8_t terminator) {
         WriteZeroPageByte(kENDCHR, previousCharac);
 
         while (true) {
-            const std::uint8_t ch = ReadProgramByte(static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + offset));
+            const ProgramPointer textPtr{ReadZeroPageWord(kTXTPTR)};
+            const std::uint8_t ch = textPtr.read(offset);
             if (ch == 0 || ch == ReadZeroPageByte(kENDCHR)) {
                 return offset;
             }
@@ -1672,19 +1686,20 @@ bool FL1(std::uint16_t startAddress) {
 
     while (true) {
         WriteZeroPageWord(kLOWTR, current);
+        const ProgramPointer currentPtr{current};
 
-        const std::uint8_t nextHi = ReadProgramByte(static_cast<std::uint16_t>(current + 1u));
+        const std::uint8_t nextHi = currentPtr.read(1u);
         if (nextHi == 0) {
             return false;
         }
 
-        const std::uint8_t lineHi = ReadProgramByte(static_cast<std::uint16_t>(current + 3u));
+        const std::uint8_t lineHi = currentPtr.read(3u);
         if (targetHi < lineHi) {
             return false;
         }
 
         if (targetHi == lineHi) {
-            const std::uint8_t lineLo = ReadProgramByte(static_cast<std::uint16_t>(current + 2u));
+            const std::uint8_t lineLo = currentPtr.read(2u);
             if (targetLo < lineLo) {
                 return false;
             }
@@ -1693,7 +1708,7 @@ bool FL1(std::uint16_t startAddress) {
             }
         }
 
-        const std::uint8_t nextLo = ReadProgramByte(current);
+        const std::uint8_t nextLo = currentPtr.read();
         current = ApplesoftVariables::makeWord(nextLo, nextHi);
     }
 }
