@@ -100,11 +100,15 @@ void STRPRT() {
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: STROUT (inclusive) .. STRPRT (exclusive)
 // Name normalization: none (assembler label STROUT kept verbatim).
-void STROUT(std::uint8_t a, std::uint8_t y) {
-    // jsr STRLIT — build a FAC string descriptor from the address in (y, a)
-    STRLIT(a, y);
+void STROUT(std::uint16_t address) {
+    // jsr STRLIT — build a FAC string descriptor from the address.
+    STRLIT(address);
     // Fall through to STRPRT (range end is exclusive; modeled as call).
     STRPRT();
+}
+
+void STROUT(std::uint8_t a, std::uint8_t y) {
+    STROUT(ApplesoftVariables::makeWord(a, y));
 }
 
 // ---------------------------------------------------------------------------
