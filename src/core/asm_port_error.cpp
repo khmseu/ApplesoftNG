@@ -95,6 +95,10 @@ std::uint16_t ReadZeroPageWord(std::uint8_t address) {
     return variables_const().readWord(address);
 }
 
+std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
+    return static_cast<std::uint8_t>(lhs + rhs);
+}
+
 void RESTORE();
 void SETDA(std::uint16_t dataPointer);
 void CONTROL_C_TYPED();
@@ -352,7 +356,7 @@ void FOR() {
     GTFORPNTState gtforpntState{};
     const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
     if (gtforpntResult.found) {
-        SetStackPointer(static_cast<std::uint8_t>(gtforpntResult.x + 15));
+        SetStackPointer(add_u8(gtforpntResult.x, 15u));
     }
 
     PopReturnAddress();
@@ -472,7 +476,7 @@ void NEXT() {
     // d0 04 / NEXT_1 jsr PTRGET / NEXT_2 sta FORPNT, sty FORPNT+1
     // No-variable NEXT case is represented by FORPNT+1 = 0.
     if (CHRGOT() == 0u) {
-        WriteZeroPageByte(static_cast<std::uint8_t>(kFORPNT + 1), 0u);
+        WriteZeroPageByte(add_u8(kFORPNT, 1u), 0u);
     } else {
         const std::uint16_t varPtr = PTRGET();
         WriteZeroPageWord(kFORPNT, varPtr);
@@ -481,7 +485,7 @@ void NEXT() {
     // jsr GTFORPNT
     GTFORPNTState gtforpntState{};
     gtforpntState.forpntLo = ReadZeroPageByte(kFORPNT);
-    gtforpntState.forpntHi = ReadZeroPageByte(static_cast<std::uint8_t>(kFORPNT + 1));
+    gtforpntState.forpntHi = ReadZeroPageByte(add_u8(kFORPNT, 1u));
     // TODO(asm-port): populate gtforpntState.stackPage from runtime stack memory.
 
     const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
@@ -516,7 +520,7 @@ void NEXT() {
 
     // L_NEXT_3_2: pop FOR frame, then continue NEWSTT unless another variable
     // follows in NEXT var-list (NEXT I,J,...).
-    SetStackPointer(static_cast<std::uint8_t>(gtforpntResult.x + 18u));
+    SetStackPointer(add_u8(gtforpntResult.x, 18u));
 
     if (CHRGOT() != static_cast<std::uint8_t>(',')) {
         NEWSTT();
