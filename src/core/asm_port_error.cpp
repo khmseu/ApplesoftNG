@@ -1686,11 +1686,10 @@ bool FL1(std::uint16_t startAddress) {
     const std::uint8_t targetLo = ReadZeroPageByte(kLINNUM);
     const std::uint8_t targetHi = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1));
 
-    std::uint16_t current = startAddress;
+    ProgramPointer currentPtr{startAddress};
 
     while (true) {
-        WriteZeroPageWord(kLOWTR, current);
-        const ProgramPointer currentPtr{current};
+        WriteZeroPageWord(kLOWTR, currentPtr.address);
 
         const std::uint8_t nextHi = currentPtr.read(1u);
         if (nextHi == 0) {
@@ -1713,7 +1712,7 @@ bool FL1(std::uint16_t startAddress) {
         }
 
         const std::uint8_t nextLo = currentPtr.read();
-        current = ApplesoftVariables::makeWord(nextLo, nextHi);
+        currentPtr = ProgramPointer{ApplesoftVariables::makeWord(nextLo, nextHi)};
     }
 }
 
