@@ -2319,9 +2319,9 @@ void GETARY2() {
     // Name normalization: none (assembler label GETARY2 kept verbatim).
 
     const std::uint8_t numDim = ReadZeroPageByte(0x0fu);
-    const std::uint16_t lowtr = ReadZeroPageWord(0x9bu);
-    const std::uint16_t arypnt = static_cast<std::uint16_t>(lowtr + static_cast<std::uint16_t>(numDim * 2u) + 5u);
-    WriteZeroPageWord(0x94u, arypnt);
+    const ProgramPointer lowtr{ReadZeroPageWord(0x9bu)};
+    const std::uint16_t arypntOffset = static_cast<std::uint16_t>(numDim * 2u) + 5u;
+    WriteZeroPageWord(0x94u, lowtr.advanced(arypntOffset).address);
 }
 
 void NEG32768() {
