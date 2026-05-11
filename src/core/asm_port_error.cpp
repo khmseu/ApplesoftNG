@@ -939,9 +939,9 @@ LineAddress FromWord(std::uint16_t value) {
     return LineAddress{ApplesoftVariables::lowByte(value), ApplesoftVariables::highByte(value)};
 }
 
-LineAddress GetTextTableAddress() {
+ProgramPointer GetTextTablePointer() {
     constexpr std::uint8_t kTXTTAB = 0x67;
-    return FromWord(ReadZeroPageWord(kTXTTAB));
+    return ProgramPointer{ReadZeroPageWord(kTXTTAB)};
 }
 
 bool IsEndOfProgram(LineAddress current) {
@@ -982,7 +982,7 @@ void FIX_LINKS() {
 
     SETPTRS();
 
-    ProgramPointer currentPtr{ToWord(GetTextTableAddress())};
+    ProgramPointer currentPtr = GetTextTablePointer();
     while (true) {
         if (IsEndOfProgram(currentPtr)) {
             RESTART();
