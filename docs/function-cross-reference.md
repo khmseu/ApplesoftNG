@@ -63,7 +63,7 @@ returning, or contains `TODO(asm-port)`.
 | ENDX                              | src/core/asm_port_token_address_table.cpp |   14 | stub   |
 | ENDX_impl                         | src/core/asm_port_error.cpp               | 1311 | real   |
 | ERLIN                             | src/core/asm_port_input.cpp               |  203 | real   |
-| ERRDIR                            | src/core/asm_port_input.cpp               |   39 | stub   |
+| ERRDIR                            | src/core/asm_port_error.cpp               | 2641 | real   |
 | ERROR                             | src/core/asm_port_error.cpp               |  871 | real   |
 | ERROR_MESSAGES                    | src/core/asm_port_error_messages.cpp      |   14 | stub   |
 | EXECUTE_STATEMENT                 | src/core/asm_port_error.cpp               | 1222 | real   |
@@ -81,6 +81,7 @@ returning, or contains `TODO(asm-port)`.
 | FNDLIN                            | src/core/asm_port_error.cpp               |  643 | real   |
 | FOR                               | src/core/asm_port_error.cpp               |  350 | stub   |
 | FOR                               | src/core/asm_port_token_address_table.cpp |   38 | stub   |
+| FRE                               | src/core/asm_port_error.cpp               | 2592 | real   |
 | FRETMP                            | src/core/asm_port_error.cpp               |  429 | stub   |
 | FRETMS                            | src/core/asm_port_error.cpp               | 2534 | stub   |
 | FRM_STACK_2                       | src/core/asm_port_error.cpp               | 1127 | stub   |
@@ -96,6 +97,7 @@ returning, or contains `TODO(asm-port)`.
 | GETCHR                            | src/core/asm_port_error.cpp               |  610 | real   |
 | GETLN                             | src/platform/asm_port_getln.cpp           |   37 | stub   |
 | GETLNZ                            | src/platform/asm_port_getln.cpp           |   27 | stub   |
+| GIVAYF                            | src/core/asm_port_error.cpp               | 2613 | real   |
 | GetTextTablePointer               | src/core/asm_port_error.cpp               |  931 | real   |
 | GME                               | src/core/asm_port_error.cpp               |  278 | real   |
 | GO_TO_LINE                        | src/core/asm_port_error.cpp               | 1534 | real   |
@@ -172,6 +174,8 @@ returning, or contains `TODO(asm-port)`.
 | MON_WRITE                         | src/core/asm_port_error.cpp               | 1799 | stub   |
 | MOVINS                            | src/core/asm_port_error.cpp               | 2530 | stub   |
 | MOVSTR                            | src/core/asm_port_strlt2.cpp              |   40 | stub   |
+| MULTIPLY_SUBSCRIPT                | src/core/asm_port_error.cpp               | 2523 | real   |
+| MULTIPLY_SUBS_1                   | src/core/asm_port_error.cpp               | 2539 | real   |
 | NAME_NOT_FOUND                    | src/core/asm_port_error.cpp               | 2276 | stub   |
 | NAMOK                             | src/core/asm_port_error.cpp               | 2192 | real   |
 | NEG32768                          | src/core/asm_port_error.cpp               | 2334 | real   |
@@ -201,6 +205,7 @@ returning, or contains `TODO(asm-port)`.
 | PDL                               | src/core/asm_port_unfnc.cpp               |   13 | stub   |
 | PeekTopControlTokenAfterGTFORPNT  | src/core/asm_port_error.cpp               | 1706 | stub   |
 | PLOTFNS                           | src/core/asm_port_error.cpp               |  413 | stub   |
+| POS                               | src/core/asm_port_error.cpp               | 2633 | real   |
 | POINT                             | src/core/asm_port_strtxt.cpp              |   24 | stub   |
 | POP                               | src/core/asm_port_error.cpp               | 1578 | stub   |
 | POP                               | src/core/asm_port_token_address_table.cpp |   22 | stub   |
@@ -284,7 +289,7 @@ returning, or contains `TODO(asm-port)`.
 | SetTextPointer                    | src/core/asm_port_error.cpp               |   31 | real   |
 | SetTextPointerToInputBufferMinus1 | src/core/asm_port_error.cpp               |  670 | stub   |
 | SIGN                              | src/core/asm_port_error.cpp               | 1123 | stub   |
-| SNGFLT                            | src/core/asm_port_error.cpp               |  452 | stub   |
+| SNGFLT                            | src/core/asm_port_error.cpp               |  462 | real   |
 | stack_at                          | src/core/asm_port_gtforpnt.cpp            |   13 | real   |
 | stack_word_at                     | src/core/asm_port_gtforpnt.cpp            |   17 | real   |
 | STEP                              | src/core/asm_port_error.cpp               |  536 | stub   |
@@ -315,6 +320,7 @@ returning, or contains `TODO(asm-port)`.
 | TRACE\_                           | src/core/asm_port_error.cpp               |  581 | real   |
 | TRUE                              | src/core/asm_port_error.cpp               | 2052 | real   |
 | UNARY                             | src/core/asm_port_error.cpp               | 1990 | stub   |
+| UNDFNC                            | src/core/asm_port_error.cpp               | 2653 | real   |
 | UNFNC                             | src/core/asm_port_unfnc.cpp               |   49 | stub   |
 | USE_OLD_ARRAY                     | src/core/asm_port_error.cpp               | 2447 | real   |
 | VARTIO                            | src/core/asm_port_error.cpp               | 1429 | stub   |

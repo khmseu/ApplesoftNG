@@ -18,6 +18,7 @@ namespace applesoft::asm_port {
 void CONTROL_C_TYPED();
 void HANDLERR();
 void SYNERR();
+void ERRDIR();
 void STROUT(std::string_view text);
 
 // TODO(asm-port): port CHRGOT label.
@@ -34,9 +35,6 @@ std::uint8_t CHRGET_INPUT() { return 0; }
 
 // TODO(asm-port): port SYNCHR label.
 void SYNCHR(std::uint8_t /*expected*/) {}
-
-// TODO(asm-port): port ERRDIR label.
-void ERRDIR() {}
 
 // TODO(asm-port): port INLIN label.
 // void INLIN() {}

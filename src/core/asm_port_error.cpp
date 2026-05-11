@@ -439,23 +439,32 @@ std::uint8_t MON_PREAD() {
     return 0;
 }
 
+void GIVAYF(std::int16_t value);
+
 // TODO(asm-port): port QINT label.
 void QINT() {}
 
 // TODO(asm-port): port COLD_START label.
 void COLD_START() {}
 
+// TODO(asm-port): port FLOAT_1 label.
+void FLOAT_1(std::uint8_t exponent) {
+    WriteZeroPageByte(ApplesoftVariables::ZP_FAC, exponent);
+}
+
+// TODO(asm-port): port GARBAG label.
+void GARBAG() {}
+
 std::uint8_t gJerErrorCode = ERR_SYNTAX;
 constexpr std::uint8_t kNEG32768Data[4] = {0x90u, 0x80u, 0x00u, 0x00u};
 constexpr std::uint8_t kCZeroData[2] = {0x00u, 0x00u};
 
 void SNGFLT(std::uint8_t value) {
-    // TODO(asm-port): replace with true SNGFLT conversion routine.
-    WriteZeroPageByte(ApplesoftVariables::ZP_FAC, value);
-    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 1u), 0u);
-    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 2u), 0u);
-    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 3u), 0u);
-    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 4u), 0u);
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SNGFLT (inclusive) .. ERRDIR (exclusive)
+    // Name normalization: none (assembler label SNGFLT kept verbatim).
+
+    GIVAYF(static_cast<std::int16_t>(value));
 }
 
 // TODO(asm-port): compare temporary ARG and FAC strings and return -1/0/1.
@@ -2518,6 +2527,137 @@ void GME() {
     (void)MEMERR();
 }
 
+std::uint16_t MULTIPLY_SUBS_1(std::uint8_t multiplierHigh);
+
+std::uint16_t MULTIPLY_SUBSCRIPT(std::uint8_t descriptorOffset) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: MULTIPLY_SUBSCRIPT (inclusive) .. MULTIPLY_SUBS_1 (exclusive)
+    // Name normalization: none (assembler label MULTIPLY_SUBSCRIPT kept verbatim).
+    // Load the 16-bit array-dimension multiplier from the LOWTR descriptor pointer.
+
+    WriteZeroPageByte(ApplesoftVariables::ZP_INDEX, descriptorOffset);
+
+    const ProgramPointer descriptor{ReadZeroPageWord(ApplesoftVariables::ZP_LOWTR)};
+    WriteZeroPageByte(
+        static_cast<std::uint8_t>(ApplesoftVariables::ZP_RESULT + 2u),
+        descriptor.read(descriptorOffset));
+
+    return MULTIPLY_SUBS_1(descriptor.read(static_cast<std::uint16_t>(descriptorOffset - 1u)));
+}
+
+std::uint16_t MULTIPLY_SUBS_1(std::uint8_t multiplierHigh) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: MULTIPLY_SUBS_1 (inclusive) .. FRE (exclusive)
+    // Name normalization: none (assembler label MULTIPLY_SUBS_1 kept verbatim).
+    // STRNG2 is dual-use elsewhere, but in this slice it is the 16-bit multiplicand.
+
+    WriteZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_RESULT + 3u), multiplierHigh);
+    WriteZeroPageByte(ApplesoftVariables::ZP_INDX, 16u);
+
+    const std::uint16_t multiplier = ApplesoftVariables::makeWord(
+        ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_RESULT + 2u)),
+        multiplierHigh);
+
+    std::uint16_t multiplicand = ReadZeroPageWord(ApplesoftVariables::ZP_STRNG2);
+    std::uint16_t product = 0u;
+
+    for (std::uint8_t bitsRemaining = 16u; bitsRemaining > 0u; --bitsRemaining) {
+        if ((product & 0x8000u) != 0u) {
+            GME();
+            return product;
+        }
+
+        product = static_cast<std::uint16_t>(product << 1u);
+
+        const bool nextBitSet = (multiplicand & 0x8000u) != 0u;
+        multiplicand = static_cast<std::uint16_t>(multiplicand << 1u);
+        WriteZeroPageWord(ApplesoftVariables::ZP_STRNG2, multiplicand);
+
+        if (!nextBitSet) {
+            continue;
+        }
+
+        if (product > static_cast<std::uint16_t>(0xffffu - multiplier)) {
+            GME();
+            return product;
+        }
+
+        product = static_cast<std::uint16_t>(product + multiplier);
+    }
+
+    WriteZeroPageByte(ApplesoftVariables::ZP_INDX, 0u);
+    return product;
+}
+
+void FRE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FRE (inclusive) .. GIVAYF (exclusive)
+    // Name normalization: none (assembler label FRE kept verbatim).
+    // FRETOP and STREND are one logical address pair each; model the subtraction
+    // as one 16-bit free-space computation before floating the signed result.
+
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_VALTYP) != 0u) {
+        (void)FREFAC();
+    }
+
+    GARBAG();
+
+    const std::uint16_t fretop = ReadZeroPageWord(ApplesoftVariables::ZP_FRETOP);
+    const std::uint16_t strend = ReadZeroPageWord(ApplesoftVariables::ZP_STREND);
+    const std::uint16_t freeSpace = static_cast<std::uint16_t>(fretop - strend);
+    GIVAYF(static_cast<std::int16_t>(freeSpace));
+}
+
+namespace {
+
+void GIVAYF(std::int16_t value) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: GIVAYF (inclusive) .. POS (exclusive)
+    // Name normalization: none (assembler label GIVAYF kept verbatim).
+    // The A/Y pair is one signed 16-bit integer on entry; represent it as one
+    // C++ value instead of split low/high byte locals.
+
+    const std::uint16_t rawValue = static_cast<std::uint16_t>(value);
+
+    WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP, 0u);
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 1u), ApplesoftVariables::lowByte(rawValue));
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 2u), ApplesoftVariables::highByte(rawValue));
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 3u), 0u);
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 4u), 0u);
+
+    FLOAT_1(0x90u);
+}
+
+} // namespace
+
+void POS() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: POS (inclusive) .. SNGFLT (exclusive)
+    // Name normalization: none (assembler label POS kept verbatim).
+
+    SNGFLT(ReadZeroPageByte(ApplesoftVariables::ZP_MON_CH));
+}
+
+void ERRDIR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ERRDIR (inclusive) .. DEF (exclusive)
+    // Name normalization: none (assembler label ERRDIR kept verbatim).
+
+    if (!IsDirectMode()) {
+        return;
+    }
+
+    ERROR(ERR_ILLDIR);
+}
+
+void UNDFNC() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: UNDFNC (inclusive) .. DEF (exclusive)
+    // Name normalization: none (assembler label UNDFNC kept verbatim).
+
+    ERROR(ERR_UNDEFFUNC);
+}
+
 void SETFOR() {
     // TODO(asm-port): port SETFOR label.
 }
@@ -2545,8 +2685,7 @@ bool IsOnErr() {
 }
 
 bool IsDirectMode() {
-    // TODO(asm-port): return true when the interpreter is in direct mode.
-    return false;
+    return ReadZeroPageByte(add_u8(ApplesoftVariables::ZP_CURLIN, 1u)) == 0xffu;
 }
 
 } // namespace applesoft::asm_port
