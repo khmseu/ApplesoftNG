@@ -1554,14 +1554,15 @@ void GOTO() {
     const std::uint8_t currentPage = ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1));
     const std::uint8_t targetPage = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1));
 
-    std::uint16_t start = 0;
+    ProgramPointer start{};
     if (currentPage >= targetPage) {
-        start = ReadZeroPageWord(kTXTTAB);
+        start = ProgramPointer{ReadZeroPageWord(kTXTTAB)};
     } else {
-        start = static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + remnOffset + 1u);
+        const ProgramPointer textPtr{ReadZeroPageWord(kTXTPTR)};
+        start = textPtr.advanced(static_cast<std::uint16_t>(remnOffset) + 1u);
     }
 
-    if (!FL1(start)) {
+    if (!FL1(start.address)) {
         ERROR(ERR_UNDEFSTAT);
         return;
     }
@@ -2303,8 +2304,8 @@ void SET_VARPNT_AND_YA() {
     // Labels: SET_VARPNT_AND_YA (inclusive) .. GETARY (exclusive)
     // Name normalization: none (assembler label SET_VARPNT_AND_YA kept verbatim).
 
-    const std::uint16_t valueAddress = static_cast<std::uint16_t>(ReadZeroPageWord(0x9bu) + 2u);
-    WriteZeroPageWord(0x83u, valueAddress); // VARPNT
+    const ProgramPointer lowtr{ReadZeroPageWord(0x9bu)};
+    WriteZeroPageWord(0x83u, lowtr.advanced(2u).address); // VARPNT
 }
 
 void GETARY() {
