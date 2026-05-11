@@ -953,10 +953,7 @@ bool IsEndOfProgram(LineAddress current) {
 }
 
 std::uint8_t ReadProgramByte(LineAddress base, std::uint8_t offset) {
-    // TODO(asm-port): read a byte from the program memory buffer at base+offset.
-    (void)base;
-    (void)offset;
-    return 0;
+    return ProgramPointer{ToWord(base)}.read(offset);
 }
 
 LineAddress AdvanceToNextLine(LineAddress current) {
