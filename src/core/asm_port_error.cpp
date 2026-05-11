@@ -44,6 +44,7 @@ std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 std::uint16_t ReadZeroPageWord(std::uint8_t address);
+std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs);
 std::uint8_t CHRGOT();
 void SYNERR();
 
@@ -63,7 +64,7 @@ void LINGET() {
         const std::uint8_t digit = static_cast<std::uint8_t>(current - static_cast<std::uint8_t>('0'));
         WriteZeroPageByte(kCHARAC, digit);
 
-        const std::uint8_t lineHigh = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1));
+        const std::uint8_t lineHigh = ReadZeroPageByte(add_u8(kLINNUM, 1u));
         WriteZeroPageByte(kINDEX, lineHigh);
 
         // Preserve ROM overflow guard (line number exceeds 63999).
@@ -559,7 +560,7 @@ void NEWSTT() {
         return;
     }
 
-    if (ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1)) != 0xffu) {
+    if (ReadZeroPageByte(add_u8(kCURLIN, 1u)) != 0xffu) {
         WriteZeroPageWord(kOLDTEXT_lo, ReadZeroPageWord(kTXTPTR));
     } else {
         WriteZeroPageWord(kOLDTEXT_lo, 0);
@@ -802,7 +803,7 @@ void LIST() {
         LINGET();
     }
 
-    LineNumber endRange{ReadZeroPageByte(kLINNUM), ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1))};
+    LineNumber endRange{ReadZeroPageByte(kLINNUM), ReadZeroPageByte(add_u8(kLINNUM, 1u))};
     if (endRange.lo == 0 && endRange.hi == 0) {
         endRange.lo = 0xff;
         endRange.hi = 0xff;
@@ -1555,8 +1556,8 @@ void GOTO() {
     LINGET();
     const std::uint8_t remnOffset = REMN();
 
-    const std::uint8_t currentPage = ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1));
-    const std::uint8_t targetPage = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1));
+    const std::uint8_t currentPage = ReadZeroPageByte(add_u8(kCURLIN, 1u));
+    const std::uint8_t targetPage = ReadZeroPageByte(add_u8(kLINNUM, 1u));
 
     ProgramPointer start{};
     if (currentPage >= targetPage) {
@@ -1657,7 +1658,7 @@ bool FL1(std::uint16_t startAddress) {
     constexpr std::uint8_t kLINNUM = 0x50;
 
     const std::uint8_t targetLo = ReadZeroPageByte(kLINNUM);
-    const std::uint8_t targetHi = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1));
+    const std::uint8_t targetHi = ReadZeroPageByte(add_u8(kLINNUM, 1u));
 
     ProgramPointer currentPtr{startAddress};
 
@@ -1810,7 +1811,7 @@ void SYNERR() {
 
 void PushForPntFrame() {
     constexpr std::uint8_t kFORPNT = 0x85;
-    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kFORPNT + 1)));
+    PushByteToStack(ReadZeroPageByte(add_u8(kFORPNT, 1u)));
     PushByteToStack(ReadZeroPageByte(kFORPNT));
     PushTokenTo(TOKEN_FOR);
 }
@@ -1830,7 +1831,7 @@ void LET() {
     SYNCHR(kTOKEN_EQUAL);
 
     const std::uint8_t savedValTyp = ReadZeroPageByte(kVALTYP);
-    const std::uint8_t savedValTypPlus1 = ReadZeroPageByte(static_cast<std::uint8_t>(kVALTYP + 1));
+    const std::uint8_t savedValTypPlus1 = ReadZeroPageByte(add_u8(kVALTYP, 1u));
 
     FRMEVL();
 
@@ -1890,7 +1891,7 @@ void PUTSTR() {
     std::uint16_t descriptorPointer = ReadZeroPageWord(kFAC_PLUS_3);
 
     const std::uint8_t descDataHigh = readDescriptorByte(2);
-    const std::uint8_t fretopHigh = ReadZeroPageByte(static_cast<std::uint8_t>(kFRETOP + 1));
+    const std::uint8_t fretopHigh = ReadZeroPageByte(add_u8(kFRETOP, 1u));
 
     bool useExistingDescriptor = false;
     bool descriptorIsVariable = false;
