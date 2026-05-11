@@ -17,6 +17,11 @@ namespace applesoft::asm_port {
     // Name normalization: none (assembler label CHKCOM kept verbatim).
     void CHKCOM() ;
 
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: CHKNUM (inclusive) .. CHKSTR (exclusive)
+    // Name normalization: none (assembler label CHKNUM kept verbatim).
+    void CHKNUM() ;
+
 
 
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst

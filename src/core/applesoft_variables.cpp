@@ -56,6 +56,7 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case ZP_DIMFLG: return DIMFLG;
     case ZP_VALTYP: return VALTYP;
     case ZP_VALTYP_PLUS_1: return VALTYP_PLUS_1;
+    case ZP_GARFLG: return GARFLG;
     case ZP_SUBFLG: return SUBFLG;
     case ZP_INPUTFLG: return INPUTFLG;
     case ZP_CPRMASK: return CPRMASK;
@@ -68,6 +69,7 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case ZP_LINNUM: return lowByte(LINNUM);
     case ZP_LINNUM + 1: return highByte(LINNUM);
     case ZP_TEMPPT: return TEMPPT;
+    case ZP_LASTPT: return LASTPT;
     case ZP_INDEX: return lowByte(INDEX);
     case ZP_INDEX + 1: return highByte(INDEX);
     case ZP_RESULT: return RESULT[0];
@@ -84,6 +86,8 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case ZP_STREND + 1: return highByte(STREND);
     case ZP_FRETOP: return lowByte(FRETOP);
     case ZP_FRETOP + 1: return highByte(FRETOP);
+    case ZP_FRESPC: return lowByte(FRESPC);
+    case ZP_FRESPC + 1: return highByte(FRESPC);
     case ZP_MEMSIZ: return lowByte(MEMSIZ);
     case ZP_MEMSIZ + 1: return highByte(MEMSIZ);
     case ZP_CURLIN: return lowByte(CURLIN);
@@ -172,6 +176,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case ZP_DIMFLG: DIMFLG = value; return;
     case ZP_VALTYP: VALTYP = value; return;
     case ZP_VALTYP_PLUS_1: VALTYP_PLUS_1 = value; return;
+    case ZP_GARFLG: GARFLG = value; return;
     case ZP_SUBFLG: SUBFLG = value; return;
     case ZP_INPUTFLG: INPUTFLG = value; return;
     case ZP_CPRMASK: CPRMASK = value; return;
@@ -184,6 +189,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case ZP_LINNUM: setLowByte(LINNUM, value); return;
     case ZP_LINNUM + 1: setHighByte(LINNUM, value); return;
     case ZP_TEMPPT: TEMPPT = value; return;
+    case ZP_LASTPT: LASTPT = value; return;
     case ZP_INDEX: setLowByte(INDEX, value); return;
     case ZP_INDEX + 1: setHighByte(INDEX, value); return;
     case ZP_RESULT: RESULT[0] = value; return;
@@ -200,6 +206,8 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case ZP_STREND + 1: setHighByte(STREND, value); return;
     case ZP_FRETOP: setLowByte(FRETOP, value); return;
     case ZP_FRETOP + 1: setHighByte(FRETOP, value); return;
+    case ZP_FRESPC: setLowByte(FRESPC, value); return;
+    case ZP_FRESPC + 1: setHighByte(FRESPC, value); return;
     case ZP_MEMSIZ: setLowByte(MEMSIZ, value); return;
     case ZP_MEMSIZ + 1: setHighByte(MEMSIZ, value); return;
     case ZP_CURLIN: setLowByte(CURLIN, value); return;

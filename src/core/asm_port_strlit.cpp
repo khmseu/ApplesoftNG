@@ -1,6 +1,7 @@
 #include "core/asm_port_strlit.hpp"
 
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_error.hpp"
 #include "core/asm_port_strlt2.hpp"
 
 #include <cstdint>
@@ -16,7 +17,23 @@ void write_ENDCHR(std::uint8_t v) {
     variables().writeByte(ApplesoftVariables::ZP_ENDCHR, v);
 }
 
+// TODO(asm-port): port FOUT_1 label.
+void FOUT_1() {}
+
 } // namespace
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: STR (inclusive) .. STRINI (exclusive)
+// Name normalization: none (assembler label STR kept verbatim).
+void STR() {
+    // STR$: expression must already be numeric.
+    CHKNUM();
+
+    // Convert FAC to text in the STR$ transient stack buffer.
+    // In ROM this starts at STACK-1 ($00ff) and then branches to STRLIT.
+    FOUT_1();
+    STRLIT(0x00ffu);
+}
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: STRLIT (inclusive) .. STRLT2 (exclusive)

@@ -14,6 +14,7 @@ public:
     static constexpr std::uint8_t ZP_DIMFLG = 0x10;
     static constexpr std::uint8_t ZP_VALTYP = 0x11;
     static constexpr std::uint8_t ZP_VALTYP_PLUS_1 = 0x12;
+    static constexpr std::uint8_t ZP_GARFLG = 0x13;
     static constexpr std::uint8_t ZP_SUBFLG = 0x14;
     static constexpr std::uint8_t ZP_INPUTFLG = 0x15;
     static constexpr std::uint8_t ZP_CPRMASK = 0x16;
@@ -23,6 +24,7 @@ public:
     static constexpr std::uint8_t ZP_MON_A2 = 0x3e;
     static constexpr std::uint8_t ZP_LINNUM = 0x50;
     static constexpr std::uint8_t ZP_TEMPPT = 0x52;
+    static constexpr std::uint8_t ZP_LASTPT = 0x53;
     static constexpr std::uint8_t ZP_TEMPST = 0x55;
     static constexpr std::uint8_t ZP_INDEX = 0x5e;
     static constexpr std::uint8_t ZP_RESULT = 0x62;
@@ -31,6 +33,7 @@ public:
     static constexpr std::uint8_t ZP_ARYTAB = 0x6b;
     static constexpr std::uint8_t ZP_STREND = 0x6d;
     static constexpr std::uint8_t ZP_FRETOP = 0x6f;
+    static constexpr std::uint8_t ZP_FRESPC = 0x71;
     static constexpr std::uint8_t ZP_MEMSIZ = 0x73;
     static constexpr std::uint8_t ZP_CURLIN = 0x75;
     static constexpr std::uint8_t ZP_OLDLIN = 0x77;
@@ -126,6 +129,7 @@ public:
     std::uint8_t DIMFLG = 0;      // $10  DIM-call flag
     std::uint8_t VALTYP = 0;      // $11  string flag: $ff = string, $00 = float
     std::uint8_t VALTYP_PLUS_1 = 0; // $12  integer type flag
+    std::uint8_t GARFLG = 0;      // $13  garbage collection tried flag
     std::uint8_t SUBFLG = 0;      // $14
     std::uint8_t INPUTFLG = 0;    // $15  $00=INPUT, $40=GET, $98=READ
     std::uint8_t CPRMASK = 0;     // $16  relational comparison mask
@@ -137,11 +141,13 @@ public:
     std::uint16_t INDEX = 0;      // $5e/$5f scratch pointer (string data address)
     std::uint16_t LINNUM = 0;     // $50/$51
     std::uint8_t TEMPPT = 0;      // $52
+    std::uint8_t LASTPT = 0;      // $53
     std::uint16_t TXTTAB = 0;     // $67/$68
     std::uint16_t VARTAB = 0;     // $69/$6a
     std::uint16_t ARYTAB = 0;     // $6b/$6c
     std::uint16_t STREND = 0;     // $6d/$6e
     std::uint16_t FRETOP = 0;     // $6f/$70
+    std::uint16_t FRESPC = 0;     // $71/$72
     std::uint16_t MEMSIZ = 0;     // $73/$74
     std::uint16_t CURLIN = 0;     // $75/$76
     std::uint16_t OLDLIN = 0;     // $77/$78

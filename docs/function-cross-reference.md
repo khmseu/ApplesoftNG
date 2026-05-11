@@ -97,6 +97,7 @@ returning, or contains `TODO(asm-port)`.
 | GET                               | src/core/asm_port_token_address_table.cpp |   24 | stub   |
 | GETARY                            | src/core/asm_port_error.cpp               | 2315 | real   |
 | GETARY2                           | src/core/asm_port_error.cpp               | 2323 | real   |
+| GETSPA                            | src/core/asm_port_strlt2.cpp              |  166 | real   |
 | GETBYT                            | src/core/asm_port_error.cpp               | 1937 | stub   |
 | GETCHR                            | src/core/asm_port_error.cpp               |  610 | real   |
 | GETLN                             | src/platform/asm_port_getln.cpp           |   37 | stub   |
@@ -144,6 +145,7 @@ returning, or contains `TODO(asm-port)`.
 | IsStatementEndOfParsedInput       | src/core/asm_port_error.cpp               |  157 | stub   |
 | IsTraceEnabled                    | src/core/asm_port_error.cpp               | 1212 | stub   |
 | JER                               | src/core/asm_port_error.cpp               | 2439 | real   |
+| JERR                              | src/core/asm_port_strlt2.cpp              |  140 | real   |
 | LET                               | src/core/asm_port_error.cpp               | 1818 | stub   |
 | LET                               | src/core/asm_port_token_address_table.cpp |   28 | stub   |
 | LET2                              | src/core/asm_port_error.cpp               | 1847 | stub   |
@@ -239,7 +241,8 @@ returning, or contains `TODO(asm-port)`.
 | PushTextPointerAddress            | src/core/asm_port_error.cpp               | 1052 | stub   |
 | PushTokenTo                       | src/core/asm_port_error.cpp               | 1060 | stub   |
 | PushWordToStack                   | src/core/asm_port_error.cpp               | 1039 | real   |
-| PUTNEW                            | src/core/asm_port_strlt2.cpp              |   45 | stub   |
+| PUTEMP                            | src/core/asm_port_strlt2.cpp              |  147 | real   |
+| PUTNEW                            | src/core/asm_port_strlt2.cpp              |  124 | real   |
 | PUTSTR                            | src/core/asm_port_error.cpp               | 1871 | stub   |
 | QINT                              | src/core/asm_port_error.cpp               |  443 | stub   |
 | QT_ERROR                          | src/core/asm_port_qt_error.cpp            |   16 | real   |
@@ -303,12 +306,14 @@ returning, or contains `TODO(asm-port)`.
 | STOP                              | src/core/asm_port_token_address_table.cpp |   13 | stub   |
 | STOP_impl                         | src/core/asm_port_error.cpp               | 1299 | real   |
 | STORE_FACDB_YX_ROUNDED            | src/core/asm_port_error.cpp               | 2730 | stub   |
+| STR                               | src/core/asm_port_strlit.cpp              |   28 | real   |
 | STRCMP                            | src/core/asm_port_error.cpp               | 2080 | stub   |
 | STRINI                            | src/core/asm_port_error.cpp               | 2525 | stub   |
-| STRINI                            | src/core/asm_port_strlt2.cpp              |   35 | stub   |
-| STRLIT                            | src/core/asm_port_strlit.cpp              |   24 | real   |
+| STRINI                            | src/core/asm_port_strlt2.cpp              |   97 | real   |
+| STRLIT                            | src/core/asm_port_strlit.cpp              |   41 | real   |
 | STRLIT_from_word                  | src/core/asm_port_strtxt.cpp              |   19 | stub   |
-| STRLT2                            | src/core/asm_port_strlt2.cpp              |   49 | stub   |
+| STRLT2                            | src/core/asm_port_strlt2.cpp              |  194 | real   |
+| STRSPA                            | src/core/asm_port_strlt2.cpp              |  108 | real   |
 | STROUT                            | src/core/asm_port_error.cpp               |  976 | stub   |
 | STROUT                            | src/core/asm_port_input.cpp               |   21 | stub   |
 | STROUT                            | src/core/asm_port_print.cpp               |  103 | real   |
