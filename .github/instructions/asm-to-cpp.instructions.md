@@ -17,32 +17,48 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 
 1. Locate both labels and confirm they are in the same source listing region.
 2. Extract the range that starts at `start_label` and stops immediately before `end_label`.
-3. Before coding, consult [docs/function-cross-reference.md](../../docs/function-cross-reference.md) and the [# Function Cross Reference](../../docs/function-cross-reference.md#function-cross-reference) section to determine which functions in this window are already ported, which are still stubs/placeholders, and where each function is implemented.
-4. Include comments that are:
+3. Identify 16-bit pointer candidates in the extracted range before coding:
+
+- indirect addressing operands such as `($NN),Y` and `($NN,X)`
+- split-byte address construction such as `#<label` and `#>label` stored to adjacent bytes
+- low-byte add plus carry-chain high-byte increment sequences (`ADC`/`INC` patterns)
+
+4. For each pointer candidate, plan a single unified C++ representation (pointer or pointer abstraction) instead of separate low/high byte locals.
+5. Before coding, consult [docs/function-cross-reference.md](../../docs/function-cross-reference.md) and the [# Function Cross Reference](../../docs/function-cross-reference.md#function-cross-reference) section to determine which functions in this window are already ported, which are still stubs/placeholders, and where each function is implemented.
+6. Include comments that are:
 
 - inline inside the range.
 - immediately preceding the first line in range and directly describing the range behavior.
 
-5. Infer the behavior and data flow from opcodes, branch patterns, and comments.
+7. Infer the behavior and data flow from opcodes, branch patterns, and comments.
    - If the source slice does not end in an unconditional transfer (`RTS`, `JMP`, or unconditional branch), it falls through into the next label. Model that fall-through in C++ by calling the following function at that point, or by returning state that the caller uses to invoke the next label.
 
 - If a label is `MON_xyz`, treat it as an alias for monitor label `xyz` and implement it immediately as a forwarder function (do not leave alias-only comments without code).
 
-6. Implement one primary C++ function that preserves the original assembler name as much as possible.
-7. Place the function in the appropriate runtime area:
+8. Implement one primary C++ function that preserves the original assembler name as much as possible.
+9. Place the function in the appropriate runtime area:
 
 - interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
 - console or machine-facing I/O behavior: [src/platform](../../src/platform) and [include/platform](../../include/platform)
 
-8. Add a short provenance comment above the function with:
+10. Add a short provenance comment above the function with:
 
 - source listing path
 - start/end labels
 - any normalization done to keep name valid in C++
 
-9. If callees are not implemented yet, add dummy implementations in the same subsystem.
-10. Update [docs/function-cross-reference.md](../../docs/function-cross-reference.md) after the port so it reflects new implementations and current stub/real status.
-11. Ensure build remains green after each increment.
+11. If callees are not implemented yet, add dummy implementations in the same subsystem.
+12. Update [docs/function-cross-reference.md](../../docs/function-cross-reference.md) after the port so it reflects new implementations and current stub/real status.
+13. Ensure build remains green after each increment.
+
+## 16-bit Pointer Synthesis Rules
+
+- Do not model split-byte pointer flows as two unrelated `uint8_t` locals when they represent one logical address.
+- Lift split-byte pointer flows to one unified pointer-oriented representation in C++ (raw pointer, typed wrapper, or equivalent abstraction).
+- Translate carry-chain pointer arithmetic to one operation on the unified representation (for example `ptr += offset`) instead of open-coded low/high byte math.
+- For dual-use zero-page pairs (sometimes integer, sometimes pointer), use one explicit dual-use representation (for example `union`, `std::variant`, or a dedicated wrapper) and document why.
+- For absolute memory references that are not fixed-address state, prefer a consistent base-memory mapping model and index from it.
+- If an absolute address names a translated C++ object or a fixed-address zero-page variable, use the translated object or `ApplesoftVariables` accessor instead of a raw memory index.
 
 ## Naming Rules
 
@@ -56,6 +72,7 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 - Route all fixed-address state reads/writes through `ApplesoftVariables` (`variables()` / `variables_const()` and their byte/word accessors).
 - Do not mirror fixed addresses with separate globals, file-scope statics, or ad-hoc structs when `ApplesoftVariables` already represents them.
 - When a needed fixed address is missing, add it to `ApplesoftVariables` first, then use the accessors from ported code.
+- When a fixed-address pair forms one logical pointer, read/write it through one conceptual variable in the ported function (for example via word accessors or a dedicated pointer abstraction), not duplicated low/high temporaries.
 
 ## Dummy Implementation Rules
 
@@ -63,16 +80,19 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 - Use the original assembler-like name for stub function names.
 - Add `TODO(asm-port)` in each stub with the source label to be ported later.
 - Return neutral values by type:
-- `void`: empty body
-- pointers: `nullptr`
-- arithmetic types: `0`
-- `bool`: `false`
-- class/struct values: `{}`
+  - `void`: empty body
+  - pointers: `nullptr`
+  - arithmetic types: `0`
+  - `bool`: `false`
+  - class/struct values: `{}`
 
 ## Output Checklist
 
 - Exactly one bounded behavior slice was ported.
 - If the slice does not end in an unconditional transfer, the implementation explicitly models the fall-through to `end_label` by calling the next function or returning continuation state.
+- 16-bit pointer candidates in the window were identified and lifted to unified C++ representations.
+- Any carry-chain pointer arithmetic in the window was represented as unified pointer arithmetic.
+- Any dual-use integer/pointer storage in the window has an explicit, documented dual-use representation.
 - Function location matches subsystem boundaries.
 - Original names preserved or minimally normalized with mapping comments.
 - Missing callees have explicit dummy implementations.
