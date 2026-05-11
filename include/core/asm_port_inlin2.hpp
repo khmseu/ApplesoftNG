@@ -8,6 +8,10 @@ struct Inlin2Result {
     std::uint8_t a;
     std::uint8_t x;
     std::uint8_t y;
+
+    std::uint16_t address() const {
+        return static_cast<std::uint16_t>(static_cast<std::uint16_t>(y) << 8 | x);
+    }
 };
 
 

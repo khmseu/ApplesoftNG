@@ -22,6 +22,15 @@ struct BLTUState {
     // Destination state updated by BLTU.
     std::uint8_t strendLo = 0;
     std::uint8_t strendHi = 0;
+
+    std::uint16_t strend() const {
+        return static_cast<std::uint16_t>(static_cast<std::uint16_t>(strendHi) << 8 | strendLo);
+    }
+
+    void setStrend(std::uint16_t value) {
+        strendLo = static_cast<std::uint8_t>(value & 0x00ffu);
+        strendHi = static_cast<std::uint8_t>(value >> 8);
+    }
 };
 
 struct BLTUResult {
@@ -44,6 +53,24 @@ struct BLTU2State {
     std::uint8_t hightrHi = 0;
     std::uint8_t highdsLo = 0;
     std::uint8_t highdsHi = 0;
+
+    std::uint16_t sourcePointer() const {
+        return static_cast<std::uint16_t>(static_cast<std::uint16_t>(hightrHi) << 8 | hightrLo);
+    }
+
+    void setSourcePointer(std::uint16_t value) {
+        hightrLo = static_cast<std::uint8_t>(value & 0x00ffu);
+        hightrHi = static_cast<std::uint8_t>(value >> 8);
+    }
+
+    std::uint16_t destinationPointer() const {
+        return static_cast<std::uint16_t>(static_cast<std::uint16_t>(highdsHi) << 8 | highdsLo);
+    }
+
+    void setDestinationPointer(std::uint16_t value) {
+        highdsLo = static_cast<std::uint8_t>(value & 0x00ffu);
+        highdsHi = static_cast<std::uint8_t>(value >> 8);
+    }
 };
 
 struct BLTU2Result {

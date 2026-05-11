@@ -3,18 +3,9 @@
 namespace applesoft::asm_port {
 namespace {
 
-std::uint16_t pointer_from(std::uint8_t lo, std::uint8_t hi) {
-    return static_cast<std::uint16_t>(lo | (static_cast<std::uint16_t>(hi) << 8));
-}
-
-void pointer_to(std::uint16_t value, std::uint8_t& lo, std::uint8_t& hi) {
-    lo = static_cast<std::uint8_t>(value & 0x00ff);
-    hi = static_cast<std::uint8_t>(value >> 8);
-}
-
 void copy_page_backward(BLTU2State& state) {
-    std::uint16_t source = pointer_from(state.hightrLo, state.hightrHi);
-    std::uint16_t destination = pointer_from(state.highdsLo, state.highdsHi);
+    const std::uint16_t source = state.sourcePointer();
+    const std::uint16_t destination = state.destinationPointer();
 
     do {
         state.memory[destination + state.y] = state.memory[source + state.y];
@@ -35,8 +26,7 @@ BLTUResult BLTU(BLTUState& state) {
     state.y = reasonResult.y;
 
     // New top of array storage (STREND) is loaded from adjusted A/Y.
-    state.strendLo = state.a;
-    state.strendHi = state.y;
+    state.setStrend(static_cast<std::uint16_t>(static_cast<std::uint16_t>(state.y) << 8 | state.a));
 
     // Execution falls through to BLTU2 in the original ROM.
     return BLTUResult{state.a, state.y};
@@ -48,12 +38,8 @@ BLTU2Result BLTU2(BLTU2State& state) {
     // Name normalization: none (assembler label BLTU2 kept verbatim).
 
     if (state.y != 0) {
-        pointer_to(static_cast<std::uint16_t>(pointer_from(state.hightrLo, state.hightrHi) - state.y),
-                   state.hightrLo,
-                   state.hightrHi);
-        pointer_to(static_cast<std::uint16_t>(pointer_from(state.highdsLo, state.highdsHi) - state.y),
-                   state.highdsLo,
-                   state.highdsHi);
+        state.setSourcePointer(static_cast<std::uint16_t>(state.sourcePointer() - state.y));
+        state.setDestinationPointer(static_cast<std::uint16_t>(state.destinationPointer() - state.y));
         copy_page_backward(state);
     }
 

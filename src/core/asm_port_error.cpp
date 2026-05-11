@@ -899,7 +899,7 @@ void RESTART() {
 
     CRDO();
     const Inlin2Result inlin2 = INLIN2(RESTART_PROMPT);
-    SetTextPointer(static_cast<std::uint16_t>(static_cast<std::uint16_t>(inlin2.y) << 8 | inlin2.x));
+    SetTextPointer(inlin2.address());
     ClearErrFlag();
 
     const std::uint8_t firstChar = CHRGET();

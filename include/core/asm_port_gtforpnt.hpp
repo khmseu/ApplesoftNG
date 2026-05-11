@@ -19,6 +19,15 @@ struct GTFORPNTState {
     // Zero-page FORPNT ($85/$86): variable address to search for.
     std::uint8_t forpntLo = 0;
     std::uint8_t forpntHi = 0;
+
+    std::uint16_t variablePointer() const {
+        return static_cast<std::uint16_t>(static_cast<std::uint16_t>(forpntHi) << 8 | forpntLo);
+    }
+
+    void setVariablePointer(std::uint16_t value) {
+        forpntLo = static_cast<std::uint8_t>(value & 0x00ffu);
+        forpntHi = static_cast<std::uint8_t>(value >> 8);
+    }
 };
 
 struct GTFORPNTResult {

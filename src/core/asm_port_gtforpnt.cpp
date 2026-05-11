@@ -9,6 +9,11 @@ std::uint8_t stack_at(const GTFORPNTState& state, std::uint8_t x, std::uint8_t p
     return state.stackPage[static_cast<std::uint8_t>(x + plus)];
 }
 
+std::uint16_t stack_word_at(const GTFORPNTState& state, std::uint8_t x, std::uint8_t plus) {
+    return static_cast<std::uint16_t>(static_cast<std::uint16_t>(stack_at(state, x, static_cast<std::uint8_t>(plus + 1u))) << 8 |
+                                      stack_at(state, x, plus));
+}
+
 } // namespace
 
 GTFORPNTResult GTFORPNT(std::uint8_t stackPointer, GTFORPNTState& state) {
@@ -18,15 +23,15 @@ GTFORPNTResult GTFORPNT(std::uint8_t stackPointer, GTFORPNTState& state) {
     while (x != 0) {
         // FRAME MARKER at STACK+1,X must be TOKEN_FOR ($81).
         if (stack_at(state, x, 1) == TOKEN_FOR) {
+            const std::uint16_t frameVariablePointer = stack_word_at(state, x, 2);
+
             // NEXT with no variable: bind FORPNT from current frame first.
             if (state.forpntHi == 0) {
-                state.forpntLo = stack_at(state, x, 2);
-                state.forpntHi = stack_at(state, x, 3);
+                state.setVariablePointer(frameVariablePointer);
             }
 
             // Compare FORPNT against frame variable pointer (hi then lo, as ROM).
-            if (state.forpntHi == stack_at(state, x, 3) &&
-                state.forpntLo == stack_at(state, x, 2)) {
+            if (state.variablePointer() == frameVariablePointer) {
                 return GTFORPNTResult{true, x};
             }
         }
