@@ -253,7 +253,7 @@ void INPUTERR() {
         return;
     }
 
-    ERLIN(0xffu, 0xffu);
+    ERLIN(0xffffu);
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
