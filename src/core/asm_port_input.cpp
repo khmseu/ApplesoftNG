@@ -185,7 +185,7 @@ void PROCESS_INPUT_LIST(std::uint16_t input_ptr, std::uint8_t input_flag) {
                 SETDA(variables_const().INPTR);
             } else {
                 // INPUT: if trailing chars remain, print "?EXTRA IGNORED".
-                if (variables_const().readByte(variables_const().INPTR) != 0u) {
+                if (variables_const().pointer(variables_const().INPTR).read() != 0u) {
                     STROUT("?EXTRA IGNORED\r");
                 }
             }
