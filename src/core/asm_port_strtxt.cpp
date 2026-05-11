@@ -9,7 +9,7 @@ namespace applesoft::asm_port {
 namespace {
 
 std::uint16_t read_TXTPTR() {
-    return variables_const().readWord(0x00b8u);
+    return variables_const().readWord(ApplesoftVariables::ZP_TXTPTR);
 }
 
 bool read_carry_flag() {

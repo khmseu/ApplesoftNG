@@ -7,6 +7,67 @@ namespace applesoft::asm_port {
 
 class ApplesoftVariables {
 public:
+    // Canonical zero-page/fixed address names used by assembler ports.
+    static constexpr std::uint8_t ZP_CHARAC = 0x0d;
+    static constexpr std::uint8_t ZP_ENDCHR = 0x0e;
+    static constexpr std::uint8_t ZP_NUMDIM = 0x0f;
+    static constexpr std::uint8_t ZP_DIMFLG = 0x10;
+    static constexpr std::uint8_t ZP_VALTYP = 0x11;
+    static constexpr std::uint8_t ZP_VALTYP_PLUS_1 = 0x12;
+    static constexpr std::uint8_t ZP_SUBFLG = 0x14;
+    static constexpr std::uint8_t ZP_INPUTFLG = 0x15;
+    static constexpr std::uint8_t ZP_CPRMASK = 0x16;
+    static constexpr std::uint8_t ZP_MON_CH = 0x24;
+    static constexpr std::uint8_t ZP_MON_PROMPT = 0x33;
+    static constexpr std::uint8_t ZP_MON_A1 = 0x3c;
+    static constexpr std::uint8_t ZP_MON_A2 = 0x3e;
+    static constexpr std::uint8_t ZP_LINNUM = 0x50;
+    static constexpr std::uint8_t ZP_TEMPPT = 0x52;
+    static constexpr std::uint8_t ZP_TEMPST = 0x55;
+    static constexpr std::uint8_t ZP_INDEX = 0x5e;
+    static constexpr std::uint8_t ZP_RESULT = 0x62;
+    static constexpr std::uint8_t ZP_TXTTAB = 0x67;
+    static constexpr std::uint8_t ZP_VARTAB = 0x69;
+    static constexpr std::uint8_t ZP_ARYTAB = 0x6b;
+    static constexpr std::uint8_t ZP_STREND = 0x6d;
+    static constexpr std::uint8_t ZP_FRETOP = 0x6f;
+    static constexpr std::uint8_t ZP_MEMSIZ = 0x73;
+    static constexpr std::uint8_t ZP_CURLIN = 0x75;
+    static constexpr std::uint8_t ZP_OLDLIN = 0x77;
+    static constexpr std::uint8_t ZP_OLDTEXT = 0x79;
+    static constexpr std::uint8_t ZP_DATLIN = 0x7b;
+    static constexpr std::uint8_t ZP_DATPTR = 0x7d;
+    static constexpr std::uint8_t ZP_INPTR = 0x7f;
+    static constexpr std::uint8_t ZP_VARNAM = 0x81;
+    static constexpr std::uint8_t ZP_VARPNT = 0x83;
+    static constexpr std::uint8_t ZP_FORPNT = 0x85;
+    static constexpr std::uint8_t ZP_TXPSV = 0x87;
+    static constexpr std::uint8_t ZP_CPRTYP = 0x89;
+    static constexpr std::uint8_t ZP_DSCPTR = 0x8c;
+    static constexpr std::uint8_t ZP_JMPADRS = 0x90;
+    static constexpr std::uint8_t ZP_ARYPNT = 0x94;
+    static constexpr std::uint8_t ZP_HIGHTR = 0x96;
+    static constexpr std::uint8_t ZP_INDX = 0x99;
+    static constexpr std::uint8_t ZP_LOWTR = 0x9b;
+    static constexpr std::uint8_t ZP_FAC = 0x9d;
+    static constexpr std::uint8_t ZP_FAC_SIGN = 0xa2;
+    static constexpr std::uint8_t ZP_ARG = 0xa5;
+    static constexpr std::uint8_t ZP_STRNG1 = 0xab;
+    static constexpr std::uint8_t ZP_STRNG2 = 0xad;
+    static constexpr std::uint8_t ZP_PRGEND = 0xaf;
+    static constexpr std::uint8_t ZP_TXTPTR = 0xb8;
+    static constexpr std::uint8_t ZP_LOCK = 0xd6;
+    static constexpr std::uint8_t ZP_ERRFLG = 0xd8;
+    static constexpr std::uint8_t ZP_FIRST = 0xf0;
+    static constexpr std::uint8_t ZP_SPEEDZ = 0xf1;
+    static constexpr std::uint8_t ZP_TRCFLG = 0xf2;
+    static constexpr std::uint8_t ZP_FLASH_BIT = 0xf3;
+    static constexpr std::uint8_t ZP_REMSTK = 0xf8;
+
+    static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_1 = 0x01ffu;
+    static constexpr std::uint16_t ADDR_INPUT_BUFFER = 0x0200u;
+    static constexpr std::uint16_t ADDR_KEYBOARD = 0xc000u;
+
     class ConstBytePointer {
     public:
         ConstBytePointer(const ApplesoftVariables* vars, std::uint16_t address)

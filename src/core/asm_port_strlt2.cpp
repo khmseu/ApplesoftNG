@@ -8,27 +8,27 @@ namespace applesoft::asm_port {
 namespace {
 
 std::uint8_t read_CHARAC() {
-    return variables_const().readByte(0x000du);
+    return variables_const().readByte(ApplesoftVariables::ZP_CHARAC);
 }
 
 std::uint8_t read_ENDCHR() {
-    return variables_const().readByte(0x000eu);
+    return variables_const().readByte(ApplesoftVariables::ZP_ENDCHR);
 }
 
 void write_STRNG1(std::uint16_t value) {
-    variables().writeWord(0x00abu, value);
+    variables().writeWord(ApplesoftVariables::ZP_STRNG1, value);
 }
 
 void write_FAC(std::uint8_t v) {
-    variables().writeByte(0x009du, v);
+    variables().writeByte(ApplesoftVariables::ZP_FAC, v);
 }
 
 void write_FAC_pointer(std::uint16_t value) {
-    variables().writeWord(0x009eu, value);
+    variables().writeWord(static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 1u), value);
 }
 
 void write_STRNG2(std::uint16_t value) {
-    variables().writeWord(0x00adu, value);
+    variables().writeWord(ApplesoftVariables::ZP_STRNG2, value);
 }
 
 // TODO(asm-port): port STRINI label.

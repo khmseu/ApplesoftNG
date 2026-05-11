@@ -9,11 +9,11 @@ namespace applesoft::asm_port {
 namespace {
 
 void write_CHARAC(std::uint8_t v) {
-    variables().writeByte(0x000du, v);
+    variables().writeByte(ApplesoftVariables::ZP_CHARAC, v);
 }
 
 void write_ENDCHR(std::uint8_t v) {
-    variables().writeByte(0x000eu, v);
+    variables().writeByte(ApplesoftVariables::ZP_ENDCHR, v);
 }
 
 } // namespace

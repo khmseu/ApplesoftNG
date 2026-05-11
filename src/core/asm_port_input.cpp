@@ -25,9 +25,9 @@ std::uint8_t CHRGOT() { return 0; }
 
 namespace {
 
-constexpr std::uint16_t kINPUT_BUFFER_MINUS_1 = 0x01ffu;
-constexpr std::uint16_t kINPUT_BUFFER = 0x0200u;
-constexpr std::uint16_t kINPUT_BUFFER_PLUS_1 = 0x0201u;
+constexpr std::uint16_t kINPUT_BUFFER_MINUS_1 = ApplesoftVariables::ADDR_INPUT_BUFFER_MINUS_1;
+constexpr std::uint16_t kINPUT_BUFFER = ApplesoftVariables::ADDR_INPUT_BUFFER;
+constexpr std::uint16_t kINPUT_BUFFER_PLUS_1 = ApplesoftVariables::ADDR_INPUT_BUFFER + 1u;
 
 // TODO(asm-port): port CHRGET label.
 std::uint8_t CHRGET_INPUT() { return 0; }

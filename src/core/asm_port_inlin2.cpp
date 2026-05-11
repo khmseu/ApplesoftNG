@@ -7,10 +7,10 @@
 namespace applesoft::asm_port {
 namespace {
 
-constexpr std::uint16_t kInputBufferAddress = 0x0200;
+constexpr std::uint16_t kInputBufferAddress = ApplesoftVariables::ADDR_INPUT_BUFFER;
 
 void write_MON_PROMPT(std::uint8_t v) {
-    variables().writeByte(0x0033u, v);
+    variables().writeByte(ApplesoftVariables::ZP_MON_PROMPT, v);
 }
 
 // MON_GETLN is a monitor alias for GETLN.

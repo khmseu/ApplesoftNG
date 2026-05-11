@@ -29,22 +29,22 @@ std::uint8_t CHRGET() {
 }
 
 void SetTextPointer(std::uint16_t address) {
-    variables().writeWord(0x00b8u, address);
+    variables().writeWord(ApplesoftVariables::ZP_TXTPTR, address);
 }
 
 void ClearErrFlag() {
-    variables().writeByte(0x00d8u, 0);
+    variables().writeByte(ApplesoftVariables::ZP_ERRFLG, 0);
 }
 
 void MarkDirectMode() {
-    variables().writeByte(0x0076u, 0xffu);
+    variables().writeByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_CURLIN + 1u), 0xffu);
 }
 
 std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 std::uint16_t ReadZeroPageWord(std::uint8_t address);
-std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs);
+constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs);
 std::uint8_t CHRGOT();
 void SYNERR();
 
@@ -53,9 +53,9 @@ void LINGET() {
     // Labels: LINGET (inclusive) .. LET (exclusive)
     // Name normalization: none (assembler label LINGET kept verbatim).
 
-    constexpr std::uint8_t kLINNUM = 0x50;
-    constexpr std::uint8_t kINDEX = 0x5e;
-    constexpr std::uint8_t kCHARAC = 0x0d;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
+    constexpr std::uint8_t kCHARAC = ApplesoftVariables::ZP_CHARAC;
 
     WriteZeroPageWord(kLINNUM, 0);
 
@@ -96,7 +96,7 @@ std::uint16_t ReadZeroPageWord(std::uint8_t address) {
     return variables_const().readWord(address);
 }
 
-std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
+constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
     return static_cast<std::uint8_t>(lhs + rhs);
 }
 
@@ -287,14 +287,14 @@ bool NEW_impl() {
 }
 
 void SCRTCH_impl() {
-    constexpr std::uint8_t kTXTTAB = 0x67;
-    constexpr std::uint8_t kLOCK = 0xd6;
-    constexpr std::uint8_t kVARTAB = 0x69;
-    constexpr std::uint8_t kPRGEND = 0xaf;
-    constexpr std::uint8_t kARYTAB = 0x6b;
-    constexpr std::uint8_t kSTREND = 0x6d;
-    constexpr std::uint8_t kMEMSIZ = 0x73;
-    constexpr std::uint8_t kFRETOP = 0x6f;
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
+    constexpr std::uint8_t kLOCK = ApplesoftVariables::ZP_LOCK;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kPRGEND = ApplesoftVariables::ZP_PRGEND;
+    constexpr std::uint8_t kARYTAB = ApplesoftVariables::ZP_ARYTAB;
+    constexpr std::uint8_t kSTREND = ApplesoftVariables::ZP_STREND;
+    constexpr std::uint8_t kMEMSIZ = ApplesoftVariables::ZP_MEMSIZ;
+    constexpr std::uint8_t kFRETOP = ApplesoftVariables::ZP_FRETOP;
 
     const ProgramPointer programStart{ReadZeroPageWord(kTXTTAB)};
     WriteZeroPageByte(kLOCK, 0);
@@ -326,11 +326,11 @@ bool CLEAR_impl() {
 }
 
 void CLEARC_impl() {
-    constexpr std::uint8_t kMEMSIZ = 0x73;
-    constexpr std::uint8_t kFRETOP = 0x6f;
-    constexpr std::uint8_t kVARTAB = 0x69;
-    constexpr std::uint8_t kARYTAB = 0x6b;
-    constexpr std::uint8_t kSTREND = 0x6d;
+    constexpr std::uint8_t kMEMSIZ = ApplesoftVariables::ZP_MEMSIZ;
+    constexpr std::uint8_t kFRETOP = ApplesoftVariables::ZP_FRETOP;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kARYTAB = ApplesoftVariables::ZP_ARYTAB;
+    constexpr std::uint8_t kSTREND = ApplesoftVariables::ZP_STREND;
 
     WriteZeroPageWord(kFRETOP, ReadZeroPageWord(kMEMSIZ));
     WriteZeroPageWord(kARYTAB, ReadZeroPageWord(kVARTAB));
@@ -340,15 +340,15 @@ void CLEARC_impl() {
 }
 
 void STXTPT_impl() {
-    constexpr std::uint8_t kTXTTAB = 0x67;
-    constexpr std::uint8_t kTXTPTR = 0xb8;
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
 
     const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
     WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(textTable - 1u));
 }
 
 void FOR() {
-    constexpr std::uint8_t kSUBFLG = 0x14;
+    constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
     constexpr std::uint8_t kTOKEN_TO = 0x00; // TODO(asm-port): actual Applesoft "TO" token value.
 
     WriteZeroPageByte(kSUBFLG, 0x80);
@@ -451,11 +451,11 @@ constexpr std::uint8_t kCZeroData[2] = {0x00u, 0x00u};
 
 void SNGFLT(std::uint8_t value) {
     // TODO(asm-port): replace with true SNGFLT conversion routine.
-    WriteZeroPageByte(0x9du, value);
-    WriteZeroPageByte(0x9eu, 0u);
-    WriteZeroPageByte(0x9fu, 0u);
-    WriteZeroPageByte(0xa0u, 0u);
-    WriteZeroPageByte(0xa1u, 0u);
+    WriteZeroPageByte(ApplesoftVariables::ZP_FAC, value);
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 1u), 0u);
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 2u), 0u);
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 3u), 0u);
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 4u), 0u);
 }
 
 // TODO(asm-port): compare temporary ARG and FAC strings and return -1/0/1.
@@ -470,9 +470,9 @@ void NEXT() {
     // Labels: NEXT (inclusive) .. FRMNUM (exclusive)
     // Name normalization: none (assembler label NEXT kept verbatim).
 
-    constexpr std::uint8_t kFORPNT = 0x85;
-    constexpr std::uint8_t kCURLIN = 0x75;
-    constexpr std::uint8_t kTXTPTR = 0xb8;
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
 
     // d0 04 / NEXT_1 jsr PTRGET / NEXT_2 sta FORPNT, sty FORPNT+1
     // No-variable NEXT case is represented by FORPNT+1 = 0.
@@ -503,7 +503,7 @@ void NEXT() {
     // Stack offsets follow ROM comments; helpers are placeholders until stack
     // memory and FAC math ports are fully wired.
     LOAD_FAC_FROM_YA();
-    WriteZeroPageByte(0xa2u, readStackByteAt(gtforpntResult.x, 9u)); // FAC_SIGN
+    WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, readStackByteAt(gtforpntResult.x, 9u)); // FAC_SIGN
     WriteZeroPageWord(kFORPNT, ReadZeroPageWord(kFORPNT));
     FADD();
     SETFOR();
@@ -549,10 +549,10 @@ void STEP() {
 }
 
 void NEWSTT() {
-    constexpr std::uint8_t kREMSTK = 0xf8;
-    constexpr std::uint8_t kTXTPTR = 0xb8;
-    constexpr std::uint8_t kCURLIN = 0x75;
-    constexpr std::uint8_t kOLDTEXT_lo = 0x79;
+    constexpr std::uint8_t kREMSTK = ApplesoftVariables::ZP_REMSTK;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    constexpr std::uint8_t kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
 
     WriteZeroPageByte(kREMSTK, ReadStackPointer());
 
@@ -561,9 +561,9 @@ void NEWSTT() {
     }
 
     if (ReadZeroPageByte(add_u8(kCURLIN, 1u)) != 0xffu) {
-        WriteZeroPageWord(kOLDTEXT_lo, ReadZeroPageWord(kTXTPTR));
+        WriteZeroPageWord(kOLDTEXT, ReadZeroPageWord(kTXTPTR));
     } else {
-        WriteZeroPageWord(kOLDTEXT_lo, 0);
+        WriteZeroPageWord(kOLDTEXT, 0);
     }
 
     if (IsEndOfLineAtTextPointer()) {
@@ -579,7 +579,7 @@ void NEWSTT() {
 }
 
 void TRACE_() {
-    constexpr std::uint8_t kTRCFLG = 0xf2;
+    constexpr std::uint8_t kTRCFLG = ApplesoftVariables::ZP_TRCFLG;
 
     if ((ReadZeroPageByte(kTRCFLG) & 0x80u) != 0u) {
         if (IsRunningMode()) {
@@ -645,7 +645,7 @@ bool FNDLIN() {
     // Labels: FNDLIN (inclusive) .. FL1 (exclusive)
     // Name normalization: none (assembler label FNDLIN kept verbatim).
 
-    constexpr std::uint8_t kTXTTAB = 0x67;
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
 
     // Assembler falls through from FNDLIN directly into FL1 with A=TXTTAB, X=TXTTAB+1.
     return FL1(ReadZeroPageWord(kTXTTAB));
@@ -786,9 +786,9 @@ void PARSE_INPUT_LINE() {
 }
 
 void LIST() {
-    constexpr std::uint8_t kLOWTR = 0x9b;
-    constexpr std::uint8_t kLINNUM = 0x50;
-    constexpr std::uint8_t kMON_CH = 0x24;
+    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+    constexpr std::uint8_t kMON_CH = ApplesoftVariables::ZP_MON_CH;
 
     if (!IsStatementEndOfParsedInput()) {
         return;
@@ -929,7 +929,7 @@ void RESTART() {
 }
 
 ProgramPointer GetTextTablePointer() {
-    constexpr std::uint8_t kTXTTAB = 0x67;
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
     return ProgramPointer{ReadZeroPageWord(kTXTTAB)};
 }
 
@@ -985,10 +985,10 @@ void INPRT() {
 }
 
 void STKINI() {
-    constexpr std::uint8_t kTEMPPT = 0x52;
-    constexpr std::uint8_t kTEMPST = 0x55;
-    constexpr std::uint8_t kOLDTEXT_plus_1 = 0x7a;
-    constexpr std::uint8_t kSUBFLG = 0x14;
+    constexpr std::uint8_t kTEMPPT = ApplesoftVariables::ZP_TEMPPT;
+    constexpr std::uint8_t kTEMPST = ApplesoftVariables::ZP_TEMPST;
+    constexpr std::uint8_t kOLDTEXT_plus_1 = add_u8(ApplesoftVariables::ZP_OLDTEXT, 1u);
+    constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
 
     WriteZeroPageByte(kTEMPPT, kTEMPST);
     SetStackPointer(0xf8);
@@ -1012,10 +1012,9 @@ std::uint8_t GETCHR() {
 }
 
 bool ISCNTC() {
-    constexpr std::uint8_t kKEYBOARD = 0xc0; // TODO(asm-port): actual KEYBOARD zero-page address.
     constexpr std::uint8_t kCTRL_C_CODE = 0x83;
 
-    if (ReadZeroPageByte(kKEYBOARD) != kCTRL_C_CODE) {
+    if (variables_const().readByte(ApplesoftVariables::ADDR_KEYBOARD) != kCTRL_C_CODE) {
         return false;
     }
 
@@ -1083,7 +1082,7 @@ void CHKNUM() {
     // Labels: CHKNUM (inclusive) .. CHKSTR (exclusive)
     // Name normalization: none (assembler label CHKNUM kept verbatim).
 
-    constexpr std::uint8_t kVALTYP = 0x11;
+    constexpr std::uint8_t kVALTYP = ApplesoftVariables::ZP_VALTYP;
     const bool facIsString = (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u;
     if (facIsString) {
         ERROR(ERR_BADTYPE);
@@ -1095,7 +1094,7 @@ void CHKSTR() {
     // Labels: CHKSTR (inclusive) .. CHKVAL (exclusive)
     // Name normalization: none (assembler label CHKSTR kept verbatim).
 
-    constexpr std::uint8_t kVALTYP = 0x11;
+    constexpr std::uint8_t kVALTYP = ApplesoftVariables::ZP_VALTYP;
     const bool facIsString = (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u;
     if (!facIsString) {
         ERROR(ERR_BADTYPE);
@@ -1134,9 +1133,9 @@ void FRM_STACK_3() {
 }
 
 std::uint8_t ScanAheadOffset(std::uint8_t terminator) {
-    constexpr std::uint8_t kTXTPTR = 0xb8;
-    constexpr std::uint8_t kCHARAC = 0x0d;
-    constexpr std::uint8_t kENDCHR = 0x0e;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kCHARAC = ApplesoftVariables::ZP_CHARAC;
+    constexpr std::uint8_t kENDCHR = ApplesoftVariables::ZP_ENDCHR;
 
     WriteZeroPageByte(kCHARAC, terminator);
     std::uint8_t offset = 0;
@@ -1168,7 +1167,7 @@ void ADDON(std::uint8_t offset) {
     // Labels: ADDON (inclusive) .. DATAN (exclusive)
     // Name normalization: none (assembler label ADDON kept verbatim).
 
-    constexpr std::uint8_t kTXTPTR = 0xb8;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
 
     const ProgramPointer textPtr{ReadZeroPageWord(kTXTPTR)};
     WriteZeroPageWord(kTXTPTR, textPtr.advanced(offset).address);
@@ -1268,19 +1267,19 @@ void COLON_() {
     SYNERR();
 }
 void RESTORE() {
-    constexpr std::uint8_t kTXTTAB = 0x67;
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
     const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
     const std::uint16_t dataPointer = static_cast<std::uint16_t>(textTable - 1u);
     SETDA(dataPointer);
 }
 
 void SETDA(std::uint16_t dataPointer) {
-    constexpr std::uint8_t kDATPTR = 0x7d;
+    constexpr std::uint8_t kDATPTR = ApplesoftVariables::ZP_DATPTR;
     WriteZeroPageWord(kDATPTR, dataPointer);
 }
 
 void CONTROL_C_TYPED() {
-    constexpr std::uint8_t kERRFLG = 0xd8;
+    constexpr std::uint8_t kERRFLG = ApplesoftVariables::ZP_ERRFLG;
     const std::uint8_t errFlags = ReadZeroPageByte(kERRFLG);
 
     if ((errFlags & 0x80u) == 0u) {
@@ -1314,10 +1313,10 @@ void ENDX_impl(bool shouldPrintBreak) {
         return;
     }
 
-    constexpr std::uint8_t kTXTPTR = 0xb8;
-    constexpr std::uint8_t kCURLIN = 0x75;
-    constexpr std::uint8_t kOLDTEXT = 0x79;
-    constexpr std::uint8_t kOLDLIN = 0x77;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    constexpr std::uint8_t kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
+    constexpr std::uint8_t kOLDLIN = ApplesoftVariables::ZP_OLDLIN;
 
     const std::uint16_t textPointer = ReadZeroPageWord(kTXTPTR);
     const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
@@ -1361,11 +1360,11 @@ void CONT() {
         return;
     }
 
-    constexpr std::uint8_t kOLDTEXT = 0x79;
-    constexpr std::uint8_t kOLDTEXT_plus_1 = 0x7a;
-    constexpr std::uint8_t kOLDLIN = 0x77;
-    constexpr std::uint8_t kTXTPTR = 0xb8;
-    constexpr std::uint8_t kCURLIN = 0x75;
+    constexpr std::uint8_t kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
+    constexpr std::uint8_t kOLDTEXT_plus_1 = add_u8(ApplesoftVariables::ZP_OLDTEXT, 1u);
+    constexpr std::uint8_t kOLDLIN = ApplesoftVariables::ZP_OLDLIN;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
 
     if (ReadZeroPageByte(kOLDTEXT_plus_1) == 0) {
         ERROR(ERR_CANTCONT);
@@ -1381,9 +1380,9 @@ void SAVE() {
     // Labels: SAVE (inclusive) .. LOAD (exclusive)
     // Name normalization: none (assembler label SAVE kept verbatim).
 
-    constexpr std::uint8_t kPRGEND = 0xaf;
-    constexpr std::uint8_t kTXTTAB = 0x67;
-    constexpr std::uint8_t kLINNUM = 0x50;
+    constexpr std::uint8_t kPRGEND = ApplesoftVariables::ZP_PRGEND;
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
 
     const std::uint16_t programEnd = ReadZeroPageWord(kPRGEND);
     const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
@@ -1401,11 +1400,11 @@ void LOAD() {
     // Labels: LOAD (inclusive) .. VARTIO (exclusive)
     // Name normalization: none (assembler label LOAD kept verbatim).
 
-    constexpr std::uint8_t kLINNUM = 0x50;
-    constexpr std::uint8_t kTXTTAB = 0x67;
-    constexpr std::uint8_t kVARTAB = 0x69;
-    constexpr std::uint8_t kTEMPPT = 0x52;
-    constexpr std::uint8_t kLOCK = 0xd6;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kTEMPPT = ApplesoftVariables::ZP_TEMPPT;
+    constexpr std::uint8_t kLOCK = ApplesoftVariables::ZP_LOCK;
 
     VARTIO();
     MON_READ();
@@ -1432,13 +1431,13 @@ void VARTIO() {
     // Labels: VARTIO (inclusive) .. PROGIO (exclusive)
     // Name normalization: none (assembler label VARTIO kept verbatim).
 
-    constexpr std::uint8_t kLINNUM = 0x50;
-    constexpr std::uint8_t kTEMPPT = 0x52;
-    constexpr std::uint8_t kLOCK = 0xd6;
-    constexpr std::uint8_t kMON_A1L = 0x3c;
-    constexpr std::uint8_t kMON_A1H = 0x3d;
-    constexpr std::uint8_t kMON_A2L = 0x3e;
-    constexpr std::uint8_t kMON_A2H = 0x3f;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+    constexpr std::uint8_t kTEMPPT = ApplesoftVariables::ZP_TEMPPT;
+    constexpr std::uint8_t kLOCK = ApplesoftVariables::ZP_LOCK;
+    constexpr std::uint8_t kMON_A1L = ApplesoftVariables::ZP_MON_A1;
+    constexpr std::uint8_t kMON_A1H = add_u8(ApplesoftVariables::ZP_MON_A1, 1u);
+    constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
+    constexpr std::uint8_t kMON_A2H = add_u8(ApplesoftVariables::ZP_MON_A2, 1u);
 
     WriteZeroPageByte(kMON_A1L, kLINNUM);
     WriteZeroPageByte(kMON_A1H, 0x00);
@@ -1452,12 +1451,12 @@ void PROGIO() {
     // Labels: PROGIO (inclusive) .. RUN (exclusive)
     // Name normalization: none (assembler label PROGIO kept verbatim).
 
-    constexpr std::uint8_t kTXTTAB = 0x67;
-    constexpr std::uint8_t kVARTAB = 0x69;
-    constexpr std::uint8_t kMON_A1L = 0x3c;
-    constexpr std::uint8_t kMON_A1H = 0x3d;
-    constexpr std::uint8_t kMON_A2L = 0x3e;
-    constexpr std::uint8_t kMON_A2H = 0x3f;
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kMON_A1L = ApplesoftVariables::ZP_MON_A1;
+    constexpr std::uint8_t kMON_A1H = add_u8(ApplesoftVariables::ZP_MON_A1, 1u);
+    constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
+    constexpr std::uint8_t kMON_A2H = add_u8(ApplesoftVariables::ZP_MON_A2, 1u);
 
     WriteZeroPageWord(kMON_A1L, ReadZeroPageWord(kTXTTAB));
     WriteZeroPageWord(kMON_A2L, ReadZeroPageWord(kVARTAB));
@@ -1477,8 +1476,8 @@ void RUN() {
     // - If no line number specified: starts execution at beginning of program (SETPTRS)
     // - If line number specified: clears variables (CLEARC) then searches for and jumps to that line
 
-    constexpr std::uint8_t kCURLIN_hi = 0x76;
-    
+    constexpr std::uint8_t kCURLIN_hi = add_u8(ApplesoftVariables::ZP_CURLIN, 1u);
+
     // Decrement CURLIN+1 to mark as running (6502: dec CURLIN+1)
     std::uint8_t curlinHi = ReadZeroPageByte(kCURLIN_hi);
     WriteZeroPageByte(kCURLIN_hi, static_cast<std::uint8_t>(curlinHi - 1));
@@ -1509,8 +1508,8 @@ void GOSUB() {
     // - Falls through to shared GO_TO_LINE logic to find and execute the target line
     // - On RETURN, restores execution state from the stack frame
 
-    constexpr std::uint8_t kTXTPTR = 0xb8;
-    constexpr std::uint8_t kCURLIN = 0x75;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
     constexpr std::uint8_t kTOKEN_GOSUB = 0xb0;
 
     CHKMEMState chkmemState{};
@@ -1547,11 +1546,11 @@ void GOTO() {
     // Labels: GOTO (inclusive) .. POP (exclusive)
     // Name normalization: none (assembler label GOTO kept verbatim).
 
-    constexpr std::uint8_t kCURLIN = 0x75;
-    constexpr std::uint8_t kLINNUM = 0x50;
-    constexpr std::uint8_t kTXTPTR = 0xb8;
-    constexpr std::uint8_t kTXTTAB = 0x67;
-    constexpr std::uint8_t kLOWTR = 0x9b;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
+    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
 
     LINGET();
     const std::uint8_t remnOffset = REMN();
@@ -1581,7 +1580,7 @@ void POP() {
     // Labels: POP (inclusive) .. RETURN (exclusive)
     // Name normalization: none (assembler label POP kept verbatim).
 
-    constexpr std::uint8_t kFORPNT = 0x85;
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
     constexpr std::uint8_t kTOKEN_GOSUB = 0xb0;
 
     if (!IsStatementEndOfParsedInput()) {
@@ -1610,8 +1609,8 @@ void RETURN() {
     // Labels: RETURN (inclusive) .. DATA (exclusive)
     // Name normalization: none (assembler label RETURN kept verbatim).
 
-    constexpr std::uint8_t kCURLIN = 0x75;
-    constexpr std::uint8_t kTXTPTR = 0xb8;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
 
     (void)PopByteFromStack(); // discard GOSUB token
     const std::uint16_t currentLine = PopWordFromStack();
@@ -1654,8 +1653,8 @@ bool FL1(std::uint16_t startAddress) {
     // Labels: FL1 (inclusive) .. NEW (exclusive)
     // Name normalization: none (assembler label FL1 kept verbatim).
 
-    constexpr std::uint8_t kLOWTR = 0x9b;
-    constexpr std::uint8_t kLINNUM = 0x50;
+    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
 
     const std::uint8_t targetLo = ReadZeroPageByte(kLINNUM);
     const std::uint8_t targetHi = ReadZeroPageByte(add_u8(kLINNUM, 1u));
@@ -1725,7 +1724,7 @@ void IF() {
 
     constexpr std::uint8_t kTOKEN_GOTO = 0xabu;
     constexpr std::uint8_t kTOKEN_THEN = 0xc4u;
-    constexpr std::uint8_t kFAC = 0x9d;
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
 
     FRMEVL();
     if (CHRGOT() != kTOKEN_GOTO) {
@@ -1770,7 +1769,7 @@ void ONGOTO() {
 
     constexpr std::uint8_t kTOKEN_GOSUB = 0xb0u;
     constexpr std::uint8_t kTOKEN_GOTO = 0xabu;
-    constexpr std::uint8_t kFAC_PLUS_4 = 0xa1;
+    constexpr std::uint8_t kFAC_PLUS_4 = add_u8(ApplesoftVariables::ZP_FAC, 4u);
 
     const std::uint8_t token = GETBYT();
     if (token != kTOKEN_GOSUB && token != kTOKEN_GOTO) {
@@ -1810,7 +1809,7 @@ void SYNERR() {
 }
 
 void PushForPntFrame() {
-    constexpr std::uint8_t kFORPNT = 0x85;
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
     PushByteToStack(ReadZeroPageByte(add_u8(kFORPNT, 1u)));
     PushByteToStack(ReadZeroPageByte(kFORPNT));
     PushTokenTo(TOKEN_FOR);
@@ -1821,9 +1820,9 @@ void LET() {
     // Labels: LET (inclusive) .. LET2 (exclusive)
     // Name normalization: none (assembler label LET kept verbatim).
 
-    constexpr std::uint8_t kFORPNT = 0x85;
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
     constexpr std::uint8_t kTOKEN_EQUAL = 0xd0;
-    constexpr std::uint8_t kVALTYP = 0x11;
+    constexpr std::uint8_t kVALTYP = ApplesoftVariables::ZP_VALTYP;
 
     const std::uint16_t variablePtr = PTRGET();
     WriteZeroPageWord(kFORPNT, variablePtr);
@@ -1850,9 +1849,9 @@ void LET2(std::uint8_t savedValTypPlus1) {
     // Labels: LET2 (inclusive) .. PUTSTR (exclusive)
     // Name normalization: none (assembler label LET2 kept verbatim).
 
-    constexpr std::uint8_t kFORPNT = 0x85;
-    constexpr std::uint8_t kFAC_PLUS_3 = 0xa0;
-    constexpr std::uint8_t kFAC_PLUS_4 = 0xa1;
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
+    constexpr std::uint8_t kFAC_PLUS_3 = add_u8(ApplesoftVariables::ZP_FAC, 3u);
+    constexpr std::uint8_t kFAC_PLUS_4 = add_u8(ApplesoftVariables::ZP_FAC, 4u);
 
     // Positive means real variable; ROM jumps directly to SETFOR.
     if ((savedValTypPlus1 & 0x80u) == 0u) {
@@ -1874,13 +1873,13 @@ void PUTSTR() {
     // Labels: PUTSTR (inclusive) .. PR_STRING (exclusive)
     // Name normalization: none (assembler label PUTSTR kept verbatim).
 
-    constexpr std::uint8_t kFAC_PLUS_3 = 0xa0;
-    constexpr std::uint8_t kFAC_PLUS_4 = 0xa1;
-    constexpr std::uint8_t kDSCPTR = 0x8c;
-    constexpr std::uint8_t kFORPNT = 0x85;
-    constexpr std::uint8_t kFRETOP = 0x6f;
-    constexpr std::uint8_t kVARTAB = 0x69;
-    constexpr std::uint8_t kSTRNG1 = 0xab;
+    constexpr std::uint8_t kFAC_PLUS_3 = add_u8(ApplesoftVariables::ZP_FAC, 3u);
+    constexpr std::uint8_t kFAC_PLUS_4 = add_u8(ApplesoftVariables::ZP_FAC, 4u);
+    constexpr std::uint8_t kDSCPTR = ApplesoftVariables::ZP_DSCPTR;
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
+    constexpr std::uint8_t kFRETOP = ApplesoftVariables::ZP_FRETOP;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kSTRNG1 = ApplesoftVariables::ZP_STRNG1;
 
     const std::uint16_t facDescriptor = ReadZeroPageWord(kFAC_PLUS_3);
     const auto facDescriptorPtr = variables_const().pointer(facDescriptor);
@@ -1946,9 +1945,9 @@ std::uint16_t PTRGET() {
     // Name normalization: none (assembler label PTRGET kept verbatim).
 
     CHRGOT();
-    WriteZeroPageByte(0x10u, 0u); // DIMFLG
+    WriteZeroPageByte(ApplesoftVariables::ZP_DIMFLG, 0u); // DIMFLG
     PTRGET3();
-    return ReadZeroPageWord(0x83u); // VARPNT
+    return ReadZeroPageWord(ApplesoftVariables::ZP_VARPNT); // VARPNT
 }
 
 bool CHKVAL(std::uint8_t savedValTyp) {
@@ -1956,7 +1955,7 @@ bool CHKVAL(std::uint8_t savedValTyp) {
     // Labels: CHKVAL (inclusive) .. FRMEVL (exclusive)
     // Name normalization: none (assembler label CHKVAL kept verbatim).
 
-    constexpr std::uint8_t kVALTYP = 0x11;
+    constexpr std::uint8_t kVALTYP = ApplesoftVariables::ZP_VALTYP;
 
     const bool facIsString = (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u;
     const bool expectedString = (savedValTyp & 0x80u) != 0u;
@@ -1974,7 +1973,7 @@ void SCREEN() {
     // Labels: SCREEN (inclusive) .. UNARY (exclusive)
     // Name normalization: none (assembler label SCREEN kept verbatim).
 
-    constexpr std::uint8_t kFIRST = 0xf0;
+    constexpr std::uint8_t kFIRST = ApplesoftVariables::ZP_FIRST;
 
     CHRGET();
     PLOTFNS();
@@ -2013,8 +2012,8 @@ void OR() {
     // Labels: OR (inclusive) .. ANDOP (exclusive)
     // Name normalization: none (assembler label OR kept verbatim).
 
-    constexpr std::uint8_t kARG = 0xa5;
-    constexpr std::uint8_t kFAC = 0x9d;
+    constexpr std::uint8_t kARG = ApplesoftVariables::ZP_ARG;
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
 
     if ((ReadZeroPageByte(kARG) | ReadZeroPageByte(kFAC)) != 0u) {
         TRUE();
@@ -2030,8 +2029,8 @@ void ANDOP() {
     // Labels: ANDOP (inclusive) .. FALSE (exclusive)
     // Name normalization: none (assembler label ANDOP kept verbatim).
 
-    constexpr std::uint8_t kARG = 0xa5;
-    constexpr std::uint8_t kFAC = 0x9d;
+    constexpr std::uint8_t kARG = ApplesoftVariables::ZP_ARG;
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
 
     if (ReadZeroPageByte(kARG) == 0u || ReadZeroPageByte(kFAC) == 0u) {
         FALSE();
@@ -2063,7 +2062,7 @@ void RELOPS() {
     // Labels: RELOPS (inclusive) .. STRCMP (exclusive)
     // Name normalization: none (assembler label RELOPS kept verbatim).
 
-    constexpr std::uint8_t kCPRTYP = 0x89;
+    constexpr std::uint8_t kCPRTYP = ApplesoftVariables::ZP_CPRTYP;
     constexpr std::uint16_t kARG = 0x00a5u;
 
     const std::uint8_t compareTypeFlags = ReadZeroPageByte(kCPRTYP);
@@ -2083,8 +2082,8 @@ void STRCMP() {
     // Labels: STRCMP (inclusive) .. NUMCMP (exclusive)
     // Name normalization: none (assembler label STRCMP kept verbatim).
 
-    constexpr std::uint8_t kVALTYP = 0x11;
-    constexpr std::uint8_t kCPRTYP = 0x89;
+    constexpr std::uint8_t kVALTYP = ApplesoftVariables::ZP_VALTYP;
+    constexpr std::uint8_t kCPRTYP = ApplesoftVariables::ZP_CPRTYP;
 
     WriteZeroPageByte(kVALTYP, 0u);
     WriteZeroPageByte(kCPRTYP, static_cast<std::uint8_t>(ReadZeroPageByte(kCPRTYP) - 1u));
@@ -2112,7 +2111,7 @@ void CMPDONE() {
     // Labels: CMPDONE (inclusive) .. PDL (exclusive)
     // Name normalization: none (assembler label CMPDONE kept verbatim).
 
-    constexpr std::uint8_t kCPRMASK = 0x16;
+    constexpr std::uint8_t kCPRMASK = ApplesoftVariables::ZP_CPRMASK;
 
     std::int16_t x = static_cast<std::int16_t>(gNumericCompareResult) + 1;
     if (x < 0) {
@@ -2151,7 +2150,7 @@ void DIM() {
     // Labels: DIM (inclusive) .. PTRGET (exclusive)
     // Name normalization: none (assembler label DIM kept verbatim).
 
-    WriteZeroPageByte(0x10u, 1u); // DIMFLG non-zero when called from DIM.
+    WriteZeroPageByte(ApplesoftVariables::ZP_DIMFLG, 1u); // DIMFLG non-zero when called from DIM.
     PTRGET2();
 
     if (CHRGOT() != 0u) {
@@ -2172,7 +2171,7 @@ void PTRGET3() {
     // Labels: PTRGET3 (inclusive) .. BADNAM (exclusive)
     // Name normalization: none (assembler label PTRGET3 kept verbatim).
 
-    WriteZeroPageByte(0x81u, CHRGOT()); // VARNAM low byte
+    WriteZeroPageByte(ApplesoftVariables::ZP_VARNAM, CHRGOT()); // VARNAM low byte
     CHRGOT();
     if (!ISLETC()) {
         BADNAM();
@@ -2195,8 +2194,8 @@ void NAMOK() {
     // Labels: NAMOK (inclusive) .. BASIC (exclusive)
     // Name normalization: none (assembler label NAMOK kept verbatim).
 
-    WriteZeroPageByte(0x11u, 0u); // VALTYP
-    WriteZeroPageByte(0x12u, 0u); // VALTYP+1
+    WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP, 0u); // VALTYP
+    WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP_PLUS_1, 0u); // VALTYP+1
     PTRGET4();
 }
 
@@ -2239,29 +2238,29 @@ void PTRGET4() {
     }
 
     if (current == static_cast<std::uint8_t>('$')) {
-        WriteZeroPageByte(0x11u, 0xffu); // VALTYP string
+        WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP, 0xffu); // VALTYP string
         current = CHRGET();
     } else if (current == static_cast<std::uint8_t>('%')) {
-        if ((ReadZeroPageByte(0x14u) & 0x80u) != 0u) {
+        if ((ReadZeroPageByte(ApplesoftVariables::ZP_SUBFLG) & 0x80u) != 0u) {
             BADNAM();
             return;
         }
 
-        WriteZeroPageByte(0x12u, 0x80u); // integer mode
-        WriteZeroPageByte(0x81u, static_cast<std::uint8_t>(ReadZeroPageByte(0x81u) | 0x80u));
+        WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP_PLUS_1, 0x80u); // integer mode
+        WriteZeroPageByte(ApplesoftVariables::ZP_VARNAM, static_cast<std::uint8_t>(ReadZeroPageByte(ApplesoftVariables::ZP_VARNAM) | 0x80u));
         secondChar = static_cast<std::uint8_t>(secondChar | 0x80u);
         current = CHRGET();
     }
 
-    WriteZeroPageByte(0x82u, secondChar); // VARNAM+1
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_VARNAM, 1u), secondChar); // VARNAM+1
 
-    const std::uint8_t subflg = ReadZeroPageByte(0x14u);
+    const std::uint8_t subflg = ReadZeroPageByte(ApplesoftVariables::ZP_SUBFLG);
     if (subflg == 0u && current == static_cast<std::uint8_t>('(')) {
         ARRAY();
         return;
     }
 
-    WriteZeroPageByte(0x14u, 0u); // clear SUBFLG
+    WriteZeroPageByte(ApplesoftVariables::ZP_SUBFLG, 0u); // clear SUBFLG
     NAME_NOT_FOUND();
 }
 
@@ -2288,8 +2287,8 @@ void C_ZERO() {
     // Labels: C_ZERO (inclusive) .. MAKE_NEW_VARIABLE (exclusive)
     // Name normalization: none (assembler label C_ZERO kept verbatim).
 
-    WriteZeroPageByte(0x62u, kCZeroData[0]);
-    WriteZeroPageByte(0x63u, kCZeroData[1]);
+    WriteZeroPageByte(ApplesoftVariables::ZP_RESULT, kCZeroData[0]);
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 1u), kCZeroData[1]);
 }
 
 void MAKE_NEW_VARIABLE() {
@@ -2297,8 +2296,8 @@ void MAKE_NEW_VARIABLE() {
     // Labels: MAKE_NEW_VARIABLE (inclusive) .. SET_VARPNT_AND_YA (exclusive)
     // Name normalization: none (assembler label MAKE_NEW_VARIABLE kept verbatim).
 
-    const std::uint16_t arytab = ReadZeroPageWord(0x6bu);
-    WriteZeroPageWord(0x9bu, arytab); // LOWTR <- ARYTAB
+    const std::uint16_t arytab = ReadZeroPageWord(ApplesoftVariables::ZP_ARYTAB);
+    WriteZeroPageWord(ApplesoftVariables::ZP_LOWTR, arytab); // LOWTR <- ARYTAB
 
     // TODO(asm-port): port BLTU movement of array block.
     SET_VARPNT_AND_YA();
@@ -2309,8 +2308,8 @@ void SET_VARPNT_AND_YA() {
     // Labels: SET_VARPNT_AND_YA (inclusive) .. GETARY (exclusive)
     // Name normalization: none (assembler label SET_VARPNT_AND_YA kept verbatim).
 
-    const ProgramPointer lowtr{ReadZeroPageWord(0x9bu)};
-    WriteZeroPageWord(0x83u, lowtr.advanced(2u).address); // VARPNT
+    const ProgramPointer lowtr{ReadZeroPageWord(ApplesoftVariables::ZP_LOWTR)};
+    WriteZeroPageWord(ApplesoftVariables::ZP_VARPNT, lowtr.advanced(2u).address); // VARPNT
 }
 
 void GETARY() {
@@ -2326,10 +2325,10 @@ void GETARY2() {
     // Labels: GETARY2 (inclusive) .. NEG32768 (exclusive)
     // Name normalization: none (assembler label GETARY2 kept verbatim).
 
-    const std::uint8_t numDim = ReadZeroPageByte(0x0fu);
-    const ProgramPointer lowtr{ReadZeroPageWord(0x9bu)};
+    const std::uint8_t numDim = ReadZeroPageByte(ApplesoftVariables::ZP_NUMDIM);
+    const ProgramPointer lowtr{ReadZeroPageWord(ApplesoftVariables::ZP_LOWTR)};
     const std::uint16_t arypntOffset = static_cast<std::uint16_t>(numDim * 2u) + 5u;
-    WriteZeroPageWord(0x94u, lowtr.advanced(arypntOffset).address);
+    WriteZeroPageWord(ApplesoftVariables::ZP_ARYPNT, lowtr.advanced(arypntOffset).address);
 }
 
 void NEG32768() {
@@ -2337,10 +2336,10 @@ void NEG32768() {
     // Labels: NEG32768 (inclusive) .. MAKINT (exclusive)
     // Name normalization: none (assembler label NEG32768 kept verbatim).
 
-    WriteZeroPageByte(0x62u, kNEG32768Data[0]);
-    WriteZeroPageByte(0x63u, kNEG32768Data[1]);
-    WriteZeroPageByte(0x64u, kNEG32768Data[2]);
-    WriteZeroPageByte(0x65u, kNEG32768Data[3]);
+    WriteZeroPageByte(ApplesoftVariables::ZP_RESULT, kNEG32768Data[0]);
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 1u), kNEG32768Data[1]);
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 2u), kNEG32768Data[2]);
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 3u), kNEG32768Data[3]);
 }
 
 void MAKINT() {
@@ -2358,7 +2357,7 @@ void MKINT() {
     // Labels: MKINT (inclusive) .. AYINT (exclusive)
     // Name normalization: none (assembler label MKINT kept verbatim).
 
-    if ((ReadZeroPageByte(0xa2u) & 0x80u) != 0u) {
+    if ((ReadZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN) & 0x80u) != 0u) {
         MI1();
         return;
     }
@@ -2375,7 +2374,7 @@ void AYINT() {
     // Labels: AYINT (inclusive) .. MI1 (exclusive)
     // Name normalization: none (assembler label AYINT kept verbatim).
 
-    if (ReadZeroPageByte(0x9du) < 0x90u) {
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_FAC) < 0x90u) {
         MI2();
         return;
     }
@@ -2410,7 +2409,7 @@ void ARRAY() {
     // Labels: ARRAY (inclusive) .. SUBERR (exclusive)
     // Name normalization: none (assembler label ARRAY kept verbatim).
 
-    if (ReadZeroPageByte(0x14u) != 0u) {
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_SUBFLG) != 0u) {
         USE_OLD_ARRAY();
         return;
     }
@@ -2450,13 +2449,13 @@ void USE_OLD_ARRAY() {
     // Labels: USE_OLD_ARRAY (inclusive) .. MAKE_NEW_ARRAY (exclusive)
     // Name normalization: none (assembler label USE_OLD_ARRAY kept verbatim).
 
-    if (ReadZeroPageByte(0x10u) != 0u) {
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_DIMFLG) != 0u) {
         gJerErrorCode = ERR_REDIMD;
         JER();
         return;
     }
 
-    if (ReadZeroPageByte(0x14u) == 0u) {
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_SUBFLG) == 0u) {
         GETARY();
         FIND_ARRAY_ELEMENT();
     }
@@ -2467,7 +2466,7 @@ void MAKE_NEW_ARRAY() {
     // Labels: MAKE_NEW_ARRAY (inclusive) .. FIND_ARRAY_ELEMENT (exclusive)
     // Name normalization: none (assembler label MAKE_NEW_ARRAY kept verbatim).
 
-    if (ReadZeroPageByte(0x14u) != 0u) {
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_SUBFLG) != 0u) {
         ERROR(ERR_NODATA);
         return;
     }
@@ -2475,7 +2474,7 @@ void MAKE_NEW_ARRAY() {
     GETARY();
 
     // TODO(asm-port): complete dynamic allocation, descriptor population, and zeroing.
-    if (ReadZeroPageByte(0x10u) == 0u) {
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_DIMFLG) == 0u) {
         FIND_ARRAY_ELEMENT();
     }
 }
@@ -2485,8 +2484,8 @@ void FIND_ARRAY_ELEMENT() {
     // Labels: FIND_ARRAY_ELEMENT (inclusive) .. FAE_1 (exclusive)
     // Name normalization: none (assembler label FIND_ARRAY_ELEMENT kept verbatim).
 
-    WriteZeroPageByte(0x0fu, ReadZeroPageByte(0x0fu)); // TODO(asm-port): fetch #dims from descriptor pointer.
-    WriteZeroPageWord(0xadu, 0u); // STRNG2 accumulator
+    WriteZeroPageByte(ApplesoftVariables::ZP_NUMDIM, ReadZeroPageByte(ApplesoftVariables::ZP_NUMDIM)); // TODO(asm-port): fetch #dims from descriptor pointer.
+    WriteZeroPageWord(ApplesoftVariables::ZP_STRNG2, 0u); // STRNG2 accumulator
     FAE_1();
 }
 
@@ -2495,7 +2494,7 @@ void FAE_1() {
     // Labels: FAE_1 (inclusive) .. GSE (exclusive)
     // Name normalization: none (assembler label FAE_1 kept verbatim).
 
-    if (ReadZeroPageByte(0x0fu) == 0u) {
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_NUMDIM) == 0u) {
         return;
     }
 
