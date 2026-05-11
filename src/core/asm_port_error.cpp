@@ -597,20 +597,10 @@ struct ProgramPointer {
     }
 };
 
-struct LineAddress;
-std::uint16_t ToWord(LineAddress address);
-bool IsEndOfProgram(LineAddress current);
 bool IsEndOfProgram(ProgramPointer currentPtr);
 ProgramPointer AdvanceToNextLine(ProgramPointer currentPtr);
 
 std::uint8_t CHRGOT();
-struct LineAddress {
-    std::uint8_t lo = 0;
-    std::uint8_t hi = 0;
-};
-
-LineAddress FromWord(std::uint16_t value);
-
 bool ISCNTC();
 void LINPRT();
 // void OUTDO();
@@ -935,23 +925,9 @@ void RESTART() {
     TRACE_();
 }
 
-std::uint16_t ToWord(LineAddress address) {
-    return ApplesoftVariables::makeWord(address.lo, address.hi);
-}
-
-LineAddress FromWord(std::uint16_t value) {
-    return LineAddress{ApplesoftVariables::lowByte(value), ApplesoftVariables::highByte(value)};
-}
-
 ProgramPointer GetTextTablePointer() {
     constexpr std::uint8_t kTXTTAB = 0x67;
     return ProgramPointer{ReadZeroPageWord(kTXTTAB)};
-}
-
-bool IsEndOfProgram(LineAddress current) {
-    // The original FIX_LINKS loop terminates by jumping to RESTART after processing
-    // the final program line. A zero address is the safest sentinel for now.
-    return current.lo == 0 && current.hi == 0;
 }
 
 bool IsEndOfProgram(ProgramPointer currentPtr) {
@@ -967,12 +943,6 @@ ProgramPointer AdvanceToNextLine(ProgramPointer currentPtr) {
     }
 
     return currentPtr.advanced(static_cast<std::uint16_t>(offset) + 1u);
-}
-
-void WriteForwardPointer(LineAddress current, LineAddress next) {
-    // TODO(asm-port): write the low/high bytes of 'next' into the current line's forward-pointer header.
-    (void)current;
-    (void)next;
 }
 
 void WriteForwardPointer(ProgramPointer currentPtr, ProgramPointer nextPtr) {
