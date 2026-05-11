@@ -651,11 +651,11 @@ void InsertNewLine() {
 }
 
 std::uint8_t read_INPUT_BUFFER(std::uint8_t index) {
-    return variables_const().readByte(static_cast<std::uint16_t>(0x0200u + index));
+    return variables_const().pointer(0x0200u).read(index);
 }
 
 void write_INPUT_BUFFER_minus_5(std::uint8_t index, std::uint8_t value) {
-    variables().writeByte(static_cast<std::uint16_t>(0x01fbu + index), value);
+    variables().pointer(0x01fbu).write(value, index);
 }
 
 void SetTextPointerToInputBufferMinus1() {
