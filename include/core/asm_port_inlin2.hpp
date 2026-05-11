@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include "core/applesoft_variables.hpp"
+
 namespace applesoft::asm_port {
 
 struct Inlin2Result {
@@ -18,7 +20,7 @@ struct Inlin2Result {
     }
 
     std::uint16_t address() const {
-        return static_cast<std::uint16_t>(static_cast<std::uint16_t>(y) << 8 | x);
+        return ApplesoftVariables::makeWord(x, y);
     }
 };
 

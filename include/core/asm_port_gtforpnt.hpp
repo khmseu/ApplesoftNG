@@ -3,6 +3,8 @@
 #include <array>
 #include <cstdint>
 
+#include "core/applesoft_variables.hpp"
+
 namespace applesoft::asm_port {
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -21,7 +23,7 @@ struct GTFORPNTState {
     std::uint8_t forpntHi = 0;
 
     std::uint16_t variablePointer() const {
-        return static_cast<std::uint16_t>(static_cast<std::uint16_t>(forpntHi) << 8 | forpntLo);
+        return ApplesoftVariables::makeWord(forpntLo, forpntHi);
     }
 
     void setVariablePointer(std::uint16_t value) {

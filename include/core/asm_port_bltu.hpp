@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdint>
 
+#include "core/applesoft_variables.hpp"
 #include "core/asm_port_reason.hpp"
 
 namespace applesoft::asm_port {
@@ -24,7 +25,7 @@ struct BLTUState {
     std::uint8_t strendHi = 0;
 
     std::uint16_t strend() const {
-        return static_cast<std::uint16_t>(static_cast<std::uint16_t>(strendHi) << 8 | strendLo);
+        return ApplesoftVariables::makeWord(strendLo, strendHi);
     }
 
     void setStrend(std::uint16_t value) {
@@ -55,7 +56,7 @@ struct BLTU2State {
     std::uint8_t highdsHi = 0;
 
     std::uint16_t sourcePointer() const {
-        return static_cast<std::uint16_t>(static_cast<std::uint16_t>(hightrHi) << 8 | hightrLo);
+        return ApplesoftVariables::makeWord(hightrLo, hightrHi);
     }
 
     void setSourcePointer(std::uint16_t value) {
@@ -64,7 +65,7 @@ struct BLTU2State {
     }
 
     std::uint16_t destinationPointer() const {
-        return static_cast<std::uint16_t>(static_cast<std::uint16_t>(highdsHi) << 8 | highdsLo);
+        return ApplesoftVariables::makeWord(highdsLo, highdsHi);
     }
 
     void setDestinationPointer(std::uint16_t value) {
