@@ -19,10 +19,6 @@ std::uint8_t read_byte(std::uint16_t address) {
     return variables_const().readByte(address);
 }
 
-std::uint16_t address_from_ya(std::uint8_t low, std::uint8_t high) {
-    return ApplesoftVariables::makeWord(low, high);
-}
-
 void write_STRNG1(std::uint16_t value) {
     variables().writeWord(0x00abu, value);
 }
@@ -54,11 +50,11 @@ void PUTNEW() {}
 
 } // namespace
 
-void STRLT2(std::uint8_t a, std::uint8_t y) {
-    // BUILD A DESCRIPTOR FOR STRING STARTING AT Y,A
+void STRLT2(std::uint16_t address) {
+    // BUILD A DESCRIPTOR FOR STRING STARTING AT address
     // AND TERMINATED BY $00, (CHARAC), OR (ENDCHR)
 
-    const std::uint16_t start = address_from_ya(a, y);
+    const std::uint16_t start = address;
     write_STRNG1(start);
     write_FAC_pointer(start);
 
@@ -100,6 +96,10 @@ void STRLT2(std::uint8_t a, std::uint8_t y) {
 
     // Fall-through target in original control flow is PUTNEW.
     PUTNEW();
+}
+
+void STRLT2(std::uint8_t a, std::uint8_t y) {
+    STRLT2(ApplesoftVariables::makeWord(a, y));
 }
 
 } // namespace applesoft::asm_port

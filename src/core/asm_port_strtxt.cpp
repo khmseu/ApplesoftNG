@@ -17,7 +17,7 @@ bool read_carry_flag() {
 }
 
 void STRLIT_from_word(std::uint16_t address) {
-    STRLIT(ApplesoftVariables::lowByte(address), ApplesoftVariables::highByte(address));
+    STRLIT(address);
 }
 
 // TODO(asm-port): port POINT label.
