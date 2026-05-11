@@ -51,11 +51,12 @@ static std::uint8_t GTBYTC() { return 0; }
  std::uint8_t FREFAC() {
     const std::uint16_t descriptorAddress =
         ApplesoftVariables::makeWord(variables_const().FAC[3], variables_const().FAC[4]);
+    const auto descriptorPtr = variables_const().pointer(descriptorAddress);
 
     // String descriptor layout: [length, data_lo, data_hi]
-    const std::uint8_t length = variables_const().readByte(descriptorAddress);
+    const std::uint8_t length = descriptorPtr.read();
 
-    variables().INDEX = variables_const().readWord(static_cast<std::uint16_t>(descriptorAddress + 1u));
+    variables().INDEX = ApplesoftVariables::makeWord(descriptorPtr.read(1u), descriptorPtr.read(2u));
 
     return length;
 }
@@ -77,14 +78,13 @@ constexpr std::uint8_t TOKEN_SPC = 0xc3u; // SPC(
 void STRPRT() {
     // jsr FREFAC — obtain string length (A) and data address (INDEX)
     const std::uint8_t length = FREFAC();
-    const std::uint16_t addr  = variables_const().INDEX;
+    const auto strPtr = variables_const().pointer(variables_const().INDEX);
 
     // tax / ldy #0 / inx: set up counter X = length+1 for dex-first loop.
     // The original uses a dec-before-test loop: inx then dex/beq.
     // In C++ the equivalent is iterating 'length' times starting from index 0.
     for (std::uint8_t i = 0u; i < length; ++i) {
-        const std::uint8_t ch = variables_const().readByte(
-            static_cast<std::uint16_t>(addr + i));
+        const std::uint8_t ch = strPtr.read(i);
         OUTDO(ch);
     }
     // Note: The original contains a three-instruction block
