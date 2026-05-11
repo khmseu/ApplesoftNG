@@ -43,6 +43,7 @@ public:
     static constexpr std::uint8_t ZP_FORPNT = 0x85;
     static constexpr std::uint8_t ZP_TXPSV = 0x87;
     static constexpr std::uint8_t ZP_CPRTYP = 0x89;
+    static constexpr std::uint8_t ZP_FNCNAM = 0x8a;
     static constexpr std::uint8_t ZP_DSCPTR = 0x8c;
     static constexpr std::uint8_t ZP_JMPADRS = 0x90;
     static constexpr std::uint8_t ZP_ARYPNT = 0x94;

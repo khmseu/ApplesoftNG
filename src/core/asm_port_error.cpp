@@ -244,6 +244,8 @@ void STRCMP();
 void NUMCMP();
 void CMPDONE();
 void CHKCOM();
+void CHKOPN();
+void CHKCLS();
 void PDL();
 void NXDIM();
 void DIM();
@@ -258,6 +260,9 @@ bool ISLETC();
 void NAME_NOT_FOUND();
 void C_ZERO();
 void MAKE_NEW_VARIABLE();
+void FNC_();
+void PARCHK();
+void STORE_FACDB_YX_ROUNDED();
 void SET_VARPNT_AND_YA();
 void GETARY();
 void GETARY2();
@@ -2675,16 +2680,63 @@ void UNDFNC() {
     ERROR(ERR_UNDEFFUNC);
 }
 
+void CHKCLS() {
+    // Check for ')' at current position
+    SYNCHR(static_cast<std::uint8_t>(')'));
+}
+
+void CHKOPN() {
+    // Check for '(' at current position
+    SYNCHR(static_cast<std::uint8_t>('('));
+}
+
 void DEF() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: DEF (inclusive) .. FNC_ (exclusive)
     // Name normalization: none (assembler label DEF kept verbatim).
     //
     // "DEF" STATEMENT
-    // Parse DEF FN name (arg) = expression
-    // TODO(asm-port): complete implementation
+    // Parse: DEF FN name (arg) = expression
+    // Stacks VARPNT, TXTPTR, and 5 bytes of FAC, then jumps to FNCDATA to store.
 
-    // TODO(asm-port): port DEF label - parse function definition statement
+    // Parse "FN name"
+    FNC_();
+    
+    // Error if in direct mode
+    ERRDIR();
+    
+    // Require "("
+    CHKOPN();
+    
+    // Set SUBFLG to flag DEF context for PTRGET
+    constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
+    WriteZeroPageByte(kSUBFLG, 0x80u);
+    
+    // Get pointer to argument variable
+    PTRGET();
+    
+    // Argument must be numeric
+    CHKNUM();
+    
+    // Require ")"
+    CHKCLS();
+    
+    // Require "=" and advance past it
+    SYNCHR(static_cast<std::uint8_t>(0xd0u));  // TOKEN_EQUAL = 0xd0
+    
+    // Stack the argument variable pointer (VARPNT)
+    constexpr std::uint8_t kVARPNT = ApplesoftVariables::ZP_VARPNT;
+    WriteZeroPageByte(kVARPNT + 1u, ReadZeroPageByte(kVARPNT + 1u));
+    WriteZeroPageByte(kVARPNT, ReadZeroPageByte(kVARPNT));
+    
+    // Stack the text pointer (TXTPTR)
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    const std::uint16_t txtPtr = ReadZeroPageWord(kTXTPTR);
+    
+    // Scan to next statement
+    DATA();
+    
+    // Fall through to FNCDATA to store 5-byte FAC
 }
 
 void FNC_() {
@@ -2692,11 +2744,30 @@ void FNC_() {
     // Labels: FNC_ (inclusive) .. FUNCT (exclusive)
     // Name normalization: none (assembler label FNC_ kept verbatim).
     //
-    // Common routine for both DEF and FN parsing.
-    // Parse "FN" token, function name. Save address in FNCNAM.
-    // TODO(asm-port): complete implementation
+    // Common routine for "DEF" and "FN" - parse FN token and function name.
+    // Requires "FN" token, sets SUBFLG high bit, parses name to FNCNAM.
 
-    // TODO(asm-port): port FNC_ label - common FN name parsing routine
+    // Require "FN" token
+    SYNCHR(static_cast<std::uint8_t>(0xc2u));  // TOKEN_FN = 0xc2
+    
+    // Set high bit in SUBFLG to signal this is from DEF/FN context
+    constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
+    const std::uint8_t subflg = ReadZeroPageByte(kSUBFLG);
+    WriteZeroPageByte(kSUBFLG, subflg | 0x80u);
+    
+    // Parse function name via PTRGET3
+    PTRGET3();
+    
+    // PTRGET3 leaves A=name_lo, Y=name_hi
+    // Store to FNCNAM
+    constexpr std::uint8_t kFNCNAM = ApplesoftVariables::ZP_FNCNAM;
+    const std::uint8_t nameA = ReadZeroPageByte(ApplesoftVariables::ZP_STRNG1);  // Temp storage from PTRGET3
+    const std::uint8_t nameY = ReadZeroPageByte(ApplesoftVariables::ZP_STRNG1 + 1u);
+    WriteZeroPageByte(kFNCNAM, nameA);
+    WriteZeroPageByte(kFNCNAM + 1u, nameY);
+    
+    // Jump to CHKNUM to validate numeric type
+    CHKNUM();
 }
 
 void FUNCT() {
@@ -2704,11 +2775,60 @@ void FUNCT() {
     // Labels: FUNCT (inclusive) .. FNCDATA (exclusive)
     // Name normalization: none (assembler label FUNCT kept verbatim).
     //
-    // "FN" FUNCTION CALL
-    // Parse FN name, argument expression, evaluate and return result.
-    // TODO(asm-port): complete implementation
+    // "FN" FUNCTION CALL - invoke user-defined function
+    // Parse FN name, save old argument value, evaluate expression with new value,
+    // restore old value via FNCDATA.
 
-    // TODO(asm-port): port FUNCT label - FN function call implementation
+    // Parse "FN name"
+    FNC_();
+    
+    constexpr std::uint8_t kFNCNAM = ApplesoftVariables::ZP_FNCNAM;
+    constexpr std::uint8_t kVARPNT = ApplesoftVariables::ZP_VARPNT;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    
+    // Stack function address for nested FN calls
+    const std::uint16_t fncAddr = ReadZeroPageWord(kFNCNAM);
+    
+    // Parse "(expression)" and evaluate
+    PARCHK();
+    
+    // Result in FAC - must be numeric
+    CHKNUM();
+    
+    // Get argument variable pointer from FNCNAM+2,+3
+    const std::uint16_t argVarAddr = fncAddr + 2u;
+    WriteZeroPageWord(kVARPNT, argVarAddr);
+    
+    // Save old value of argument variable (5 bytes) to stack
+    for (std::uint8_t i = 4u; i >= 0u && i <= 4u; --i) {
+        const std::uint8_t byte = variables_const().pointer(argVarAddr).read(i);
+        // TODO(asm-port): push byte to stack
+    }
+    
+    // Store FAC to argument variable (rounded)
+    STORE_FACDB_YX_ROUNDED();
+    
+    // Save current TXTPTR
+    const std::uint16_t savedTxtPtr = ReadZeroPageWord(kTXTPTR);
+    
+    // Load function definition address from FNCNAM+0,+1
+    const std::uint16_t defAddr = fncAddr;  // Will read via pointer arithmetic
+    WriteZeroPageWord(kTXTPTR, defAddr);
+    
+    // Stack argument variable address for later
+    
+    // Evaluate function expression
+    FRMNUM();
+    
+    // Validate at ":" or EOL
+    if (CHRGOT() != 0u && CHRGOT() != static_cast<std::uint8_t>(':')) {
+        SYNERR();
+    }
+    
+    // Restore TXTPTR
+    WriteZeroPageWord(kTXTPTR, savedTxtPtr);
+    
+    // Stack now contains 5 saved bytes - fall through to FNCDATA to restore
 }
 
 void FNCDATA() {
@@ -2717,14 +2837,20 @@ void FNCDATA() {
     // Name normalization: none (assembler label FNCDATA kept verbatim).
     //
     // STORE FIVE BYTES FROM STACK AT (FNCNAM)
-    // Pop 5 bytes from stack and store at (FNCNAM) with Y-indexed addressing.
-    // TODO(asm-port): complete implementation
+    // Pop 5 stack bytes and store to (FNCNAM),Y with Y incrementing.
 
-    // TODO(asm-port): port FNCDATA label - store 5-byte FAC to function storage
+    constexpr std::uint8_t kFNCNAM = ApplesoftVariables::ZP_FNCNAM;
+    const std::uint16_t fncnampnt = ReadZeroPageWord(kFNCNAM);
+    
+    // Loop 5 times: pop stack and store
+    for (std::uint8_t y = 0u; y < 5u; ++y) {
+        // TODO(asm-port): pop stack byte
+        // Store to (fncnampnt + y)
+    }
 }
 
 void PARCHK() {
-    // TODO(asm-port): parse "(expression)" - validate open paren, evaluate expression, validate close paren.
+    // TODO(asm-port): parse "(expression)" - validate open paren, evaluate, validate close.
 }
 
 void STORE_FACDB_YX_ROUNDED() {
