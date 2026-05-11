@@ -19,15 +19,15 @@ std::uint8_t MON_GETLN() {
 }
 
 void write_INPUT_BUFFER(std::uint8_t index, std::uint8_t v) {
-    variables().writeByte(static_cast<std::uint16_t>(kInputBufferAddress + index), v);
+    variables().pointer(kInputBufferAddress).write(v, index);
 }
 
 std::uint8_t read_INPUT_BUFFER_minus_1(std::uint8_t index) {
-    return variables_const().readByte(static_cast<std::uint16_t>((kInputBufferAddress - 1u) + index));
+    return variables_const().pointer(static_cast<std::uint16_t>(kInputBufferAddress - 1u)).read(index);
 }
 
 void write_INPUT_BUFFER_minus_1(std::uint8_t index, std::uint8_t v) {
-    variables().writeByte(static_cast<std::uint16_t>((kInputBufferAddress - 1u) + index), v);
+    variables().pointer(static_cast<std::uint16_t>(kInputBufferAddress - 1u)).write(v, index);
 }
 
 // TODO(asm-port): port RDKEY monitor call; read a key from the monitor.

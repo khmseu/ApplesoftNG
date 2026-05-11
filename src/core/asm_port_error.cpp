@@ -1872,8 +1872,9 @@ void LET2(std::uint8_t savedValTypPlus1) {
     AYINT();
 
     const std::uint16_t forPtr = ReadZeroPageWord(kFORPNT);
-    variables().writeByte(forPtr, ReadZeroPageByte(kFAC_PLUS_3));
-    variables().writeByte(static_cast<std::uint16_t>(forPtr + 1u), ReadZeroPageByte(kFAC_PLUS_4));
+    auto forPtrByte = variables().pointer(forPtr);
+    forPtrByte.write(ReadZeroPageByte(kFAC_PLUS_3));
+    forPtrByte.write(ReadZeroPageByte(kFAC_PLUS_4), 1u);
 }
 
 void PUTSTR() {
@@ -1890,8 +1891,9 @@ void PUTSTR() {
     constexpr std::uint8_t kSTRNG1 = 0xab;
 
     const std::uint16_t facDescriptor = ReadZeroPageWord(kFAC_PLUS_3);
+    const auto facDescriptorPtr = variables_const().pointer(facDescriptor);
     auto readDescriptorByte = [&](std::uint8_t offset) {
-        return variables_const().readByte(static_cast<std::uint16_t>(facDescriptor + offset));
+        return facDescriptorPtr.read(offset);
     };
 
     std::uint16_t descriptorPointer = ReadZeroPageWord(kFAC_PLUS_3);
@@ -1930,9 +1932,10 @@ void PUTSTR() {
 
     const std::uint16_t source = ReadZeroPageWord(kDSCPTR);
     const std::uint16_t dest = ReadZeroPageWord(kFORPNT);
+    const auto sourcePtr = variables_const().pointer(source);
+    auto destPtr = variables().pointer(dest);
     for (std::uint8_t i = 0; i < 3; ++i) {
-        const std::uint8_t value = variables_const().readByte(static_cast<std::uint16_t>(source + i));
-        variables().writeByte(static_cast<std::uint16_t>(dest + i), value);
+        destPtr.write(sourcePtr.read(i), i);
     }
 }
 
