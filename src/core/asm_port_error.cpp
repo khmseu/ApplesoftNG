@@ -2063,7 +2063,7 @@ void RELOPS() {
     // Name normalization: none (assembler label RELOPS kept verbatim).
 
     constexpr std::uint8_t kCPRTYP = ApplesoftVariables::ZP_CPRTYP;
-    constexpr std::uint16_t kARG = 0x00a5u;
+    constexpr std::uint16_t kARG = ApplesoftVariables::ZP_ARG;
 
     const std::uint8_t compareTypeFlags = ReadZeroPageByte(kCPRTYP);
     if (CHKVAL(compareTypeFlags)) {
