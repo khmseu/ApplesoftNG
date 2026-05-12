@@ -40,6 +40,7 @@ void DEF();
 void POKE();
 void WAIT();
 void PRINT(std::uint8_t a);
+void CALL();
 void NORMAL();
 void INVERSE();
 void FLASH();
@@ -64,7 +65,7 @@ static void GR()               {} // TODO(asm-port): GR
 static void TEXT()             {} // TODO(asm-port): TEXT
 static void PR_NUMBER()        {} // TODO(asm-port): PR_NUMBER
 static void IN_NUMBER()        {} // TODO(asm-port): IN_NUMBER
-static void CALL()             {} // TODO(asm-port): CALL
+static void CALL_Handler()     { CALL(); }
 static void PLOT()             {} // TODO(asm-port): PLOT
 static void HLIN()             {} // TODO(asm-port): HLIN
 static void VLIN()             {} // TODO(asm-port): VLIN
@@ -138,7 +139,7 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         TEXT,             // [9]  $89...137...TEXT
         PR_NUMBER,        // [10] $8A...138...PR#
         IN_NUMBER,        // [11] $8B...139...IN#
-        CALL,             // [12] $8C...140...CALL
+        CALL_Handler,     // [12] $8C...140...CALL
         PLOT,             // [13] $8D...141...PLOT
         HLIN,             // [14] $8E...142...HLIN
         VLIN,             // [15] $8F...143...VLIN

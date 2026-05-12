@@ -3457,6 +3457,32 @@ void CHKOPN() {
     SYNCHR(static_cast<std::uint8_t>('('));
 }
 
+void CALL() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: CALL (inclusive) .. IN_NUMBER (exclusive)
+    // Name normalization: none (assembler label CALL kept verbatim).
+    //
+    // Execute machine language subroutine at expression address.
+    // Evaluates the numeric expression to a 16-bit address, then performs
+    // an indirect jump to that address. The called routine returns with RTS.
+
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+
+    // Evaluate numeric expression into FAC
+    FRMNUM();
+
+    // Convert FAC to 16-bit address in LINNUM
+    GETADR();
+
+    // Get the address from LINNUM
+    const std::uint16_t callAddress = ReadZeroPageWord(kLINNUM);
+
+    // Perform indirect call via function pointer
+    // The machine code at callAddress must return with an RTS instruction
+    auto callRoutine = reinterpret_cast<void (*)()>(callAddress);
+    callRoutine();
+}
+
 void DEF() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: DEF (inclusive) .. FNC_ (exclusive)
