@@ -309,6 +309,8 @@ returning, or contains `TODO(asm-port)`.
 | SET_VARPNT_AND_YA                 | src/core/asm_port_error.cpp               | 2306 | real   |
 | SIGN                              | src/core/asm_port_error.cpp               | 1123 | stub   |
 | SNGFLT                            | src/core/asm_port_error.cpp               |  462 | real   |
+| SPEED                             | src/core/asm_port_error.cpp               |  156 | real   |
+| SPEED_Handler                     | src/core/asm_port_token_address_table.cpp |  107 | real   |
 | STEP                              | src/core/asm_port_error.cpp               |  536 | stub   |
 | STKINI                            | src/core/asm_port_error.cpp               |  987 | real   |
 | STOP                              | src/core/asm_port_error.cpp               | 1295 | real   |

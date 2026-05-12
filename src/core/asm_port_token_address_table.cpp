@@ -43,6 +43,7 @@ void INVERSE();
 void FLASH();
 void HIMEM();
 void LOMEM();
+void SPEED();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
@@ -103,7 +104,7 @@ static void ONERR_Handler()    { ONERR(); }
 static void RESUME_Handler()   { RESUME(); }
 static void RECALL()           {} // TODO(asm-port): RECALL
 static void STORE()            {} // TODO(asm-port): STORE
-static void SPEED()            {} // TODO(asm-port): SPEED
+static void SPEED_Handler()    { SPEED(); }
 static void AMPERSAND_VECTOR() {} // TODO(asm-port): & dispatch (JMP vector at $03F5)
 static void WAIT_Handler()     { WAIT(); }
 static void DEF_Handler()      { DEF(); }
@@ -162,7 +163,7 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         RESUME_Handler,   // [38] $A6...166...RESUME
         RECALL,           // [39] $A7...167...RECALL
         STORE,            // [40] $A8...168...STORE
-        SPEED,            // [41] $A9...169...SPEED=
+        SPEED_Handler,    // [41] $A9...169...SPEED=
         LET,              // [42] $AA...170...LET
         GOTO,             // [43] $AB...171...GOTO
         RUN,              // [44] $AC...172...RUN

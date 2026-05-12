@@ -40,6 +40,7 @@ void FRMNUM();
 void GETADR();
 std::uint8_t MEMERR();
 void CLEARC();
+std::uint8_t GETBYT();
 
 
 // TODO(asm-port): port NORMAL statement behavior (currently display-mode init stub).
@@ -150,6 +151,18 @@ void LOMEM() {
     WriteZeroPageByte(kVARTAB, linnum_lo);
     WriteZeroPageByte(kVARTAB + 1u, linnum_hi);
     CLEARC();
+}
+
+void SPEED() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SPEED (inclusive) .. TRACE (exclusive)
+    // Name normalization: none (assembler label SPEED kept verbatim).
+
+    constexpr std::uint8_t kSPEEDZ = ApplesoftVariables::ZP_SPEEDZ;
+    const std::uint8_t speed = GETBYT();
+
+    // ROM computes SPEEDZ = 0x100 - SPEED (via EOR #$FF / INX sequence).
+    WriteZeroPageByte(kSPEEDZ, static_cast<std::uint8_t>(0u - speed));
 }
 
 constexpr std::array<std::uint8_t, 29> kGenericCHRGETImage = {
