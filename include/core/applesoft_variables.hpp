@@ -69,10 +69,16 @@ public:
     static constexpr std::uint8_t ZP_TXTPTR = 0xb8;
     static constexpr std::uint8_t ZP_LOCK = 0xd6;
     static constexpr std::uint8_t ZP_ERRFLG = 0xd8;
+    static constexpr std::uint8_t ZP_ERRLIN = 0xda;
+    static constexpr std::uint8_t ZP_ERRPOS = 0xdc;
+    static constexpr std::uint8_t ZP_ERRNUM = 0xde;
+    static constexpr std::uint8_t ZP_ERRSTK = 0xdf;
     static constexpr std::uint8_t ZP_FIRST = 0xf0;
     static constexpr std::uint8_t ZP_SPEEDZ = 0xf1;
     static constexpr std::uint8_t ZP_TRCFLG = 0xf2;
     static constexpr std::uint8_t ZP_FLASH_BIT = 0xf3;
+    static constexpr std::uint8_t ZP_TXTPSV = 0xf4;
+    static constexpr std::uint8_t ZP_CURLSV = 0xf6;
     static constexpr std::uint8_t ZP_REMSTK = 0xf8;
 
     static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_1 = 0x01ffu;

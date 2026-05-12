@@ -604,6 +604,7 @@ void FLOAT_1(std::uint8_t exponent) {
 }
 
 std::uint8_t gJerErrorCode = ERR_SYNTAX;
+std::uint8_t gPendingErrorCode = ERR_SYNTAX;
 constexpr std::uint8_t kNEG32768Data[4] = {0x90u, 0x80u, 0x00u, 0x00u};
 constexpr std::uint8_t kCZeroData[2] = {0x00u, 0x00u};
 
@@ -1168,6 +1169,8 @@ void ERROR(std::uint8_t error_code_offset) {
     // Labels: ERROR (inclusive) .. PRINT_ERROR_LINNUM (exclusive)
     // Name normalization: none (assembler label ERROR kept verbatim).
 
+    gPendingErrorCode = error_code_offset;
+
     if (IsOnErr()) {
         HANDLERR();
         return;
@@ -1644,6 +1647,7 @@ void CONTROL_C_TYPED() {
     // `bit ERRFLG` / `bpl` in ROM: when sign bit is set, ON ERR is active and
     // CONTROL-C dispatches to HANDLERR with code $FF semantics.
     if ((errFlags & 0x80u) != 0u) {
+        gPendingErrorCode = 0xffu;
         HANDLERR();
         return;
     }
@@ -3453,7 +3457,32 @@ void SETFOR() {
 }
 
 void HANDLERR() {
-    // TODO(asm-port): transfer control to the ON ERR handler.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: HANDLERR (inclusive) .. RESUME (exclusive)
+    // Name normalization: none (assembler label HANDLERR kept verbatim).
+    constexpr std::uint8_t kERRNUM = ApplesoftVariables::ZP_ERRNUM;
+    constexpr std::uint8_t kERRLIN = ApplesoftVariables::ZP_ERRLIN;
+    constexpr std::uint8_t kERRPOS = ApplesoftVariables::ZP_ERRPOS;
+    constexpr std::uint8_t kERRSTK = ApplesoftVariables::ZP_ERRSTK;
+    constexpr std::uint8_t kTXTPSV = ApplesoftVariables::ZP_TXTPSV;
+    constexpr std::uint8_t kCURLSV = ApplesoftVariables::ZP_CURLSV;
+    constexpr std::uint8_t kREMSTK = ApplesoftVariables::ZP_REMSTK;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    constexpr std::uint8_t kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+
+    WriteZeroPageByte(kERRNUM, gPendingErrorCode);
+    WriteZeroPageByte(kERRSTK, ReadZeroPageByte(kREMSTK));
+
+    WriteZeroPageWord(kERRLIN, ReadZeroPageWord(kCURLIN));
+    WriteZeroPageWord(kERRPOS, ReadZeroPageWord(kOLDTEXT));
+
+    WriteZeroPageWord(kTXTPTR, ReadZeroPageWord(kTXTPSV));
+    WriteZeroPageWord(kCURLIN, ReadZeroPageWord(kCURLSV));
+
+    CHRGOT();
+    GOTO();
+    NEWSTT();
 }
 
 bool IsOnErr() {

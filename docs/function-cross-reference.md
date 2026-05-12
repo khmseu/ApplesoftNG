@@ -129,7 +129,7 @@ returning, or contains `TODO(asm-port)`.
 | GTBYTC                            | src/core/asm_port_error.cpp               |      | real   |
 | GTFORPNT                          | src/core/asm_port_gtforpnt.cpp            |   25 | stub   |
 | GetTextTablePointer               | src/core/asm_port_error.cpp               |  931 | real   |
-| HANDLERR                          | src/core/asm_port_error.cpp               | 2538 | stub   |
+| HANDLERR                          | src/core/asm_port_error.cpp               | 2538 | real   |
 | HANDLERR                          | src/core/asm_port_input.cpp               |   19 | stub   |
 | HandleNumberedLine                | src/core/asm_port_error.cpp               |  835 | real   |
 | IF                                | src/core/asm_port_error.cpp               | 1720 | stub   |
