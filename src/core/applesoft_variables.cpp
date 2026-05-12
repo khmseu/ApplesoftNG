@@ -37,6 +37,14 @@ void ApplesoftVariables::setHighByte(std::uint16_t& target, std::uint8_t value) 
 }
 
 std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
+    if (address == ADDR_INPUT_BUFFER_MINUS_4) {
+        return INPUT_BUFFER_MINUS_4;
+    }
+
+    if (address == ADDR_INPUT_BUFFER_MINUS_3) {
+        return INPUT_BUFFER_MINUS_3;
+    }
+
     if (address == ADDR_INPUT_BUFFER_MINUS_1) {
         return INPUT_BUFFER_MINUS_1;
     }
@@ -50,6 +58,15 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     }
 
     switch (address) {
+    case ZP_GOWARM: return GOWARM;
+    case ZP_GOWARM + 1: return lowByte(GOWARM_TARGET);
+    case ZP_GOWARM + 2: return highByte(GOWARM_TARGET);
+    case ZP_GOSTROUT: return GOSTROUT;
+    case ZP_GOSTROUT + 1: return lowByte(GOSTROUT_TARGET);
+    case ZP_GOSTROUT + 2: return highByte(GOSTROUT_TARGET);
+    case ZP_USR: return USR;
+    case ZP_USR + 1: return lowByte(USR_TARGET);
+    case ZP_USR + 2: return highByte(USR_TARGET);
     case ZP_CHARAC: return CHARAC;
     case ZP_ENDCHR: return ENDCHR;
     case ZP_NUMDIM: return NUMDIM;
@@ -116,6 +133,7 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case ZP_DSCPTR: return lowByte(DSCPTR);
     case ZP_DSCPTR + 1: return highByte(DSCPTR);
     case ZP_DSCLEN: return DSCLEN;
+    case ZP_JMPADRS: return JMPADRS_OPCODE;
     case ZP_JMPADRS + 1: return lowByte(JMPADRS);
     case ZP_JMPADRS + 2: return highByte(JMPADRS);
     case ZP_ARYPNT: return lowByte(ARYPNT);
@@ -131,6 +149,7 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case ZP_FAC + 3: return FAC[3];
     case ZP_FAC + 4: return FAC[4];
     case ZP_FAC_SIGN: return FAC_SIGN;
+    case ZP_SHIFT_SIGN_EXT: return SHIFT_SIGN_EXT;
     case ZP_ARG: return ARG[0];
     case ZP_ARG + 1: return ARG[1];
     case ZP_ARG + 2: return ARG[2];
@@ -157,6 +176,16 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
 }
 
 void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
+    if (address == ADDR_INPUT_BUFFER_MINUS_4) {
+        INPUT_BUFFER_MINUS_4 = value;
+        return;
+    }
+
+    if (address == ADDR_INPUT_BUFFER_MINUS_3) {
+        INPUT_BUFFER_MINUS_3 = value;
+        return;
+    }
+
     if (address == ADDR_INPUT_BUFFER_MINUS_1) {
         INPUT_BUFFER_MINUS_1 = value;
         return;
@@ -173,6 +202,15 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     }
 
     switch (address) {
+    case ZP_GOWARM: GOWARM = value; return;
+    case ZP_GOWARM + 1: setLowByte(GOWARM_TARGET, value); return;
+    case ZP_GOWARM + 2: setHighByte(GOWARM_TARGET, value); return;
+    case ZP_GOSTROUT: GOSTROUT = value; return;
+    case ZP_GOSTROUT + 1: setLowByte(GOSTROUT_TARGET, value); return;
+    case ZP_GOSTROUT + 2: setHighByte(GOSTROUT_TARGET, value); return;
+    case ZP_USR: USR = value; return;
+    case ZP_USR + 1: setLowByte(USR_TARGET, value); return;
+    case ZP_USR + 2: setHighByte(USR_TARGET, value); return;
     case ZP_CHARAC: CHARAC = value; return;
     case ZP_ENDCHR: ENDCHR = value; return;
     case ZP_NUMDIM: NUMDIM = value; return;
@@ -239,6 +277,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case ZP_DSCPTR: setLowByte(DSCPTR, value); return;
     case ZP_DSCPTR + 1: setHighByte(DSCPTR, value); return;
     case ZP_DSCLEN: DSCLEN = value; return;
+    case ZP_JMPADRS: JMPADRS_OPCODE = value; return;
     case ZP_JMPADRS + 1: setLowByte(JMPADRS, value); return;
     case ZP_JMPADRS + 2: setHighByte(JMPADRS, value); return;
     case ZP_ARYPNT: setLowByte(ARYPNT, value); return;
@@ -254,6 +293,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case ZP_FAC + 3: FAC[3] = value; return;
     case ZP_FAC + 4: FAC[4] = value; return;
     case ZP_FAC_SIGN: FAC_SIGN = value; return;
+    case ZP_SHIFT_SIGN_EXT: SHIFT_SIGN_EXT = value; return;
     case ZP_ARG: ARG[0] = value; return;
     case ZP_ARG + 1: ARG[1] = value; return;
     case ZP_ARG + 2: ARG[2] = value; return;

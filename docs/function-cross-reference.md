@@ -32,7 +32,7 @@ returning, or contains `TODO(asm-port)`.
 | CHECK_EXIT                        | src/core/asm_port_strlt2.cpp              |  324 | real   |
 | CHECK_SIMPLE_VARIABLE             | src/core/asm_port_strlt2.cpp              |  262 | real   |
 | CHECK_VARIABLE                    | src/core/asm_port_strlt2.cpp              |  282 | real   |
-| CHRGET                            | src/core/asm_port_error.cpp               |   26 | stub   |
+| CHRGET                            | src/core/asm_port_error.cpp               |   87 | real   |
 | CHRGET_INPUT                      | src/core/asm_port_input.cpp               |   33 | stub   |
 | CHRGOT                            | src/core/asm_port_error.cpp               |  606 | real   |
 | CHRGOT                            | src/core/asm_port_input.cpp               |   24 | stub   |
@@ -44,7 +44,7 @@ returning, or contains `TODO(asm-port)`.
 | ClearErrFlag                      | src/core/asm_port_error.cpp               |   35 | real   |
 | CLREOL                            | src/platform/asm_port_getln.cpp           |   24 | stub   |
 | CMPDONE                           | src/core/asm_port_error.cpp               | 2109 | real   |
-| COLD_START                        | src/core/asm_port_error.cpp               |  446 | stub   |
+| COLD_START                        | src/core/asm_port_error.cpp               |  108 | real   |
 | COLON\_                           | src/core/asm_port_error.cpp               | 1257 | real   |
 | CompareArgAndFacStrings           | src/core/asm_port_error.cpp               |  462 | stub   |
 | CONINT                            | src/core/asm_port_error.cpp               |  435 | stub   |
@@ -104,6 +104,8 @@ returning, or contains `TODO(asm-port)`.
 | GET                               | src/core/asm_port_token_address_table.cpp |   24 | stub   |
 | GETARY                            | src/core/asm_port_error.cpp               | 2315 | real   |
 | GETARY2                           | src/core/asm_port_error.cpp               | 2323 | real   |
+| GENERIC_CHRGET                    | src/core/asm_port_error.cpp               |   59 | real   |
+| GENERIC_END                       | src/core/asm_port_error.cpp               |   99 | real   |
 | GETSPA                            | src/core/asm_port_strlt2.cpp              |  170 | real   |
 | GETBYT                            | src/core/asm_port_error.cpp               | 1937 | stub   |
 | GETCHR                            | src/core/asm_port_error.cpp               |  610 | real   |

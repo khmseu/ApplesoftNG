@@ -8,6 +8,9 @@ namespace applesoft::asm_port {
 class ApplesoftVariables {
 public:
     // Canonical zero-page/fixed address names used by assembler ports.
+    static constexpr std::uint8_t ZP_GOWARM = 0x00;
+    static constexpr std::uint8_t ZP_GOSTROUT = 0x03;
+    static constexpr std::uint8_t ZP_USR = 0x0a;
     static constexpr std::uint8_t ZP_CHARAC = 0x0d;
     static constexpr std::uint8_t ZP_ENDCHR = 0x0e;
     static constexpr std::uint8_t ZP_NUMDIM = 0x0f;
@@ -58,6 +61,7 @@ public:
     static constexpr std::uint8_t ZP_LOWTR = 0x9b;
     static constexpr std::uint8_t ZP_FAC = 0x9d;
     static constexpr std::uint8_t ZP_FAC_SIGN = 0xa2;
+    static constexpr std::uint8_t ZP_SHIFT_SIGN_EXT = 0xa4;
     static constexpr std::uint8_t ZP_ARG = 0xa5;
     static constexpr std::uint8_t ZP_STRNG1 = 0xab;
     static constexpr std::uint8_t ZP_STRNG2 = 0xad;
@@ -72,6 +76,8 @@ public:
     static constexpr std::uint8_t ZP_REMSTK = 0xf8;
 
     static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_1 = 0x01ffu;
+    static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_3 = 0x01fdu;
+    static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_4 = 0x01fcu;
     static constexpr std::uint16_t ADDR_INPUT_BUFFER = 0x0200u;
     static constexpr std::uint16_t ADDR_KEYBOARD = 0xc000u;
 
@@ -129,6 +135,12 @@ public:
 
     // Zero-page and fixed-address variables currently used in the C++ ports.
     std::uint8_t NUMDIM = 0;      // $0f  number of dimensions
+    std::uint8_t GOWARM = 0;      // $00 opcode byte
+    std::uint16_t GOWARM_TARGET = 0; // $01/$02
+    std::uint8_t GOSTROUT = 0;    // $03 opcode byte
+    std::uint16_t GOSTROUT_TARGET = 0; // $04/$05
+    std::uint8_t USR = 0;         // $0a opcode byte
+    std::uint16_t USR_TARGET = 0; // $0b/$0c
     std::uint8_t DIMFLG = 0;      // $10  DIM-call flag
     std::uint8_t VALTYP = 0;      // $11  string flag: $ff = string, $00 = float
     std::uint8_t VALTYP_PLUS_1 = 0; // $12  integer type flag
@@ -164,13 +176,15 @@ public:
     std::uint16_t FNCNAM = 0;     // $8a/$8b
     std::uint16_t DSCPTR = 0;     // $8c/$8d
     std::uint8_t DSCLEN = 0;      // $8f
-    std::uint16_t JMPADRS = 0;    // $90/$91 (JMPADRS+1,+2)
+    std::uint8_t JMPADRS_OPCODE = 0; // $90
+    std::uint16_t JMPADRS = 0;    // $91/$92 (JMPADRS+1,+2)
     std::uint16_t ARYPNT = 0;     // $94/$95
     std::uint16_t HIGHTR = 0;     // $96/$97
     std::uint8_t INDX = 0;        // $99
     std::uint16_t LOWTR = 0;      // $9b/$9c
     std::array<std::uint8_t, 5> FAC{}; // $9d..$a1
     std::uint8_t FAC_SIGN = 0;    // $a2
+    std::uint8_t SHIFT_SIGN_EXT = 0; // $a4
     std::array<std::uint8_t, 6> ARG{}; // $a5..$aa
     std::uint16_t STRNG1 = 0;     // $ab/$ac
     std::uint16_t STRNG2 = 0;     // $ad/$ae
@@ -191,6 +205,8 @@ public:
 
     // Non-zero-page fixed addresses currently used.
     std::uint8_t INPUT_BUFFER_MINUS_1 = 0; // $01ff
+    std::uint8_t INPUT_BUFFER_MINUS_3 = 0; // $01fd
+    std::uint8_t INPUT_BUFFER_MINUS_4 = 0; // $01fc
     std::uint8_t KEYBOARD = 0;    // $c000 (memory-mapped keyboard latch)
     std::array<std::uint8_t, 256> INPUT_BUFFER_PAGE{}; // $0200..$02ff
 
