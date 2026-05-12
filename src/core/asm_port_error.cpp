@@ -1635,10 +1635,15 @@ void SETDA(std::uint16_t dataPointer) {
 }
 
 void CONTROL_C_TYPED() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: CONTROL_C_TYPED (inclusive) .. STOP (exclusive)
+    // Name normalization: none (assembler label CONTROL_C_TYPED kept verbatim).
     constexpr std::uint8_t kERRFLG = ApplesoftVariables::ZP_ERRFLG;
     const std::uint8_t errFlags = ReadZeroPageByte(kERRFLG);
 
-    if ((errFlags & 0x80u) == 0u) {
+    // `bit ERRFLG` / `bpl` in ROM: when sign bit is set, ON ERR is active and
+    // CONTROL-C dispatches to HANDLERR with code $FF semantics.
+    if ((errFlags & 0x80u) != 0u) {
         HANDLERR();
         return;
     }
