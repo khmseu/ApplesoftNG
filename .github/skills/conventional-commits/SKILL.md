@@ -27,7 +27,7 @@ This skill covers:
 
 ### Message Structure
 
-- Apply rules in this priority order: 1) valid Conventional Commits header syntax, 2) correct breaking-change signaling, 3) body/footer detail for human and automation needs.
+- Apply rules in this priority order: 1) valid Conventional Commits header syntax, 2) correct breaking-change signaling, 3) body/footer detail for human and automation needs. If priorities conflict, satisfy 1 and 2 first, then add as much body/footer detail as possible without violating 1 or 2.
 - Use the canonical structure:
 
 ```text
@@ -46,7 +46,7 @@ This skill covers:
 ### Types and Scope
 
 - Use `feat` for new features and `fix` for bug fixes.
-- Use additional types (`docs`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`, etc.) from your repository's documented allowlist (for example, in `CONTRIBUTING.md`); if no allowlist exists, use exactly this default set and ensure each commit uses one valid type from it.
+- Use additional types (`docs`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`) from your repository's documented allowlist (for example, in `CONTRIBUTING.md`); if no allowlist exists, use only this listed default set and ensure each commit uses one valid type from it.
 - Use scope as a noun indicating affected subsystem, for example `feat(parser): ...`.
 - Prefer splitting mixed changes into multiple commits rather than forcing one ambiguous type.
 

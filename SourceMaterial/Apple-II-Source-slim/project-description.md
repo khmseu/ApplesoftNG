@@ -30,7 +30,7 @@ Each module or submodule is a separate `.lst` and `.sym` file pair.
 
 **Example**:
 
-```
+```6502
 1356 T:0431               PRINT_ERROR_LINNUM
 1357 T:0431  20 3a 0b               jsr STROUT
 1358 T:0434  a9 00                  lda #$00
@@ -39,7 +39,7 @@ Each module or submodule is a separate `.lst` and `.sym` file pair.
 
 or:
 
-```
+```6502
 112 T:0000  a0 4b        HEADR     ldy #$4b          ;WRITE A*256 'LONG 1'
 113 T:0002  20 12 00               jsr ZERDLY                ;  HALF CYCLES
 114 T:0005  d0 f9                  bne HEADR             ;  (650 USEC EACH)
@@ -66,7 +66,7 @@ or:
 
 **Example**:
 
-```
+```text
 GOWARM, 0x0000, 0, 0x0000
 STROUT, 0x0F3A, 0, 0x0000
 CHRGOT, 0x0F86, 0, 0x0000
@@ -164,7 +164,7 @@ The analyzer generates a report showing:
 - Supports labels, mnemonics, operands, and comments
 - Generates hex byte sequences for each instruction
 
-**Reference**: https://www.floodgap.com/retrotech/xa/
+**Reference**: <https://www.floodgap.com/retrotech/xa/>
 
 ## Problem Statement
 

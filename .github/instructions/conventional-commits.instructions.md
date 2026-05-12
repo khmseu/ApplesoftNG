@@ -1,5 +1,5 @@
 ---
-description: "Use when creating commit messages, performing git commits, preparing squash merge commit text, or suggesting commit titles. Enforce Conventional Commits 1.0.0 format and SemVer-aware commit intent."
+description: "Enforce Conventional Commits 1.0.0 format."
 name: "Conventional Commits Enforcement"
 ---
 
@@ -18,9 +18,9 @@ Always use Conventional Commits format for any commit message you write or sugge
 ## Required Rules
 
 - The header must include a valid type and a colon-space separator.
-- Prefer lowercase types and short imperative descriptions.
+- Always use lowercase types and short imperative descriptions.
 - For any non-trivial change, include a detailed commit body describing context, rationale, and key implementation details.
-- Reserve header-only commit messages for trivial changes only.
+- Reserve header-only commit messages for changes limited to spelling corrections, whitespace/indentation adjustments, or comment-only updates (no code logic changes).
 - Use `feat` for new features and `fix` for bug fixes.
 - Use additional types consistently when appropriate, such as `docs`, `refactor`, `perf`, `test`, `chore`, `ci`, and `build`.
 - If the change is breaking, mark it with `!` in the header and/or a `BREAKING CHANGE:` footer.

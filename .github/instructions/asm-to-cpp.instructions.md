@@ -11,47 +11,47 @@ Use these instructions when converting a bounded assembler segment into C++.
 - `start_label`: first label of the conversion window, inclusive.
 - `end_label`: last label of the conversion window, exclusive.
 
-Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II-Source-slim](../../SourceMaterial/Apple-II-Source-slim).
+Treat only labels declared as assembler labels in the historical listings within the conversion window as valid symbols from [SourceMaterial/Apple-II-Source-slim](../../SourceMaterial/Apple-II-Source-slim) (exclude comments, prose, and metadata headings).
 
 ## Mandatory Workflow
 
-1. Locate both labels and confirm they are in the same source listing region.
+1. Locate both labels and confirm they are in the same source listing region. If either label is not found in the listings, stop and report which label is missing before proceeding.
 2. Extract the range that starts at `start_label` and stops immediately before `end_label`.
-3. Identify 16-bit pointer candidates in the extracted range before coding:
-
-- indirect addressing operands such as `($NN),Y` and `($NN,X)`
-- split-byte address construction such as `#<label` and `#>label` stored to adjacent bytes
-- low-byte add plus carry-chain high-byte increment sequences (`ADC`/`INC` patterns)
-
+3. Identify 16-bit pointer candidates in the extracted range before coding using this checklist:
+    - indirect addressing operands such as `($NN),Y` and `($NN,X)`
+    - split-byte address construction such as `#<label` and `#>label` stored to adjacent bytes
+    - low-byte add plus carry-chain high-byte increment sequences (`ADC`/`INC` patterns)
 4. For each pointer candidate, plan a single unified C++ representation (pointer or pointer abstraction) instead of separate low/high byte locals.
-5. Before coding, consult [docs/function-cross-reference.md](../../docs/function-cross-reference.md) and the [# Function Cross Reference](../../docs/function-cross-reference.md#function-cross-reference) section to determine which functions in this window are already ported, which are still stubs/placeholders, and where each function is implemented.
+5. Before coding, consult [docs/function-cross-reference.md](../../docs/function-cross-reference.md) to determine which functions in this window are already ported, which are still stubs/placeholders, and where each function is implemented.
 6. Include comments that are:
 
-- inline inside the range.
-- immediately preceding the first line in range and directly describing the range behavior.
+    - inline inside the range.
+    - immediately preceding the first line in range and directly describing the range behavior.
 
 7. Infer the behavior and data flow from opcodes, branch patterns, and comments.
    - If the source slice does not end in an unconditional transfer (`RTS`, `JMP`, or unconditional branch), it falls through into the next label. Model that fall-through in C++ by calling the following function at that point, or by returning state that the caller uses to invoke the next label.
 
-- If a label is `MON_xyz`, treat it as an alias for monitor label `xyz` and implement it immediately as a forwarder function (do not leave alias-only comments without code).
+   - If a label is `MON_xyz`, treat it as an alias for monitor label `xyz` and implement it immediately as a forwarder function (do not leave alias-only comments without code).
 
 8. Implement one primary C++ function that preserves the original assembler name as much as possible.
 9. Place the function in the appropriate runtime area:
 
-- interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
-- console or machine-facing I/O behavior: [src/platform](../../src/platform) and [include/platform](../../include/platform)
+    - interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
+    - console or machine-facing I/O behavior: [src/platform](../../src/platform) and [include/platform](../../include/platform)
 
 10. Add a short provenance comment above the function with:
 
-- source listing path
-- start/end labels
-- any normalization done to keep name valid in C++
+    - source listing path
+    - start/end labels
+    - any normalization done to keep name valid in C++
 
 11. If callees are not implemented yet, add dummy implementations in the same subsystem.
 12. Update [docs/function-cross-reference.md](../../docs/function-cross-reference.md) after the port so it reflects new implementations and current stub/real status.
-13. Ensure build remains green after each increment.
+13. Run a build after each increment; use the Output Checklist below as the acceptance gate for all detailed constraints.
 
-## 16-bit Pointer Synthesis Rules
+## Implementation Rules
+
+### 16-bit Pointer Synthesis
 
 - Do not model split-byte pointer flows as two unrelated `uint8_t` locals when they represent one logical address.
 - Lift split-byte pointer flows to one unified pointer-oriented representation in C++ (raw pointer, typed wrapper, or equivalent abstraction).
@@ -60,31 +60,33 @@ Treat labels as symbols from the historical listings in [SourceMaterial/Apple-II
 - For absolute memory references that are not fixed-address state, prefer a consistent base-memory mapping model and index from it.
 - If an absolute address names a translated C++ object or a fixed-address zero-page variable, use the translated object or `ApplesoftVariables` accessor instead of a raw memory index.
 
-## Naming Rules
+### Naming
 
 - Keep assembler symbol names verbatim when valid in C++.
 - If a symbol is not a valid C++ identifier, minimally normalize it (for example `.` to `_`) and document original symbol in a comment.
 - Prefer keeping capitalization consistent with source labels.
 - Treat `MON_xyz` labels as monitor aliases for `xyz`; always implement them immediately as direct forwarders to the corresponding monitor handler.
 
-## Fixed-Address Variable Rules
+### Fixed-Address Variables
 
 - Route all fixed-address state reads/writes through `ApplesoftVariables` (`variables()` / `variables_const()` and their byte/word accessors).
 - Do not mirror fixed addresses with separate globals, file-scope statics, or ad-hoc structs when `ApplesoftVariables` already represents them.
 - When a needed fixed address is missing, add it to `ApplesoftVariables` first, then use the accessors from ported code.
 - When a fixed-address pair forms one logical pointer, read/write it through one conceptual variable in the ported function (for example via word accessors or a dedicated pointer abstraction), not duplicated low/high temporaries.
 
-## Dummy Implementation Rules
+### Dummy Implementations
 
-- Create stubs only for missing dependencies required by the converted function.
-- Use the original assembler-like name for stub function names.
-- Add `TODO(asm-port)` in each stub with the source label to be ported later.
-- Return neutral values by type:
-  - `void`: empty body
-  - pointers: `nullptr`
-  - arithmetic types: `0`
-  - `bool`: `false`
-  - class/struct values: `{}`
+Create stubs only for missing dependencies required by the converted function.
+
+| Rule                | Detail                                        |
+| ------------------- | --------------------------------------------- |
+| Name                | Use the original assembler-like name verbatim |
+| Marker              | Add `TODO(asm-port)` with the source label    |
+| `void` return       | Empty body                                    |
+| Pointer return      | `return nullptr;`                             |
+| Arithmetic return   | `return 0;`                                   |
+| `bool` return       | `return false;`                               |
+| Class/struct return | `return {};`                                  |
 
 ## Output Checklist
 
@@ -107,9 +109,11 @@ When the conversion window contains a table of `.word LABEL` or `.word LABEL-1` 
 - The `-1` offset is a 6502 RTS-dispatch artifact; in C++ use the plain function pointer without adjustment.
 - Declare a type alias for the common function signature: `using <TableName>_fn = <return>(*)(<params>);`
 - Implement a single lookup function named after the table label:
+
   ```cpp
   <TableName>_fn <TableName>(std::size_t index);
   ```
+
 - The body holds a `static constexpr` array of function pointers indexed from 0.
 - The function returns the pointer; the **caller** is responsible for invoking it.
 - For any callee not yet ported, add a dummy stub with `TODO(asm-port)` following the Dummy Implementation Rules above, with signature matching the type alias.

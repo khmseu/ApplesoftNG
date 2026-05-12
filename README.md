@@ -40,14 +40,14 @@ This project is a clone of the original Applesoft BASIC interpreter, implemented
 
 1. Clone the repository:
 
-   ```
+   ```bash
    git clone <repository-url>
    cd applesoft-clone
    ```
 
 2. Build the project using CMake:
 
-   ```
+   ```bash
    mkdir build
    cd build
    cmake ..
@@ -55,7 +55,8 @@ This project is a clone of the original Applesoft BASIC interpreter, implemented
    ```
 
 3. Run the interpreter:
-   ```
+
+   ```bash
    ./ApplesoftClone
    ```
 

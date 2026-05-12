@@ -11,6 +11,8 @@ Incrementally port Applesoft historical assembler ranges into C++ using a strict
 - "incremental assembler to c++"
 - "translate this listing window"
 
+If `start_label` or `end_label` cannot be resolved in the listings, return an error message specifying which label could not be found.
+
 ## Inputs
 
 - `start_label` (inclusive)
@@ -22,6 +24,8 @@ Optional:
 
 ## Procedure
 
+### Label Resolution & Analysis
+
 1. Resolve both labels in the listings under [SourceMaterial/Apple-II-Source-slim/src/system](../../../SourceMaterial/Apple-II-Source-slim/src/system).
 2. Read the bounded range from `start_label` up to but not including `end_label`, including inline comments and comments immediately preceding the range.
 3. Identify 16-bit pointer candidates in the window before coding:
@@ -30,23 +34,28 @@ Optional:
    - carry-chain pointer arithmetic (`ADC` on low byte with carry into high byte)
 
 4. For each candidate, plan one unified C++ representation (pointer or pointer abstraction). Do not keep low/high bytes as separate independent locals when they represent one pointer.
-5. Consult [docs/function-cross-reference.md](../../../docs/function-cross-reference.md), especially [# Function Cross Reference](../../../docs/function-cross-reference.md#function-cross-reference), to identify existing implementations, current stub placeholders, and source locations for functions in the window.
-6. Summarize intent in exactly 3-5 concise bullets before coding.
-7. Implement one C++ function for the range.
-8. If the range does not end in an `RTS`, `JMP`, or unconditional branch, preserve the fall-through into `end_label` by calling the following function at that point. Add a checklist item to confirm that the next-label fall-through is modeled explicitly.
-9. Treat `MON_xyz` labels as monitor aliases for `xyz`; always implement them immediately as forwarding functions to the monitor handler.
-10. Route all fixed-address global state access through `ApplesoftVariables` (`variables()` / `variables_const()` accessors). If a required fixed address is missing, add it to `ApplesoftVariables` before use.
-11. For fixed-address byte pairs that form pointers, read/write them through one conceptual pointer variable (or an explicit pointer abstraction), and lift carry-chain updates to unified pointer arithmetic.
-12. For dual-use integer/pointer storage, use an explicit representation (`union`, `std::variant`, or dedicated wrapper) and document the rationale.
-13. Keep label-based naming as-is when legal; otherwise normalize only as needed to satisfy C++ identifier rules and document the mapping.
-14. Choose destination by behavior:
+5. Consult [docs/function-cross-reference.md](../../../docs/function-cross-reference.md), to identify existing implementations, current stub placeholders, and source locations for functions in the window.
 
-- language/runtime semantics -> [src/core](../../../src/core)
-- device/console/monitor I/O semantics -> [src/platform](../../../src/platform)
+### Implementation
 
-15. Add missing dependency stubs near the new implementation with `TODO(asm-port)` markers.
-16. Update [docs/function-cross-reference.md](../../../docs/function-cross-reference.md) to reflect newly ported functions and updated stub/real status.
-17. Build and report the exact files changed.
+1. Summarize intent in exactly 3-5 bullets, each limited to a maximum of 15 words, before coding.
+2. Implement one C++ function for the range.
+3. If the range does not end in an `RTS`, `JMP`, or unconditional branch, preserve the fall-through into `end_label` by calling the following function at that point. Add a checklist item to confirm that the next-label fall-through is modeled explicitly.
+4. Treat `MON_xyz` labels as monitor aliases for `xyz`; implement them in the same file as direct forwarding functions that call the corresponding monitor handler.
+5. Route all fixed-address global state access through `ApplesoftVariables` (`variables()` / `variables_const()` accessors). If a required fixed address is missing, add it to `ApplesoftVariables` before use.
+6. For fixed-address byte pairs that form pointers, read/write them through one conceptual pointer variable (or an explicit pointer abstraction), and lift carry-chain updates to unified pointer arithmetic. Example: if `ZP_LO` and `ZP_HI` represent one 16-bit address, use `uint16_t ptr = variables().readWord(ZP_LO);` instead of separate byte reads.
+7. For dual-use integer/pointer storage, use an explicit representation (`union`, `std::variant`, or dedicated wrapper) and document the rationale.
+8. Keep label-based naming as-is when legal; otherwise normalize only as needed to satisfy C++ identifier rules and document the mapping.
+9. Choose destination by behavior:
+
+      - language/runtime semantics -> [src/core](../../../src/core)
+      - device/console/monitor I/O semantics -> [src/platform](../../../src/platform)
+
+### Finalization
+
+1. Add missing dependency stubs near the new implementation with `TODO(asm-port)` markers.
+2. Update [docs/function-cross-reference.md](../../../docs/function-cross-reference.md) to reflect newly ported functions and updated stub/real status.
+3. Build and report the exact files changed.
 
 ## Function Address Table Pattern
 
