@@ -274,6 +274,8 @@ returning, or contains `TODO(asm-port)`.
 | RESTART                           | src/core/asm_port_error.cpp               |  904 | stub   |
 | RESTORE                           | src/core/asm_port_error.cpp               | 1269 | real   |
 | RESTORE                           | src/core/asm_port_token_address_table.cpp |   12 | stub   |
+| RESUME                            | src/core/asm_port_error.cpp               | 3490 | real   |
+| RESUME                            | src/core/asm_port_token_address_table.cpp |   92 | real   |
 | RETURN                            | src/core/asm_port_error.cpp               | 1607 | real   |
 | RIGHTSTR                          | src/core/asm_port_strlt2.cpp              |  681 | real   |
 | ROUND_FAC                         | src/core/asm_port_error.cpp               | 2368 | stub   |

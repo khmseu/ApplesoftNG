@@ -3485,6 +3485,22 @@ void HANDLERR() {
     NEWSTT();
 }
 
+void RESUME() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: RESUME (inclusive) .. JSYN (exclusive)
+    // Name normalization: none (assembler label RESUME kept verbatim).
+    constexpr std::uint8_t kERRLIN = ApplesoftVariables::ZP_ERRLIN;
+    constexpr std::uint8_t kERRPOS = ApplesoftVariables::ZP_ERRPOS;
+    constexpr std::uint8_t kERRSTK = ApplesoftVariables::ZP_ERRSTK;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+
+    WriteZeroPageWord(kCURLIN, ReadZeroPageWord(kERRLIN));
+    WriteZeroPageWord(kTXTPTR, ReadZeroPageWord(kERRPOS));
+    SetStackPointer(ReadZeroPageByte(kERRSTK));
+    NEWSTT();
+}
+
 bool IsOnErr() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: ERROR (inclusive) .. L_ERROR_1 (exclusive)
