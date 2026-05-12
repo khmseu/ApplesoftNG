@@ -148,12 +148,12 @@ returning, or contains `TODO(asm-port)`.
 | ISCNTC                            | src/core/asm_port_error.cpp               | 1014 | real   |
 | ISLETC                            | src/core/asm_port_error.cpp               | 2267 | real   |
 | InsertNewLine                     | src/core/asm_port_error.cpp               |  826 | real   |
-| IsDirectMode                      | src/core/asm_port_error.cpp               | 2547 | stub   |
+| IsDirectMode                      | src/core/asm_port_error.cpp               | 2547 | real   |
 | IsEndOfLineAtTextPointer          | src/core/asm_port_error.cpp               | 1188 | real   |
 | IsEndOfProgram                    | src/core/asm_port_error.cpp               |  936 | real   |
 | IsEndOfProgramAtTextPointer       | src/core/asm_port_error.cpp               | 1193 | real   |
 | IsLineNumberGreater               | src/core/asm_port_error.cpp               |  617 | real   |
-| IsOnErr                           | src/core/asm_port_error.cpp               | 2542 | stub   |
+| IsOnErr                           | src/core/asm_port_error.cpp               | 2542 | real   |
 | IsRunningMode                     | src/core/asm_port_error.cpp               | 1207 | real   |
 | IsStatementEndOfParsedInput       | src/core/asm_port_error.cpp               |  157 | stub   |
 | IsTraceEnabled                    | src/core/asm_port_error.cpp               | 1212 | real   |
