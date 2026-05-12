@@ -754,9 +754,7 @@ void NEWSTT() {
 }
 
 void TRACE_() {
-    constexpr std::uint8_t kTRCFLG = ApplesoftVariables::ZP_TRCFLG;
-
-    if ((ReadZeroPageByte(kTRCFLG) & 0x80u) != 0u) {
+    if (IsTraceEnabled()) {
         if (IsRunningMode()) {
             OUTDO('#'&0x7fu);
             LINPRT();
@@ -1547,18 +1545,30 @@ void AdvanceTextPointerToNextLine() {
 }
 
 bool IsRunningMode() {
-    // TODO(asm-port): determine whether the interpreter is currently running.
-    return false;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: TRACE_ (inclusive) .. EXECUTE_STATEMENT (exclusive)
+    // Name normalization: helper name chosen for the inline TRACE_ predicate.
+    // TRACE_ checks CURLIN+1 and only traces when non-zero (running mode).
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    return ReadZeroPageByte(add_u8(kCURLIN, 1u)) != 0u;
 }
 
 bool IsTraceEnabled() {
-    // TODO(asm-port): inspect the TRCFLG flag from zero page.
-    return false;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: TRACE_ (inclusive) .. EXECUTE_STATEMENT (exclusive)
+    // Name normalization: helper name chosen for the inline TRACE_ predicate.
+    // `bit TRCFLG` + `bpl` means tracing is enabled when TRCFLG bit 7 is set.
+    constexpr std::uint8_t kTRCFLG = ApplesoftVariables::ZP_TRCFLG;
+    return (ReadZeroPageByte(kTRCFLG) & 0x80u) != 0u;
 }
 
 std::uint8_t CurrentStatementChar() {
-    // TODO(asm-port): return the current statement character at the parser cursor.
-    return 0;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: EXECUTE_STATEMENT (inclusive) .. EXECUTE_STATEMENT_1 (exclusive)
+    // Name normalization: helper name chosen for the inline EXECUTE_STATEMENT load.
+    // EXECUTE_STATEMENT uses `ldy #0` then `lda (TXTPTR),Y`.
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    return ReadProgramByte(ReadZeroPageWord(kTXTPTR));
 }
 
 void EXECUTE_STATEMENT() {
