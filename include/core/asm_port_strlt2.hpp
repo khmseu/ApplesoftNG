@@ -24,4 +24,7 @@ std::uint8_t FRETMP(std::uint16_t descriptorAddress);
 // Labels: FRETMS (inclusive) .. CHRSTR (exclusive)
 bool FRETMS(std::uint16_t descriptorAddress);
 
+// Labels: CHRSTR (inclusive) .. LEFTSTR (exclusive)
+void CHRSTR();
+
 } // namespace applesoft::asm_port

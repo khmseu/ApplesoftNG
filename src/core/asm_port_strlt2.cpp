@@ -512,6 +512,11 @@ void PUTEMP(std::uint8_t tempDescriptorAddress) {
 
 } // namespace
 
+// TODO(asm-port): replace with cross-TU forward declaration once CONINT is
+// promoted to a public symbol (it is currently in an anonymous namespace in
+// asm_port_error.cpp and cannot be linked from other TUs).
+static void CONINT() {}
+
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: GARBAG (inclusive) .. FIND_HIGHEST_STRING (exclusive)
 // Name normalization: none (assembler label GARBAG kept verbatim).
@@ -579,6 +584,39 @@ bool FRETMS(std::uint16_t descriptorAddress) {
     write_TEMPPT(a);
     write_LASTPT(static_cast<std::uint8_t>(a - 3u));
     return true;
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: CHRSTR (inclusive) .. LEFTSTR (exclusive)
+// Name normalization: none (assembler label CHRSTR kept verbatim).
+//
+// CHR$() built-in: parse the argument byte via CONINT, allocate a 1-byte string
+// with STRSPA, store the character into the newly allocated space, then publish
+// a temporary string descriptor with PUTNEW.
+// ROM pops two return addresses before jumping to PUTNEW because CHRSTR was
+// reached via the UNFNC dispatch JSR chain; in C++ the call frames unwind
+// normally so no explicit pop is needed.
+void CHRSTR() {
+    // CONINT: evaluate the current FAC argument as an integer byte (0-255).
+    // The ROM convention is X register = result byte.  In the C++ port, CONINT
+    // writes the converted value into FAC[4] (the X-register proxy at ZP_FAC+4);
+    // we read it back from there.
+    CONINT();
+    const std::uint8_t ch = variables_const().readByte(
+        static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 4u));
+
+    // Allocate space for the 1-byte string.  STRSPA sets FAC[0]=1 (length) and
+    // FAC+1,2 = allocated address.
+    STRSPA(1u);
+
+    // sta (FAC+1),Y  with Y=0: write the character to the allocated string space.
+    // FAC+1/FAC+2 is one unified pointer (write_FAC_pointer uses the same address).
+    const std::uint16_t strData = variables_const().readWord(
+        static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 1u));
+    variables().writeByte(strData, ch);
+
+    // jmp PUTNEW: convert the raw FAC string data into a temporary descriptor.
+    PUTNEW();
 }
 
 void STRLT2(std::uint16_t address) {

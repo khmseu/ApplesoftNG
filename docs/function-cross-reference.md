@@ -34,6 +34,7 @@ returning, or contains `TODO(asm-port)`.
 | CHECK_SIMPLE_VARIABLE             | src/core/asm_port_strlt2.cpp              |  262 | real   |
 | CHECK_VARIABLE                    | src/core/asm_port_strlt2.cpp              |  282 | real   |
 | CHRGET                            | src/core/asm_port_error.cpp               |   87 | real   |
+| CHRSTR                            | src/core/asm_port_strlt2.cpp              |  599 | real   |
 | CHRGET_INPUT                      | src/core/asm_port_input.cpp               |   33 | stub   |
 | CHRGOT                            | src/core/asm_port_error.cpp               |   77 | real   |
 | CLEAR                             | src/core/asm_port_error.cpp               |  855 | real   |
@@ -96,7 +97,7 @@ returning, or contains `TODO(asm-port)`.
 | FRETMP                            | src/core/asm_port_strlt2.cpp              |  500 | real   |
 | FRM_STACK_2                       | src/core/asm_port_error.cpp               | 1127 | stub   |
 | FRM_STACK_3                       | src/core/asm_port_error.cpp               | 1131 | stub   |
-| FRMEVL                            | src/core/asm_port_error.cpp               | 1933 | stub   |
+| FRMEVL                            | src/core/asm_port_error.cpp               | 2099 | real   |
 | FRMNUM                            | src/core/asm_port_error.cpp               | 1112 | real   |
 | FUNCT                             | src/core/asm_port_error.cpp               | 2702 | stub   |
 | GARBAG                            | src/core/asm_port_strlt2.cpp              |  200 | real   |

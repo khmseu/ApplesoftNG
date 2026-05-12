@@ -10,14 +10,11 @@ namespace applesoft::asm_port {
 
 std::uint8_t CHRGET();
 std::uint8_t CHRGOT();
+void FRMEVL();
 
 // ---------------------------------------------------------------------------
 // Forward declarations for callees not yet in public headers.
 // ---------------------------------------------------------------------------
-
-// FRMEVL: evaluate the expression at TXTPTR; result goes into FAC / VALTYP.
-// TODO(asm-port): port FRMEVL.
-static void FRMEVL() {}
 
 // FOUT: convert the floating-point value in FAC to an ASCII string buffer;
 // on return (A, Y) point to the buffer.  Used inside the PRINT2 number path.
