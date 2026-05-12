@@ -129,6 +129,8 @@ returning, or contains `TODO(asm-port)`.
 | GTBYTC                            | src/core/asm_port_error.cpp               |      | real   |
 | GTFORPNT                          | src/core/asm_port_gtforpnt.cpp            |   25 | stub   |
 | GetTextTablePointer               | src/core/asm_port_error.cpp               |  931 | real   |
+| HIMEM                             | src/core/asm_port_error.cpp               |   77 | real   |
+| HIMEM_Handler                     | src/core/asm_port_token_address_table.cpp |  100 | real   |
 | HANDLERR                          | src/core/asm_port_error.cpp               | 2538 | real   |
 | HANDLERR                          | src/core/asm_port_input.cpp               |   19 | stub   |
 | HandleNumberedLine                | src/core/asm_port_error.cpp               |  835 | real   |
@@ -161,6 +163,8 @@ returning, or contains `TODO(asm-port)`.
 | JERR                              | src/core/asm_port_strlt2.cpp              |  140 | real   |
 | LEFTSTR                           | src/core/asm_port_strlt2.cpp              |  668 | real   |
 | LEN                               | src/core/asm_port_strlt2.cpp              |  563 | real   |
+| LOMEM                             | src/core/asm_port_error.cpp               |  113 | real   |
+| LOMEM_Handler                     | src/core/asm_port_token_address_table.cpp |  101 | real   |
 | LET                               | src/core/asm_port_error.cpp               | 1818 | stub   |
 | LET                               | src/core/asm_port_token_address_table.cpp |   28 | stub   |
 | LET2                              | src/core/asm_port_error.cpp               | 1847 | stub   |

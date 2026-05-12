@@ -36,6 +36,11 @@ void PushByteToStack(std::uint8_t value);
 void SCRTCH();
 void RESTART();
 void CRDO();
+void FRMNUM();
+void GETADR();
+std::uint8_t MEMERR();
+void CLEARC();
+
 
 // TODO(asm-port): port NORMAL statement behavior (currently display-mode init stub).
 void NORMAL() {
@@ -72,6 +77,79 @@ void FLASH() {
 
     WriteZeroPageByte(kMON_INVFLG, 0x7fu);
     WriteZeroPageByte(kFLASH_BIT, 0x40u);
+}
+
+void HIMEM() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: HIMEM (inclusive) .. LOMEM (exclusive)
+    // Name normalization: none (assembler label HIMEM kept verbatim).
+
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+    constexpr std::uint8_t kSTREND = ApplesoftVariables::ZP_STREND;
+    constexpr std::uint8_t kMEMSIZ = ApplesoftVariables::ZP_MEMSIZ;
+    constexpr std::uint8_t kFRETOP = ApplesoftVariables::ZP_FRETOP;
+
+    FRMNUM();
+    GETADR();
+
+    // Check LINNUM >= STREND (must be above string storage)
+    const std::uint8_t linnum_lo = ReadZeroPageByte(kLINNUM);
+    const std::uint8_t linnum_hi = ReadZeroPageByte(kLINNUM + 1u);
+    const std::uint8_t strend_lo = ReadZeroPageByte(kSTREND);
+    const std::uint8_t strend_hi = ReadZeroPageByte(kSTREND + 1u);
+
+    // Compare: if linnum < strend, error
+    if (linnum_hi < strend_hi || (linnum_hi == strend_hi && linnum_lo < strend_lo)) {
+        MEMERR();
+        return;
+    }
+
+    // Valid: store to MEMSIZ and FRETOP
+    WriteZeroPageByte(kMEMSIZ, linnum_lo);
+    WriteZeroPageByte(kMEMSIZ + 1u, linnum_hi);
+    WriteZeroPageByte(kFRETOP, linnum_lo);
+    WriteZeroPageByte(kFRETOP + 1u, linnum_hi);
+}
+
+void LOMEM() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: LOMEM (inclusive) .. ONERR (exclusive)
+    // Name normalization: none (assembler label LOMEM kept verbatim).
+
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+    constexpr std::uint8_t kMEMSIZ = ApplesoftVariables::ZP_MEMSIZ;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
+
+    FRMNUM();
+    GETADR();
+
+    // Check LINNUM < MEMSIZ (must be below HIMEM)
+    const std::uint8_t linnum_lo = ReadZeroPageByte(kLINNUM);
+    const std::uint8_t linnum_hi = ReadZeroPageByte(kLINNUM + 1u);
+    const std::uint8_t memsiz_lo = ReadZeroPageByte(kMEMSIZ);
+    const std::uint8_t memsiz_hi = ReadZeroPageByte(kMEMSIZ + 1u);
+
+    // If linnum >= memsiz, error
+    if (linnum_hi > memsiz_hi || (linnum_hi == memsiz_hi && linnum_lo >= memsiz_lo)) {
+        MEMERR();
+        return;
+    }
+
+    // Check LINNUM > TXTTAB (must be above program text)
+    const std::uint8_t txttab_lo = ReadZeroPageByte(kTXTTAB);
+    const std::uint8_t txttab_hi = ReadZeroPageByte(kTXTTAB + 1u);
+
+    // If linnum <= txttab, error
+    if (linnum_hi < txttab_hi || (linnum_hi == txttab_hi && linnum_lo <= txttab_lo)) {
+        MEMERR();
+        return;
+    }
+
+    // Valid: store to VARTAB and call CLEARC (LOMEM clears variables and arrays)
+    WriteZeroPageByte(kVARTAB, linnum_lo);
+    WriteZeroPageByte(kVARTAB + 1u, linnum_hi);
+    CLEARC();
 }
 
 constexpr std::array<std::uint8_t, 29> kGenericCHRGETImage = {

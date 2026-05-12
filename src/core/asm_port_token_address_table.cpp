@@ -41,6 +41,8 @@ void WAIT();
 void NORMAL();
 void INVERSE();
 void FLASH();
+void HIMEM();
+void LOMEM();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
@@ -95,8 +97,8 @@ static void INVERSE_Handler()  { INVERSE(); }
 static void FLASH_Handler()    { FLASH(); }
 static void COLOR()            {} // TODO(asm-port): COLOR
 static void VTAB()             {} // TODO(asm-port): VTAB
-static void HIMEM()            {} // TODO(asm-port): HIMEM
-static void LOMEM()            {} // TODO(asm-port): LOMEM
+static void HIMEM_Handler()    { HIMEM(); }
+static void LOMEM_Handler()    { LOMEM(); }
 static void ONERR_Handler()    { ONERR(); }
 static void RESUME_Handler()   { RESUME(); }
 static void RECALL()           {} // TODO(asm-port): RECALL
@@ -154,8 +156,8 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         COLOR,            // [32] $A0...160...COLOR=
         POP,              // [33] $A1...161...POP
         VTAB,             // [34] $A2...162...VTAB
-        HIMEM,            // [35] $A3...163...HIMEM:
-        LOMEM,            // [36] $A4...164...LOMEM:
+        HIMEM_Handler,    // [35] $A3...163...HIMEM:
+        LOMEM_Handler,    // [36] $A4...164...LOMEM:
         ONERR_Handler,    // [37] $A5...165...ONERR
         RESUME_Handler,   // [38] $A6...166...RESUME
         RECALL,           // [39] $A7...167...RECALL
