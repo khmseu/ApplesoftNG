@@ -50,6 +50,30 @@ void NORMAL() {
     WriteZeroPageByte(kFLASH_BIT, 0x00u);
 }
 
+void INVERSE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: INVERSE (inclusive) .. FLASH (exclusive)
+    // Name normalization: none (assembler label INVERSE kept verbatim).
+
+    constexpr std::uint8_t kMON_INVFLG = ApplesoftVariables::ZP_MON_INVFLG;
+    constexpr std::uint8_t kFLASH_BIT = ApplesoftVariables::ZP_FLASH_BIT;
+
+    WriteZeroPageByte(kMON_INVFLG, 0x3fu);
+    WriteZeroPageByte(kFLASH_BIT, 0x00u);
+}
+
+void FLASH() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FLASH (inclusive) .. COLOR (exclusive)
+    // Name normalization: none (assembler label FLASH kept verbatim).
+
+    constexpr std::uint8_t kMON_INVFLG = ApplesoftVariables::ZP_MON_INVFLG;
+    constexpr std::uint8_t kFLASH_BIT = ApplesoftVariables::ZP_FLASH_BIT;
+
+    WriteZeroPageByte(kMON_INVFLG, 0x7fu);
+    WriteZeroPageByte(kFLASH_BIT, 0x40u);
+}
+
 constexpr std::array<std::uint8_t, 29> kGenericCHRGETImage = {
     0xe6, 0xb8, 0xd0, 0x02, 0xe6, 0xb9, 0xad, 0x60, 0xea, 0xc9,
     0x3a, 0xb0, 0x0a, 0xc9, 0x20, 0xf0, 0xef, 0x38, 0xe9, 0x30,

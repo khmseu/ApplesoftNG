@@ -39,6 +39,8 @@ void DEF();
 void POKE();
 void WAIT();
 void NORMAL();
+void INVERSE();
+void FLASH();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
@@ -89,8 +91,8 @@ static void NOTRACE() {
                       static_cast<std::uint8_t>(trcflg >> 1u));
 }
 static void NORMAL_Handler()   { NORMAL(); }
-static void INVERSE()          {} // TODO(asm-port): INVERSE
-static void FLASH()            {} // TODO(asm-port): FLASH
+static void INVERSE_Handler()  { INVERSE(); }
+static void FLASH_Handler()    { FLASH(); }
 static void COLOR()            {} // TODO(asm-port): COLOR
 static void VTAB()             {} // TODO(asm-port): VTAB
 static void HIMEM()            {} // TODO(asm-port): HIMEM
@@ -147,8 +149,8 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         TRACE,            // [27] $9B...155...TRACE
         NOTRACE,          // [28] $9C...156...NOTRACE
         NORMAL_Handler,   // [29] $9D...157...NORMAL
-        INVERSE,          // [30] $9E...158...INVERSE
-        FLASH,            // [31] $9F...159...FLASH
+        INVERSE_Handler,  // [30] $9E...158...INVERSE
+        FLASH_Handler,    // [31] $9F...159...FLASH
         COLOR,            // [32] $A0...160...COLOR=
         POP,              // [33] $A1...161...POP
         VTAB,             // [34] $A2...162...VTAB

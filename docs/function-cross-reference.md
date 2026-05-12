@@ -213,6 +213,8 @@ returning, or contains `TODO(asm-port)`.
 | NOTCR                             | src/platform/asm_port_getln.cpp           |   30 | stub   |
 | NORMAL                            | src/core/asm_port_error.cpp               |   41 | real   |
 | NUMCMP                            | src/core/asm_port_error.cpp               | 2099 | real   |
+| INVERSE                           | src/core/asm_port_error.cpp               |   53 | real   |
+| FLASH                             | src/core/asm_port_error.cpp               |   65 | real   |
 | NXDIM                             | src/core/asm_port_error.cpp               | 2139 | real   |
 | NXIN                              | src/core/asm_port_nxin.cpp                |   13 | real   |
 | ONERR                             | src/core/asm_port_error.cpp               | 3510 | real   |
@@ -332,11 +334,13 @@ returning, or contains `TODO(asm-port)`.
 | SetBranchTargetToSTEP             | src/core/asm_port_error.cpp               | 1068 | stub   |
 | SetTextPointer                    | src/core/asm_port_error.cpp               |   31 | real   |
 | SetTextPointerToInputBufferMinus1 | src/core/asm_port_error.cpp               |  670 | stub   |
-| TOKEN_ADDRESS_TABLE               | src/core/asm_port_token_address_table.cpp |   96 | stub   |
+| TOKEN_ADDRESS_TABLE               | src/core/asm_port_token_address_table.cpp |  120 | stub   |
 | TOKEN_NAME_TABLE                  | src/core/asm_port_token_name_table.cpp    |   15 | stub   |
 | TRACE (statement handler)         | src/core/asm_port_token_address_table.cpp |   70 | real   |
 | NOTRACE (statement handler)       | src/core/asm_port_token_address_table.cpp |   75 | real   |
-| NORMAL_Handler (dispatch)         | src/core/asm_port_token_address_table.cpp |   90 | real   |
+| NORMAL_Handler (dispatch)         | src/core/asm_port_token_address_table.cpp |   93 | real   |
+| INVERSE_Handler (dispatch)        | src/core/asm_port_token_address_table.cpp |   94 | real   |
+| FLASH_Handler (dispatch)          | src/core/asm_port_token_address_table.cpp |   95 | real   |
 | TRACE\_                           | src/core/asm_port_error.cpp               |  581 | real   |
 | TRUE                              | src/core/asm_port_error.cpp               | 2052 | real   |
 | UNARY                             | src/core/asm_port_error.cpp               | 1990 | stub   |
