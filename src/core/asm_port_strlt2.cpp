@@ -9,6 +9,11 @@
 namespace applesoft::asm_port {
 
 void CHKSTR();
+void GARBAG();
+void STRINI(std::uint8_t length);
+void MOVINS();
+std::uint8_t FRETMP(std::uint16_t descriptorAddress);
+bool FRETMS(std::uint16_t descriptorAddress);
 
 namespace {
 
@@ -171,7 +176,6 @@ void JERR();
 void PUTEMP(std::uint8_t tempDescriptorAddress);
 std::uint16_t GETSPA(std::uint8_t length);
 void STRSPA(std::uint8_t length);
-void GARBAG();
 void FIND_HIGHEST_STRING();
 void CHECK_SIMPLE_VARIABLE();
 void CHECK_VARIABLE(std::uint8_t descriptorOffset);
@@ -180,13 +184,10 @@ void CHECK_EXIT();
 void MOVE_HIGHEST_STRING_TO_TOP();
 void PUTNEW();
 void CAT();
-void MOVINS();
 void MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length);
 void MOVSTR_1(std::uint8_t length);
 std::uint8_t FRESTR();
 std::uint8_t FREFAC();
-std::uint8_t FRETMP(std::uint16_t descriptorAddress);
-bool FRETMS(std::uint16_t descriptorAddress);
 
 // TODO(asm-port): port FRM_ELEMENT label.
 void FRM_ELEMENT() {}
@@ -222,15 +223,6 @@ std::uint16_t GETSPA(std::uint8_t length) {
         GARBAG();
         write_GARFLG(0x80u);
     }
-}
-
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: GARBAG (inclusive) .. FIND_HIGHEST_STRING (exclusive)
-// Name normalization: none (assembler label GARBAG kept verbatim).
-void GARBAG() {
-    // Collect from top down: initialize FRETOP from MEMSIZ, then fall through.
-    write_FRETOP(read_MEMSIZ());
-    FIND_HIGHEST_STRING();
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -397,17 +389,6 @@ void MOVE_HIGHEST_STRING_TO_TOP() {
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: STRINI (inclusive) .. STRSPA (exclusive)
-// Name normalization: none (assembler label STRINI kept verbatim).
-void STRINI(std::uint8_t length) {
-    // Pointer candidate lifted: FAC+3/FAC+4 is one descriptor pointer.
-    write_DSCPTR(read_FAC_descriptor_address());
-
-    // Original control flow falls through directly into STRSPA.
-    STRSPA(length);
-}
-
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: STRSPA (inclusive) .. STRLIT (exclusive)
 // Name normalization: none (assembler label STRSPA kept verbatim).
 void STRSPA(std::uint8_t length) {
@@ -448,17 +429,6 @@ void CAT() {
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: MOVINS (inclusive) .. MOVSTR (exclusive)
-// Name normalization: none (assembler label MOVINS kept verbatim).
-void MOVINS() {
-    const auto descriptor = variables_const().pointer(read_STRNG1());
-    const std::uint8_t length = descriptor.read(0u);
-    const std::uint8_t x = descriptor.read(1u);
-    const std::uint8_t y = descriptor.read(2u);
-    MOVSTR(x, y, length);
-}
-
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: MOVSTR (inclusive) .. MOVSTR_1 (exclusive)
 // Name normalization: none (assembler label MOVSTR kept verbatim).
 void MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length) {
@@ -496,44 +466,6 @@ std::uint8_t FRESTR() {
 // Name normalization: none (assembler label FREFAC kept verbatim).
 std::uint8_t FREFAC() {
     return FRETMP(read_FAC_descriptor_address());
-}
-
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: FRETMP (inclusive) .. FRETMS (exclusive)
-// Name normalization: none (assembler label FRETMP kept verbatim).
-std::uint8_t FRETMP(std::uint16_t descriptorAddress) {
-    write_INDEX(descriptorAddress);
-    const bool isTemporary = FRETMS(descriptorAddress);
-
-    const auto descriptor = variables_const().pointer(descriptorAddress);
-    const std::uint8_t length = descriptor.read(0u);
-    const std::uint16_t stringAddress = ApplesoftVariables::makeWord(descriptor.read(1u), descriptor.read(2u));
-
-    if (isTemporary && stringAddress == read_FRETOP()) {
-        write_FRETOP(static_cast<std::uint16_t>(read_FRETOP() + length));
-    }
-
-    write_INDEX(stringAddress);
-    return length;
-}
-
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: FRETMS (inclusive) .. CHRSTR (exclusive)
-// Name normalization: none (assembler label FRETMS kept verbatim).
-bool FRETMS(std::uint16_t descriptorAddress) {
-    const std::uint8_t a = ApplesoftVariables::lowByte(descriptorAddress);
-    const std::uint8_t y = ApplesoftVariables::highByte(descriptorAddress);
-    const std::uint8_t lastpt = variables_const().readByte(ApplesoftVariables::ZP_LASTPT);
-    const std::uint8_t lastptHi = variables_const().readByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_LASTPT + 1u));
-
-    if (y != lastptHi || a != lastpt) {
-        return false;
-    }
-
-    // Descriptor is latest temporary: release by rewinding TEMPPT/LASTPT.
-    write_TEMPPT(a);
-    write_LASTPT(static_cast<std::uint8_t>(a - 3u));
-    return true;
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -579,6 +511,75 @@ void PUTEMP(std::uint8_t tempDescriptorAddress) {
 }
 
 } // namespace
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: GARBAG (inclusive) .. FIND_HIGHEST_STRING (exclusive)
+// Name normalization: none (assembler label GARBAG kept verbatim).
+void GARBAG() {
+    // Collect from top down: initialize FRETOP from MEMSIZ, then fall through.
+    write_FRETOP(read_MEMSIZ());
+    FIND_HIGHEST_STRING();
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: STRINI (inclusive) .. STRSPA (exclusive)
+// Name normalization: none (assembler label STRINI kept verbatim).
+void STRINI(std::uint8_t length) {
+    // Pointer candidate lifted: FAC+3/FAC+4 is one descriptor pointer.
+    write_DSCPTR(read_FAC_descriptor_address());
+
+    // Original control flow falls through directly into STRSPA.
+    STRSPA(length);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: MOVINS (inclusive) .. MOVSTR (exclusive)
+// Name normalization: none (assembler label MOVINS kept verbatim).
+void MOVINS() {
+    const auto descriptor = variables_const().pointer(read_STRNG1());
+    const std::uint8_t length = descriptor.read(0u);
+    const std::uint8_t x = descriptor.read(1u);
+    const std::uint8_t y = descriptor.read(2u);
+    MOVSTR(x, y, length);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: FRETMP (inclusive) .. FRETMS (exclusive)
+// Name normalization: none (assembler label FRETMP kept verbatim).
+std::uint8_t FRETMP(std::uint16_t descriptorAddress) {
+    write_INDEX(descriptorAddress);
+    const bool isTemporary = FRETMS(descriptorAddress);
+
+    const auto descriptor = variables_const().pointer(descriptorAddress);
+    const std::uint8_t length = descriptor.read(0u);
+    const std::uint16_t stringAddress = ApplesoftVariables::makeWord(descriptor.read(1u), descriptor.read(2u));
+
+    if (isTemporary && stringAddress == read_FRETOP()) {
+        write_FRETOP(static_cast<std::uint16_t>(read_FRETOP() + length));
+    }
+
+    write_INDEX(stringAddress);
+    return length;
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: FRETMS (inclusive) .. CHRSTR (exclusive)
+// Name normalization: none (assembler label FRETMS kept verbatim).
+bool FRETMS(std::uint16_t descriptorAddress) {
+    const std::uint8_t a = ApplesoftVariables::lowByte(descriptorAddress);
+    const std::uint8_t y = ApplesoftVariables::highByte(descriptorAddress);
+    const std::uint8_t lastpt = variables_const().readByte(ApplesoftVariables::ZP_LASTPT);
+    const std::uint8_t lastptHi = variables_const().readByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_LASTPT + 1u));
+
+    if (y != lastptHi || a != lastpt) {
+        return false;
+    }
+
+    // Descriptor is latest temporary: release by rewinding TEMPPT/LASTPT.
+    write_TEMPPT(a);
+    write_LASTPT(static_cast<std::uint8_t>(a - 3u));
+    return true;
+}
 
 void STRLT2(std::uint16_t address) {
     // BUILD A DESCRIPTOR FOR STRING STARTING AT address

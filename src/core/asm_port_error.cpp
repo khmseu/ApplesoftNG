@@ -373,7 +373,9 @@ void AYINT();
 void SETFOR();
 void STRINI(std::uint8_t length);
 void MOVINS();
-void FRETMS();
+bool FRETMS(std::uint16_t descriptorAddress);
+std::uint8_t FRETMP(std::uint16_t descriptorAddress);
+void GARBAG();
 void SCREEN();
 void UNARY();
 void OR();
@@ -571,9 +573,6 @@ std::int8_t FCOMP(std::uint16_t /*argAddress*/) {
 // TODO(asm-port): port FREFAC label.
 // void FREFAC() {}
 
-// TODO(asm-port): port FRETMP label.
-void FRETMP() {}
-
 // TODO(asm-port): port FLOAT label.
 void FLOAT() {}
 
@@ -594,9 +593,6 @@ void QINT() {}
 void FLOAT_1(std::uint8_t exponent) {
     WriteZeroPageByte(ApplesoftVariables::ZP_FAC, exponent);
 }
-
-// TODO(asm-port): port GARBAG label.
-void GARBAG() {}
 
 std::uint8_t gJerErrorCode = ERR_SYNTAX;
 constexpr std::uint8_t kNEG32768Data[4] = {0x90u, 0x80u, 0x00u, 0x00u};
@@ -2088,7 +2084,7 @@ void PUTSTR() {
 
     WriteZeroPageWord(kDSCPTR, descriptorPointer);
 
-    FRETMS();
+    (void)FRETMS(descriptorPointer);
 
     const std::uint16_t source = ReadZeroPageWord(kDSCPTR);
     const std::uint16_t dest = ReadZeroPageWord(kFORPNT);
@@ -2258,7 +2254,7 @@ void STRCMP() {
     WriteZeroPageByte(kCPRTYP, static_cast<std::uint8_t>(ReadZeroPageByte(kCPRTYP) - 1u));
 
     FREFAC();
-    FRETMP();
+    (void)FRETMP(ReadZeroPageWord(ApplesoftVariables::ZP_DSCPTR));
 
     gNumericCompareResult = CompareArgAndFacStrings();
     gNumericCompareCarry = gNumericCompareResult >= 0;
@@ -2997,19 +2993,6 @@ void STORE_FACDB_YX_ROUNDED() {
 
 void SETFOR() {
     // TODO(asm-port): port SETFOR label.
-}
-
-void STRINI(std::uint8_t length) {
-    // TODO(asm-port): port STRINI label.
-    (void)length;
-}
-
-void MOVINS() {
-    // TODO(asm-port): port MOVINS label.
-}
-
-void FRETMS() {
-    // TODO(asm-port): port FRETMS label.
 }
 
 void HANDLERR() {
