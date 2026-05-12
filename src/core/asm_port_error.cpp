@@ -819,6 +819,21 @@ bool FNDLIN() {
     return FL1(ReadZeroPageWord(kTXTTAB));
 }
 
+void PrintDecimalUnsigned(std::uint16_t value) {
+    char digits[5];
+    std::uint8_t length = 0;
+
+    do {
+        digits[length++] = static_cast<char>('0' + static_cast<char>(value % 10u));
+        value = static_cast<std::uint16_t>(value / 10u);
+    } while (value != 0u);
+
+    while (length != 0u) {
+        --length;
+        OUTDO(static_cast<std::uint8_t>(digits[length]));
+    }
+}
+
 void DeleteExistingLine() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: NUMBERED_LINE delete block (inclusive) .. PUT_NEW_LINE (exclusive)
@@ -1058,6 +1073,7 @@ void LIST() {
     constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
     constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
     constexpr std::uint8_t kMON_CH = ApplesoftVariables::ZP_MON_CH;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
 
     if (!IsStatementEndOfParsedInput()) {
         return;
@@ -1090,6 +1106,7 @@ void LIST() {
             break;
         }
 
+        WriteZeroPageWord(kCURLIN, ApplesoftVariables::makeWord(currentLine.lo, currentLine.hi));
         LINPRT();
         WriteZeroPageByte(kMON_CH, 5);
         PrintListLine(currentPtr);
@@ -1243,14 +1260,20 @@ void FIX_LINKS() {
 }
 
 void STROUT(std::string_view text) {
-    // TODO(asm-port): print the given string to the Applesoft console.
-    // This overload is a high-level convenience bridge used by the error-printing
-    // code.  It is distinct from STROUT(std::uint16_t address) in asm_port_print.
-    (void)text;
+    for (const char ch : text) {
+        OUTDO(static_cast<std::uint8_t>(ch));
+    }
 }
 
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: INPRT (inclusive) .. GO_STROUT (exclusive)
+// Name normalization: none (assembler label INPRT kept verbatim).
+// Print the " IN " prefix and the current running line number.
 void INPRT() {
-    // TODO(asm-port): print the current line number when running a program.
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+
+    STROUT(QT_ERROR(QT_IN_INDEX));
+    PrintDecimalUnsigned(ReadZeroPageWord(kCURLIN));
 }
 
 void STKINI() {
@@ -1271,7 +1294,9 @@ void STKINI() {
 // }
 
 void LINPRT() {
-    // TODO(asm-port): print the current Applesoft line number during LIST.
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+
+    PrintDecimalUnsigned(ReadZeroPageWord(kCURLIN));
 }
 
 std::uint8_t GETCHR() {

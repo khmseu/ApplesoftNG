@@ -136,7 +136,7 @@ returning, or contains `TODO(asm-port)`.
 | INLIN                             | src/core/asm_port_inlin.cpp               |    7 | real   |
 | INLIN2                            | src/core/asm_port_inlin2.cpp              |   43 | real   |
 | INPERR                            | src/core/asm_port_input.cpp               |  232 | real   |
-| INPRT                             | src/core/asm_port_error.cpp               |  983 | stub   |
+| INPRT                             | src/core/asm_port_error.cpp               |  983 | real   |
 | INPUT                             | src/core/asm_port_input.cpp               |   75 | real   |
 | INPUT                             | src/core/asm_port_token_address_table.cpp |   25 | stub   |
 | INPUTERR                          | src/core/asm_port_input.cpp               |  240 | real   |
