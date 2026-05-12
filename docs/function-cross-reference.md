@@ -214,6 +214,8 @@ returning, or contains `TODO(asm-port)`.
 | NUMCMP                            | src/core/asm_port_error.cpp               | 2099 | real   |
 | NXDIM                             | src/core/asm_port_error.cpp               | 2139 | real   |
 | NXIN                              | src/core/asm_port_nxin.cpp                |   13 | real   |
+| ONERR                             | src/core/asm_port_error.cpp               | 3510 | real   |
+| ONERR                             | src/core/asm_port_token_address_table.cpp |   96 | real   |
 | ONGOTO                            | src/core/asm_port_error.cpp               | 1765 | stub   |
 | ONGOTO                            | src/core/asm_port_token_address_table.cpp |   31 | stub   |
 | OR                                | src/core/asm_port_error.cpp               | 2010 | stub   |

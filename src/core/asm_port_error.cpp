@@ -3501,6 +3501,27 @@ void RESUME() {
     NEWSTT();
 }
 
+void ONERR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ONERR (inclusive) .. HANDLERR (exclusive)
+    // Name normalization: none (assembler label ONERR kept verbatim).
+    constexpr std::uint8_t kTOKEN_GOTO = 0xabu;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kTXTPSV = ApplesoftVariables::ZP_TXTPSV;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    constexpr std::uint8_t kCURLSV = ApplesoftVariables::ZP_CURLSV;
+    constexpr std::uint8_t kERRFLG = ApplesoftVariables::ZP_ERRFLG;
+
+    SYNCHR(kTOKEN_GOTO);
+    WriteZeroPageWord(kTXTPSV, ReadZeroPageWord(kTXTPTR));
+
+    const std::uint8_t errflg = ReadZeroPageByte(kERRFLG);
+    WriteZeroPageByte(kERRFLG, static_cast<std::uint8_t>((errflg >> 1u) | 0x80u));
+
+    WriteZeroPageWord(kCURLSV, ReadZeroPageWord(kCURLIN));
+    ADDON(REMN());
+}
+
 bool IsOnErr() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: ERROR (inclusive) .. L_ERROR_1 (exclusive)

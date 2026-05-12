@@ -33,6 +33,7 @@ void LET();
 void IF();
 void REM();
 void ONGOTO();
+void ONERR();
 void RESUME();
 void DEF();
 void POKE();
@@ -93,7 +94,7 @@ static void COLOR()            {} // TODO(asm-port): COLOR
 static void VTAB()             {} // TODO(asm-port): VTAB
 static void HIMEM()            {} // TODO(asm-port): HIMEM
 static void LOMEM()            {} // TODO(asm-port): LOMEM
-static void ONERR()            {} // TODO(asm-port): ONERR
+static void ONERR_Handler()    { ONERR(); }
 static void RESUME_Handler()   { RESUME(); }
 static void RECALL()           {} // TODO(asm-port): RECALL
 static void STORE()            {} // TODO(asm-port): STORE
@@ -152,7 +153,7 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         VTAB,             // [34] $A2...162...VTAB
         HIMEM,            // [35] $A3...163...HIMEM:
         LOMEM,            // [36] $A4...164...LOMEM:
-        ONERR,            // [37] $A5...165...ONERR
+        ONERR_Handler,    // [37] $A5...165...ONERR
         RESUME_Handler,   // [38] $A6...166...RESUME
         RECALL,           // [39] $A7...167...RECALL
         STORE,            // [40] $A8...168...STORE
