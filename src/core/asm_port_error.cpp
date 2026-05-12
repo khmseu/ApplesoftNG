@@ -47,6 +47,7 @@ void MON_SETCOL(std::uint8_t color);
 void MON_TABV(std::uint8_t row_zero_based);
 void MON_INPORT(std::uint8_t slot);
 void MON_OUTPORT(std::uint8_t slot);
+void MON_PLOT(std::uint8_t y, std::uint8_t x);
 
 
 // TODO(asm-port): port NORMAL statement behavior (currently display-mode init stub).
@@ -108,6 +109,13 @@ void MON_OUTPORT(std::uint8_t slot) {
     // TODO(asm-port): port MON_OUTPORT monitor handler.
     // Placeholder to preserve PR# statement call flow until monitor integration.
     (void)slot;
+}
+
+void MON_PLOT(std::uint8_t y, std::uint8_t x) {
+    // TODO(asm-port): port MON_PLOT monitor handler.
+    // Placeholder to preserve PLOT statement call flow until monitor integration.
+    (void)y;
+    (void)x;
 }
 
 void COLOR() {
@@ -871,6 +879,25 @@ std::int8_t CompareArgAndFacStrings() {
 }
 
 } // namespace
+
+void PLOT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PLOT (inclusive) .. HLIN (exclusive)
+    // Name normalization: none (assembler label PLOT kept verbatim).
+
+    constexpr std::uint8_t kFIRST = ApplesoftVariables::ZP_FIRST;
+    constexpr std::uint8_t kMaxXExclusive = 40u;
+
+    const std::uint8_t yCoord = PLOTFNS();
+    const std::uint8_t xCoord = ReadZeroPageByte(kFIRST);
+
+    if (xCoord >= kMaxXExclusive) {
+        GOERR();
+        return;
+    }
+
+    MON_PLOT(yCoord, xCoord);
+}
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: CONINT (inclusive) .. VAL (exclusive)
