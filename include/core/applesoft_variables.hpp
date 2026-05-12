@@ -22,6 +22,8 @@ public:
     static constexpr std::uint8_t ZP_INPUTFLG = 0x15;
     static constexpr std::uint8_t ZP_CPRMASK = 0x16;
     static constexpr std::uint8_t ZP_MON_CH = 0x24;
+    static constexpr std::uint8_t ZP_MON_H2 = 0x2c;
+    static constexpr std::uint8_t ZP_MON_V2 = 0x2d;
     static constexpr std::uint8_t ZP_MON_INVFLG = 0x32;
     static constexpr std::uint8_t ZP_MON_PROMPT = 0x33;
     static constexpr std::uint8_t ZP_MON_A1 = 0x3c;
