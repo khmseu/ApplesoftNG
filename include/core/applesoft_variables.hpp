@@ -48,7 +48,10 @@ public:
     static constexpr std::uint8_t ZP_CPRTYP = 0x89;
     static constexpr std::uint8_t ZP_FNCNAM = 0x8a;
     static constexpr std::uint8_t ZP_DSCPTR = 0x8c;
+    static constexpr std::uint8_t ZP_DSCLEN = 0x8f;
     static constexpr std::uint8_t ZP_JMPADRS = 0x90;
+    // Dual-use byte in ROM: LENGTH shares storage with JMPADRS low byte.
+    static constexpr std::uint8_t ZP_LENGTH = 0x91;
     static constexpr std::uint8_t ZP_ARYPNT = 0x94;
     static constexpr std::uint8_t ZP_HIGHTR = 0x96;
     static constexpr std::uint8_t ZP_INDX = 0x99;
@@ -158,7 +161,9 @@ public:
     std::uint16_t FORPNT = 0;     // $85/$86
     std::uint16_t TXPSV = 0;      // $87/$88 saved TXTPTR during input parsing
     std::uint8_t CPRTYP = 0;      // $89  relational operator flags
+    std::uint16_t FNCNAM = 0;     // $8a/$8b
     std::uint16_t DSCPTR = 0;     // $8c/$8d
+    std::uint8_t DSCLEN = 0;      // $8f
     std::uint16_t JMPADRS = 0;    // $90/$91 (JMPADRS+1,+2)
     std::uint16_t ARYPNT = 0;     // $94/$95
     std::uint16_t HIGHTR = 0;     // $96/$97

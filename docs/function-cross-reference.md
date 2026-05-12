@@ -28,6 +28,10 @@ returning, or contains `TODO(asm-port)`.
 | CHKNUM                            | src/core/asm_port_error.cpp               | 1080 | real   |
 | CHKSTR                            | src/core/asm_port_error.cpp               | 1092 | real   |
 | CHKVAL                            | src/core/asm_port_error.cpp               | 1953 | stub   |
+| CHECK_BUMP                        | src/core/asm_port_strlt2.cpp              |  316 | real   |
+| CHECK_EXIT                        | src/core/asm_port_strlt2.cpp              |  324 | real   |
+| CHECK_SIMPLE_VARIABLE             | src/core/asm_port_strlt2.cpp              |  262 | real   |
+| CHECK_VARIABLE                    | src/core/asm_port_strlt2.cpp              |  282 | real   |
 | CHRGET                            | src/core/asm_port_error.cpp               |   26 | stub   |
 | CHRGET_INPUT                      | src/core/asm_port_input.cpp               |   33 | stub   |
 | CHRGOT                            | src/core/asm_port_error.cpp               |  606 | real   |
@@ -75,6 +79,7 @@ returning, or contains `TODO(asm-port)`.
 | FCOMP                             | src/core/asm_port_error.cpp               |  421 | stub   |
 | FCOMP2                            | src/core/asm_port_error.cpp               |  401 | stub   |
 | FIND_ARRAY_ELEMENT                | src/core/asm_port_error.cpp               |  275 | real   |
+| FIND_HIGHEST_STRING               | src/core/asm_port_strlt2.cpp              |  209 | real   |
 | FINDATA                           | src/core/asm_port_input.cpp               |   60 | stub   |
 | FIX_LINKS                         | src/core/asm_port_error.cpp               |  956 | stub   |
 | FL1                               | src/core/asm_port_error.cpp               | 1692 | stub   |
@@ -85,6 +90,7 @@ returning, or contains `TODO(asm-port)`.
 | FOR                               | src/core/asm_port_error.cpp               |  350 | stub   |
 | FOR                               | src/core/asm_port_token_address_table.cpp |   38 | stub   |
 | FRE                               | src/core/asm_port_error.cpp               | 2592 | real   |
+| FREFAC                            | src/core/asm_port_print.cpp               |   51 | real   |
 | FRETMP                            | src/core/asm_port_error.cpp               |  429 | stub   |
 | FRETMS                            | src/core/asm_port_error.cpp               | 2534 | stub   |
 | FRM_STACK_2                       | src/core/asm_port_error.cpp               | 1127 | stub   |
@@ -92,12 +98,13 @@ returning, or contains `TODO(asm-port)`.
 | FRMEVL                            | src/core/asm_port_error.cpp               | 1933 | stub   |
 | FRMNUM                            | src/core/asm_port_error.cpp               | 1112 | real   |
 | FUNCT                             | src/core/asm_port_error.cpp               | 2702 | stub   |
+| GARBAG                            | src/core/asm_port_strlt2.cpp              |  200 | real   |
 | GARBAG                            | src/core/asm_port_reason.cpp              |   14 | stub   |
 | GET                               | src/core/asm_port_input.cpp               |  258 | real   |
 | GET                               | src/core/asm_port_token_address_table.cpp |   24 | stub   |
 | GETARY                            | src/core/asm_port_error.cpp               | 2315 | real   |
 | GETARY2                           | src/core/asm_port_error.cpp               | 2323 | real   |
-| GETSPA                            | src/core/asm_port_strlt2.cpp              |  166 | real   |
+| GETSPA                            | src/core/asm_port_strlt2.cpp              |  170 | real   |
 | GETBYT                            | src/core/asm_port_error.cpp               | 1937 | stub   |
 | GETCHR                            | src/core/asm_port_error.cpp               |  610 | real   |
 | GETLN                             | src/platform/asm_port_getln.cpp           |   37 | stub   |
@@ -179,6 +186,7 @@ returning, or contains `TODO(asm-port)`.
 | MON_WAIT                          | src/platform/asm_port_outdo.cpp           |   30 | stub   |
 | MON_WRITE                         | src/core/asm_port_error.cpp               | 1799 | stub   |
 | MOVINS                            | src/core/asm_port_error.cpp               | 2530 | stub   |
+| MOVE_HIGHEST_STRING_TO_TOP        | src/core/asm_port_strlt2.cpp              |  331 | real   |
 | MOVSTR                            | src/core/asm_port_strlt2.cpp              |   40 | stub   |
 | MULTIPLY_SUBSCRIPT                | src/core/asm_port_error.cpp               | 2523 | real   |
 | MULTIPLY_SUBS_1                   | src/core/asm_port_error.cpp               | 2539 | real   |
@@ -221,7 +229,7 @@ returning, or contains `TODO(asm-port)`.
 | PopWordFromStack                  | src/core/asm_port_error.cpp               | 1045 | stub   |
 | PR_COMMA                          | src/core/asm_port_print.cpp               |  268 | real   |
 | PR_STRING                         | src/core/asm_port_print.cpp               |  181 | real   |
-| PR_TAB_OR_SPC                     | src/core/asm_port_print.cpp               |  296 | stub   |
+| PR_TAB_OR_SPC                     | src/core/asm_port_print.cpp               |  296 | real   |
 | PRINT                             | src/core/asm_port_print.cpp               |  202 | real   |
 | print                             | src/platform/console.cpp                  |    4 | real   |
 | PRINT2                            | src/core/asm_port_print.cpp               |  219 | real   |
@@ -317,7 +325,7 @@ returning, or contains `TODO(asm-port)`.
 | STROUT                            | src/core/asm_port_error.cpp               |  976 | stub   |
 | STROUT                            | src/core/asm_port_input.cpp               |   21 | stub   |
 | STROUT                            | src/core/asm_port_print.cpp               |  103 | real   |
-| STRPRT                            | src/core/asm_port_print.cpp               |   78 | stub   |
+| STRPRT                            | src/core/asm_port_print.cpp               |   78 | real   |
 | STRTXT                            | src/core/asm_port_strtxt.cpp              |   28 | stub   |
 | STXTPT                            | src/core/asm_port_error.cpp               |  867 | real   |
 | STXTPT_impl                       | src/core/asm_port_error.cpp               |  342 | stub   |

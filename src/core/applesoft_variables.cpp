@@ -111,8 +111,11 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case ZP_TXPSV: return lowByte(TXPSV);
     case ZP_TXPSV + 1: return highByte(TXPSV);
     case ZP_CPRTYP: return CPRTYP;
+    case ZP_FNCNAM: return lowByte(FNCNAM);
+    case ZP_FNCNAM + 1: return highByte(FNCNAM);
     case ZP_DSCPTR: return lowByte(DSCPTR);
     case ZP_DSCPTR + 1: return highByte(DSCPTR);
+    case ZP_DSCLEN: return DSCLEN;
     case ZP_JMPADRS + 1: return lowByte(JMPADRS);
     case ZP_JMPADRS + 2: return highByte(JMPADRS);
     case ZP_ARYPNT: return lowByte(ARYPNT);
@@ -231,8 +234,11 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case ZP_TXPSV: setLowByte(TXPSV, value); return;
     case ZP_TXPSV + 1: setHighByte(TXPSV, value); return;
     case ZP_CPRTYP: CPRTYP = value; return;
+    case ZP_FNCNAM: setLowByte(FNCNAM, value); return;
+    case ZP_FNCNAM + 1: setHighByte(FNCNAM, value); return;
     case ZP_DSCPTR: setLowByte(DSCPTR, value); return;
     case ZP_DSCPTR + 1: setHighByte(DSCPTR, value); return;
+    case ZP_DSCLEN: DSCLEN = value; return;
     case ZP_JMPADRS + 1: setLowByte(JMPADRS, value); return;
     case ZP_JMPADRS + 2: setHighByte(JMPADRS, value); return;
     case ZP_ARYPNT: setLowByte(ARYPNT, value); return;
