@@ -13,11 +13,6 @@ void write_MON_PROMPT(std::uint8_t v) {
     variables().writeByte(ApplesoftVariables::ZP_MON_PROMPT, v);
 }
 
-// MON_GETLN is a monitor alias for GETLN.
-std::uint8_t MON_GETLN() {
-    return GETLN();
-}
-
 void write_INPUT_BUFFER(std::uint8_t index, std::uint8_t v) {
     variables().pointer(kInputBufferAddress).write(v, index);
 }
@@ -30,14 +25,13 @@ void write_INPUT_BUFFER_minus_1(std::uint8_t index, std::uint8_t v) {
     variables().pointer(static_cast<std::uint16_t>(kInputBufferAddress - 1u)).write(v, index);
 }
 
-// TODO(asm-port): port RDKEY monitor call; read a key from the monitor.
-std::uint8_t RDKEY() { return 0; }
-
 } // namespace
 
-// MON_RDKEY is a monitor alias for RDKEY.
+// MON_RDKEY: monitor label RDKEY (keyin.o65.lst).
+// All monitor labels carry a virtual MON_ prefix in C++; RDKEY -> MON_RDKEY.
+// TODO(asm-port): port MON_RDKEY monitor key-read routine.
 std::uint8_t MON_RDKEY() {
-    return RDKEY();
+    return 0;
 }
 
 Inlin2Result INLIN2(std::uint8_t x) {

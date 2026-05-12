@@ -34,7 +34,7 @@ void CROUT() {}
 
 } // namespace
 
-std::uint8_t GETLN() {
+std::uint8_t MON_GETLN() {
     // Output monitor prompt and initialize input index.
     COUT(read_prompt_char());
     std::uint8_t x = 1;

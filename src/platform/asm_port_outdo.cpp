@@ -10,9 +10,10 @@ namespace applesoft::asm_port {
 namespace {
 
 // MON_COUT = $fded  (Apple II monitor character-output routine)
-// Alias: MON_COUT is a monitor alias for COUT; implemented here as a forwarder
-// to the host console.  Apple II display-mode bits (inverse/flash) are stripped
-// so that the host terminal receives plain 7-bit ASCII.
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst label COUT.
+// All monitor labels carry a virtual MON_ prefix in C++; COUT -> MON_COUT.
+// Apple II display-mode bits (inverse/flash) are stripped so that the host
+// terminal receives plain 7-bit ASCII.
 void MON_COUT(std::uint8_t a) {
     // Strip Apple II high-bit encoding; $0d (CR) becomes newline.
     const char ch = static_cast<char>(a & 0x7fu);
@@ -25,8 +26,9 @@ void MON_COUT(std::uint8_t a) {
 }
 
 // MON_WAIT = $fca8  (Apple II monitor busy-wait routine)
-// Alias: MON_WAIT is a monitor alias for WAIT; speed delay not applicable on a
-// modern host.
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst label WAIT.
+// All monitor labels carry a virtual MON_ prefix in C++; WAIT -> MON_WAIT.
+// Speed delay not applicable on a modern host.
 void MON_WAIT(std::uint8_t /* speed_complement */) {
     // TODO(asm-port): speed delay not meaningful on host; left as no-op.
 }
