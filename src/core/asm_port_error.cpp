@@ -297,8 +297,12 @@ void SetStackPointer(std::uint8_t value) {
 }
 
 bool IsStatementEndOfParsedInput() {
-    // TODO(asm-port): determine whether the current statement has no trailing text.
-    return true;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: END2 (inclusive) .. SAVE (exclusive)
+    // Name normalization: helper name chosen for the inline `bne RTS_4` guard.
+    // STOP/END/CONT continue only when parser is at end-of-statement; model the
+    // zero-flag check via the current parsed character at TXTPTR.
+    return CHRGOT() == 0u;
 }
 
 bool NEW_impl();

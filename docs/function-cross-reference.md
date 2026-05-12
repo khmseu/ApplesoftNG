@@ -155,7 +155,7 @@ returning, or contains `TODO(asm-port)`.
 | IsLineNumberGreater               | src/core/asm_port_error.cpp               |  617 | real   |
 | IsOnErr                           | src/core/asm_port_error.cpp               | 2542 | real   |
 | IsRunningMode                     | src/core/asm_port_error.cpp               | 1207 | real   |
-| IsStatementEndOfParsedInput       | src/core/asm_port_error.cpp               |  157 | stub   |
+| IsStatementEndOfParsedInput       | src/core/asm_port_error.cpp               |  157 | real   |
 | IsTraceEnabled                    | src/core/asm_port_error.cpp               | 1212 | real   |
 | JER                               | src/core/asm_port_error.cpp               | 2439 | real   |
 | JERR                              | src/core/asm_port_strlt2.cpp              |  140 | real   |
