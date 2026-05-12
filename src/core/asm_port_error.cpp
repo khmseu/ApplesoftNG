@@ -74,6 +74,10 @@ std::uint8_t CHRGET() {
     return GENERIC_CHRGET();
 }
 
+std::uint8_t CHRGOT() {
+    return variables_const().pointer(ReadZeroPageWord(ApplesoftVariables::ZP_TXTPTR)).read();
+}
+
 void COLD_START();
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst

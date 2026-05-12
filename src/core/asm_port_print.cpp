@@ -8,17 +8,12 @@
 
 namespace applesoft::asm_port {
 
+std::uint8_t CHRGET();
+std::uint8_t CHRGOT();
+
 // ---------------------------------------------------------------------------
 // Forward declarations for callees not yet in public headers.
 // ---------------------------------------------------------------------------
-
-// CHRGET ($b1/$00 in ROM): advance TXTPTR and return the next character.
-// TODO(asm-port): route through the real CHRGET port once available.
-static std::uint8_t CHRGET() { return 0; }
-
-// CHRGOT ($b7/$00 in ROM): return the current character without advancing.
-// TODO(asm-port): route through the real CHRGOT port once available.
-static std::uint8_t CHRGOT() { return 0; }
 
 // FRMEVL: evaluate the expression at TXTPTR; result goes into FAC / VALTYP.
 // TODO(asm-port): port FRMEVL.

@@ -35,8 +35,7 @@ returning, or contains `TODO(asm-port)`.
 | CHECK_VARIABLE                    | src/core/asm_port_strlt2.cpp              |  282 | real   |
 | CHRGET                            | src/core/asm_port_error.cpp               |   87 | real   |
 | CHRGET_INPUT                      | src/core/asm_port_input.cpp               |   33 | stub   |
-| CHRGOT                            | src/core/asm_port_error.cpp               |  606 | real   |
-| CHRGOT                            | src/core/asm_port_input.cpp               |   24 | stub   |
+| CHRGOT                            | src/core/asm_port_error.cpp               |   77 | real   |
 | CLEAR                             | src/core/asm_port_error.cpp               |  855 | real   |
 | CLEAR                             | src/core/asm_port_token_address_table.cpp |    9 | stub   |
 | CLEAR_impl                        | src/core/asm_port_error.cpp               |  319 | real   |

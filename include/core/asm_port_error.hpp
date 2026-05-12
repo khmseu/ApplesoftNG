@@ -7,6 +7,12 @@
 
 namespace applesoft::asm_port {
 
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: CHRGET / CHRGOT
+// Name normalization: none (assembler labels kept verbatim).
+std::uint8_t CHRGET();
+std::uint8_t CHRGOT();
+
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: ANDOP (inclusive) .. FALSE (exclusive)
     // Name normalization: none (assembler label ANDOP kept verbatim).
