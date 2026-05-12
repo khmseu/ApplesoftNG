@@ -29,6 +29,9 @@ void LET();
 void IF();
 void REM();
 void ONGOTO();
+void DEF();
+void POKE();
+void WAIT();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
@@ -79,9 +82,9 @@ static void RECALL()           {} // TODO(asm-port): RECALL
 static void STORE()            {} // TODO(asm-port): STORE
 static void SPEED()            {} // TODO(asm-port): SPEED
 static void AMPERSAND_VECTOR() {} // TODO(asm-port): & dispatch (JMP vector at $03F5)
-static void WAIT()             {} // TODO(asm-port): WAIT
-static void DEF()              {} // TODO(asm-port): DEF
-static void POKE()             {} // TODO(asm-port): POKE
+static void WAIT_Handler()     { WAIT(); }
+static void DEF_Handler()      { DEF(); }
+static void POKE_Handler()     { POKE(); }
 static void PRINT()            {} // TODO(asm-port): PRINT
 static void CLEAR_Handler()    { CLEAR(); }
 static void GET_Handler()      { GET(); }
@@ -148,11 +151,11 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         REM,              // [50] $B2...178...REM
         STOP,             // [51] $B3...179...STOP
         ONGOTO,           // [52] $B4...180...ON
-        WAIT,             // [53] $B5...181...WAIT
+        WAIT_Handler,     // [53] $B5...181...WAIT
         LOAD,             // [54] $B6...182...LOAD
         SAVE,             // [55] $B7...183...SAVE
-        DEF,              // [56] $B8...184...DEF
-        POKE,             // [57] $B9...185...POKE
+        DEF_Handler,      // [56] $B8...184...DEF
+        POKE_Handler,     // [57] $B9...185...POKE
         PRINT,            // [58] $BA...186...PRINT
         CONT,             // [59] $BB...187...CONT
         LIST,             // [60] $BC...188...LIST

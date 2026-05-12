@@ -367,6 +367,13 @@ void NEWSTT();
 void TRACE_();
 void FRMEVL();
 std::uint8_t GETBYT();
+std::uint8_t GTNUM();
+std::uint8_t COMBYTE();
+void GETADR();
+void PEEK();
+void POKE();
+void WAIT();
+void RTS_10();
 // std::uint16_t PTRGET();
 bool CHKVAL(std::uint8_t savedValTyp);
 void ROUND_FAC();
@@ -2433,6 +2440,96 @@ std::uint8_t GETBYT() {
     FRMNUM();
     CONINT();
     return ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 4u));
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: GTNUM (inclusive) .. COMBYTE (exclusive)
+// Name normalization: none (assembler label GTNUM kept verbatim).
+std::uint8_t GTNUM() {
+    FRMNUM();
+    GETADR();
+    return COMBYTE();
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: COMBYTE (inclusive) .. GETADR (exclusive)
+// Name normalization: none (assembler label COMBYTE kept verbatim).
+std::uint8_t COMBYTE() {
+    CHKCOM();
+    return GETBYT();
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: GETADR (inclusive) .. PEEK (exclusive)
+// Name normalization: none (assembler label GETADR kept verbatim).
+void GETADR() {
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+
+    if (ReadZeroPageByte(kFAC) >= 0x91u) {
+        IQERR();
+        return;
+    }
+
+    QINT();
+
+    const std::uint8_t lo = ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u));
+    const std::uint8_t hi = ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u));
+    WriteZeroPageByte(kLINNUM, lo);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1u), hi);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: PEEK (inclusive) .. POKE (exclusive)
+// Name normalization: none (assembler label PEEK kept verbatim).
+void PEEK() {
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+
+    const std::uint16_t savedLinnum = ReadZeroPageWord(kLINNUM);
+    GETADR();
+    const std::uint8_t value = ReadProgramByte(ReadZeroPageWord(kLINNUM));
+    WriteZeroPageWord(kLINNUM, savedLinnum);
+    SNGFLT(value);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: POKE (inclusive) .. WAIT (exclusive)
+// Name normalization: none (assembler label POKE kept verbatim).
+void POKE() {
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+
+    const std::uint8_t value = GTNUM();
+    WriteProgramByte(ReadZeroPageWord(kLINNUM), value);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: WAIT (inclusive) .. FADDH (exclusive)
+// Name normalization: none (assembler label WAIT kept verbatim).
+void WAIT() {
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
+
+    const std::uint8_t mask = GTNUM();
+    WriteZeroPageByte(kFORPNT, mask);
+
+    std::uint8_t xorMask = 0u;
+    if (CHRGOT() != 0u) {
+        xorMask = COMBYTE();
+    }
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFORPNT + 1u), xorMask);
+
+    while (true) {
+        const std::uint8_t value = ReadProgramByte(ReadZeroPageWord(kLINNUM));
+        const std::uint8_t masked = static_cast<std::uint8_t>((value ^ xorMask) & mask);
+        if (masked != 0u) {
+            RTS_10();
+            return;
+        }
+    }
+}
+
+void RTS_10() {
+    // Shared RTS target for WAIT in ROM.
 }
 
 std::uint16_t PTRGET() {

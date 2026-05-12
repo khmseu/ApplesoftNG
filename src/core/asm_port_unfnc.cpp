@@ -13,6 +13,7 @@
 namespace applesoft::asm_port {
 
 void PDL();
+void PEEK();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for function handlers not yet ported.
@@ -34,7 +35,7 @@ static void COS()      {} // TODO(asm-port): COS        $DE...222
 static void SIN()      {} // TODO(asm-port): SIN        $DF...223
 static void TAN()      {} // TODO(asm-port): TAN        $E0...224
 static void ATN()      {} // TODO(asm-port): ATN        $E1...225
-static void PEEK()     {} // TODO(asm-port): PEEK       $E2...226
+static void PEEK_fn()  { PEEK(); }
 static void LEN_fn()   { LEN(); }
 static void STR_fn()   { STR(); }
 static void VAL()        {} // TODO(asm-port): VAL        $E5...229
@@ -66,7 +67,7 @@ UNFNC_fn UNFNC(std::size_t index) {
         SIN,      // [13] $DF...223...SIN
         TAN,      // [14] $E0...224...TAN
         ATN,      // [15] $E1...225...ATN
-        PEEK,     // [16] $E2...226...PEEK
+        PEEK_fn,  // [16] $E2...226...PEEK
         LEN_fn,   // [17] $E3...227...LEN
         STR_fn,   // [18] $E4...228...STR$
         VAL,        // [19] $E5...229...VAL
