@@ -31,6 +31,8 @@ void INPUT();
 void READ();
 void DIM();
 void LET();
+void PR_NUMBER();
+void IN_NUMBER();
 void IF();
 void REM();
 void ONGOTO();
@@ -63,8 +65,8 @@ static void DIM_Handler()      { DIM(); }
 static void READ_Handler()     { READ(); }
 static void GR()               {} // TODO(asm-port): GR
 static void TEXT()             {} // TODO(asm-port): TEXT
-static void PR_NUMBER()        {} // TODO(asm-port): PR_NUMBER
-static void IN_NUMBER()        {} // TODO(asm-port): IN_NUMBER
+static void PR_NUMBER_Handler(){ PR_NUMBER(); }
+static void IN_NUMBER_Handler(){ IN_NUMBER(); }
 static void CALL_Handler()     { CALL(); }
 static void PLOT()             {} // TODO(asm-port): PLOT
 static void HLIN()             {} // TODO(asm-port): HLIN
@@ -137,8 +139,8 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         READ_Handler,     // [7]  $87...135...READ
         GR,               // [8]  $88...136...GR
         TEXT,             // [9]  $89...137...TEXT
-        PR_NUMBER,        // [10] $8A...138...PR#
-        IN_NUMBER,        // [11] $8B...139...IN#
+        PR_NUMBER_Handler,// [10] $8A...138...PR#
+        IN_NUMBER_Handler,// [11] $8B...139...IN#
         CALL_Handler,     // [12] $8C...140...CALL
         PLOT,             // [13] $8D...141...PLOT
         HLIN,             // [14] $8E...142...HLIN

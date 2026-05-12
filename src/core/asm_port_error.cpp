@@ -45,6 +45,8 @@ void IQERR();
 
 void MON_SETCOL(std::uint8_t color);
 void MON_TABV(std::uint8_t row_zero_based);
+void MON_INPORT(std::uint8_t slot);
+void MON_OUTPORT(std::uint8_t slot);
 
 
 // TODO(asm-port): port NORMAL statement behavior (currently display-mode init stub).
@@ -94,6 +96,18 @@ void MON_TABV(std::uint8_t row_zero_based) {
     // TODO(asm-port): port MON_TABV monitor handler.
     // Placeholder to preserve VTAB statement call flow until monitor integration.
     (void)row_zero_based;
+}
+
+void MON_INPORT(std::uint8_t slot) {
+    // TODO(asm-port): port MON_INPORT monitor handler.
+    // Placeholder to preserve IN# statement call flow until monitor integration.
+    (void)slot;
+}
+
+void MON_OUTPORT(std::uint8_t slot) {
+    // TODO(asm-port): port MON_OUTPORT monitor handler.
+    // Placeholder to preserve PR# statement call flow until monitor integration.
+    (void)slot;
 }
 
 void COLOR() {
@@ -3481,6 +3495,24 @@ void CALL() {
     // The machine code at callAddress must return with an RTS instruction
     auto callRoutine = reinterpret_cast<void (*)()>(callAddress);
     callRoutine();
+}
+
+void IN_NUMBER() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: IN_NUMBER (inclusive) .. PR_NUMBER (exclusive)
+    // Name normalization: none (assembler label IN_NUMBER kept verbatim).
+
+    const std::uint8_t slot = GETBYT();
+    MON_INPORT(slot);
+}
+
+void PR_NUMBER() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PR_NUMBER (inclusive) .. PLOTFNS (exclusive)
+    // Name normalization: none (assembler label PR_NUMBER kept verbatim).
+
+    const std::uint8_t slot = GETBYT();
+    MON_OUTPORT(slot);
 }
 
 void DEF() {
