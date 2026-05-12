@@ -51,6 +51,8 @@ void MON_PLOT(std::uint8_t y, std::uint8_t x);
 void MON_HLINE(std::uint8_t y, std::uint8_t right, std::uint8_t left);
 void MON_VLINE(std::uint8_t x, std::uint8_t top);
 void MON_HOME();
+void MON_SETTXT();
+void MON_SETGR();
 
 
 // TODO(asm-port): port NORMAL statement behavior (currently display-mode init stub).
@@ -141,12 +143,65 @@ void MON_HOME() {
     // Placeholder to preserve HOME statement call flow until monitor integration.
 }
 
+void MON_SETTXT() {
+    // TODO(asm-port): port MON_SETTXT monitor handler.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst label SETTXT.
+    // Sets full-screen text window; reads TXTSET soft-switch then calls SETWND.
+}
+
+void MON_SETGR() {
+    // TODO(asm-port): port MON_SETGR monitor handler.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst label SETGR.
+    // Sets up lo-res graphics window; reads TXTCLR+MIXSET soft-switches, calls CLRTOP.
+}
+
 void HOME() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: MON_HOME (inclusive) .. ROT (exclusive)
     // Name normalization: HOME statement maps to MON_HOME monitor routine ($FC58).
 
     MON_HOME();
+}
+
+void GR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: GR (inclusive) .. TEXT (exclusive)
+    // Name normalization: none (assembler label GR kept verbatim).
+    //
+    // lda SW_LORES ($c056): soft-switch read activates lo-res graphics mode.
+    // lda SW_MIXSET ($c053): soft-switch read enables lower 4 lines as text.
+    // jmp MON_SETGR: monitor SETGR sets up the lo-res graphics window.
+    // Soft-switch side-effect reads carry no value; mode is established by MON_SETGR.
+    MON_SETGR();
+}
+
+void TEXT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: TEXT (inclusive) .. STORE (exclusive)
+    // Name normalization: none (assembler label TEXT kept verbatim).
+    //
+    // lda SW_LOWSCR ($c054): soft-switch read selects display page 1.
+    // jmp MON_SETTXT: monitor SETTXT sets the full-screen text window.
+    // Soft-switch side-effect read carries no value; state is set by MON_SETTXT.
+    MON_SETTXT();
+}
+
+void HTAB() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: HTAB (inclusive) .. end of label range (exclusive)
+    // Name normalization: none (assembler label HTAB kept verbatim).
+    //
+    // jsr GETBYT  — evaluate expression; result in X-reg (1-based column).
+    // dex         — convert to 0-based.
+    // L_HTAB_1: if col >= 40, subtract 40 and emit CR (handles columns > screen width).
+    // L_HTAB_2: sta MON_CH ($24) — store final column into cursor position register.
+    const std::uint8_t raw = GETBYT();
+    std::uint8_t col = static_cast<std::uint8_t>(raw - 1u);  // dex; txa
+    while (col >= 40u) {
+        col = static_cast<std::uint8_t>(col - 40u);
+        CRDO();
+    }
+    variables().writeByte(ApplesoftVariables::ZP_MON_CH, col);
 }
 
 void COLOR() {

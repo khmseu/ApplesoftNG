@@ -55,6 +55,9 @@ void VTAB();
 void HIMEM();
 void LOMEM();
 void SPEED();
+void GR();
+void TEXT();
+void HTAB();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
@@ -67,8 +70,8 @@ static void INPUT_Handler()    { INPUT(); }
 static void DEL()              {} // TODO(asm-port): DEL
 static void DIM_Handler()      { DIM(); }
 static void READ_Handler()     { READ(); }
-static void GR()               {} // TODO(asm-port): GR
-static void TEXT()             {} // TODO(asm-port): TEXT
+static void GR_Handler()   { GR(); }
+static void TEXT_Handler() { TEXT(); }
 static void PR_NUMBER_Handler(){ PR_NUMBER(); }
 static void IN_NUMBER_Handler(){ IN_NUMBER(); }
 static void CALL_Handler()     { CALL(); }
@@ -81,7 +84,7 @@ static void HCOLOR()           {} // TODO(asm-port): HCOLOR
 static void HPLOT()            {} // TODO(asm-port): HPLOT
 static void DRAW()             {} // TODO(asm-port): DRAW
 static void XDRAW()            {} // TODO(asm-port): XDRAW
-static void HTAB()             {} // TODO(asm-port): HTAB
+static void HTAB_Handler()     { HTAB(); }
 static void HOME_Handler()     { HOME(); }
 static void ROT()              {} // TODO(asm-port): ROT
 static void SCALE()            {} // TODO(asm-port): SCALE
@@ -137,8 +140,8 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         DEL,              // [5]  $85...133...DEL
         DIM_Handler,      // [6]  $86...134...DIM
         READ_Handler,     // [7]  $87...135...READ
-        GR,               // [8]  $88...136...GR
-        TEXT,             // [9]  $89...137...TEXT
+        GR_Handler,       // [8]  $88...136...GR
+        TEXT_Handler,     // [9]  $89...137...TEXT
         PR_NUMBER_Handler,// [10] $8A...138...PR#
         IN_NUMBER_Handler,// [11] $8B...139...IN#
         CALL_Handler,     // [12] $8C...140...CALL
@@ -151,7 +154,7 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         HPLOT,            // [19] $93...147...HPLOT
         DRAW,             // [20] $94...148...DRAW
         XDRAW,            // [21] $95...149...XDRAW
-        HTAB,             // [22] $96...150...HTAB
+        HTAB_Handler,     // [22] $96...150...HTAB
         HOME_Handler,     // [23] $97...151...HOME
         ROT,              // [24] $98...152...ROT=
         SCALE,            // [25] $99...153...SCALE=

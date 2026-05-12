@@ -64,7 +64,8 @@
 | GOSUB               | src/core/asm_port_error.cpp               | 2221 | real   |
 | GOTO                | src/core/asm_port_error.cpp               | 2265 | real   |
 | GO_TO_LINE          | src/core/asm_port_error.cpp               | 2255 | real   |
-| GR                  | src/core/asm_port_token_address_table.cpp | 70   | stub   |
+| GR                  | src/core/asm_port_error.cpp               | 166  | real   |
+| GR_Handler          | src/core/asm_port_token_address_table.cpp | 73   | real   |
 | GSE                 | src/core/asm_port_error.cpp               | 3487 | real   |
 | HANDLERR            | src/core/asm_port_error.cpp               | 3859 | real   |
 | HCOLOR              | src/core/asm_port_token_address_table.cpp | 80   | stub   |
@@ -77,7 +78,8 @@
 | HOME                | src/core/asm_port_error.cpp               | 144  | real   |
 | HOME_Handler        | src/core/asm_port_token_address_table.cpp | 85   | real   |
 | HPLOT               | src/core/asm_port_token_address_table.cpp | 81   | stub   |
-| HTAB                | src/core/asm_port_token_address_table.cpp | 84   | stub   |
+| HTAB                | src/core/asm_port_error.cpp               | 189  | real   |
+| HTAB_Handler        | src/core/asm_port_token_address_table.cpp | 87   | real   |
 | IF                  | src/core/asm_port_error.cpp               | 2447 | real   |
 | IF_TRUE             | src/core/asm_port_error.cpp               | 2479 | real   |
 | INPUT_Handler       | src/core/asm_port_token_address_table.cpp | 66   | real   |
@@ -101,6 +103,8 @@
 | MI1                 | src/core/asm_port_error.cpp               | 3373 | real   |
 | MI2                 | src/core/asm_port_error.cpp               | 3381 | real   |
 | MKINT               | src/core/asm_port_error.cpp               | 3337 | real   |
+| MON_SETGR           | src/core/asm_port_error.cpp               | 152  | stub   |
+| MON_SETTXT          | src/core/asm_port_error.cpp               | 146  | stub   |
 | NAME_NOT_FOUND      | src/core/asm_port_error.cpp               | 3258 | real   |
 | NAMOK               | src/core/asm_port_error.cpp               | 3174 | real   |
 | NEG32768            | src/core/asm_port_error.cpp               | 3316 | real   |
@@ -157,7 +161,8 @@
 | SUBERR              | src/core/asm_port_error.cpp               | 3403 | real   |
 | SYNCHR              | src/core/asm_port_error.cpp               | 1745 | real   |
 | SYNERR              | src/core/asm_port_error.cpp               | 2534 | real   |
-| TEXT                | src/core/asm_port_token_address_table.cpp | 71   | stub   |
+| TEXT                | src/core/asm_port_error.cpp               | 178  | real   |
+| TEXT_Handler        | src/core/asm_port_token_address_table.cpp | 74   | real   |
 | TRUE                | src/core/asm_port_error.cpp               | 3034 | real   |
 | UNARY               | src/core/asm_port_error.cpp               | 2972 | real   |
 | UNDFNC              | src/core/asm_port_error.cpp               | 3626 | real   |
