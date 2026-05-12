@@ -9,6 +9,7 @@ namespace applesoft::asm_port {
 
 std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
+std::uint8_t CHRGET();
 
 bool CLEAR();
 bool NEW();
@@ -38,6 +39,7 @@ void RESUME();
 void DEF();
 void POKE();
 void WAIT();
+void PRINT(std::uint8_t a);
 void NORMAL();
 void INVERSE();
 void FLASH();
@@ -111,7 +113,7 @@ static void AMPERSAND_VECTOR() {} // TODO(asm-port): & dispatch (JMP vector at $
 static void WAIT_Handler()     { WAIT(); }
 static void DEF_Handler()      { DEF(); }
 static void POKE_Handler()     { POKE(); }
-static void PRINT()            {} // TODO(asm-port): PRINT
+static void PRINT_Handler()    { PRINT(CHRGET()); }
 static void CLEAR_Handler()    { CLEAR(); }
 static void GET_Handler()      { GET(); }
 static void NEW_Handler()      { NEW(); }
@@ -182,7 +184,7 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         SAVE,             // [55] $B7...183...SAVE
         DEF_Handler,      // [56] $B8...184...DEF
         POKE_Handler,     // [57] $B9...185...POKE
-        PRINT,            // [58] $BA...186...PRINT
+        PRINT_Handler,    // [58] $BA...186...PRINT
         CONT,             // [59] $BB...187...CONT
         LIST,             // [60] $BC...188...LIST
         CLEAR_Handler,    // [61] $BD...189...CLEAR
