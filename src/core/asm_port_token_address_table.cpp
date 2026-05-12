@@ -3,8 +3,12 @@
 // Name normalization: none
 
 #include "core/asm_port_token_address_table.hpp"
+#include "core/applesoft_variables.hpp"
 
 namespace applesoft::asm_port {
+
+std::uint8_t ReadZeroPageByte(std::uint8_t address);
+void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 
 bool CLEAR();
 bool NEW();
@@ -67,8 +71,20 @@ static void MON_HOME() {
 static void ROT()              {} // TODO(asm-port): ROT
 static void SCALE()            {} // TODO(asm-port): SCALE
 static void SHLOAD()           {} // TODO(asm-port): SHLOAD
-static void TRACE()            {} // TODO(asm-port): TRACE
-static void NOTRACE()          {} // TODO(asm-port): NOTRACE
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: TRACE (inclusive) .. NORMAL (exclusive)
+// Name normalization: none. TRACE: sec; ror TRCFLG → bit 7 set (trace on).
+//                           NOTRACE: clc; ror TRCFLG → bit 7 clear (trace off).
+static void TRACE() {
+    const std::uint8_t trcflg = ReadZeroPageByte(ApplesoftVariables::ZP_TRCFLG);
+    WriteZeroPageByte(ApplesoftVariables::ZP_TRCFLG,
+                      static_cast<std::uint8_t>((trcflg >> 1u) | 0x80u));
+}
+static void NOTRACE() {
+    const std::uint8_t trcflg = ReadZeroPageByte(ApplesoftVariables::ZP_TRCFLG);
+    WriteZeroPageByte(ApplesoftVariables::ZP_TRCFLG,
+                      static_cast<std::uint8_t>(trcflg >> 1u));
+}
 static void NORMAL()           {} // TODO(asm-port): NORMAL
 static void INVERSE()          {} // TODO(asm-port): INVERSE
 static void FLASH()            {} // TODO(asm-port): FLASH

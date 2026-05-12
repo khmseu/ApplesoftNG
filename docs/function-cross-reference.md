@@ -58,7 +58,7 @@ returning, or contains `TODO(asm-port)`.
 | C_ZERO                            | src/core/asm_port_error.cpp               | 2285 | real   |
 | ClearErrFlag                      | src/core/asm_port_error.cpp               |   35 | real   |
 | CompareArgAndFacStrings           | src/core/asm_port_error.cpp               |  462 | stub   |
-| CurrentStatementChar              | src/core/asm_port_error.cpp               | 1217 | stub   |
+| CurrentStatementChar              | src/core/asm_port_error.cpp               | 1217 | real   |
 | DATA                              | src/core/asm_port_error.cpp               | 1711 | real   |
 | DATA                              | src/core/asm_port_token_address_table.cpp |   23 | stub   |
 | DATAN                             | src/core/asm_port_error.cpp               | 1176 | stub   |
@@ -154,9 +154,9 @@ returning, or contains `TODO(asm-port)`.
 | IsEndOfProgramAtTextPointer       | src/core/asm_port_error.cpp               | 1193 | real   |
 | IsLineNumberGreater               | src/core/asm_port_error.cpp               |  617 | real   |
 | IsOnErr                           | src/core/asm_port_error.cpp               | 2542 | stub   |
-| IsRunningMode                     | src/core/asm_port_error.cpp               | 1207 | stub   |
+| IsRunningMode                     | src/core/asm_port_error.cpp               | 1207 | real   |
 | IsStatementEndOfParsedInput       | src/core/asm_port_error.cpp               |  157 | stub   |
-| IsTraceEnabled                    | src/core/asm_port_error.cpp               | 1212 | stub   |
+| IsTraceEnabled                    | src/core/asm_port_error.cpp               | 1212 | real   |
 | JER                               | src/core/asm_port_error.cpp               | 2439 | real   |
 | JERR                              | src/core/asm_port_strlt2.cpp              |  140 | real   |
 | LEFTSTR                           | src/core/asm_port_strlt2.cpp              |  668 | real   |
@@ -329,6 +329,8 @@ returning, or contains `TODO(asm-port)`.
 | SetTextPointerToInputBufferMinus1 | src/core/asm_port_error.cpp               |  670 | stub   |
 | TOKEN_ADDRESS_TABLE               | src/core/asm_port_token_address_table.cpp |   96 | stub   |
 | TOKEN_NAME_TABLE                  | src/core/asm_port_token_name_table.cpp    |   15 | stub   |
+| TRACE (statement handler)         | src/core/asm_port_token_address_table.cpp |   70 | real   |
+| NOTRACE (statement handler)       | src/core/asm_port_token_address_table.cpp |   75 | real   |
 | TRACE\_                           | src/core/asm_port_error.cpp               |  581 | real   |
 | TRUE                              | src/core/asm_port_error.cpp               | 2052 | real   |
 | UNARY                             | src/core/asm_port_error.cpp               | 1990 | stub   |
