@@ -38,7 +38,17 @@ void RESTART();
 void CRDO();
 
 // TODO(asm-port): port NORMAL statement behavior (currently display-mode init stub).
-void NORMAL() {}
+void NORMAL() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: NORMAL (inclusive) .. INVERSE (exclusive)
+    // Name normalization: none (assembler label NORMAL kept verbatim).
+
+    constexpr std::uint8_t kMON_INVFLG = ApplesoftVariables::ZP_MON_INVFLG;
+    constexpr std::uint8_t kFLASH_BIT = ApplesoftVariables::ZP_FLASH_BIT;
+
+    WriteZeroPageByte(kMON_INVFLG, 0xffu);
+    WriteZeroPageByte(kFLASH_BIT, 0x00u);
+}
 
 constexpr std::array<std::uint8_t, 29> kGenericCHRGETImage = {
     0xe6, 0xb8, 0xd0, 0x02, 0xe6, 0xb9, 0xad, 0x60, 0xea, 0xc9,

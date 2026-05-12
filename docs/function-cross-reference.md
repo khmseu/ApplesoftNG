@@ -211,6 +211,7 @@ returning, or contains `TODO(asm-port)`.
 | NEXT                              | src/core/asm_port_token_address_table.cpp |   15 | stub   |
 | NEXT_shouldTerminateLoop          | src/core/asm_port_error.cpp               |  404 | stub   |
 | NOTCR                             | src/platform/asm_port_getln.cpp           |   30 | stub   |
+| NORMAL                            | src/core/asm_port_error.cpp               |   41 | real   |
 | NUMCMP                            | src/core/asm_port_error.cpp               | 2099 | real   |
 | NXDIM                             | src/core/asm_port_error.cpp               | 2139 | real   |
 | NXIN                              | src/core/asm_port_nxin.cpp                |   13 | real   |
@@ -335,6 +336,7 @@ returning, or contains `TODO(asm-port)`.
 | TOKEN_NAME_TABLE                  | src/core/asm_port_token_name_table.cpp    |   15 | stub   |
 | TRACE (statement handler)         | src/core/asm_port_token_address_table.cpp |   70 | real   |
 | NOTRACE (statement handler)       | src/core/asm_port_token_address_table.cpp |   75 | real   |
+| NORMAL_Handler (dispatch)         | src/core/asm_port_token_address_table.cpp |   90 | real   |
 | TRACE\_                           | src/core/asm_port_error.cpp               |  581 | real   |
 | TRUE                              | src/core/asm_port_error.cpp               | 2052 | real   |
 | UNARY                             | src/core/asm_port_error.cpp               | 1990 | stub   |

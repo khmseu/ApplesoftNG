@@ -38,6 +38,7 @@ void RESUME();
 void DEF();
 void POKE();
 void WAIT();
+void NORMAL();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
@@ -87,7 +88,7 @@ static void NOTRACE() {
     WriteZeroPageByte(ApplesoftVariables::ZP_TRCFLG,
                       static_cast<std::uint8_t>(trcflg >> 1u));
 }
-static void NORMAL()           {} // TODO(asm-port): NORMAL
+static void NORMAL_Handler()   { NORMAL(); }
 static void INVERSE()          {} // TODO(asm-port): INVERSE
 static void FLASH()            {} // TODO(asm-port): FLASH
 static void COLOR()            {} // TODO(asm-port): COLOR
@@ -145,7 +146,7 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         SHLOAD,           // [26] $9A...154...SHLOAD
         TRACE,            // [27] $9B...155...TRACE
         NOTRACE,          // [28] $9C...156...NOTRACE
-        NORMAL,           // [29] $9D...157...NORMAL
+        NORMAL_Handler,   // [29] $9D...157...NORMAL
         INVERSE,          // [30] $9E...158...INVERSE
         FLASH,            // [31] $9F...159...FLASH
         COLOR,            // [32] $A0...160...COLOR=
