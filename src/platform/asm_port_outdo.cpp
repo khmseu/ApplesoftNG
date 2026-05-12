@@ -15,14 +15,7 @@ namespace {
 // Apple II display-mode bits (inverse/flash) are stripped so that the host
 // terminal receives plain 7-bit ASCII.
 void MON_COUT(std::uint8_t a) {
-    // Strip Apple II high-bit encoding; $0d (CR) becomes newline.
-    const char ch = static_cast<char>(a & 0x7fu);
-    if (ch == '\r') {
-        std::cout << '\n';
-    } else if (ch != '\0') {
-        std::cout << ch;
-    }
-    std::cout.flush();
+    // TODO(asm-port): strip Apple II display-mode bits (inverse/flash) so that the host terminal receives plain 7-bit ASCII.
 }
 
 // MON_WAIT = $fca8  (Apple II monitor busy-wait routine)

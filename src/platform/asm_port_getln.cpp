@@ -35,44 +35,8 @@ void CROUT() {}
 } // namespace
 
 std::uint8_t MON_GETLN() {
-    // Output monitor prompt and initialize input index.
-    COUT(read_prompt_char());
-    std::uint8_t x = 1;
-
-    while (true) {
-        // BCKSPC: if index is zero, branch to GETLNZ (outside this slice).
-        if (x == 0) {
-            GETLNZ();
-            COUT(read_prompt_char());
-            x = 1;
-        }
-
-        --x;
-
-        std::uint8_t a = RDCHAR();
-
-        // Special handling for Ctrl-U path using screen character.
-        if (a == static_cast<std::uint8_t>(0x95)) {
-            a = read_screen_char_via_28_y();
-        }
-
-        // Convert to capitals for keyboard chars in $E0-$FF range.
-        if (a >= static_cast<std::uint8_t>(0xe0)) {
-            a = static_cast<std::uint8_t>(a & 0xdfu);
-        }
-
-        write_input_buffer(x, a);
-
-        // Carriage return path: clear remainder of line then fall into CROUT.
-        if (a == static_cast<std::uint8_t>(0x8d)) {
-            CLREOL();
-            CROUT();
-            return x;
-        }
-
-        // Non-CR handling branches to NOTCR, which loops back to NXTCHAR.
-        NOTCR(x);
-    }
+    // TODO(asm-port): port GETLN monitor line-input routine.
+return 0;
 }
 
 } // namespace applesoft::asm_port

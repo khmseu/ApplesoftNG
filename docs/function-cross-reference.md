@@ -233,8 +233,8 @@
 | MIDSTR                            | src/core/asm_port_strlt2.cpp              | 731  | real   |
 | MIDSTR_fn                         | src/core/asm_port_unfnc.cpp               | 46   | real   |
 | MKINT                             | src/core/asm_port_error.cpp               | 3392 | real   |
-| MON_COUT                          | src/platform/asm_port_outdo.cpp           | 17   | real   |
-| MON_GETLN                         | src/platform/asm_port_getln.cpp           | 37   | real   |
+| MON_COUT                          | src/platform/asm_port_outdo.cpp           | 17   | stub   |
+| MON_GETLN                         | src/platform/asm_port_getln.cpp           | 37   | stub   |
 | MON_HLINE                         | src/core/asm_port_error.cpp               | 126  | stub   |
 | MON_HOME                          | src/core/asm_port_error.cpp               | 141  | stub   |
 | MON_INPORT                        | src/core/asm_port_error.cpp               | 107  | stub   |
@@ -249,7 +249,7 @@
 | MON_SETTXT                        | src/core/asm_port_error.cpp               | 146  | stub   |
 | MON_TABV                          | src/core/asm_port_error.cpp               | 101  | stub   |
 | MON_VLINE                         | src/core/asm_port_error.cpp               | 134  | stub   |
-| MON_WAIT                          | src/platform/asm_port_outdo.cpp           | 32   | stub   |
+| MON_WAIT                          | src/platform/asm_port_outdo.cpp           | 25   | stub   |
 | MON_WRITE                         | src/core/asm_port_error.cpp               | 2581 | stub   |
 | MOVE_HIGHEST_STRING_TO_TOP        | src/core/asm_port_strlt2.cpp              | 398  | real   |
 | MOVINS                            | src/core/asm_port_strlt2.cpp              | 622  | real   |
@@ -281,9 +281,9 @@
 | ONGOTO                            | src/core/asm_port_error.cpp               | 2547 | real   |
 | OR                                | src/core/asm_port_error.cpp               | 3047 | real   |
 | OR_op                             | src/core/asm_port_mathtbl.cpp             | 26   | stub   |
-| OUTDO                             | src/platform/asm_port_outdo.cpp           | 41   | real   |
-| OUTQUES                           | src/platform/asm_port_outdo.cpp           | 77   | real   |
-| OUTSP                             | src/platform/asm_port_outdo.cpp           | 69   | real   |
+| OUTDO                             | src/platform/asm_port_outdo.cpp           | 34   | real   |
+| OUTQUES                           | src/platform/asm_port_outdo.cpp           | 70   | real   |
+| OUTSP                             | src/platform/asm_port_outdo.cpp           | 62   | real   |
 | PARCHK                            | src/core/asm_port_error.cpp               | 3902 | stub   |
 | parseNumericInputAndStore         | src/core/asm_port_input.cpp               | 51   | stub   |
 | parseStringInputAndStore          | src/core/asm_port_input.cpp               | 48   | stub   |
