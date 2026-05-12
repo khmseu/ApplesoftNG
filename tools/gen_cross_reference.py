@@ -2,27 +2,22 @@
 """
 Regenerate docs/function-cross-reference.md from C++ source files.
 
-Scans all src/**/*.cpp files for uppercase Applesoft/monitor function
-definitions, classifies each as 'real' or 'stub', and writes a sorted
-Markdown table to docs/function-cross-reference.md.
+Scans all src/**/*.cpp files for function definitions with bodies,
+classifies each as 'real' or 'stub', and writes a sorted Markdown table
+to docs/function-cross-reference.md.
 
 Inclusion rules
 ---------------
-- Function name must match [A-Z][A-Z0-9_]* (all-uppercase identifiers).
-- In src/core/asm_port_token_address_table.cpp: both static and non-static
-  definitions are included (handlers live there as `static void FOO_Handler()`).
-- In all other files: non-static function definitions are included, EXCEPT:
-    * Static functions (file-local helpers) are always excluded in non-table files.
-    * Functions inside a `namespace { }` (anonymous namespace) are excluded
-      unless their name begins with `MON_` — those represent real monitor-layer
-      functions that are tracked regardless of namespace placement.
+- Every function definition that has a body `{ … }` is included,
+  regardless of name, static qualifier, or enclosing namespace.
+- Forward declarations (ending with `;`) are skipped.
 
 Stub classification
 -------------------
-A function body is classified as 'stub' if ANY of the following hold:
-  1. The body (between { and matching }) is empty after stripping whitespace
-     and single-line comments.
-  2. The body contains the marker `TODO(asm-port)`.
+A function is classified as 'stub' if ANY of the following hold:
+  1. A `TODO(asm-port)` marker appears in the comment block immediately
+     before the function signature, OR anywhere inside the body.
+  2. The body is empty after stripping whitespace and single-line comments.
   3. The body contains only stub-return patterns: `return 0;`, `return false;`,
      `return nullptr;`, `return {};`, or `(void)expr;` statements.
 Otherwise it is classified 'real'.
@@ -42,9 +37,6 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SRC_ROOT = REPO_ROOT / "src"
 OUTPUT = REPO_ROOT / "docs" / "function-cross-reference.md"
 
-# Relative path (within repo) of the token-address table source file.
-TOKEN_TABLE_REL = "src/core/asm_port_token_address_table.cpp"  # nosec B105
-
 # Matches the start of a function definition at the beginning of a line.
 # Groups: (1) optional 'static ', (2) function name
 FUNC_START_RE = re.compile(
@@ -57,9 +49,10 @@ FUNC_START_RE = re.compile(
     r"|std::string"
     r"|Inlin2Result"
     r"|InlinResult"
+    r"|[A-Za-z_][A-Za-z0-9_]*"
     r")"
     r"\s+"
-    r"([A-Z][A-Z0-9_]*)"
+    r"([A-Za-z_][A-Za-z0-9_]*)"
     r"\s*\("
 )
 
@@ -72,48 +65,6 @@ _STUB_RETURN_RE = re.compile(
     r")\s*$",
     re.MULTILINE,
 )
-
-
-# ---------------------------------------------------------------------------
-# Pre-pass: compute per-line anonymous-namespace state
-# ---------------------------------------------------------------------------
-
-
-def _compute_anon_states(lines: list[str]) -> list[bool]:
-    """
-    Return a list of booleans, one per line, indicating whether that line
-    falls inside an anonymous `namespace { }` block.
-
-    Named namespaces (`namespace foo {`) do not count; only bare
-    `namespace {` introduces an anonymous namespace.
-    """
-    states: list[bool] = []
-    brace_depth: int = 0
-    # Stack of brace depths at which anonymous namespaces were entered.
-    # We record depth *before* the opening `{` of the namespace statement.
-    anon_entry_depths: list[int] = []
-
-    for line in lines:
-        # Determine current state before processing braces on this line.
-        in_anon = len(anon_entry_depths) > 0
-        states.append(in_anon)
-
-        # Check if this line opens an anonymous namespace.
-        # `namespace {` with optional whitespace between keyword and `{`.
-        if re.search(r"\bnamespace\s*\{", line):
-            anon_entry_depths.append(brace_depth)
-
-        # Update brace depth for all `{` and `}` on the line.
-        for ch in line:
-            if ch == "{":
-                brace_depth += 1
-            elif ch == "}":
-                brace_depth -= 1
-                # Check if we've just closed an anonymous namespace.
-                if anon_entry_depths and brace_depth == anon_entry_depths[-1]:
-                    anon_entry_depths.pop()
-
-    return states
 
 
 # ---------------------------------------------------------------------------
@@ -165,10 +116,10 @@ def _strip_line_comments(text: str) -> str:
     return re.sub(r"//[^\n]*", "", text)
 
 
-def _is_stub(body: str) -> bool:
+def _is_stub(body: str, preceding_comments: str = "") -> bool:
     """Return True if the function body looks like an unimplemented stub."""
-    # Rule 1: explicit TODO marker anywhere in the body.
-    if "TODO(asm-port)" in body:
+    # Rule 1: explicit TODO marker in the preceding comment block or the body.
+    if "TODO(asm-port)" in preceding_comments or "TODO(asm-port)" in body:
         return True
 
     # Extract inner content between the outermost { }.
@@ -203,7 +154,6 @@ def extract_functions(src_root: Path) -> list[tuple[str, int, str, str]]:
 
     for cpp_file in sorted(src_root.rglob("*.cpp")):
         rel = str(cpp_file.relative_to(REPO_ROOT)).replace("\\", "/")
-        is_token_table = rel == TOKEN_TABLE_REL
 
         try:
             text = cpp_file.read_text(encoding="utf-8")
@@ -212,31 +162,21 @@ def extract_functions(src_root: Path) -> list[tuple[str, int, str, str]]:
             continue
 
         lines = text.splitlines(keepends=True)
-        anon_states = _compute_anon_states(lines)
 
         i = 0
         while i < len(lines):
             line = lines[i]
             m = FUNC_START_RE.match(line)
             if m:
-                is_static = bool(m.group(1))
                 func_name = m.group(2)
-                in_anon = anon_states[i]
 
-                # Apply inclusion filter.
-                if is_token_table:
-                    # Include all (static or non-static) uppercase functions.
-                    pass
-                else:
-                    if is_static:
-                        # Static functions in non-table files are local helpers.
-                        i += 1
-                        continue
-                    if in_anon and not func_name.startswith("MON_"):
-                        # Anonymous-namespace functions are internal, unless
-                        # they carry the MON_ prefix (real monitor functions).
-                        i += 1
-                        continue
+                # Collect consecutive comment lines immediately before this line.
+                j = i - 1
+                comment_parts: list[str] = []
+                while j >= 0 and lines[j].lstrip().startswith("//"):
+                    comment_parts.append(lines[j])
+                    j -= 1
+                preceding = "".join(reversed(comment_parts))
 
                 # Try to read the body; skip forward declarations.
                 try:
@@ -245,7 +185,7 @@ def extract_functions(src_root: Path) -> list[tuple[str, int, str, str]]:
                     i += 1
                     continue
 
-                status = "stub" if _is_stub(body) else "real"
+                status = "stub" if _is_stub(body, preceding) else "real"
                 results.append((rel, i + 1, func_name, status))
 
                 # Jump past the consumed body.
