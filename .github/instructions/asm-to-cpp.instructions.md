@@ -70,6 +70,8 @@ Treat only labels declared as assembler labels in the historical listings within
 - Do not mirror fixed addresses with separate globals, file-scope statics, or ad-hoc structs when `ApplesoftVariables` already represents them.
 - When a needed fixed address is missing, add it to `ApplesoftVariables` first, then use the accessors from ported code.
 - When a fixed-address pair forms one logical pointer, read/write it through one conceptual variable in the ported function (for example via word accessors or a dedicated pointer abstraction), not duplicated low/high temporaries.
+- Route all reads/writes for the $C000-$CFFF range through an `IOPorts`-style companion class with named constants and single-byte accessors.
+- `IOPorts` is the I/O-space companion to `ApplesoftVariables`: keep the same naming discipline for addresses, but do not model device semantics yet.
 
 ### Dummy Implementations
 

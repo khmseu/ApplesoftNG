@@ -12,7 +12,7 @@ Instead of a simple "emulator" approach (where memory is just a `uint8_t[65536]`
 
 ## 2. The Core Challenge: Pointer Fragmentation
 
-On the 6502, a 16-bit address (e.g., `$C000`) is handled as two separate 8-bit values:
+On the 6502, a 16-bit address (e.g., `IOPorts::ADDR_KEYBOARD`) is handled as two separate 8-bit values:
 
 - **Low Byte (BAL):** The least significant 8 bits.
 - **High Byte (BAH):** The most significant 8 bits.

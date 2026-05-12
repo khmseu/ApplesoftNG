@@ -1,5 +1,7 @@
 #include "core/applesoft_variables.hpp"
 
+#include "core/io_ports.hpp"
+
 namespace applesoft::asm_port {
 
 namespace {
@@ -53,8 +55,8 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
         return INPUT_BUFFER_PAGE[address - ADDR_INPUT_BUFFER];
     }
 
-    if (address == ADDR_KEYBOARD) {
-        return KEYBOARD;
+    if (address >= IOPorts::ADDR_BASE && address < IOPorts::ADDR_END) {
+        return ioPorts_const().readByte(address);
     }
 
     switch (address) {
@@ -196,8 +198,8 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
         return;
     }
 
-    if (address == ADDR_KEYBOARD) {
-        KEYBOARD = value;
+    if (address >= IOPorts::ADDR_BASE && address < IOPorts::ADDR_END) {
+        ioPorts().writeByte(address, value);
         return;
     }
 

@@ -6,6 +6,7 @@
 #include "core/asm_port_gtforpnt.hpp"
 #include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_reason.hpp"
+#include "core/io_ports.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_qt_error.hpp"
 #include "core/asm_port_token_address_table.hpp"
@@ -209,13 +210,13 @@ void HGR2() {
     // Labels: HGR2 (inclusive) .. HGR (exclusive)
     // Name normalization: none (assembler label HGR2 kept verbatim).
     //
-    // bit SW_HISCR ($c055): soft-switch read selects hi-res page 2 ($4000–5FFF).
-    // bit SW_MIXCLR ($c052): soft-switch read disables mixed-mode text window.
+    // bit SW_HISCR (IOPorts::ADDR_SW_HISCR): soft-switch read selects hi-res page 2.
+    // bit SW_MIXCLR (IOPorts::ADDR_SW_MIXCLR): soft-switch read disables mixed-mode text window.
     // lda #>$4000; sta HGR_PAGE: set page offset to $40.
     // jmp SETHPG: shared setup for HGR_PAGE assignment, turn on hi-res, turn on graphics.
     // TODO(asm-port): implement soft-switch read side-effects and graphics mode setup.
     // For now, delegate to MON_SETGR as a placeholder; a full implementation would
-    // read soft-switches at $C055 and $C052, set page selection, and call monitor.
+    // read soft-switches through IOPorts, set page selection, and call monitor.
     MON_SETGR();
 }
 
@@ -225,12 +226,12 @@ void HGR() {
     // Name normalization: none (assembler label HGR kept verbatim).
     //
     // lda #>$2000: hi-res page 1 starts at $2000–3FFF.
-    // bit SW_LOWSCR ($c054): soft-switch read selects display page 1.
-    // bit SW_MIXSET ($c053): soft-switch read enables mixed-mode text window.
+    // bit SW_LOWSCR (IOPorts::ADDR_SW_LOWSCR): soft-switch read selects display page 1.
+    // bit SW_MIXSET (IOPorts::ADDR_SW_MIXSET): soft-switch read enables mixed-mode text window.
     // (Falls through to SETHPG.)
     // TODO(asm-port): implement soft-switch read side-effects and graphics mode setup.
     // For now, delegate to MON_SETGR as a placeholder; a full implementation would
-    // read soft-switches at $C054 and $C053, set page selection, and call monitor.
+    // read soft-switches through IOPorts, set page selection, and call monitor.
     MON_SETGR();
 }
 
@@ -459,7 +460,7 @@ void COLD_START() {
 
     // Unified RAM probe pointer lifted from LINNUM low/high carry-chain in ROM.
     std::uint16_t ramProbe = kProgramStart;
-    while ((ramProbe & 0xff00u) < 0xc000u) {
+    while ((ramProbe & 0xff00u) < IOPorts::ADDR_BASE) {
         ramProbe = static_cast<std::uint16_t>(ramProbe + 0x0100u);
     }
 
@@ -1781,7 +1782,7 @@ std::uint8_t GETCHR() {
 bool ISCNTC() {
     constexpr std::uint8_t kCTRL_C_CODE = 0x83;
 
-    if (variables_const().readByte(ApplesoftVariables::ADDR_KEYBOARD) != kCTRL_C_CODE) {
+    if (ioPorts_const().readByte(IOPorts::ADDR_KEYBOARD) != kCTRL_C_CODE) {
         return false;
     }
 

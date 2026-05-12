@@ -88,7 +88,6 @@ public:
     static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_3 = 0x01fdu;
     static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_4 = 0x01fcu;
     static constexpr std::uint16_t ADDR_INPUT_BUFFER = 0x0200u;
-    static constexpr std::uint16_t ADDR_KEYBOARD = 0xc000u;
 
     class ConstBytePointer {
     public:
@@ -216,14 +215,13 @@ public:
     std::uint8_t INPUT_BUFFER_MINUS_1 = 0; // $01ff
     std::uint8_t INPUT_BUFFER_MINUS_3 = 0; // $01fd
     std::uint8_t INPUT_BUFFER_MINUS_4 = 0; // $01fc
-    std::uint8_t KEYBOARD = 0;    // $c000 (memory-mapped keyboard latch)
     std::array<std::uint8_t, 256> INPUT_BUFFER_PAGE{}; // $0200..$02ff
 
     // General flat backing store for arbitrary program-space addresses.
-    // Zero page (0x00-0xFF), the input-buffer page (0x0200-0x02FF), and the
-    // keyboard latch (0xC000) are handled by their named member fields above;
-    // all other addresses (stack page, program text, variable/array storage,
-    // string heap, etc.) use this array so that ProgramPointer reads/writes work.
+    // Zero page (0x00-0xFF) and the input-buffer page (0x0200-0x02FF) are
+    // handled by their named member fields above; all other addresses (stack
+    // page, program text, variable/array storage, string heap, etc.) use this
+    // array so that ProgramPointer reads/writes work.
     std::array<std::uint8_t, 0x10000> general_memory_{};
 
     // Small amount of emulated CPU status currently needed by ports.

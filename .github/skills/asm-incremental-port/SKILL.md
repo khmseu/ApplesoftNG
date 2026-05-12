@@ -44,11 +44,13 @@ Optional:
 4. All symbols defined in monitor source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/monitor`](../../../SourceMaterial/Apple-II-Source-slim/src/system/monitor)) carry a virtual `MON_` prefix. A label `xyz` in a monitor listing is always named `MON_xyz` in C++. When the window references `MON_xyz`, look up label `xyz` in the monitor listings and implement the C++ function as `MON_xyz`.
 5. Route all fixed-address global state access through `ApplesoftVariables` (`variables()` / `variables_const()` accessors). If a required fixed address is missing, add it to `ApplesoftVariables` before use.
 6. For fixed-address byte pairs that form pointers, read/write them through one conceptual pointer variable (or an explicit pointer abstraction), and lift carry-chain updates to unified pointer arithmetic. Example: if `ZP_LO` and `ZP_HI` represent one 16-bit address, use `uint16_t ptr = variables().readWord(ZP_LO);` instead of separate byte reads.
-7. For dual-use integer/pointer storage, use an explicit representation (`union`, `std::variant`, or dedicated wrapper) and document the rationale.
-8. Keep label-based naming as-is when legal; otherwise normalize only as needed to satisfy C++ identifier rules and document the mapping.
-9. Choose destination by behavior:
-   - language/runtime semantics -> [src/core](../../../src/core)
-   - device/console/monitor I/O semantics -> [src/platform](../../../src/platform)
+7. Route all $C000-$CFFF reads/writes through an `IOPorts`-style companion class with named constants and single-byte accessors; do not implement actual device semantics yet.
+8. For dual-use integer/pointer storage, use an explicit representation (`union`, `std::variant`, or dedicated wrapper) and document the rationale.
+9. Keep label-based naming as-is when legal; otherwise normalize only as needed to satisfy C++ identifier rules and document the mapping.
+10. Choose destination by behavior:
+
+- language/runtime semantics -> [src/core](../../../src/core)
+- device/console/monitor I/O semantics -> [src/platform](../../../src/platform)
 
 ### Finalization
 

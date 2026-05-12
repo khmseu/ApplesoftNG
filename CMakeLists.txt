@@ -37,6 +37,7 @@ set(SOURCES
     src/core/asm_port_chkmem.cpp
     src/core/asm_port_reason.cpp
     src/core/asm_port_memerr.cpp
+    src/core/io_ports.cpp
     src/core/applesoft_variables.cpp
     src/core/asm_port_error.cpp
     src/core/asm_port_print.cpp
