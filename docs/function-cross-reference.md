@@ -156,6 +156,7 @@ returning, or contains `TODO(asm-port)`.
 | IsTraceEnabled                    | src/core/asm_port_error.cpp               | 1212 | stub   |
 | JER                               | src/core/asm_port_error.cpp               | 2439 | real   |
 | JERR                              | src/core/asm_port_strlt2.cpp              |  140 | real   |
+| LEFTSTR                           | src/core/asm_port_strlt2.cpp              |  668 | real   |
 | LET                               | src/core/asm_port_error.cpp               | 1818 | stub   |
 | LET                               | src/core/asm_port_token_address_table.cpp |   28 | stub   |
 | LET2                              | src/core/asm_port_error.cpp               | 1847 | stub   |
@@ -177,6 +178,7 @@ returning, or contains `TODO(asm-port)`.
 | MEMERR                            | src/core/asm_port_error.cpp               |  212 | stub   |
 | MEMERR                            | src/core/asm_port_memerr.cpp              |    8 | real   |
 | MEMERR                            | src/core/asm_port_reason.cpp              |   19 | real   |
+| MIDSTR                            | src/core/asm_port_strlt2.cpp              |  695 | real   |
 | MI1                               | src/core/asm_port_error.cpp               | 2391 | real   |
 | MI2                               | src/core/asm_port_error.cpp               | 2399 | real   |
 | MKINT                             | src/core/asm_port_error.cpp               | 2355 | real   |
@@ -281,6 +283,7 @@ returning, or contains `TODO(asm-port)`.
 | RELOPS                            | src/core/asm_port_error.cpp               | 2060 | stub   |
 | REM                               | src/core/asm_port_error.cpp               | 1743 | real   |
 | REM                               | src/core/asm_port_token_address_table.cpp |   30 | real   |
+| RIGHTSTR                          | src/core/asm_port_strlt2.cpp              |  681 | real   |
 | REMN                              | src/core/asm_port_error.cpp               | 1643 | real   |
 | RESPERR                           | src/core/asm_port_input.cpp               |  218 | stub   |
 | RESTART                           | src/core/asm_port_error.cpp               |  904 | stub   |

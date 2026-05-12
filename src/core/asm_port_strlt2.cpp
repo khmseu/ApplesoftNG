@@ -4,6 +4,7 @@
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_messages.hpp"
 
+#include <algorithm>
 #include <cstdint>
 
 namespace applesoft::asm_port {
@@ -14,6 +15,9 @@ void STRINI(std::uint8_t length);
 void MOVINS();
 std::uint8_t FRETMP(std::uint16_t descriptorAddress);
 bool FRETMS(std::uint16_t descriptorAddress);
+std::uint8_t GETBYT();
+void IQERR();
+void CHKCLS();
 
 namespace {
 
@@ -194,6 +198,45 @@ void FRM_ELEMENT() {}
 
 // TODO(asm-port): port FRMEVL_2 label.
 void FRMEVL_2() {}
+
+struct SubstringSetupResult {
+    std::uint8_t firstParameter;
+    std::uint8_t sourceLength;
+};
+
+bool SUBSTRING_SETUP(SubstringSetupResult& out) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SUBSTRING_SETUP (inclusive) .. LEN (exclusive)
+    // Name normalization: none (assembler label SUBSTRING_SETUP kept verbatim).
+    CHKCLS();
+
+    const std::uint8_t first = variables_const().readByte(
+        static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 4u));
+    if (first == 0u) {
+        IQERR();
+        return false;
+    }
+
+    const std::uint16_t descriptor = read_DSCPTR();
+    const auto descriptorPtr = variables_const().pointer(descriptor);
+    const std::uint8_t sourceLength = descriptorPtr.read(0u);
+    const std::uint16_t source = ApplesoftVariables::makeWord(descriptorPtr.read(1u), descriptorPtr.read(2u));
+    write_INDEX(source);
+
+    out.firstParameter = first;
+    out.sourceLength = sourceLength;
+    return true;
+}
+
+void SUBSTRING_BUILD(std::uint8_t leftStart, std::uint8_t copyLength) {
+    STRSPA(copyLength);
+    (void)FRETMP(read_DSCPTR());
+
+    const std::uint16_t source = read_INDEX();
+    write_INDEX(static_cast<std::uint16_t>(source + leftStart));
+    MOVSTR_1(copyLength);
+    PUTNEW();
+}
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: GETSPA (inclusive) .. GARBAG (exclusive)
@@ -617,6 +660,59 @@ void CHRSTR() {
 
     // jmp PUTNEW: convert the raw FAC string data into a temporary descriptor.
     PUTNEW();
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: LEFTSTR (inclusive) .. RIGHTSTR (exclusive)
+// Name normalization: none (assembler label LEFTSTR kept verbatim).
+void LEFTSTR() {
+    SubstringSetupResult setup{};
+    if (!SUBSTRING_SETUP(setup)) {
+        return;
+    }
+
+    const std::uint8_t copyLength = std::min(setup.firstParameter, setup.sourceLength);
+    SUBSTRING_BUILD(0u, copyLength);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: RIGHTSTR (inclusive) .. MIDSTR (exclusive)
+// Name normalization: none (assembler label RIGHTSTR kept verbatim).
+void RIGHTSTR() {
+    SubstringSetupResult setup{};
+    if (!SUBSTRING_SETUP(setup)) {
+        return;
+    }
+
+    const std::uint8_t copyLength = std::min(setup.firstParameter, setup.sourceLength);
+    const std::uint8_t leftStart = static_cast<std::uint8_t>(setup.sourceLength - copyLength);
+    SUBSTRING_BUILD(leftStart, copyLength);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: MIDSTR (inclusive) .. SUBSTRING_SETUP (exclusive)
+// Name normalization: none (assembler label MIDSTR kept verbatim).
+void MIDSTR() {
+    std::uint8_t requestedWidth = 0xffu;
+    if (CHRGOT() != static_cast<std::uint8_t>(')')) {
+        CHKCOM();
+        requestedWidth = GETBYT();
+    }
+
+    SubstringSetupResult setup{};
+    if (!SUBSTRING_SETUP(setup)) {
+        return;
+    }
+
+    const std::uint8_t leftStart = static_cast<std::uint8_t>(setup.firstParameter - 1u);
+    if (leftStart >= setup.sourceLength) {
+        SUBSTRING_BUILD(leftStart, 0u);
+        return;
+    }
+
+    const std::uint8_t remaining = static_cast<std::uint8_t>(setup.sourceLength - leftStart);
+    const std::uint8_t copyLength = std::min(remaining, requestedWidth);
+    SUBSTRING_BUILD(leftStart, copyLength);
 }
 
 void STRLT2(std::uint16_t address) {
