@@ -16,7 +16,6 @@ import argparse
 import os
 import re
 import sys
-from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
 
@@ -452,7 +451,7 @@ class Analyzer:
                         self._mark(tgt, "jtable", from_label)
 
     def _enclosing_label(self, mod: Module, ins: Instruction) -> Optional[str]:
-        """The most recent label in this module at or before ins."""
+        """Return the most recent label in this module at or before ins."""
         # quick linear search backward isn't needed; we can use ins.label or
         # traverse instructions earlier.  Pre-computing is faster for big
         # modules.
@@ -564,9 +563,11 @@ def write_report(modules: List[Module], analyzer: Analyzer, out_stream) -> None:
             write(f"  ${full:04X}  {name:<24} {kinds}\n")
 
     # 2. JSR-discovered subroutines
-    jsr_labels = [l for l in analyzer.global_labels.values() if l.is_jsr_target]
+    jsr_labels = [
+        label for label in analyzer.global_labels.values() if label.is_jsr_target
+    ]
     write(_hdr(f"2. SUBROUTINES DISCOVERED VIA JSR ({len(jsr_labels)})"))
-    for lab in sorted(jsr_labels, key=lambda l: l.rom_addr):
+    for lab in sorted(jsr_labels, key=lambda label: label.rom_addr):
         write(
             f"  ${lab.rom_addr:04X}  {lab.name:<24} "
             f"[{lab.module}]  callers={len(lab.references)}\n"
@@ -574,18 +575,20 @@ def write_report(modules: List[Module], analyzer: Analyzer, out_stream) -> None:
 
     # 3. JMP-discovered labels
     jmp_labels = [
-        l
-        for l in analyzer.global_labels.values()
-        if l.is_jmp_target and not l.is_jsr_target
+        label
+        for label in analyzer.global_labels.values()
+        if label.is_jmp_target and not label.is_jsr_target
     ]
     write(_hdr(f"3. JMP-ONLY TARGETS ({len(jmp_labels)})"))
-    for lab in sorted(jmp_labels, key=lambda l: l.rom_addr):
+    for lab in sorted(jmp_labels, key=lambda label: label.rom_addr):
         write(f"  ${lab.rom_addr:04X}  {lab.name:<24} [{lab.module}]\n")
 
     # 4. Jump-table entries
-    jt = [l for l in analyzer.global_labels.values() if l.is_jumptable_entry]
+    jt = [
+        label for label in analyzer.global_labels.values() if label.is_jumptable_entry
+    ]
     write(_hdr(f"4. JUMP-TABLE ENTRIES ({len(jt)})"))
-    for lab in sorted(jt, key=lambda l: l.rom_addr):
+    for lab in sorted(jt, key=lambda label: label.rom_addr):
         write(f"  ${lab.rom_addr:04X}  {lab.name:<24} [{lab.module}]\n")
 
     # 5. ROM order
@@ -597,16 +600,18 @@ def write_report(modules: List[Module], analyzer: Analyzer, out_stream) -> None:
             f"\n--- {mod.parent} :: {mod.name}   "
             f"base=${mod.base_addr:04X}  size=${mod.size:04X} ---\n"
         )
-        labs = sorted(mod.labels.values(), key=lambda l: (l.local_addr, l.src_line))
-        for l in labs:
+        labs = sorted(
+            mod.labels.values(), key=lambda label: (label.local_addr, label.src_line)
+        )
+        for label in labs:
             write(
-                f"  ${l.rom_addr:04X}  {l.name:<26} "
-                f"[{','.join(l.kinds()) or '-'}]\n"
+                f"  ${label.rom_addr:04X}  {label.name:<26} "
+                f"[{','.join(label.kinds()) or '-'}]\n"
             )
 
     # 6. Call graph (compact)
     write(_hdr("6. CALL GRAPH (callee  <- callers)"))
-    callees = sorted(analyzer.global_labels.values(), key=lambda l: l.rom_addr)
+    callees = sorted(analyzer.global_labels.values(), key=lambda label: label.rom_addr)
     for lab in callees:
         if not lab.references:
             continue

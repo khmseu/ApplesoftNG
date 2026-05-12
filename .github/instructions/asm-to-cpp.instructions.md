@@ -18,15 +18,14 @@ Treat only labels declared as assembler labels in the historical listings within
 1. Locate both labels and confirm they are in the same source listing region. If either label is not found in the listings, stop and report which label is missing before proceeding.
 2. Extract the range that starts at `start_label` and stops immediately before `end_label`.
 3. Identify 16-bit pointer candidates in the extracted range before coding using this checklist:
-    - indirect addressing operands such as `($NN),Y` and `($NN,X)`
-    - split-byte address construction such as `#<label` and `#>label` stored to adjacent bytes
-    - low-byte add plus carry-chain high-byte increment sequences (`ADC`/`INC` patterns)
+   - indirect addressing operands such as `($NN),Y` and `($NN,X)`
+   - split-byte address construction such as `#<label` and `#>label` stored to adjacent bytes
+   - low-byte add plus carry-chain high-byte increment sequences (`ADC`/`INC` patterns)
 4. For each pointer candidate, plan a single unified C++ representation (pointer or pointer abstraction) instead of separate low/high byte locals.
 5. Before coding, consult [docs/function-cross-reference.md](../../docs/function-cross-reference.md) to determine which functions in this window are already ported, which are still stubs/placeholders, and where each function is implemented.
 6. Include comments that are:
-
-    - inline inside the range.
-    - immediately preceding the first line in range and directly describing the range behavior.
+   - inline inside the range.
+   - immediately preceding the first line in range and directly describing the range behavior.
 
 7. Infer the behavior and data flow from opcodes, branch patterns, and comments.
    - If the source slice does not end in an unconditional transfer (`RTS`, `JMP`, or unconditional branch), it falls through into the next label. Model that fall-through in C++ by calling the following function at that point, or by returning state that the caller uses to invoke the next label.
@@ -35,12 +34,10 @@ Treat only labels declared as assembler labels in the historical listings within
 
 8. Implement one primary C++ function that preserves the original assembler name as much as possible.
 9. Place the function in the appropriate runtime area:
-
-    - interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
-    - console or machine-facing I/O behavior: [src/platform](../../src/platform) and [include/platform](../../include/platform)
+   - interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
+   - console or machine-facing I/O behavior: [src/platform](../../src/platform) and [include/platform](../../include/platform)
 
 10. Add a short provenance comment above the function with:
-
     - source listing path
     - start/end labels
     - any normalization done to keep name valid in C++

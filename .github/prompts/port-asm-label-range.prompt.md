@@ -34,9 +34,8 @@ Required input:
 7. If storage is dual-use (integer in one path, pointer in another), use and document an explicit dual-use representation (`union`, `std::variant`, or dedicated wrapper).
 8. Preserve assembler naming unless it conflicts with C++ identifier rules.
 9. Place implementation in correct subsystem:
-
-    - [src/core](../../src/core) for interpreter/runtime behavior
-    - [src/platform](../../src/platform) for console/monitor behavior
+   - [src/core](../../src/core) for interpreter/runtime behavior
+   - [src/platform](../../src/platform) for console/monitor behavior
 
 10. If required callees are missing, add dummy implementations with `TODO(asm-port)`.
 

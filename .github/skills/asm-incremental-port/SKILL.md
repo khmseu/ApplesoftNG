@@ -47,9 +47,8 @@ Optional:
 7. For dual-use integer/pointer storage, use an explicit representation (`union`, `std::variant`, or dedicated wrapper) and document the rationale.
 8. Keep label-based naming as-is when legal; otherwise normalize only as needed to satisfy C++ identifier rules and document the mapping.
 9. Choose destination by behavior:
-
-      - language/runtime semantics -> [src/core](../../../src/core)
-      - device/console/monitor I/O semantics -> [src/platform](../../../src/platform)
+   - language/runtime semantics -> [src/core](../../../src/core)
+   - device/console/monitor I/O semantics -> [src/platform](../../../src/platform)
 
 ### Finalization
 

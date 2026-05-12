@@ -32,8 +32,9 @@ This skill covers:
 2. If no changed files are detected, inform the user. Do not explore or modify files, except for understanding the changes to be committed.
 3. Write a commit message based only on the diff of the selected files.
 4. Run `git commit -m "..."`.
-  - `-m` does not expand escape sequences. Do not separate lines with `\n`; use actual linefeeds (for example, multiple `-m` flags or a message file).
-  - If a pre-commit hook prints messages, report those messages to the user.
+
+- `-m` does not expand escape sequences. Do not separate lines with `\n`; use actual linefeeds (for example, multiple `-m` flags or a message file).
+- If a pre-commit hook prints messages, report those messages to the user.
 
 ## Best Practices
 
