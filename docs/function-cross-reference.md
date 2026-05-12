@@ -50,6 +50,8 @@ returning, or contains `TODO(asm-port)`.
 | COMBYTE                           | src/core/asm_port_error.cpp               | 2448 | real   |
 | CONT                              | src/core/asm_port_error.cpp               | 1353 | real   |
 | CONT                              | src/core/asm_port_token_address_table.cpp |   16 | stub   |
+| COLOR                             | src/core/asm_port_error.cpp               |   99 | real   |
+| COLOR_Handler                     | src/core/asm_port_token_address_table.cpp |  101 | real   |
 | CONTROL_C_TYPED                   | src/core/asm_port_error.cpp               | 1281 | real   |
 | CONTROL_C_TYPED                   | src/core/asm_port_input.cpp               |   18 | stub   |
 | COUT                              | src/platform/asm_port_getln.cpp           |   18 | stub   |
@@ -347,6 +349,8 @@ returning, or contains `TODO(asm-port)`.
 | NORMAL_Handler (dispatch)         | src/core/asm_port_token_address_table.cpp |   93 | real   |
 | INVERSE_Handler (dispatch)        | src/core/asm_port_token_address_table.cpp |   94 | real   |
 | FLASH_Handler (dispatch)          | src/core/asm_port_token_address_table.cpp |   95 | real   |
+| COLOR_Handler (dispatch)          | src/core/asm_port_token_address_table.cpp |  101 | real   |
+| VTAB_Handler (dispatch)           | src/core/asm_port_token_address_table.cpp |  102 | real   |
 | TRACE\_                           | src/core/asm_port_error.cpp               |  581 | real   |
 | TRUE                              | src/core/asm_port_error.cpp               | 2052 | real   |
 | UNARY                             | src/core/asm_port_error.cpp               | 1990 | stub   |
@@ -354,6 +358,8 @@ returning, or contains `TODO(asm-port)`.
 | UNFNC                             | src/core/asm_port_unfnc.cpp               |   49 | stub   |
 | USE_OLD_ARRAY                     | src/core/asm_port_error.cpp               | 2447 | real   |
 | VARTIO                            | src/core/asm_port_error.cpp               | 1429 | stub   |
+| VTAB                              | src/core/asm_port_error.cpp               |  108 | real   |
+| VTAB                              | src/core/asm_port_token_address_table.cpp |   45 | real   |
 | WAIT                              | src/core/asm_port_error.cpp               | 2497 | real   |
 | WriteForwardPointer               | src/core/asm_port_error.cpp               |  951 | real   |
 | WriteProgramByte                  | src/core/asm_port_error.cpp               |  130 | stub   |

@@ -41,6 +41,8 @@ void WAIT();
 void NORMAL();
 void INVERSE();
 void FLASH();
+void COLOR();
+void VTAB();
 void HIMEM();
 void LOMEM();
 void SPEED();
@@ -96,8 +98,8 @@ static void NOTRACE() {
 static void NORMAL_Handler()   { NORMAL(); }
 static void INVERSE_Handler()  { INVERSE(); }
 static void FLASH_Handler()    { FLASH(); }
-static void COLOR()            {} // TODO(asm-port): COLOR
-static void VTAB()             {} // TODO(asm-port): VTAB
+static void COLOR_Handler()    { COLOR(); }
+static void VTAB_Handler()     { VTAB(); }
 static void HIMEM_Handler()    { HIMEM(); }
 static void LOMEM_Handler()    { LOMEM(); }
 static void ONERR_Handler()    { ONERR(); }
@@ -154,9 +156,9 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         NORMAL_Handler,   // [29] $9D...157...NORMAL
         INVERSE_Handler,  // [30] $9E...158...INVERSE
         FLASH_Handler,    // [31] $9F...159...FLASH
-        COLOR,            // [32] $A0...160...COLOR=
+        COLOR_Handler,    // [32] $A0...160...COLOR=
         POP,              // [33] $A1...161...POP
-        VTAB,             // [34] $A2...162...VTAB
+        VTAB_Handler,     // [34] $A2...162...VTAB
         HIMEM_Handler,    // [35] $A3...163...HIMEM:
         LOMEM_Handler,    // [36] $A4...164...LOMEM:
         ONERR_Handler,    // [37] $A5...165...ONERR

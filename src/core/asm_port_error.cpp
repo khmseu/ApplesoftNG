@@ -41,6 +41,10 @@ void GETADR();
 std::uint8_t MEMERR();
 void CLEARC();
 std::uint8_t GETBYT();
+void IQERR();
+
+void MON_SETCOL(std::uint8_t color);
+void MON_TABV(std::uint8_t row_zero_based);
 
 
 // TODO(asm-port): port NORMAL statement behavior (currently display-mode init stub).
@@ -78,6 +82,42 @@ void FLASH() {
 
     WriteZeroPageByte(kMON_INVFLG, 0x7fu);
     WriteZeroPageByte(kFLASH_BIT, 0x40u);
+}
+
+void MON_SETCOL(std::uint8_t color) {
+    // TODO(asm-port): port MON_SETCOL monitor handler.
+    // Placeholder to preserve COLOR statement call flow until monitor integration.
+    (void)color;
+}
+
+void MON_TABV(std::uint8_t row_zero_based) {
+    // TODO(asm-port): port MON_TABV monitor handler.
+    // Placeholder to preserve VTAB statement call flow until monitor integration.
+    (void)row_zero_based;
+}
+
+void COLOR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: COLOR (inclusive) .. VTAB (exclusive)
+    // Name normalization: none (assembler label COLOR kept verbatim).
+
+    const std::uint8_t color = GETBYT();
+    MON_SETCOL(color);
+}
+
+void VTAB() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: VTAB (inclusive) .. SPEED (exclusive)
+    // Name normalization: none (assembler label VTAB kept verbatim).
+
+    const std::uint8_t line = GETBYT();
+    if (line == 0u || line > 24u) {
+        IQERR();
+        return;
+    }
+
+    // ROM uses 1-based VTAB input and passes 0-based row to MON_TABV.
+    MON_TABV(static_cast<std::uint8_t>(line - 1u));
 }
 
 void HIMEM() {
