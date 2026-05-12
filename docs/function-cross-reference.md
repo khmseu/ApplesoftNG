@@ -321,7 +321,7 @@ returning, or contains `TODO(asm-port)`.
 | SUBERR                            | src/core/asm_port_error.cpp               | 2421 | real   |
 | SYNCHR                            | src/core/asm_port_error.cpp               | 1076 | stub   |
 | SYNCHR                            | src/core/asm_port_input.cpp               |   36 | stub   |
-| SYNERR                            | src/core/asm_port_error.cpp               | 1807 | stub   |
+| SYNERR                            | src/core/asm_port_error.cpp               | 1807 | real   |
 | SYNERR                            | src/core/asm_port_input.cpp               |   20 | stub   |
 | ScanAheadOffset                   | src/core/asm_port_error.cpp               | 1135 | stub   |
 | SetBranchTargetToSTEP             | src/core/asm_port_error.cpp               | 1068 | stub   |

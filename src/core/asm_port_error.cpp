@@ -2163,7 +2163,12 @@ void MON_READ() {
 }
 
 void SYNERR() {
-    // TODO(asm-port): handle a syntax error from the statement parser.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SYNERR (inclusive) .. ERROR (exclusive)
+    // Name normalization: none (assembler label SYNERR kept verbatim).
+    // ROM sequence is `ldx #ERR_SYNTAX` followed by an unconditional transfer
+    // into ERROR. In C++, dispatch directly with the syntax error code.
+    ERROR(ERR_SYNTAX);
 }
 
 void PushForPntFrame() {
