@@ -1507,7 +1507,12 @@ std::uint8_t DATAN() {
 }
 
 void GOEND() {
-    // TODO(asm-port): handle end-of-program flow for NEXT statements.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: GOEND (inclusive) .. EXECUTE_STATEMENT (exclusive)
+    // Name normalization: none (assembler label GOEND kept verbatim).
+    // End-of-program path in NEWSTT jumps into END4 with carry clear, which
+    // restarts without printing BREAK. Model that directly here.
+    RESTART();
 }
 
 bool IsEndOfLineAtTextPointer() {

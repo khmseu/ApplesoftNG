@@ -119,7 +119,7 @@ returning, or contains `TODO(asm-port)`.
 | GTNUM                             | src/core/asm_port_error.cpp               | 2440 | real   |
 | GIVAYF                            | src/core/asm_port_error.cpp               | 2613 | real   |
 | GME                               | src/core/asm_port_error.cpp               |  278 | real   |
-| GOEND                             | src/core/asm_port_error.cpp               | 1184 | stub   |
+| GOEND                             | src/core/asm_port_error.cpp               | 1184 | real   |
 | GOSUB                             | src/core/asm_port_error.cpp               | 1500 | stub   |
 | GOSUB                             | src/core/asm_port_token_address_table.cpp |   20 | stub   |
 | GOTO                              | src/core/asm_port_error.cpp               | 1544 | stub   |
