@@ -33,6 +33,7 @@ This skill covers:
 3. Write a commit message based only on the diff of the selected files.
 4. Run `git commit -m "..."`.
   - `-m` does not expand escape sequences. Do not separate lines with `\n`; use actual linefeeds (for example, multiple `-m` flags or a message file).
+  - If a pre-commit hook prints messages, report those messages to the user.
 
 ## Best Practices
 
