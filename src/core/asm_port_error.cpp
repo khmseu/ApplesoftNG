@@ -270,9 +270,7 @@ void PRINT_ERROR_LINNUM(std::string_view prefix);
 std::uint8_t ReadProgramByte(std::uint16_t address);
 
 void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
-    // TODO(asm-port): write a byte into program memory at the given address.
-    (void)address;
-    (void)value;
+    variables().writeByte(address, value);
 }
 
 struct ProgramPointer {
@@ -577,9 +575,6 @@ std::int8_t FCOMP(std::uint16_t /*argAddress*/) {
 // TODO(asm-port): port FLOAT label.
 void FLOAT() {}
 
-// TODO(asm-port): port CONINT label.
-void CONINT() {}
-
 // TODO(asm-port): port MON_PREAD monitor paddle reader.
 std::uint8_t MON_PREAD() {
     return 0;
@@ -599,6 +594,35 @@ std::uint8_t gJerErrorCode = ERR_SYNTAX;
 constexpr std::uint8_t kNEG32768Data[4] = {0x90u, 0x80u, 0x00u, 0x00u};
 constexpr std::uint8_t kCZeroData[2] = {0x00u, 0x00u};
 
+// TODO(asm-port): compare temporary ARG and FAC strings and return -1/0/1.
+std::int8_t CompareArgAndFacStrings() {
+    return 0;
+}
+
+} // namespace
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: CONINT (inclusive) .. VAL (exclusive)
+// Name normalization: none (assembler label CONINT kept verbatim).
+//
+// Convert FAC to a single-byte integer (0–255) in FAC+4.
+//   jsr MKINT      — truncate FAC to integer
+//   ldx FAC+3      — high byte must be zero (else >255)
+//   bne GOIQ       — illegal quantity
+//   ldx FAC+4      — result byte in X (FAC+4 = low byte)
+//   jmp CHRGOT     — refresh A with current input char and return
+void CONINT() {
+    MKINT();
+    const std::uint8_t facHi = ReadZeroPageByte(
+        static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 3u));
+    if (facHi != 0u) {
+        IQERR();  // GOIQ: jmp IQERR — value > 255
+        return;
+    }
+    // FAC+4 already holds the result byte after MKINT.
+    (void)CHRGOT();
+}
+
 void SNGFLT(std::uint8_t value) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: SNGFLT (inclusive) .. ERRDIR (exclusive)
@@ -606,13 +630,6 @@ void SNGFLT(std::uint8_t value) {
 
     GIVAYF(static_cast<std::int16_t>(value));
 }
-
-// TODO(asm-port): compare temporary ARG and FAC strings and return -1/0/1.
-std::int8_t CompareArgAndFacStrings() {
-    return 0;
-}
-
-} // namespace
 
 void NEXT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -744,9 +761,9 @@ void TRACE_() {
 }
 
 std::uint8_t ReadProgramByte(std::uint16_t address) {
-    // TODO(asm-port): read a byte from the program memory buffer.
-    (void)address;
-    return 0;
+    // Program text lives in the same flat address space as zero-page variables;
+    // ApplesoftVariables::readByte handles all address regions.
+    return variables_const().readByte(address);
 }
 
 bool IsEndOfProgram(ProgramPointer currentPtr);
@@ -801,11 +818,112 @@ bool FNDLIN() {
 }
 
 void DeleteExistingLine() {
-    // TODO(asm-port): delete the existing numbered line and shift later lines down.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: NUMBERED_LINE delete block (inclusive) .. PUT_NEW_LINE (exclusive)
+    // Name normalization: C++ helper; corresponds to the inline delete block inside
+    // NUMBERED_LINE (T:0471–T:04b5) in the assembler listing.
+    //
+    // The line at LOWTR is removed by sliding [next_line, VARTAB) down over it.
+    // 16-bit pointers: LOWTR and VARTAB are unified uint16_t program addresses.
+    // The forward link stored at (LOWTR)[0:1] is a unified 16-bit address.
+
+    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+
+    // Forward link of the line at LOWTR: bytes [0] and [1] form the next-line address.
+    const std::uint16_t lowtr = ReadZeroPageWord(kLOWTR);
+    const std::uint16_t nextLine = ApplesoftVariables::makeWord(
+        variables_const().readByte(lowtr),
+        variables_const().readByte(static_cast<std::uint16_t>(lowtr + 1u)));
+
+    const std::uint16_t lineSize = static_cast<std::uint16_t>(nextLine - lowtr);
+    const std::uint16_t vartab = ReadZeroPageWord(kVARTAB);
+
+    // Forward-copy [nextLine, vartab) down to lowtr.
+    const std::uint16_t moveCount = static_cast<std::uint16_t>(vartab - nextLine);
+    for (std::uint16_t i = 0; i < moveCount; ++i) {
+        variables().writeByte(
+            static_cast<std::uint16_t>(lowtr + i),
+            variables_const().readByte(static_cast<std::uint16_t>(nextLine + i)));
+    }
+
+    WriteZeroPageWord(kVARTAB, static_cast<std::uint16_t>(vartab - lineSize));
 }
 
 void InsertNewLine() {
-    // TODO(asm-port): make room and copy the new numbered line into the program listing.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PUT_NEW_LINE (inclusive) .. FIX_LINKS (exclusive)
+    // Name normalization: C++ helper; corresponds to PUT_NEW_LINE (T:04b5–T:04f2) in
+    // the assembler listing.
+    //
+    // If the tokenized line (at ADDR_INPUT_BUFFER-5, written by PARSE_INPUT_LINE) is
+    // non-empty, shift [LOWTR, VARTAB) upward in program memory to make room, write
+    // the 4-byte line header, then copy the tokens.  FIX_LINKS repairs the forward
+    // link bytes afterwards.
+    //
+    // 16-bit pointers: LOWTR and VARTAB are unified uint16_t program addresses;
+    // the token source buffer and destination are accessed via variables().
+
+    constexpr std::uint16_t kTokenBuf =
+        static_cast<std::uint16_t>(ApplesoftVariables::ADDR_INPUT_BUFFER - 5u);
+    constexpr std::uint8_t kLOWTR   = ApplesoftVariables::ZP_LOWTR;
+    constexpr std::uint8_t kVARTAB  = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kSTREND  = ApplesoftVariables::ZP_STREND;
+    constexpr std::uint8_t kFRETOP  = ApplesoftVariables::ZP_FRETOP;
+    constexpr std::uint8_t kMEMSIZ  = ApplesoftVariables::ZP_MEMSIZ;
+    constexpr std::uint8_t kLINNUM  = ApplesoftVariables::ZP_LINNUM;
+
+    // If INPUT_BUFFER[0] == 0 the user typed only a line number — delete only, no insert.
+    if (variables_const().readByte(ApplesoftVariables::ADDR_INPUT_BUFFER) == 0u) {
+        return;
+    }
+
+    // Wipe string heap: FRETOP = MEMSIZ (mirrors ROM's lda/sta MEMSIZ → FRETOP).
+    WriteZeroPageWord(kFRETOP, ReadZeroPageWord(kMEMSIZ));
+
+    // Measure tokenized content at kTokenBuf (PARSE_INPUT_LINE wrote tokens here,
+    // terminated by a 0x00 byte).  tokenLen = number of non-null token bytes.
+    std::uint16_t tokenLen = 0;
+    while (variables_const().readByte(static_cast<std::uint16_t>(kTokenBuf + tokenLen)) != 0u) {
+        ++tokenLen;
+    }
+
+    // Total line size: [link.lo][link.hi][lineno.lo][lineno.hi][tokens...][0x00 EOL]
+    //                = 2 + 2 + tokenLen + 1 = tokenLen + 5.
+    const std::uint16_t lineSize = static_cast<std::uint16_t>(tokenLen + 5u);
+    const std::uint16_t lowtr  = ReadZeroPageWord(kLOWTR);
+    const std::uint16_t vartab = ReadZeroPageWord(kVARTAB);
+
+    // Shift [lowtr, vartab) upward by lineSize to open a hole at lowtr (backward copy).
+    for (std::uint16_t i = vartab; i > lowtr; --i) {
+        const std::uint16_t src = static_cast<std::uint16_t>(i - 1u);
+        variables().writeByte(
+            static_cast<std::uint16_t>(src + lineSize),
+            variables_const().readByte(src));
+    }
+
+    // Write line header at lowtr:
+    //   [0..1] = 0x00 0x00 — forward-link placeholder; FIX_LINKS fills these.
+    //   [2..3] = LINNUM    — line number.
+    const std::uint16_t linnum = ReadZeroPageWord(kLINNUM);
+    variables().writeByte(lowtr, 0u);
+    variables().writeByte(static_cast<std::uint16_t>(lowtr + 1u), 0u);
+    variables().writeByte(static_cast<std::uint16_t>(lowtr + 2u),
+                          ApplesoftVariables::lowByte(linnum));
+    variables().writeByte(static_cast<std::uint16_t>(lowtr + 3u),
+                          ApplesoftVariables::highByte(linnum));
+
+    // Copy tokenized content (tokenLen bytes) + 0x00 EOL terminator to lowtr+4.
+    for (std::uint16_t i = 0; i <= tokenLen; ++i) {
+        variables().writeByte(
+            static_cast<std::uint16_t>(lowtr + 4u + i),
+            variables_const().readByte(static_cast<std::uint16_t>(kTokenBuf + i)));
+    }
+
+    // Update VARTAB and STREND to reflect the new end of program text.
+    const std::uint16_t newVartab = static_cast<std::uint16_t>(vartab + lineSize);
+    WriteZeroPageWord(kVARTAB, newVartab);
+    WriteZeroPageWord(kSTREND, newVartab);
 }
 
 std::uint8_t read_INPUT_BUFFER(std::uint8_t index) {
@@ -1352,22 +1470,34 @@ void GOEND() {
 }
 
 bool IsEndOfLineAtTextPointer() {
-    // TODO(asm-port): return true when TXTPTR is at the end of the current line.
-    return false;
+    // Source: NEWSTT inline — ldy #0 / lda (TXTPTR),Y: end-of-statement when byte is 0.
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    return ReadProgramByte(ReadZeroPageWord(kTXTPTR)) == 0u;
 }
 
 bool IsEndOfProgramAtTextPointer() {
-    // TODO(asm-port): return true when there is no next line after TXTPTR.
-    return false;
+    // Source: NEWSTT inline — ldy #2 / lda (TXTPTR),Y: next-line link high byte;
+    // if zero the program has ended (null forward pointer).
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    return ReadProgramByte(static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + 2u)) == 0u;
 }
 
 std::uint16_t ReadLineNumberFromTextPointer() {
-    // TODO(asm-port): read the line number stored at the current TXTPTR.
-    return 0;
+    // Source: NEWSTT inline — reads CURLIN from (TXTPTR)+3 and (TXTPTR)+4.
+    // Memory layout at TXTPTR when it sits on an EOL 0x00:
+    //   [0] = 0x00 (EOL), [1] = link.lo, [2] = link.hi, [3] = lineno.lo, [4] = lineno.hi.
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    const std::uint16_t txtptr = ReadZeroPageWord(kTXTPTR);
+    const std::uint8_t lo = ReadProgramByte(static_cast<std::uint16_t>(txtptr + 3u));
+    const std::uint8_t hi = ReadProgramByte(static_cast<std::uint16_t>(txtptr + 4u));
+    return ApplesoftVariables::makeWord(lo, hi);
 }
 
 void AdvanceTextPointerToNextLine() {
-    // TODO(asm-port): advance TXTPTR to the start of the next BASIC line.
+    // Source: NEWSTT inline — tya (A=4) + adc TXTPTR → TXTPTR += 4.
+    // CHRGET called next by TRACE_ adds 1 more, landing on the first content byte.
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + 4u));
 }
 
 bool IsRunningMode() {
@@ -2240,9 +2370,29 @@ void FRMEVL() {
     frmevl_eval(frmevl_eval, 0u, true);
 }
 
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: GTBYTC (inclusive) .. GETBYT (exclusive)
+// Name normalization: none (assembler label GTBYTC kept verbatim).
+//
+// Advance text pointer one character, then evaluate as byte (0-255) in FAC+4.
+//   jsr CHRGET     -- advance TXTPTR
+//   fall-through to GETBYT
+void GTBYTC() {
+    CHRGET();
+    (void)GETBYT();
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: GETBYT (inclusive) .. CONINT (exclusive)
+// Name normalization: none (assembler label GETBYT kept verbatim).
+//
+// Evaluate numeric expression at TXTPTR into FAC, convert to byte (0-255) in FAC+4.
+//   jsr FRMNUM     -- evaluate numeric expression
+//   fall-through to CONINT
 std::uint8_t GETBYT() {
-    // TODO(asm-port): parse byte argument and leave selector in FAC+4.
-    return 0;
+    FRMNUM();
+    CONINT();
+    return ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 4u));
 }
 
 std::uint16_t PTRGET() {

@@ -18,6 +18,8 @@ bool FRETMS(std::uint16_t descriptorAddress);
 std::uint8_t GETBYT();
 void IQERR();
 void CHKCLS();
+void CONINT();
+void SNGFLT(std::uint8_t value);
 
 namespace {
 
@@ -555,10 +557,44 @@ void PUTEMP(std::uint8_t tempDescriptorAddress) {
 
 } // namespace
 
-// TODO(asm-port): replace with cross-TU forward declaration once CONINT is
-// promoted to a public symbol (it is currently in an anonymous namespace in
-// asm_port_error.cpp and cannot be linked from other TUs).
-static void CONINT() {}
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: LEN (inclusive) .. GETSTR (exclusive)
+// Name normalization: none (assembler label LEN kept verbatim).
+//
+// "LEN" built-in: get string length and float it into FAC.
+void LEN() {
+    const std::uint8_t length = GETSTR();
+    SNGFLT(length);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: GETSTR (inclusive) .. ASC (exclusive)
+// Name normalization: none (assembler label GETSTR kept verbatim).
+//
+// Free the FAC string if temporary, clear VALTYP to numeric, return length.
+// After return INDEX points at the string data.
+std::uint8_t GETSTR() {
+    const std::uint8_t length = FRESTR();
+    variables().writeByte(ApplesoftVariables::ZP_VALTYP, 0u);
+    return length;
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: ASC (inclusive) .. GOIQ (exclusive)
+// Name normalization: none (assembler label ASC kept verbatim).
+//
+// "ASC" built-in: return ASCII value of first character.
+// GOIQ ($e6f2) is a one-instruction trampoline to IQERR; inlined here.
+void ASC() {
+    const std::uint8_t length = GETSTR();
+    if (length == 0u) {
+        IQERR();  // GOIQ: jmp IQERR — illegal quantity for empty string
+        return;
+    }
+    const std::uint16_t strAddr = read_INDEX();
+    const std::uint8_t ch = variables_const().readByte(strAddr);
+    SNGFLT(ch);
+}
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: GARBAG (inclusive) .. FIND_HIGHEST_STRING (exclusive)

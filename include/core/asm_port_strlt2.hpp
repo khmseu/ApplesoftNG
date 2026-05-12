@@ -36,4 +36,13 @@ void RIGHTSTR();
 // Labels: MIDSTR (inclusive) .. SUBSTRING_SETUP (exclusive)
 void MIDSTR();
 
+// Labels: LEN (inclusive) .. GETSTR (exclusive)
+void LEN();
+
+// Labels: GETSTR (inclusive) .. ASC (exclusive)
+std::uint8_t GETSTR();
+
+// Labels: ASC (inclusive) .. GOIQ (exclusive)
+void ASC();
+
 } // namespace applesoft::asm_port

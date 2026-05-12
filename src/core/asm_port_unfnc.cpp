@@ -35,10 +35,10 @@ static void SIN()      {} // TODO(asm-port): SIN        $DF...223
 static void TAN()      {} // TODO(asm-port): TAN        $E0...224
 static void ATN()      {} // TODO(asm-port): ATN        $E1...225
 static void PEEK()     {} // TODO(asm-port): PEEK       $E2...226
-static void LEN()      {} // TODO(asm-port): LEN        $E3...227
+static void LEN_fn()   { LEN(); }
 static void STR_fn()   { STR(); }
 static void VAL()        {} // TODO(asm-port): VAL        $E5...229
-static void ASC()        {} // TODO(asm-port): ASC        $E6...230
+static void ASC_fn()     { ASC(); }
 static void CHRSTR_fn()  { CHRSTR(); }
 static void LEFTSTR_fn() { LEFTSTR(); }
 static void RIGHTSTR_fn(){ RIGHTSTR(); }
@@ -67,10 +67,10 @@ UNFNC_fn UNFNC(std::size_t index) {
         TAN,      // [14] $E0...224...TAN
         ATN,      // [15] $E1...225...ATN
         PEEK,     // [16] $E2...226...PEEK
-        LEN,      // [17] $E3...227...LEN
+        LEN_fn,   // [17] $E3...227...LEN
         STR_fn,   // [18] $E4...228...STR$
         VAL,        // [19] $E5...229...VAL
-        ASC,        // [20] $E6...230...ASC
+        ASC_fn,     // [20] $E6...230...ASC
         CHRSTR_fn,  // [21] $E7...231...CHR$
         LEFTSTR_fn, // [22] $E8...232...LEFT$
         RIGHTSTR_fn,// [23] $E9...233...RIGHT$

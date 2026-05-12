@@ -171,7 +171,7 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case ZP_TRCFLG: return TRCFLG;
     case ZP_FLASH_BIT: return FLASH_BIT;
     case ZP_REMSTK: return REMSTK;
-    default: return 0;
+    default: return general_memory_[address];
     }
 }
 
@@ -315,7 +315,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case ZP_TRCFLG: TRCFLG = value; return;
     case ZP_FLASH_BIT: FLASH_BIT = value; return;
     case ZP_REMSTK: REMSTK = value; return;
-    default: return;
+    default: general_memory_[address] = value; return;
     }
 }
 
