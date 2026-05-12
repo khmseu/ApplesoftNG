@@ -41,7 +41,7 @@ Optional:
 1. Summarize intent in exactly 3-5 bullets, each limited to a maximum of 15 words, before coding.
 2. Implement one C++ function for the range.
 3. If the range does not end in an `RTS`, `JMP`, or unconditional branch, preserve the fall-through into `end_label` by calling the following function at that point. Add a checklist item to confirm that the next-label fall-through is modeled explicitly.
-4. Treat `MON_xyz` labels as monitor aliases for `xyz`; implement them in the same file as direct forwarding functions that call the corresponding monitor handler.
+4. All symbols defined in monitor source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/monitor`](../../../SourceMaterial/Apple-II-Source-slim/src/system/monitor)) carry a virtual `MON_` prefix. A label `xyz` in a monitor listing is always named `MON_xyz` in C++. When the window references `MON_xyz`, look up label `xyz` in the monitor listings and implement the C++ function as `MON_xyz`.
 5. Route all fixed-address global state access through `ApplesoftVariables` (`variables()` / `variables_const()` accessors). If a required fixed address is missing, add it to `ApplesoftVariables` before use.
 6. For fixed-address byte pairs that form pointers, read/write them through one conceptual pointer variable (or an explicit pointer abstraction), and lift carry-chain updates to unified pointer arithmetic. Example: if `ZP_LO` and `ZP_HI` represent one 16-bit address, use `uint16_t ptr = variables().readWord(ZP_LO);` instead of separate byte reads.
 7. For dual-use integer/pointer storage, use an explicit representation (`union`, `std::variant`, or dedicated wrapper) and document the rationale.

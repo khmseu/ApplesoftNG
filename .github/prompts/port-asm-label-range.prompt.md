@@ -27,7 +27,7 @@ Required input:
 
 1. Implement one C++ function that reproduces the behavior.
 2. If the range does not end in an `RTS`, `JMP`, or unconditional branch, model fall-through into `end_label` by calling the following function or by returning continuation state that the caller uses to invoke the next label.
-3. Treat `MON_xyz` labels as aliases for `xyz` monitor handlers; always implement them immediately as forwarding functions to the corresponding monitor behavior and document the alias mapping in code comments.
+3. All symbols defined in monitor source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/monitor`](../../SourceMaterial/Apple-II-Source-slim/src/system/monitor)) carry a virtual `MON_` prefix. A label `xyz` in a monitor listing is always named `MON_xyz` in C++. When the range references `MON_xyz`, look up label `xyz` in the monitor listings and implement the C++ function as `MON_xyz`.
 4. If the range is a table of `.word LABEL` or `.word LABEL-1` entries, convert it to a lookup function `<TableName>_fn <TableName>(std::size_t index)` that returns a function pointer the caller invokes. Declare a `using <TableName>_fn = ...` type alias. The `-1` offset is a 6502 RTS-dispatch artifact; omit it in C++. Add stub implementations for any callee not yet ported.
 5. Route all fixed-address global state access through `ApplesoftVariables` (`variables()` / `variables_const()` accessors); if a fixed address is missing there, add it before using it.
 6. When a fixed-address byte pair is one logical pointer, represent it as one conceptual pointer variable in C++ (or explicit pointer abstraction), and model carry-chain updates as unified pointer arithmetic.
