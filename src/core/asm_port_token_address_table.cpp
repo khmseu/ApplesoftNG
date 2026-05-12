@@ -36,6 +36,12 @@ void IN_NUMBER();
 void PLOT();
 void HLIN();
 void VLIN();
+void HGR2();
+void HGR();
+void HCOLOR();
+void HPLOT();
+void DRAW();
+void XDRAW();
 void HOME();
 void IF();
 void REM();
@@ -78,12 +84,12 @@ static void CALL_Handler()     { CALL(); }
 static void PLOT_Handler()     { PLOT(); }
 static void HLIN_Handler()     { HLIN(); }
 static void VLIN_Handler()     { VLIN(); }
-static void HGR2()             {} // TODO(asm-port): HGR2
-static void HGR()              {} // TODO(asm-port): HGR
-static void HCOLOR()           {} // TODO(asm-port): HCOLOR
-static void HPLOT()            {} // TODO(asm-port): HPLOT
-static void DRAW()             {} // TODO(asm-port): DRAW
-static void XDRAW()            {} // TODO(asm-port): XDRAW
+static void HGR2_Handler()     { HGR2(); }
+static void HGR_Handler()      { HGR(); }
+static void HCOLOR_Handler()   { HCOLOR(); }
+static void HPLOT_Handler()    { HPLOT(); }
+static void DRAW_Handler()     { DRAW(); }
+static void XDRAW_Handler()    { XDRAW(); }
 static void HTAB_Handler()     { HTAB(); }
 static void HOME_Handler()     { HOME(); }
 static void ROT()              {} // TODO(asm-port): ROT
@@ -148,12 +154,12 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         PLOT_Handler,     // [13] $8D...141...PLOT
         HLIN_Handler,     // [14] $8E...142...HLIN
         VLIN_Handler,     // [15] $8F...143...VLIN
-        HGR2,             // [16] $90...144...HGR2
-        HGR,              // [17] $91...145...HGR
-        HCOLOR,           // [18] $92...146...HCOLOR=
-        HPLOT,            // [19] $93...147...HPLOT
-        DRAW,             // [20] $94...148...DRAW
-        XDRAW,            // [21] $95...149...XDRAW
+        HGR2_Handler,     // [16] $90...144...HGR2
+        HGR_Handler,      // [17] $91...145...HGR
+        HCOLOR_Handler,   // [18] $92...146...HCOLOR=
+        HPLOT_Handler,    // [19] $93...147...HPLOT
+        DRAW_Handler,     // [20] $94...148...DRAW
+        XDRAW_Handler,    // [21] $95...149...XDRAW
         HTAB_Handler,     // [22] $96...150...HTAB
         HOME_Handler,     // [23] $97...151...HOME
         ROT,              // [24] $98...152...ROT=

@@ -204,6 +204,56 @@ void HTAB() {
     variables().writeByte(ApplesoftVariables::ZP_MON_CH, col);
 }
 
+void HGR2() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: HGR2 (inclusive) .. HGR (exclusive)
+    // Name normalization: none (assembler label HGR2 kept verbatim).
+    //
+    // bit SW_HISCR ($c055): soft-switch read selects hi-res page 2 ($4000–5FFF).
+    // bit SW_MIXCLR ($c052): soft-switch read disables mixed-mode text window.
+    // lda #>$4000; sta HGR_PAGE: set page offset to $40.
+    // jmp SETHPG: shared setup for HGR_PAGE assignment, turn on hi-res, turn on graphics.
+    // TODO(asm-port): implement soft-switch read side-effects and graphics mode setup.
+    // For now, delegate to MON_SETGR as a placeholder; a full implementation would
+    // read soft-switches at $C055 and $C052, set page selection, and call monitor.
+    MON_SETGR();
+}
+
+void HGR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: HGR (inclusive) .. HCOLOR (exclusive)
+    // Name normalization: none (assembler label HGR kept verbatim).
+    //
+    // lda #>$2000: hi-res page 1 starts at $2000–3FFF.
+    // bit SW_LOWSCR ($c054): soft-switch read selects display page 1.
+    // bit SW_MIXSET ($c053): soft-switch read enables mixed-mode text window.
+    // (Falls through to SETHPG.)
+    // TODO(asm-port): implement soft-switch read side-effects and graphics mode setup.
+    // For now, delegate to MON_SETGR as a placeholder; a full implementation would
+    // read soft-switches at $C054 and $C053, set page selection, and call monitor.
+    MON_SETGR();
+}
+
+void HCOLOR() {
+    // TODO(asm-port): port HCOLOR label range from Applesoft ROM.
+    // Sets hi-res graphics color.
+}
+
+void HPLOT() {
+    // TODO(asm-port): port HPLOT label range from Applesoft ROM.
+    // Plots a hi-res graphics point.
+}
+
+void DRAW() {
+    // TODO(asm-port): port DRAW label range from Applesoft ROM.
+    // Draws a hi-res shape.
+}
+
+void XDRAW() {
+    // TODO(asm-port): port XDRAW label range from Applesoft ROM.
+    // Draws a hi-res shape with XOR mode.
+}
+
 void COLOR() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: COLOR (inclusive) .. VTAB (exclusive)
