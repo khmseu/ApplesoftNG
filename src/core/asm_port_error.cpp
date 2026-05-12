@@ -50,6 +50,7 @@ void MON_OUTPORT(std::uint8_t slot);
 void MON_PLOT(std::uint8_t y, std::uint8_t x);
 void MON_HLINE(std::uint8_t y, std::uint8_t right, std::uint8_t left);
 void MON_VLINE(std::uint8_t x, std::uint8_t top);
+void MON_HOME();
 
 
 // TODO(asm-port): port NORMAL statement behavior (currently display-mode init stub).
@@ -133,6 +134,19 @@ void MON_VLINE(std::uint8_t x, std::uint8_t top) {
     // Placeholder to preserve VLIN statement call flow until monitor integration.
     (void)x;
     (void)top;
+}
+
+void MON_HOME() {
+    // TODO(asm-port): port MON_HOME monitor handler.
+    // Placeholder to preserve HOME statement call flow until monitor integration.
+}
+
+void HOME() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: MON_HOME (inclusive) .. ROT (exclusive)
+    // Name normalization: HOME statement maps to MON_HOME monitor routine ($FC58).
+
+    MON_HOME();
 }
 
 void COLOR() {

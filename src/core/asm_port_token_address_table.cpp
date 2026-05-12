@@ -36,6 +36,7 @@ void IN_NUMBER();
 void PLOT();
 void HLIN();
 void VLIN();
+void HOME();
 void IF();
 void REM();
 void ONGOTO();
@@ -81,11 +82,7 @@ static void HPLOT()            {} // TODO(asm-port): HPLOT
 static void DRAW()             {} // TODO(asm-port): DRAW
 static void XDRAW()            {} // TODO(asm-port): XDRAW
 static void HTAB()             {} // TODO(asm-port): HTAB
-static void HOME()             {} // TODO(asm-port): HOME monitor routine alias for MON_HOME.
-static void MON_HOME() {
-    HOME();
-}
-// TODO(asm-port): MON_HOME (monitor clear-screen at $FC58)
+static void HOME_Handler()     { HOME(); }
 static void ROT()              {} // TODO(asm-port): ROT
 static void SCALE()            {} // TODO(asm-port): SCALE
 static void SHLOAD()           {} // TODO(asm-port): SHLOAD
@@ -155,7 +152,7 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         DRAW,             // [20] $94...148...DRAW
         XDRAW,            // [21] $95...149...XDRAW
         HTAB,             // [22] $96...150...HTAB
-        MON_HOME,         // [23] $97...151...HOME
+        HOME_Handler,     // [23] $97...151...HOME
         ROT,              // [24] $98...152...ROT=
         SCALE,            // [25] $99...153...SCALE=
         SHLOAD,           // [26] $9A...154...SHLOAD
