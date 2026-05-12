@@ -289,9 +289,11 @@ struct ProgramPointer {
     }
 };
 
+std::uint8_t gStackPointer = 0xffu;
+bool gReturnFromPopContext = false;
+
 void SetStackPointer(std::uint8_t value) {
-    // TODO(asm-port): set the 6502 stack pointer.
-    (void)value;
+    gStackPointer = value;
 }
 
 bool IsStatementEndOfParsedInput() {
@@ -532,9 +534,9 @@ void FOR() {
 
 namespace {
 
-// TODO(asm-port): provide stack-page reads wired to the 6502 runtime stack.
-std::uint8_t readStackByteAt(std::uint8_t /*x*/, std::uint8_t /*plus*/) {
-    return 0;
+std::uint8_t readStackByteAt(std::uint8_t x, std::uint8_t plus) {
+    const std::uint8_t offset = static_cast<std::uint8_t>(x + plus);
+    return ReadProgramByte(static_cast<std::uint16_t>(0x0100u + offset));
 }
 
 std::uint16_t readStackWordAt(std::uint8_t x, std::uint8_t lowOffset, std::uint8_t highOffset) {
@@ -1291,16 +1293,17 @@ bool ISCNTC() {
 }
 
 std::uint8_t ReadStackPointer() {
-    // TODO(asm-port): return the current 6502 stack pointer value.
-    return 0;
+    return gStackPointer;
 }
 
 void PopReturnAddress() {
-    // TODO(asm-port): discard the most recently pushed return address bytes.
+    (void)PopByteFromStack();
+    (void)PopByteFromStack();
 }
 
-void PushByteToStack(std::uint8_t /*value*/) {
-    // TODO(asm-port): push a byte onto the Applesoft 6502 stack.
+void PushByteToStack(std::uint8_t value) {
+    WriteProgramByte(static_cast<std::uint16_t>(0x0100u + ReadStackPointer()), value);
+    SetStackPointer(static_cast<std::uint8_t>(ReadStackPointer() - 1u));
 }
 
 void PushWordToStack(std::uint16_t value) {
@@ -1317,15 +1320,21 @@ std::uint16_t PopWordFromStack() {
 }
 
 void PushTextPointerAddress() {
-    // TODO(asm-port): push the current TXTPTR address on the Applesoft stack.
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    const std::uint16_t textPointer = ReadZeroPageWord(kTXTPTR);
+    PushByteToStack(ApplesoftVariables::highByte(textPointer));
+    PushByteToStack(ApplesoftVariables::lowByte(textPointer));
 }
 
 void PushCurrentLineNumber() {
-    // TODO(asm-port): push CURLIN and CURLIN+1 onto the Applesoft stack.
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
+    PushByteToStack(ApplesoftVariables::highByte(currentLine));
+    PushByteToStack(ApplesoftVariables::lowByte(currentLine));
 }
 
-void PushTokenTo(std::uint8_t /*token*/) {
-    // TODO(asm-port): push a statement token value onto the Applesoft stack.
+void PushTokenTo(std::uint8_t token) {
+    PushByteToStack(token);
 }
 
 void ApplyFacSign() {
@@ -1893,6 +1902,7 @@ void POP() {
 
     if (PeekTopControlTokenAfterGTFORPNT() == kTOKEN_GOSUB) {
         // Fall-through in ROM from POP to RETURN when top frame is GOSUB.
+        gReturnFromPopContext = true;
         RETURN();
         return;
     }
@@ -1909,17 +1919,19 @@ void RETURN() {
     constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
 
     (void)PopByteFromStack(); // discard GOSUB token
-    const std::uint16_t currentLine = PopWordFromStack();
+    const std::uint8_t currentLineLo = PopByteFromStack();
 
     if (ReturnWasFromPOPContext()) {
         PULL3();
         return;
     }
 
-    const std::uint16_t textPointer = PopWordFromStack();
+    const std::uint8_t currentLineHi = PopByteFromStack();
+    const std::uint8_t textPointerLo = PopByteFromStack();
+    const std::uint8_t textPointerHi = PopByteFromStack();
 
-    WriteZeroPageWord(kCURLIN, currentLine);
-    WriteZeroPageWord(kTXTPTR, textPointer);
+    WriteZeroPageWord(kCURLIN, ApplesoftVariables::makeWord(currentLineLo, currentLineHi));
+    WriteZeroPageWord(kTXTPTR, ApplesoftVariables::makeWord(textPointerLo, textPointerHi));
 }
 
 void RTS_5() {
@@ -1990,18 +2002,21 @@ bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
 }
 
 std::uint8_t PopByteFromStack() {
-    // TODO(asm-port): pop and return one byte from the 6502 runtime stack.
-    return 0;
+    SetStackPointer(static_cast<std::uint8_t>(ReadStackPointer() + 1u));
+    return ReadProgramByte(static_cast<std::uint16_t>(0x0100u + ReadStackPointer()));
 }
 
 bool ReturnWasFromPOPContext() {
-    // TODO(asm-port): model CPY #<(TOKEN_POP*2) context check from RETURN.
-    return false;
+    if (!gReturnFromPopContext) {
+        return false;
+    }
+
+    gReturnFromPopContext = false;
+    return true;
 }
 
 std::uint8_t PeekTopControlTokenAfterGTFORPNT() {
-    // TODO(asm-port): recover A register/token result from GTFORPNT scan.
-    return 0;
+    return readStackByteAt(ReadStackPointer(), 1u);
 }
 
 void DATA() {
