@@ -22,6 +22,7 @@ returning, or contains `TODO(asm-port)`.
 | BASIC2                            | src/core/asm_port_error.cpp               | 2210 | real   |
 | BLTU                              | src/core/asm_port_bltu.cpp                |   21 | stub   |
 | BLTU2                             | src/core/asm_port_bltu.cpp                |   36 | real   |
+| CAT                               | src/core/asm_port_strlt2.cpp              |  418 | real   |
 | C_ZERO                            | src/core/asm_port_error.cpp               | 2285 | real   |
 | CHKCOM                            | src/core/asm_port_error.cpp               | 1104 | real   |
 | CHKMEM                            | src/core/asm_port_chkmem.cpp              |   16 | real   |
@@ -91,8 +92,12 @@ returning, or contains `TODO(asm-port)`.
 | FOR                               | src/core/asm_port_token_address_table.cpp |   38 | stub   |
 | FRE                               | src/core/asm_port_error.cpp               | 2592 | real   |
 | FREFAC                            | src/core/asm_port_print.cpp               |   51 | real   |
+| FREFAC                            | src/core/asm_port_strlt2.cpp              |  493 | real   |
+| FRESTR                            | src/core/asm_port_strlt2.cpp              |  485 | real   |
 | FRETMP                            | src/core/asm_port_error.cpp               |  429 | stub   |
+| FRETMP                            | src/core/asm_port_strlt2.cpp              |  500 | real   |
 | FRETMS                            | src/core/asm_port_error.cpp               | 2534 | stub   |
+| FRETMS                            | src/core/asm_port_strlt2.cpp              |  519 | real   |
 | FRM_STACK_2                       | src/core/asm_port_error.cpp               | 1127 | stub   |
 | FRM_STACK_3                       | src/core/asm_port_error.cpp               | 1131 | stub   |
 | FRMEVL                            | src/core/asm_port_error.cpp               | 1933 | stub   |
@@ -188,8 +193,10 @@ returning, or contains `TODO(asm-port)`.
 | MON_WAIT                          | src/platform/asm_port_outdo.cpp           |   30 | stub   |
 | MON_WRITE                         | src/core/asm_port_error.cpp               | 1799 | stub   |
 | MOVINS                            | src/core/asm_port_error.cpp               | 2530 | stub   |
+| MOVINS                            | src/core/asm_port_strlt2.cpp              |  449 | real   |
 | MOVE_HIGHEST_STRING_TO_TOP        | src/core/asm_port_strlt2.cpp              |  331 | real   |
-| MOVSTR                            | src/core/asm_port_strlt2.cpp              |   40 | stub   |
+| MOVSTR                            | src/core/asm_port_strlt2.cpp              |  460 | real   |
+| MOVSTR_1                          | src/core/asm_port_strlt2.cpp              |  469 | real   |
 | MULTIPLY_SUBSCRIPT                | src/core/asm_port_error.cpp               | 2523 | real   |
 | MULTIPLY_SUBS_1                   | src/core/asm_port_error.cpp               | 2539 | real   |
 | NAME_NOT_FOUND                    | src/core/asm_port_error.cpp               | 2276 | stub   |
