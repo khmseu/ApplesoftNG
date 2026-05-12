@@ -634,12 +634,16 @@ void STXTPT_impl() {
 
 void FOR() {
     constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
-    constexpr std::uint8_t kTOKEN_TO = 0x00; // TODO(asm-port): actual Applesoft "TO" token value.
+    constexpr std::uint8_t kTOKEN_TO = 0xc1u;
 
     WriteZeroPageByte(kSUBFLG, 0x80);
     LET();
 
     GTFORPNTState gtforpntState{};
+    for (std::size_t i = 0; i < gtforpntState.stackPage.size(); ++i) {
+        gtforpntState.stackPage[i] =
+            ReadProgramByte(static_cast<std::uint16_t>(0x0100u + i));
+    }
     const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
     if (gtforpntResult.found) {
         SetStackPointer(add_u8(gtforpntResult.x, 15u));
@@ -792,7 +796,10 @@ void NEXT() {
     GTFORPNTState gtforpntState{};
     gtforpntState.forpntLo = ReadZeroPageByte(kFORPNT);
     gtforpntState.forpntHi = ReadZeroPageByte(add_u8(kFORPNT, 1u));
-    // TODO(asm-port): populate gtforpntState.stackPage from runtime stack memory.
+    for (std::size_t i = 0; i < gtforpntState.stackPage.size(); ++i) {
+        gtforpntState.stackPage[i] =
+            ReadProgramByte(static_cast<std::uint16_t>(0x0100u + i));
+    }
 
     const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
     if (!gtforpntResult.found) {
@@ -839,7 +846,7 @@ void NEXT() {
 }
 
 void STEP() {
-    constexpr std::uint8_t kTOKEN_STEP = 0x00; // TODO(asm-port): actual Applesoft "STEP" token value.
+    constexpr std::uint8_t kTOKEN_STEP = 0xc7u;
 
     LOAD_FAC_FROM_YA();
     if (CHRGOT() == kTOKEN_STEP) {

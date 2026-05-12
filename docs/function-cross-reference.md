@@ -89,8 +89,8 @@ returning, or contains `TODO(asm-port)`.
 | FNCDATA                           | src/core/asm_port_error.cpp               | 2714 | stub   |
 | FNC\_                             | src/core/asm_port_error.cpp               | 2690 | stub   |
 | FNDLIN                            | src/core/asm_port_error.cpp               |  643 | real   |
-| FOR                               | src/core/asm_port_error.cpp               |  350 | stub   |
-| FOR                               | src/core/asm_port_token_address_table.cpp |   38 | stub   |
+| FOR                               | src/core/asm_port_error.cpp               |  635 | stub   |
+| FOR                               | src/core/asm_port_token_address_table.cpp |   53 | stub   |
 | FRE                               | src/core/asm_port_error.cpp               | 2592 | real   |
 | FREFAC                            | src/core/asm_port_print.cpp               |   51 | real   |
 | FREFAC                            | src/core/asm_port_strlt2.cpp              |  493 | real   |
@@ -211,8 +211,8 @@ returning, or contains `TODO(asm-port)`.
 | NEW                               | src/core/asm_port_token_address_table.cpp |   10 | stub   |
 | NEWSTT                            | src/core/asm_port_error.cpp               |  551 | real   |
 | NEW_impl                          | src/core/asm_port_error.cpp               |  280 | real   |
-| NEXT                              | src/core/asm_port_error.cpp               |  468 | stub   |
-| NEXT                              | src/core/asm_port_token_address_table.cpp |   15 | stub   |
+| NEXT                              | src/core/asm_port_error.cpp               |  777 | stub   |
+| NEXT                              | src/core/asm_port_token_address_table.cpp |   19 | stub   |
 | NEXT_shouldTerminateLoop          | src/core/asm_port_error.cpp               |  404 | stub   |
 | NOTCR                             | src/platform/asm_port_getln.cpp           |   30 | stub   |
 | NORMAL                            | src/core/asm_port_error.cpp               |   41 | real   |
@@ -311,7 +311,7 @@ returning, or contains `TODO(asm-port)`.
 | SNGFLT                            | src/core/asm_port_error.cpp               |  462 | real   |
 | SPEED                             | src/core/asm_port_error.cpp               |  156 | real   |
 | SPEED_Handler                     | src/core/asm_port_token_address_table.cpp |  107 | real   |
-| STEP                              | src/core/asm_port_error.cpp               |  536 | stub   |
+| STEP                              | src/core/asm_port_error.cpp               |  848 | stub   |
 | STKINI                            | src/core/asm_port_error.cpp               |  987 | real   |
 | STOP                              | src/core/asm_port_error.cpp               | 1295 | real   |
 | STOP                              | src/core/asm_port_token_address_table.cpp |   13 | stub   |
