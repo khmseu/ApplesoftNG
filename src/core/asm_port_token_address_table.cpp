@@ -34,6 +34,7 @@ void LET();
 void PR_NUMBER();
 void IN_NUMBER();
 void PLOT();
+void HLIN();
 void IF();
 void REM();
 void ONGOTO();
@@ -70,7 +71,7 @@ static void PR_NUMBER_Handler(){ PR_NUMBER(); }
 static void IN_NUMBER_Handler(){ IN_NUMBER(); }
 static void CALL_Handler()     { CALL(); }
 static void PLOT_Handler()     { PLOT(); }
-static void HLIN()             {} // TODO(asm-port): HLIN
+static void HLIN_Handler()     { HLIN(); }
 static void VLIN()             {} // TODO(asm-port): VLIN
 static void HGR2()             {} // TODO(asm-port): HGR2
 static void HGR()              {} // TODO(asm-port): HGR
@@ -144,7 +145,7 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         IN_NUMBER_Handler,// [11] $8B...139...IN#
         CALL_Handler,     // [12] $8C...140...CALL
         PLOT_Handler,     // [13] $8D...141...PLOT
-        HLIN,             // [14] $8E...142...HLIN
+        HLIN_Handler,     // [14] $8E...142...HLIN
         VLIN,             // [15] $8F...143...VLIN
         HGR2,             // [16] $90...144...HGR2
         HGR,              // [17] $91...145...HGR

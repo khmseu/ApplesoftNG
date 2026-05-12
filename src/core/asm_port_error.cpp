@@ -48,6 +48,7 @@ void MON_TABV(std::uint8_t row_zero_based);
 void MON_INPORT(std::uint8_t slot);
 void MON_OUTPORT(std::uint8_t slot);
 void MON_PLOT(std::uint8_t y, std::uint8_t x);
+void MON_HLINE(std::uint8_t y, std::uint8_t right, std::uint8_t left);
 
 
 // TODO(asm-port): port NORMAL statement behavior (currently display-mode init stub).
@@ -116,6 +117,14 @@ void MON_PLOT(std::uint8_t y, std::uint8_t x) {
     // Placeholder to preserve PLOT statement call flow until monitor integration.
     (void)y;
     (void)x;
+}
+
+void MON_HLINE(std::uint8_t y, std::uint8_t right, std::uint8_t left) {
+    // TODO(asm-port): port MON_HLINE monitor handler.
+    // Placeholder to preserve HLIN statement call flow until monitor integration.
+    (void)y;
+    (void)right;
+    (void)left;
 }
 
 void COLOR() {
@@ -897,6 +906,26 @@ void PLOT() {
     }
 
     MON_PLOT(yCoord, xCoord);
+}
+
+void HLIN() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: HLIN (inclusive) .. VLIN (exclusive)
+    // Name normalization: none (assembler label HLIN kept verbatim).
+
+    constexpr std::uint8_t kFIRST = ApplesoftVariables::ZP_FIRST;
+    constexpr std::uint8_t kMON_H2 = ApplesoftVariables::ZP_MON_H2;
+    constexpr std::uint8_t kMaxXExclusive = 40u;
+
+    const std::uint8_t yCoord = LINCOOR();
+    const std::uint8_t right = ReadZeroPageByte(kMON_H2);
+    if (right >= kMaxXExclusive) {
+        GOERR();
+        return;
+    }
+
+    const std::uint8_t left = ReadZeroPageByte(kFIRST);
+    MON_HLINE(yCoord, right, left);
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
