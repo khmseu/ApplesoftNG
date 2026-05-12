@@ -1,7 +1,6 @@
 ---
 name: conventional-commits
 description: "Use when writing or reviewing commit messages with the Conventional Commits 1.0.0 specification."
-context: fork
 ---
 
 # Conventional Commits
@@ -23,11 +22,22 @@ This skill covers:
 - SemVer implications of commit types
 - Practical team workflows for linting and changelog/version automation
 
+## Workflow
+
+1. Select files:
+   - If commit of staged files was requested, run `git diff --cached --stat` to see what is staged.
+   - If commit of just performed work was requested (for example with "commit that"), look at the files that were just modified.
+   - If a list of files to commit was given, look at those files.
+   - Otherwise stop and ask for more direction of which files are supposed to be committed.
+2. If no changed files are detected, inform the user. Do not explore or modify files, except for understanding the changes to be committed.
+3. Write a commit message based only on the diff of the selected files.
+4. Run `git commit -m "..."`.
+
 ## Best Practices
 
 ### Message Structure
 
-- Apply rules in this priority order: 1) valid Conventional Commits header syntax, 2) correct breaking-change signaling, 3) body/footer detail for human and automation needs. If priorities conflict, satisfy 1 and 2 first, then add as much body/footer detail as possible without violating 1 or 2.
+- Apply rules in this priority order: 1) valid Conventional Commits header syntax, 2) correct breaking-change signaling, 3) body/footer detail for human and automation needs. Always prioritize 1 and 2; if adding detail would violate them, omit that detail.
 - Use the canonical structure:
 
 ```text
@@ -46,7 +56,7 @@ This skill covers:
 ### Types and Scope
 
 - Use `feat` for new features and `fix` for bug fixes.
-- Use additional types (`docs`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`) from your repository's documented allowlist (for example, in `CONTRIBUTING.md`); if no allowlist exists, use only this listed default set and ensure each commit uses one valid type from it.
+- Use additional types from your repository's documented allowlist (for example, in `CONTRIBUTING.md`). If no allowlist exists, use only this default set: `docs`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`.
 - Use scope as a noun indicating affected subsystem, for example `feat(parser): ...`.
 - Prefer splitting mixed changes into multiple commits rather than forcing one ambiguous type.
 
