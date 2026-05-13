@@ -1,14 +1,21 @@
 #include "core/asm_port_error.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_token_name_table.hpp"
 
 #include <cstdint>
+#include <optional>
+#include <string_view>
 
 namespace applesoft::asm_port {
+
+constexpr std::size_t kTokenCount = 107;
+constexpr std::uint8_t kTokenBase = 0x80u;
 
 std::uint16_t ReadZeroPageWord(std::uint8_t address);
 std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
+void SetTextPointer(std::uint16_t address);
 void MON_WRITE();
 void MON_READ();
 bool SETPTRS();
@@ -36,6 +43,66 @@ bool ISCNTC();
 void CRDO();
 void LINPRT();
 void OUTDO(std::uint8_t value);
+
+struct TokenMatch {
+    std::uint8_t code;
+    std::uint8_t length;
+    std::string_view name;
+};
+
+std::uint8_t read_INPUT_BUFFER(std::uint8_t index) {
+    return variables_const().pointer(0x0200u).read(index);
+}
+
+void write_INPUT_BUFFER_minus_5(std::uint8_t index, std::uint8_t value) {
+    variables().pointer(0x01fbu).write(value, index);
+}
+
+void SetTextPointerToInputBufferMinus1() {
+    // TODO(asm-port): compute the actual INPUT_BUFFER-1 address in the runtime model.
+    SetTextPointer(0x01ffu);
+}
+
+std::optional<TokenMatch> MatchToken(std::uint8_t index) {
+    std::optional<TokenMatch> best;
+
+    for (std::size_t i = 0; i < kTokenCount; ++i) {
+        const std::string_view token = TOKEN_NAME_TABLE(i);
+        if (token.empty()) {
+            continue;
+        }
+
+        std::uint8_t current = index;
+        bool matched = true;
+        for (char expected : token) {
+            if (read_INPUT_BUFFER(current) != static_cast<std::uint8_t>(expected)) {
+                matched = false;
+                break;
+            }
+            ++current;
+        }
+
+        if (!matched) {
+            continue;
+        }
+
+        if (token == "AT") {
+            const std::uint8_t next = read_INPUT_BUFFER(current);
+            if (next == static_cast<std::uint8_t>('N') || next == static_cast<std::uint8_t>('O')) {
+                continue;
+            }
+        }
+
+        const std::uint8_t tokenCode = static_cast<std::uint8_t>(kTokenBase + static_cast<std::uint8_t>(i));
+        if (!best || token.size() > best->length) {
+            best = TokenMatch{tokenCode,
+                              static_cast<std::uint8_t>(token.size()),
+                              token};
+        }
+    }
+
+    return best;
+}
 
 std::uint8_t ScanAheadOffsetForData(std::uint8_t terminator) {
     constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
@@ -207,6 +274,164 @@ void PUTSTR() {
     for (std::uint8_t i = 0; i < 3; ++i) {
         destPtr.write(sourcePtr.read(i), i);
     }
+}
+
+void DeleteExistingLine() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: NUMBERED_LINE delete block (inclusive) .. PUT_NEW_LINE (exclusive)
+    // Name normalization: C++ helper; corresponds to the inline delete block inside
+    // NUMBERED_LINE (T:0471–T:04b5) in the assembler listing.
+
+    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+
+    const std::uint16_t lowtr = ReadZeroPageWord(kLOWTR);
+    const std::uint16_t nextLine = ApplesoftVariables::makeWord(
+        variables_const().readByte(lowtr),
+        variables_const().readByte(static_cast<std::uint16_t>(lowtr + 1u)));
+
+    const std::uint16_t lineSize = static_cast<std::uint16_t>(nextLine - lowtr);
+    const std::uint16_t vartab = ReadZeroPageWord(kVARTAB);
+
+    const std::uint16_t moveCount = static_cast<std::uint16_t>(vartab - nextLine);
+    for (std::uint16_t i = 0; i < moveCount; ++i) {
+        variables().writeByte(
+            static_cast<std::uint16_t>(lowtr + i),
+            variables_const().readByte(static_cast<std::uint16_t>(nextLine + i)));
+    }
+
+    WriteZeroPageWord(kVARTAB, static_cast<std::uint16_t>(vartab - lineSize));
+}
+
+void InsertNewLine() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PUT_NEW_LINE (inclusive) .. FIX_LINKS (exclusive)
+    // Name normalization: C++ helper; corresponds to PUT_NEW_LINE (T:04b5–T:04f2).
+
+    constexpr std::uint16_t kTokenBuf =
+        static_cast<std::uint16_t>(ApplesoftVariables::ADDR_INPUT_BUFFER - 5u);
+    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kSTREND = ApplesoftVariables::ZP_STREND;
+    constexpr std::uint8_t kFRETOP = ApplesoftVariables::ZP_FRETOP;
+    constexpr std::uint8_t kMEMSIZ = ApplesoftVariables::ZP_MEMSIZ;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+
+    if (variables_const().readByte(ApplesoftVariables::ADDR_INPUT_BUFFER) == 0u) {
+        return;
+    }
+
+    WriteZeroPageWord(kFRETOP, ReadZeroPageWord(kMEMSIZ));
+
+    std::uint16_t tokenLen = 0;
+    while (variables_const().readByte(static_cast<std::uint16_t>(kTokenBuf + tokenLen)) != 0u) {
+        ++tokenLen;
+    }
+
+    const std::uint16_t lineSize = static_cast<std::uint16_t>(tokenLen + 5u);
+    const std::uint16_t lowtr = ReadZeroPageWord(kLOWTR);
+    const std::uint16_t vartab = ReadZeroPageWord(kVARTAB);
+
+    for (std::uint16_t i = vartab; i > lowtr; --i) {
+        const std::uint16_t src = static_cast<std::uint16_t>(i - 1u);
+        variables().writeByte(
+            static_cast<std::uint16_t>(src + lineSize),
+            variables_const().readByte(src));
+    }
+
+    const std::uint16_t linnum = ReadZeroPageWord(kLINNUM);
+    variables().writeByte(lowtr, 0u);
+    variables().writeByte(static_cast<std::uint16_t>(lowtr + 1u), 0u);
+    variables().writeByte(static_cast<std::uint16_t>(lowtr + 2u), ApplesoftVariables::lowByte(linnum));
+    variables().writeByte(static_cast<std::uint16_t>(lowtr + 3u), ApplesoftVariables::highByte(linnum));
+
+    for (std::uint16_t i = 0; i <= tokenLen; ++i) {
+        variables().writeByte(
+            static_cast<std::uint16_t>(lowtr + 4u + i),
+            variables_const().readByte(static_cast<std::uint16_t>(kTokenBuf + i)));
+    }
+
+    const std::uint16_t newVartab = static_cast<std::uint16_t>(vartab + lineSize);
+    WriteZeroPageWord(kVARTAB, newVartab);
+    WriteZeroPageWord(kSTREND, newVartab);
+}
+
+void PARSE_INPUT_LINE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PARSE_INPUT_LINE (inclusive) .. FNDLIN (exclusive)
+    // Name normalization: none (assembler label PARSE_INPUT_LINE kept verbatim).
+
+    std::uint8_t inputIndex = 0;
+    std::uint8_t outputIndex = 0;
+    bool inRem = false;
+
+    while (true) {
+        const std::uint8_t ch = read_INPUT_BUFFER(inputIndex);
+        if (ch == 0u) {
+            break;
+        }
+
+        if (inRem) {
+            write_INPUT_BUFFER_minus_5(outputIndex++, ch);
+            ++inputIndex;
+            continue;
+        }
+
+        if (ch == static_cast<std::uint8_t>(' ')) {
+            ++inputIndex;
+            continue;
+        }
+
+        if (ch == static_cast<std::uint8_t>(0x22u)) {
+            write_INPUT_BUFFER_minus_5(outputIndex++, ch);
+            ++inputIndex;
+            while (true) {
+                const std::uint8_t quoteChar = read_INPUT_BUFFER(inputIndex);
+                if (quoteChar == 0u) {
+                    break;
+                }
+                write_INPUT_BUFFER_minus_5(outputIndex++, quoteChar);
+                ++inputIndex;
+                if (quoteChar == static_cast<std::uint8_t>(0x22u)) {
+                    break;
+                }
+            }
+            continue;
+        }
+
+        const auto token = MatchToken(inputIndex);
+        if (token.has_value()) {
+            const TokenMatch match = *token;
+            write_INPUT_BUFFER_minus_5(outputIndex++, match.code);
+
+            if (match.name == "REM") {
+                inputIndex += match.length;
+                inRem = true;
+                continue;
+            }
+
+            inputIndex += match.length;
+            continue;
+        }
+
+        write_INPUT_BUFFER_minus_5(outputIndex++, ch);
+        ++inputIndex;
+    }
+
+    write_INPUT_BUFFER_minus_5(outputIndex, 0u);
+    SetTextPointerToInputBufferMinus1();
+}
+
+void HandleNumberedLine() {
+    LINGET();
+    PARSE_INPUT_LINE();
+
+    if (FNDLIN()) {
+        DeleteExistingLine();
+    }
+
+    InsertNewLine();
+    FIX_LINKS();
 }
 
 void DEL() {
