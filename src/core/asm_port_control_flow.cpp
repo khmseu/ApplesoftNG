@@ -4,6 +4,7 @@
 #include "core/asm_port_gtforpnt.hpp"
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_token_address_table.hpp"
+#include "core/io_ports.hpp"
 
 #include <cstdint>
 #include <string_view>
@@ -72,6 +73,7 @@ std::uint8_t REMN();
 bool FL1(std::uint16_t startAddress);
 void HANDLERR();
 void SetPendingErrorCode(std::uint8_t errorCode);
+void INCHR();
 
 constexpr std::uint8_t kTokenBase = 0x80u;
 
@@ -119,6 +121,18 @@ bool ReturnWasFromPOPContext() {
 
 std::uint8_t PeekTopControlTokenAfterGTFORPNT() {
     return readStackByteAt(ReadStackPointer(), 1u);
+}
+
+bool ISCNTC() {
+    constexpr std::uint8_t kCTRL_C_CODE = 0x83;
+
+    if (ioPorts_const().readByte(IOPorts::ADDR_KEYBOARD) != kCTRL_C_CODE) {
+        return false;
+    }
+
+    INCHR();
+    CONTROL_C_TYPED();
+    return true;
 }
 
 void STOP() {

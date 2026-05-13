@@ -251,7 +251,6 @@ void PushForPntFrame();
 std::uint8_t CHRGOT();
 void LINGET();
 void SYNERR();
-bool ISCNTC();
 void LINPRT();
 void PrintDecimalUnsigned(std::uint16_t value);
 // void OUTDO();
@@ -764,18 +763,6 @@ void STKINI() {
 //     // TODO(asm-port): write the current output character from the Applesoft line
 //     // printer to the console.
 // }
-
-bool ISCNTC() {
-    constexpr std::uint8_t kCTRL_C_CODE = 0x83;
-
-    if (ioPorts_const().readByte(IOPorts::ADDR_KEYBOARD) != kCTRL_C_CODE) {
-        return false;
-    }
-
-    INCHR();
-    CONTROL_C_TYPED();
-    return true;
-}
 
 void PopReturnAddress();
 void PushByteToStack(std::uint8_t value);
