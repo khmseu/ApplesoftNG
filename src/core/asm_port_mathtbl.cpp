@@ -13,6 +13,8 @@
 
 namespace applesoft::asm_port {
 
+void OR();
+
 // ---------------------------------------------------------------------------
 // Stub implementations for math operator handlers not yet ported.
 // ---------------------------------------------------------------------------
@@ -22,8 +24,14 @@ static void FSUBT()  {} // TODO(asm-port): FSUBT  $C9...201...-
 static void FMULTT() {} // TODO(asm-port): FMULTT $CA...202...*
 static void FDIVT()  {} // TODO(asm-port): FDIVT  $CB...203.../
 static void FPWRT()  {} // TODO(asm-port): FPWRT  $CC...204...^
-// static void ANDOP()  {} // TODO(asm-port): ANDOP  $CD...205...AND
-static void OR_op()  {} // TODO(asm-port): OR     $CE...206...OR  (OR_op: OR is a C++ keyword)
+
+void OR_op() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: OR (inclusive) .. ANDOP (exclusive)
+    // Name normalization: OR -> OR_op in MATHTBL dispatch (OR is table label).
+
+    OR();
+}
 static void NEGOP()  {} // TODO(asm-port): NEGOP  $CF...207...>
 static void EQUOP()  {} // TODO(asm-port): EQUOP  $D0...208...=
 static void RELOPS() {} // TODO(asm-port): RELOPS $D1...209...<
