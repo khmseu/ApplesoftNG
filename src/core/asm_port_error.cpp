@@ -205,36 +205,6 @@ void HTAB() {
     variables().writeByte(ApplesoftVariables::ZP_MON_CH, col);
 }
 
-void HGR2() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: HGR2 (inclusive) .. HGR (exclusive)
-    // Name normalization: none (assembler label HGR2 kept verbatim).
-    //
-    // bit SW_HISCR (IOPorts::ADDR_SW_HISCR): soft-switch read selects hi-res page 2.
-    // bit SW_MIXCLR (IOPorts::ADDR_SW_MIXCLR): soft-switch read disables mixed-mode text window.
-    // lda #>$4000; sta HGR_PAGE: set page offset to $40.
-    // jmp SETHPG: shared setup for HGR_PAGE assignment, turn on hi-res, turn on graphics.
-    // TODO(asm-port): implement soft-switch read side-effects and graphics mode setup.
-    // For now, delegate to MON_SETGR as a placeholder; a full implementation would
-    // read soft-switches through IOPorts, set page selection, and call monitor.
-    MON_SETGR();
-}
-
-void HGR() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: HGR (inclusive) .. HCOLOR (exclusive)
-    // Name normalization: none (assembler label HGR kept verbatim).
-    //
-    // lda #>$2000: hi-res page 1 starts at $2000–3FFF.
-    // bit SW_LOWSCR (IOPorts::ADDR_SW_LOWSCR): soft-switch read selects display page 1.
-    // bit SW_MIXSET (IOPorts::ADDR_SW_MIXSET): soft-switch read enables mixed-mode text window.
-    // (Falls through to SETHPG.)
-    // TODO(asm-port): implement soft-switch read side-effects and graphics mode setup.
-    // For now, delegate to MON_SETGR as a placeholder; a full implementation would
-    // read soft-switches through IOPorts, set page selection, and call monitor.
-    MON_SETGR();
-}
-
 void HCOLOR() {
     // TODO(asm-port): port HCOLOR label range from Applesoft ROM.
     // Sets hi-res graphics color.

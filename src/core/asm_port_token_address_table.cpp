@@ -36,8 +36,6 @@ void IN_NUMBER();
 void PLOT();
 void HLIN();
 void VLIN();
-void HGR2();
-void HGR();
 void HCOLOR();
 void HPLOT();
 void DRAW();
@@ -84,8 +82,8 @@ static void CALL_Handler()     { CALL(); }
 static void PLOT_Handler()     { PLOT(); }
 static void HLIN_Handler()     { HLIN(); }
 static void VLIN_Handler()     { VLIN(); }
-static void HGR2_Handler()     { HGR2(); }
-static void HGR_Handler()      { HGR(); }
+static void HGR2_Handler()    { /* TODO(asm-port): HGR2 */ }
+static void HGR_Handler()     { /* TODO(asm-port): HGR */ }
 static void HCOLOR_Handler()   { HCOLOR(); }
 static void HPLOT_Handler()    { HPLOT(); }
 static void DRAW_Handler()     { DRAW(); }
