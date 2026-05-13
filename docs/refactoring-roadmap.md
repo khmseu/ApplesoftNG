@@ -183,15 +183,15 @@ The following describes how `asm_port_error.cpp` should be split into logical, m
 
 - ✅ Document proposed module structure (this file)
 - ✅ Add section comments to `asm_port_error.cpp` identifying logical boundaries
-- ✅ Create stub header files for each proposed module
+- ✅ Create `asm_port_graphics.cpp` and extract first graphics/display slice
 - ✅ Document function-to-module mapping
 
 ### Phase 2: Low-Risk Extraction (Next Iteration)
 
-- Extract graphics functions first (low interdependency with control flow)
-- Create `asm_port_graphics.cpp` with full implementations
-- Update includes and CMakeLists.txt
-- Verify compilation and cross-reference
+- ✅ Extract first graphics/display functions (NORMAL..SPEED and MON\_\* stubs)
+- ⏳ Continue extracting remaining graphics functions (`PLOT`/`HLIN`/`VLIN` and helpers)
+- ✅ Update CMakeLists.txt and build wiring
+- ✅ Verify compilation and cross-reference regeneration
 
 ### Phase 3: Gradual Extraction
 
