@@ -43,8 +43,15 @@ void LOAD_FAC_FROM_YA();
 void FRMNUM();
 void FRMEVL();
 void SIGN();
+void CHKNUM();
+void ApplyFacSign();
+void SetBranchTargetToSTEP();
 void FRM_STACK_2();
+void FRM_STACK_3();
 void PushForPntFrame();
+void PushTextPointerAddress();
+void PushCurrentLineNumber();
+void PushTokenTo(std::uint8_t token);
 std::uint8_t GETBYT();
 void ADDON(std::uint8_t offset);
 bool ISCNTC();
@@ -69,8 +76,10 @@ void GO_TO_LINE();
 void GOTO();
 void POP();
 void RETURN();
+std::uint16_t PTRGET();
 void PULL3();
 std::uint8_t REMN();
+std::uint8_t DATAN();
 bool FL1(std::uint16_t startAddress);
 void HANDLERR();
 void SetPendingErrorCode(std::uint8_t errorCode);
@@ -81,6 +90,7 @@ void MarkDirectMode();
 void PARSE_INPUT_LINE();
 void HandleNumberedLine();
 void CRDO();
+void SETFOR();
 
 constexpr std::uint8_t kTokenBase = 0x80u;
 constexpr std::uint8_t RESTART_PROMPT = ']' | 0x80u;
@@ -109,6 +119,25 @@ struct ProgramPointer {
 std::uint8_t readStackByteAt(std::uint8_t x, std::uint8_t plus) {
     const std::uint8_t offset = static_cast<std::uint8_t>(x + plus);
     return ReadProgramByte(static_cast<std::uint16_t>(0x0100u + offset));
+}
+
+constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
+    return static_cast<std::uint8_t>(lhs + rhs);
+}
+
+std::uint16_t readStackWordAt(std::uint8_t x, std::uint8_t lowOffset, std::uint8_t highOffset) {
+    return ApplesoftVariables::makeWord(readStackByteAt(x, lowOffset), readStackByteAt(x, highOffset));
+}
+
+// TODO(asm-port): port FADD label.
+void FADD() {}
+
+// TODO(asm-port): port FCOMP2 label.
+void FCOMP2() {}
+
+// TODO(asm-port): decide branch condition after comparing FOR value with end value.
+bool NEXT_shouldTerminateLoop() {
+    return false;
 }
 
 bool isDigit(std::uint8_t ch) {
@@ -369,6 +398,117 @@ void ONERR() {
 
     WriteZeroPageWord(kCURLSV, ReadZeroPageWord(kCURLIN));
     ADDON(REMN());
+}
+
+void FOR() {
+    constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
+    constexpr std::uint8_t kTOKEN_TO = 0xc1u;
+
+    WriteZeroPageByte(kSUBFLG, 0x80);
+    LET();
+
+    GTFORPNTState gtforpntState{};
+    for (std::size_t i = 0; i < gtforpntState.stackPage.size(); ++i) {
+        gtforpntState.stackPage[i] =
+            ReadProgramByte(static_cast<std::uint16_t>(0x0100u + i));
+    }
+    const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
+    if (gtforpntResult.found) {
+        SetStackPointer(add_u8(gtforpntResult.x, 15u));
+    }
+
+    PopReturnAddress();
+    PopReturnAddress();
+
+    CHKMEMState chkmemState{};
+    chkmemState.a = 9;
+    chkmemState.stackPointer = ReadStackPointer();
+    const auto chkmemResult = CHKMEM(chkmemState);
+    if (!chkmemResult.ok) {
+        return;
+    }
+
+    DATAN();
+    PushTextPointerAddress();
+    PushCurrentLineNumber();
+    PushTokenTo(kTOKEN_TO);
+    SYNCHR(kTOKEN_TO);
+    CHKNUM();
+    FRMNUM();
+    ApplyFacSign();
+    SetBranchTargetToSTEP();
+    FRM_STACK_3();
+}
+
+void NEXT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: NEXT (inclusive) .. FRMNUM (exclusive)
+    // Name normalization: none (assembler label NEXT kept verbatim).
+
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+
+    // d0 04 / NEXT_1 jsr PTRGET / NEXT_2 sta FORPNT, sty FORPNT+1
+    // No-variable NEXT case is represented by FORPNT+1 = 0.
+    if (CHRGOT() == 0u) {
+        WriteZeroPageByte(add_u8(kFORPNT, 1u), 0u);
+    } else {
+        const std::uint16_t varPtr = PTRGET();
+        WriteZeroPageWord(kFORPNT, varPtr);
+    }
+
+    // jsr GTFORPNT
+    GTFORPNTState gtforpntState{};
+    gtforpntState.forpntLo = ReadZeroPageByte(kFORPNT);
+    gtforpntState.forpntHi = ReadZeroPageByte(add_u8(kFORPNT, 1u));
+    for (std::size_t i = 0; i < gtforpntState.stackPage.size(); ++i) {
+        gtforpntState.stackPage[i] =
+            ReadProgramByte(static_cast<std::uint16_t>(0x0100u + i));
+    }
+
+    const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
+    if (!gtforpntResult.found) {
+        // Ldx #ERR_NOFOR / jmp ERROR via GERR/JERROR path.
+        ERROR(ERR_NOFOR);
+        return;
+    }
+
+    // NEXT_3: txs
+    SetStackPointer(gtforpntResult.x);
+
+    // STEP arithmetic path (LOAD_FAC_FROM_YA / FADD / SETFOR / FCOMP2).
+    // Stack offsets follow ROM comments; helpers are placeholders until stack
+    // memory and FAC math ports are fully wired.
+    LOAD_FAC_FROM_YA();
+    WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, readStackByteAt(gtforpntResult.x, 9u)); // FAC_SIGN
+    WriteZeroPageWord(kFORPNT, ReadZeroPageWord(kFORPNT));
+    FADD();
+    SETFOR();
+    FCOMP2();
+
+    if (!NEXT_shouldTerminateLoop()) {
+        // Restore line/TXTPTR from FOR frame and jump NEWSTT.
+        const std::uint16_t restoredLine = readStackWordAt(gtforpntResult.x, 15u, 16u);
+        const std::uint16_t restoredTextPointer = readStackWordAt(gtforpntResult.x, 18u, 17u);
+        WriteZeroPageWord(kCURLIN, restoredLine);
+        WriteZeroPageWord(kTXTPTR, restoredTextPointer);
+        NEWSTT();
+        return;
+    }
+
+    // L_NEXT_3_2: pop FOR frame, then continue NEWSTT unless another variable
+    // follows in NEXT var-list (NEXT I,J,...).
+    SetStackPointer(add_u8(gtforpntResult.x, 18u));
+
+    if (CHRGOT() != static_cast<std::uint8_t>(',')) {
+        NEWSTT();
+        return;
+    }
+
+    CHRGET();
+    // jsr NEXT_1 (does not return in ROM when comma-separated variables remain).
+    NEXT();
 }
 
 void POP() {
