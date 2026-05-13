@@ -1419,9 +1419,6 @@ void FNCDATA() {
     }
 }
 
-void PARCHK() {
-    // TODO(asm-port): parse "(expression)" - validate open paren, evaluate, validate close.
-}
 
 void STORE_FACDB_YX_ROUNDED() {
     // TODO(asm-port): store 5-byte FAC to address in Y,X with rounding.

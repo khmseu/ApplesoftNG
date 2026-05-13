@@ -87,6 +87,10 @@ void FRMNUM() {
     CHKNUM();
 }
 
+void PARCHK() {
+    // TODO(asm-port): parse "(expression)" - validate open paren, evaluate, validate close.
+}
+
 void CHKCLS() {
     // Check for ')' at current position.
     SYNCHR(static_cast<std::uint8_t>(')'));
