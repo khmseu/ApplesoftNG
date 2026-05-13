@@ -19,6 +19,8 @@ void CONTROL_C_TYPED();
 void HANDLERR();
 void SYNERR();
 void ERRDIR();
+void SYNCHR(std::uint8_t expected);
+void SETDA(std::uint16_t data_ptr);
 
 namespace {
 
@@ -27,9 +29,6 @@ constexpr std::uint16_t kINPUT_BUFFER = ApplesoftVariables::ADDR_INPUT_BUFFER;
 constexpr std::uint16_t kINPUT_BUFFER_PLUS_1 = ApplesoftVariables::ADDR_INPUT_BUFFER + 1u;
 
 std::uint8_t CHRGET_INPUT() { return CHRGET(); }
-
-// TODO(asm-port): port SYNCHR label.
-void SYNCHR(std::uint8_t /*expected*/) {}
 
 // TODO(asm-port): port INLIN label.
 // void INLIN() {}
@@ -54,11 +53,6 @@ void FINDATA() {}
 
 // TODO(asm-port): comma checker used between input variables.
 // void CHKCOM() {}
-
-// TODO(asm-port): DATPTR setter (SETDA label).
-void SETDA(std::uint16_t data_ptr) {
-    variables().DATPTR = data_ptr;
-}
 
 } // namespace
 
