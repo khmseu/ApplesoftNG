@@ -11,9 +11,11 @@ namespace applesoft::asm_port {
 
 std::uint8_t CHRGET();
 std::uint8_t CHRGOT();
+std::uint8_t GETBYT();
 void FRMEVL();
 bool IsDirectMode();
 void RESTART();
+void SYNERR();
 
 void PrintDecimalUnsigned(std::uint16_t value) {
     char digits[5];
@@ -60,10 +62,6 @@ void STROUT(std::string_view text) {
 // TODO(asm-port): port FOUT.
 static void FOUT() {}
 
-// SYNERR: raise a syntax error.
-// TODO(asm-port): port SYNERR.
-static void SYNERR() {}
-
 // HANDLERR: dispatch to the ON ERR handler with error code in X-register.
 // TODO(asm-port): port HANDLERR.
 static void HANDLERR() {}
@@ -72,8 +70,14 @@ static void HANDLERR() {}
 // return the result clamped to a byte (0-255) in the X register equivalent.
 // After this call, CHRGOT() returns the character immediately following the
 // expression (expected to be ')' by the callers in this file).
-// TODO(asm-port): port GTBYTC / GETBYT / CONINT chain.
-static std::uint8_t GTBYTC() { return 0; }
+static std::uint8_t GTBYTC_PRINT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: GTBYTC (inclusive) .. GETBYT (exclusive)
+    // Name normalization: none (assembler label GTBYTC kept verbatim).
+
+    CHRGET();
+    return GETBYT();
+}
 
 // FREFAC: dereference the string descriptor at FAC[3]/FAC[4], optionally
 // release the temporary descriptor, store the data pointer in INDEX, and
@@ -327,7 +331,7 @@ void PR_COMMA() {
 void PR_TAB_OR_SPC(bool is_tab) {
     // php — save carry (is_tab encodes this)
     // jsr GTBYTC — advance, evaluate arg, result clamped to byte in X-reg
-    const std::uint8_t n = GTBYTC();
+    const std::uint8_t n = GTBYTC_PRINT();
 
     // cmp #(")"&$7f) = $29 — check for closing parenthesis
     const std::uint8_t next = CHRGOT();
