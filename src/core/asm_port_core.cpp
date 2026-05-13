@@ -4,6 +4,8 @@
 #include "core/asm_port_memerr.hpp"
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_reason.hpp"
+#include "core/asm_port_chkmem.hpp"
+#include "core/asm_port_mathtbl.hpp"
 #include "core/io_ports.hpp"
 
 #include <array>
@@ -1089,6 +1091,152 @@ void FLOAT() {
     // Labels: FLOAT (inclusive) .. QINT (exclusive)
     // Name normalization: none (assembler label FLOAT kept verbatim).
 }
+
+
+void FRMEVL() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FRMEVL (inclusive) .. FRM_STACK_1 (exclusive)
+    // Name normalization: FRMEVL_1/2 and related sublabels are modeled inline.
+    //
+    // Incremental port note:
+    // This now includes the FRM_RECURSE..FRM_STACK_1 tranche by modeling the
+    // recursive precedence walk and the stacked-LHS frame handoff to ARG/CPRMASK.
+
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kVALTYP = ApplesoftVariables::ZP_VALTYP;
+    constexpr std::uint8_t kCPRTYP = ApplesoftVariables::ZP_CPRTYP;
+    constexpr std::uint8_t kCPRMASK = ApplesoftVariables::ZP_CPRMASK;
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+    constexpr std::uint8_t kARG = ApplesoftVariables::ZP_ARG;
+    constexpr std::uint8_t kSGNCPR = ApplesoftVariables::ZP_STRNG1; // SGNCPR shares $AB with STRNG1.
+    constexpr std::uint8_t kSTACK_ROOM_BYTES = 1u;
+    constexpr std::uint8_t kTOKEN_PLUS = 0xc8u;
+    constexpr std::uint8_t kTOKEN_GREATER = 0xcfu;
+    constexpr std::uint8_t kTOKEN_EQUAL = 0xd0u;
+    constexpr std::uint8_t kTOKEN_LESS = 0xd1u;
+
+    const auto frmevl_eval = [&](auto&& self, std::uint8_t callerPrecedence, bool runEntryBackstep) -> void {
+        // FRMEVL entry point only: back TXTPTR up one byte so FRM_ELEMENT starts
+        // from the current token. Recursive FRMEVL_1 calls skip this backstep.
+        if (runEntryBackstep) {
+            const std::uint16_t txtptr = ReadZeroPageWord(kTXTPTR);
+            WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(txtptr - 1u));
+        }
+
+        // FRMEVL_1 prologue: CHKMEM(1), FRM_ELEMENT.
+        CHKMEMState chkmemState{};
+        chkmemState.a = kSTACK_ROOM_BYTES;
+        if (!CHKMEM(chkmemState).ok) {
+            return;
+        }
+        UNARY();
+        WriteZeroPageByte(kCPRTYP, 0u);
+
+        while (true) {
+            std::uint8_t token = CHRGOT();
+
+            // FRMEVL_2 relational scan: absorb chains of <, =, >.
+            while (token == kTOKEN_GREATER || token == kTOKEN_EQUAL || token == kTOKEN_LESS) {
+                std::uint8_t mask = 0u;
+                if (token == kTOKEN_GREATER) {
+                    mask = 0x01u;
+                } else if (token == kTOKEN_EQUAL) {
+                    mask = 0x02u;
+                } else {
+                    mask = 0x04u;
+                }
+
+                const std::uint8_t existing = ReadZeroPageByte(kCPRTYP);
+                if ((existing & mask) != 0u) {
+                    SYNERR();
+                    return;
+                }
+
+                WriteZeroPageByte(kCPRTYP, static_cast<std::uint8_t>(existing | mask));
+                token = CHRGET();
+            }
+
+            MathTblEntry pendingEntry{};
+            std::uint8_t cprtypForFrame = 0u;
+            bool relationalPath = false;
+
+            if (ReadZeroPageByte(kCPRTYP) != 0u) {
+                // FRM_RELATIONAL: fold string-vs-numeric state into CPRTYP and
+                // treat as MATHTBL M_REL for precedence dispatch.
+                relationalPath = true;
+                const std::uint8_t relFlags = ReadZeroPageByte(kCPRTYP);
+                const bool facIsString = (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u;
+                cprtypForFrame = static_cast<std::uint8_t>((relFlags << 1u) | (facIsString ? 1u : 0u));
+
+                const std::uint16_t txtptr = ReadZeroPageWord(kTXTPTR);
+                WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(txtptr - 1u));
+                pendingEntry = MATHTBL(M_REL_IDX);
+            } else {
+                // NOTMATH/GOEX: stop when the next token is not an infix operator.
+                if (token < kTOKEN_PLUS || token > kTOKEN_LESS) {
+                    return;
+                }
+
+                // FRMEVL_2_3 special-case (+ with string FAC) is CAT in ROM.
+                if (token == kTOKEN_PLUS && (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u) {
+                    // TODO(asm-port): route string concatenation to CAT label implementation.
+                    return;
+                }
+
+                CHKNUM();
+
+                const std::size_t mathIndex = static_cast<std::size_t>(token - kTOKEN_PLUS);
+                if (mathIndex > M_REL_IDX) {
+                    return;
+                }
+                pendingEntry = MATHTBL(mathIndex);
+            }
+
+            // FRM_PRECEDENCE_TEST/PREFNC: defer lower-or-equal precedence work
+            // to the caller stack frame.
+            if (callerPrecedence >= pendingEntry.precedence) {
+                return;
+            }
+
+            // FRM_RECURSE (inclusive) .. FRM_STACK_1 (exclusive): recurse into
+            // FRMEVL_1 while carrying pending operator/precedence state.
+            const std::array<std::uint8_t, 5> lhsFac = {
+                ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 0u)),
+                ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u)),
+                ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u)),
+                ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u)),
+                ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u)),
+            };
+            const std::uint8_t lhsSign = ReadZeroPageByte(kFAC_SIGN);
+
+            if (!relationalPath) {
+                (void)CHRGET();
+            }
+            self(self, pendingEntry.precedence, false);
+
+            // FRM_PERFORM_2 frame handoff: move stacked left operand to ARG and
+            // synthesize CPRMASK/SGNCPR as if popped from the ROM expression stack.
+            WriteZeroPageByte(kCPRMASK, static_cast<std::uint8_t>(cprtypForFrame >> 1u));
+            for (std::uint8_t i = 0; i < lhsFac.size(); ++i) {
+                WriteZeroPageByte(static_cast<std::uint8_t>(kARG + i), lhsFac[i]);
+            }
+            WriteZeroPageByte(static_cast<std::uint8_t>(kARG + 5u), lhsSign);
+            WriteZeroPageByte(kSGNCPR, static_cast<std::uint8_t>(lhsSign ^ ReadZeroPageByte(kFAC_SIGN)));
+
+            if (cprtypForFrame != 0u) {
+                WriteZeroPageByte(kCPRTYP, cprtypForFrame);
+            }
+
+            if (pendingEntry.handler != nullptr) {
+                pendingEntry.handler();
+            }
+        }
+    };
+
+    frmevl_eval(frmevl_eval, 0u, true);
+}
+
 
 
 }  // namespace applesoft::asm_port
