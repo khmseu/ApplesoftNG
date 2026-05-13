@@ -172,22 +172,14 @@ void CHKCOM();
 void CHKOPN();
 void CHKCLS();
 void PDL();
-void NXDIM();
-void DIM();
-void PTRGET2();
 void PTRGET3();
 void BADNAM();
 void NAMOK();
 void BASIC();
 void BASIC2();
-void PTRGET4();
-bool ISLETC();
-void NAME_NOT_FOUND();
-void MAKE_NEW_VARIABLE();
 void FNC_();
 void PARCHK();
 void STORE_FACDB_YX_ROUNDED();
-void SET_VARPNT_AND_YA();
 void GETARY();
 void GETARY2();
 void NEG32768();
@@ -195,7 +187,6 @@ void MAKINT();
 void MKINT();
 void MI1();
 void MI2();
-void ARRAY();
 void SUBERR();
 void IQERR();
 void JER();
@@ -448,17 +439,6 @@ void FRMEVL() {
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: PEEK (inclusive) .. POKE (exclusive)
 // Name normalization: none (assembler label PEEK kept verbatim).
-std::uint16_t PTRGET() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PTRGET (inclusive) .. PTRGET2 (exclusive)
-    // Name normalization: none (assembler label PTRGET kept verbatim).
-
-    CHRGOT();
-    WriteZeroPageByte(ApplesoftVariables::ZP_DIMFLG, 0u); // DIMFLG
-    PTRGET3();
-    return ReadZeroPageWord(ApplesoftVariables::ZP_VARPNT); // VARPNT
-}
-
 void SCREEN() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: SCREEN (inclusive) .. UNARY (exclusive)
@@ -568,130 +548,6 @@ void CMPDONE() {
     FLOAT();
 }
 
-void NXDIM() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: NXDIM (inclusive) .. DIM (exclusive)
-    // Name normalization: none (assembler label NXDIM kept verbatim).
-
-    CHKCOM();
-    DIM();
-}
-
-void DIM() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: DIM (inclusive) .. PTRGET (exclusive)
-    // Name normalization: none (assembler label DIM kept verbatim).
-
-    WriteZeroPageByte(ApplesoftVariables::ZP_DIMFLG, 1u); // DIMFLG non-zero when called from DIM.
-    PTRGET2();
-
-    if (CHRGOT() != 0u) {
-        NXDIM();
-    }
-}
-
-void PTRGET2() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PTRGET2 (inclusive) .. PTRGET3 (exclusive)
-    // Name normalization: none (assembler label PTRGET2 kept verbatim).
-
-    PTRGET3();
-}
-
-void PTRGET3() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PTRGET3 (inclusive) .. BADNAM (exclusive)
-    // Name normalization: none (assembler label PTRGET3 kept verbatim).
-
-    WriteZeroPageByte(ApplesoftVariables::ZP_VARNAM, CHRGOT()); // VARNAM low byte
-    CHRGOT();
-    if (!ISLETC()) {
-        BADNAM();
-        return;
-    }
-
-    NAMOK();
-}
-
-void PTRGET4() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PTRGET4 (inclusive) .. ISLETC (exclusive)
-    // Name normalization: none (assembler label PTRGET4 kept verbatim).
-
-    std::uint8_t current = CHRGET();
-    std::uint8_t secondChar = 0u;
-
-    if ((current >= '0') && (current <= '9')) {
-        secondChar = current;
-        do {
-            current = CHRGET();
-        } while ((current >= '0') && (current <= '9'));
-    } else {
-        if (ISLETC()) {
-            secondChar = current;
-            do {
-                current = CHRGET();
-            } while (((current >= '0') && (current <= '9')) || ISLETC());
-        }
-    }
-
-    if (current == static_cast<std::uint8_t>('$')) {
-        WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP, 0xffu); // VALTYP string
-        current = CHRGET();
-    } else if (current == static_cast<std::uint8_t>('%')) {
-        if ((ReadZeroPageByte(ApplesoftVariables::ZP_SUBFLG) & 0x80u) != 0u) {
-            BADNAM();
-            return;
-        }
-
-        WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP_PLUS_1, 0x80u); // integer mode
-        WriteZeroPageByte(ApplesoftVariables::ZP_VARNAM, static_cast<std::uint8_t>(ReadZeroPageByte(ApplesoftVariables::ZP_VARNAM) | 0x80u));
-        secondChar = static_cast<std::uint8_t>(secondChar | 0x80u);
-        current = CHRGET();
-    }
-
-    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_VARNAM, 1u), secondChar); // VARNAM+1
-
-    const std::uint8_t subflg = ReadZeroPageByte(ApplesoftVariables::ZP_SUBFLG);
-    if (subflg == 0u && current == static_cast<std::uint8_t>('(')) {
-        ARRAY();
-        return;
-    }
-
-    WriteZeroPageByte(ApplesoftVariables::ZP_SUBFLG, 0u); // clear SUBFLG
-    NAME_NOT_FOUND();
-}
-
-void NAME_NOT_FOUND() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: NAME_NOT_FOUND (inclusive) .. C_ZERO (exclusive)
-    // Name normalization: none (assembler label NAME_NOT_FOUND kept verbatim).
-
-    // TODO(asm-port): preserve FRM_VARIABLE_CALL return-address special case.
-    MAKE_NEW_VARIABLE();
-}
-
-void MAKE_NEW_VARIABLE() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: MAKE_NEW_VARIABLE (inclusive) .. SET_VARPNT_AND_YA (exclusive)
-    // Name normalization: none (assembler label MAKE_NEW_VARIABLE kept verbatim).
-
-    const std::uint16_t arytab = ReadZeroPageWord(ApplesoftVariables::ZP_ARYTAB);
-    WriteZeroPageWord(ApplesoftVariables::ZP_LOWTR, arytab); // LOWTR <- ARYTAB
-
-    // TODO(asm-port): port BLTU movement of array block.
-    SET_VARPNT_AND_YA();
-}
-
-void SET_VARPNT_AND_YA() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: SET_VARPNT_AND_YA (inclusive) .. GETARY (exclusive)
-    // Name normalization: none (assembler label SET_VARPNT_AND_YA kept verbatim).
-
-    const ProgramPointer lowtr{ReadZeroPageWord(ApplesoftVariables::ZP_LOWTR)};
-    WriteZeroPageWord(ApplesoftVariables::ZP_VARPNT, lowtr.advanced(2u).address); // VARPNT
-}
-
 void AYINT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: AYINT (inclusive) .. MI1 (exclusive)
@@ -709,20 +565,6 @@ void AYINT() {
     }
 
     MI2();
-}
-
-void ARRAY() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ARRAY (inclusive) .. SUBERR (exclusive)
-    // Name normalization: none (assembler label ARRAY kept verbatim).
-
-    if (ReadZeroPageByte(ApplesoftVariables::ZP_SUBFLG) != 0u) {
-        USE_OLD_ARRAY();
-        return;
-    }
-
-    // TODO(asm-port): complete subscript-list parsing and array-table scan.
-    MAKE_NEW_ARRAY();
 }
 
 void FRE() {
