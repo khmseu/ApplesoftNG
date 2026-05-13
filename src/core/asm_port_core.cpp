@@ -31,6 +31,17 @@ bool ISLETC();
 void NAMOK();
 void NXDIM();
 void ARRAY();
+void MI1();
+void MI2();
+void CMPDONE();
+std::int8_t FCOMP(std::uint16_t argAddress);
+void FLOAT();
+void GOTO();
+void NEWSTT();
+extern std::int8_t gNumericCompareResult;
+extern bool gNumericCompareCarry;
+extern std::uint8_t gFloatInput;
+extern std::uint8_t gPendingErrorCode;
 
 void SetTextPointer(std::uint16_t address) {
     variables().writeWord(ApplesoftVariables::ZP_TXTPTR, address);
@@ -643,6 +654,94 @@ void PTRGET4() {
 
     WriteZeroPageByte(ApplesoftVariables::ZP_SUBFLG, 0u); // clear SUBFLG
     NAME_NOT_FOUND();
+}
+
+
+void SetPendingErrorCode(std::uint8_t errorCode) {
+    gPendingErrorCode = errorCode;
+}
+
+
+void NUMCMP() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: NUMCMP (inclusive) .. CMPDONE (exclusive)
+    // Name normalization: none (assembler label NUMCMP kept verbatim).
+
+    // ROM reaches CMPDONE with C set only when compare result was negative.
+    gNumericCompareCarry = (gNumericCompareResult < 0);
+    CMPDONE();
+}
+
+
+void CMPDONE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: CMPDONE (inclusive) .. PDL (exclusive)
+    // Name normalization: none (assembler label CMPDONE kept verbatim).
+
+    constexpr std::uint8_t kCPRMASK = ApplesoftVariables::ZP_CPRMASK;
+
+    std::int16_t x = static_cast<std::int16_t>(gNumericCompareResult) + 1;
+    if (x < 0) {
+        x = 0;
+    }
+
+    std::uint8_t a = static_cast<std::uint8_t>(x & 0xff);
+    a = static_cast<std::uint8_t>((a << 1) | (gNumericCompareCarry ? 1u : 0u));
+    a = static_cast<std::uint8_t>(a & ReadZeroPageByte(kCPRMASK));
+
+    gFloatInput = (a == 0u) ? 0u : 1u;
+    SNGFLT(gFloatInput);
+    FLOAT();
+}
+
+
+void AYINT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: AYINT (inclusive) .. MI1 (exclusive)
+    // Name normalization: none (assembler label AYINT kept verbatim).
+
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_FAC) < 0x90u) {
+        MI2();
+        return;
+    }
+
+    NEG32768();
+    if (FCOMP(0x0062u) != 0) {
+        MI1();
+        return;
+    }
+
+    MI2();
+}
+
+
+void HANDLERR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: HANDLERR (inclusive) .. RESUME (exclusive)
+    // Name normalization: none (assembler label HANDLERR kept verbatim).
+    constexpr std::uint8_t kERRNUM = ApplesoftVariables::ZP_ERRNUM;
+    constexpr std::uint8_t kERRLIN = ApplesoftVariables::ZP_ERRLIN;
+    constexpr std::uint8_t kERRPOS = ApplesoftVariables::ZP_ERRPOS;
+    constexpr std::uint8_t kERRSTK = ApplesoftVariables::ZP_ERRSTK;
+    constexpr std::uint8_t kTXTPSV = ApplesoftVariables::ZP_TXTPSV;
+    constexpr std::uint8_t kCURLSV = ApplesoftVariables::ZP_CURLSV;
+    constexpr std::uint8_t kREMSTK = ApplesoftVariables::ZP_REMSTK;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    constexpr std::uint8_t kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+
+    WriteZeroPageByte(kERRNUM, gPendingErrorCode);
+    WriteZeroPageByte(kERRSTK, ReadZeroPageByte(kREMSTK));
+
+    WriteZeroPageWord(kERRLIN, ReadZeroPageWord(kCURLIN));
+    WriteZeroPageWord(kERRPOS, ReadZeroPageWord(kOLDTEXT));
+
+    WriteZeroPageWord(kTXTPTR, ReadZeroPageWord(kTXTPSV));
+    WriteZeroPageWord(kCURLIN, ReadZeroPageWord(kCURLSV));
+
+    CHRGOT();
+    GOTO();
+    NEWSTT();
 }
 
 
