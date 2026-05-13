@@ -8,6 +8,8 @@
 
 #include "core/asm_port_unfnc.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_error.hpp"
+#include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_strlit.hpp"
 #include "core/asm_port_strlt2.hpp"
 
@@ -21,6 +23,7 @@ void SNGFLT(std::uint8_t value);
 void GIVAYF(std::int16_t value);
 void FRE();
 void PEEK();
+void ERROR(std::uint8_t error_code_offset);
 
 void PDL() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -69,7 +72,13 @@ void FRE_fn() {
 
     FRE();
 }
-static void ERROR()    {} // TODO(asm-port): ERROR/SCRN $D7...215  (SCRN( token dispatches to ERROR handler)
+void ERROR_fn() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: UNDFNC (inclusive) .. DEF (exclusive)
+    // Name normalization: ERROR_fn used for UNFNC table entry $D7 (SCRN().
+
+    ERROR(ERR_UNDEFFUNC);
+}
 static void PDL_fn()   { PDL(); }
 void POS() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -107,7 +116,7 @@ UNFNC_fn UNFNC(std::size_t index) {
         ABS,      // [2]  $D4...212...ABS
         USR,      // [3]  $D5...213...USR
         FRE_fn,   // [4]  $D6...214...FRE
-        ERROR,    // [5]  $D7...215...SCRN(
+        ERROR_fn, // [5]  $D7...215...SCRN(
         PDL_fn,   // [6]  $D8...216...PDL
         POS,      // [7]  $D9...217...POS
         SQR,      // [8]  $DA...218...SQR
