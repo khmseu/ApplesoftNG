@@ -20,6 +20,8 @@ constexpr std::uint8_t kCZeroData[2] = {0x00u, 0x00u};
 void GETARY();
 void GETARY2();
 void FIND_ARRAY_ELEMENT();
+void ERROR(std::uint8_t error_code_offset);
+std::uint16_t MULTIPLY_SUBS_1(std::uint8_t multiplierHigh);
 
 void SetTextPointer(std::uint16_t address) {
     variables().writeWord(ApplesoftVariables::ZP_TXTPTR, address);
@@ -308,6 +310,112 @@ void C_ZERO() {
 
     WriteZeroPageByte(ApplesoftVariables::ZP_RESULT, kCZeroData[0]);
     WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 1u), kCZeroData[1]);
+}
+
+
+void USE_OLD_ARRAY() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: USE_OLD_ARRAY (inclusive) .. MAKE_NEW_ARRAY (exclusive)
+    // Name normalization: none (assembler label USE_OLD_ARRAY kept verbatim).
+
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_DIMFLG) != 0u) {
+        gJerErrorCode = ERR_REDIMD;
+        JER();
+        return;
+    }
+
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_SUBFLG) == 0u) {
+        GETARY();
+        FIND_ARRAY_ELEMENT();
+    }
+}
+
+void MAKE_NEW_ARRAY() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: MAKE_NEW_ARRAY (inclusive) .. FIND_ARRAY_ELEMENT (exclusive)
+    // Name normalization: none (assembler label MAKE_NEW_ARRAY kept verbatim).
+
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_SUBFLG) != 0u) {
+        ERROR(ERR_NODATA);
+        return;
+    }
+
+    GETARY();
+
+    // TODO(asm-port): complete dynamic allocation, descriptor population, and zeroing.
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_DIMFLG) == 0u) {
+        FIND_ARRAY_ELEMENT();
+    }
+}
+
+void FIND_ARRAY_ELEMENT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FIND_ARRAY_ELEMENT (inclusive) .. FAE_1 (exclusive)
+    // Name normalization: none (assembler label FIND_ARRAY_ELEMENT kept verbatim).
+
+    WriteZeroPageByte(ApplesoftVariables::ZP_NUMDIM, ReadZeroPageByte(ApplesoftVariables::ZP_NUMDIM)); // TODO(asm-port): fetch #dims from descriptor pointer.
+    WriteZeroPageWord(ApplesoftVariables::ZP_STRNG2, 0u); // STRNG2 accumulator
+    FAE_1();
+}
+
+std::uint16_t MULTIPLY_SUBSCRIPT(std::uint8_t descriptorOffset) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: MULTIPLY_SUBSCRIPT (inclusive) .. MULTIPLY_SUBS_1 (exclusive)
+    // Name normalization: none (assembler label MULTIPLY_SUBSCRIPT kept verbatim).
+    // Load the 16-bit array-dimension multiplier from the LOWTR descriptor pointer.
+
+    WriteZeroPageByte(ApplesoftVariables::ZP_INDEX, descriptorOffset);
+
+    const ProgramPointer descriptor{ReadZeroPageWord(ApplesoftVariables::ZP_LOWTR)};
+    WriteZeroPageByte(
+        static_cast<std::uint8_t>(ApplesoftVariables::ZP_RESULT + 2u),
+        descriptor.read(descriptorOffset));
+
+    return MULTIPLY_SUBS_1(descriptor.read(static_cast<std::uint16_t>(descriptorOffset - 1u)));
+}
+
+std::uint16_t MULTIPLY_SUBS_1(std::uint8_t multiplierHigh) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: MULTIPLY_SUBS_1 (inclusive) .. FRE (exclusive)
+    // Name normalization: none (assembler label MULTIPLY_SUBS_1 kept verbatim).
+    // STRNG2 is dual-use elsewhere, but in this slice it is the 16-bit multiplicand.
+
+    WriteZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_RESULT + 3u), multiplierHigh);
+    WriteZeroPageByte(ApplesoftVariables::ZP_INDX, 16u);
+
+    const std::uint16_t multiplier = ApplesoftVariables::makeWord(
+        ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_RESULT + 2u)),
+        multiplierHigh);
+
+    std::uint16_t multiplicand = ReadZeroPageWord(ApplesoftVariables::ZP_STRNG2);
+    std::uint16_t product = 0u;
+
+    for (std::uint8_t bitsRemaining = 16u; bitsRemaining > 0u; --bitsRemaining) {
+        if ((product & 0x8000u) != 0u) {
+            GME();
+            return product;
+        }
+
+        product = static_cast<std::uint16_t>(product << 1u);
+
+        const bool nextBitSet = (multiplicand & 0x8000u) != 0u;
+        multiplicand = static_cast<std::uint16_t>(multiplicand << 1u);
+        WriteZeroPageWord(ApplesoftVariables::ZP_STRNG2, multiplicand);
+
+        if (!nextBitSet) {
+            continue;
+        }
+
+        if (product > static_cast<std::uint16_t>(0xffffu - multiplier)) {
+            GME();
+            return product;
+        }
+
+        product = static_cast<std::uint16_t>(product + multiplier);
+    }
+
+    WriteZeroPageByte(ApplesoftVariables::ZP_INDX, 0u);
+    return product;
 }
 
 }  // namespace applesoft::asm_port
