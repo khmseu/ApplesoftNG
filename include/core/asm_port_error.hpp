@@ -10,6 +10,9 @@ namespace applesoft::asm_port {
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
 
+inline constexpr std::uint8_t kNEG32768Data[4] = {0x90u, 0x80u, 0x00u, 0x00u};
+inline constexpr std::uint8_t kCZeroData[2] = {0x00u, 0x00u};
+
 struct ProgramPointer {
     std::uint16_t address = 0;
 
@@ -35,6 +38,7 @@ void CONINT();
 std::uint8_t GETBYT();
 void GTBYTC();
 void SNGFLT(std::uint8_t value);
+void NEG32768();
 
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: ANDOP (inclusive) .. FALSE (exclusive)

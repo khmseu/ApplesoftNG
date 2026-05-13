@@ -321,6 +321,19 @@ bool CHKVAL(std::uint8_t savedValTyp) {
     return facIsString;
 }
 
+void NEG32768() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: NEG32768 (inclusive) .. MAKINT (exclusive)
+    // Name normalization: none (assembler label NEG32768 kept verbatim).
+
+    constexpr std::uint8_t kResult = ApplesoftVariables::ZP_RESULT;
+
+    WriteZeroPageByte(kResult, kNEG32768Data[0]);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kResult + 1u), kNEG32768Data[1]);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kResult + 2u), kNEG32768Data[2]);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kResult + 3u), kNEG32768Data[3]);
+}
+
 void MAKINT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: MAKINT (inclusive) .. MKINT (exclusive)

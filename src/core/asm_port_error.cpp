@@ -180,9 +180,6 @@ void BASIC2();
 void FNC_();
 void PARCHK();
 void STORE_FACDB_YX_ROUNDED();
-void GETARY();
-void GETARY2();
-void NEG32768();
 void MAKINT();
 void MKINT();
 void MI1();
@@ -211,8 +208,6 @@ std::uint8_t gFloatInput = 0;
 std::uint8_t gPendingErrorCode = ERR_SYNTAX;
 
 std::uint8_t gJerErrorCode = ERR_SYNTAX;
-constexpr std::uint8_t kNEG32768Data[4] = {0x90u, 0x80u, 0x00u, 0x00u};
-constexpr std::uint8_t kCZeroData[2] = {0x00u, 0x00u};
 
 
 // void OUTDO() {
