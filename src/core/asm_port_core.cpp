@@ -1076,4 +1076,12 @@ void FNCDATA() {
 }
 
 
+void FLOAT_1(std::uint8_t exponent) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FLOAT_1 (inclusive) .. FLOAT_2 (exclusive)
+    // Name normalization: none (assembler label FLOAT_1 kept verbatim).
+    WriteZeroPageByte(ApplesoftVariables::ZP_FAC, exponent);
+}
+
+
 }  // namespace applesoft::asm_port

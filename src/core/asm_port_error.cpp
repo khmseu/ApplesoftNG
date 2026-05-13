@@ -225,10 +225,6 @@ std::int8_t FCOMP(std::uint16_t /*argAddress*/) {
 void FLOAT() {}
 
 // TODO(asm-port): port FLOAT_1 label.
-void FLOAT_1(std::uint8_t exponent) {
-    WriteZeroPageByte(ApplesoftVariables::ZP_FAC, exponent);
-}
-
 std::uint8_t gPendingErrorCode = ERR_SYNTAX;
 
 // TODO(asm-port): compare temporary ARG and FAC strings and return -1/0/1.
