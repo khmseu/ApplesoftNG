@@ -1522,14 +1522,6 @@ void DATA() {
     ADDON(offset);
 }
 
-void MON_WRITE() {
-    // TODO(asm-port): port monitor tape write handler used by SAVE.
-}
-
-void MON_READ() {
-    // TODO(asm-port): port monitor tape read handler used by LOAD.
-}
-
 void PushForPntFrame() {
     constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
     PushByteToStack(ReadZeroPageByte(add_u8(kFORPNT, 1u)));

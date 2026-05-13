@@ -107,4 +107,12 @@ void PROGIO() {
     (void)kMON_A2H;
 }
 
+void MON_WRITE() {
+    // TODO(asm-port): port monitor tape write handler used by SAVE.
+}
+
+void MON_READ() {
+    // TODO(asm-port): port monitor tape read handler used by LOAD.
+}
+
 }  // namespace applesoft::asm_port
