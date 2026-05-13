@@ -16,6 +16,7 @@ std::uint8_t ReadProgramByte(std::uint16_t address);
 void SYNERR();
 void FRMNUM();
 void CONINT();
+void MKINT();
 std::uint8_t COMBYTE();
 void GETADR();
 void IQERR();
@@ -143,6 +144,28 @@ std::uint8_t GETBYT() {
     FRMNUM();
     CONINT();
     return ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 4u));
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: CONINT (inclusive) .. VAL (exclusive)
+// Name normalization: none (assembler label CONINT kept verbatim).
+//
+// Convert FAC to a single-byte integer (0-255) in FAC+4.
+//   jsr MKINT      -- truncate FAC to integer
+//   ldx FAC+3      -- high byte must be zero (else >255)
+//   bne GOIQ       -- illegal quantity
+//   ldx FAC+4      -- result byte in X (FAC+4 = low byte)
+//   jmp CHRGOT     -- refresh A with current input char and return
+void CONINT() {
+    MKINT();
+    const std::uint8_t facHi = ReadZeroPageByte(
+        static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 3u));
+    if (facHi != 0u) {
+        IQERR();  // GOIQ: jmp IQERR -- value > 255
+        return;
+    }
+    // FAC+4 already holds the result byte after MKINT.
+    (void)CHRGOT();
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
