@@ -39,6 +39,7 @@ set(SOURCES
     src/core/asm_port_memerr.cpp
     src/core/io_ports.cpp
     src/core/applesoft_variables.cpp
+    src/core/asm_port_core.cpp
     src/core/asm_port_error.cpp
     src/core/asm_port_graphics.cpp
     src/core/asm_port_parser.cpp

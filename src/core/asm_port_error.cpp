@@ -27,10 +27,16 @@ bool isDigit(std::uint8_t ch) {
     return ch >= '0' && ch <= '9';
 }
 
+void SetTextPointer(std::uint16_t address);
+void ClearErrFlag();
+void MarkDirectMode();
 std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 std::uint16_t ReadZeroPageWord(std::uint8_t address);
+constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
+    return static_cast<std::uint8_t>(lhs + rhs);
+}
 void SetStackPointer(std::uint8_t value);
 void PushByteToStack(std::uint8_t value);
 
@@ -171,46 +177,9 @@ void COLD_START() {
     RESTART();
 }
 
-void SetTextPointer(std::uint16_t address) {
-    variables().writeWord(ApplesoftVariables::ZP_TXTPTR, address);
-}
-
-void ClearErrFlag() {
-    variables().writeByte(ApplesoftVariables::ZP_ERRFLG, 0);
-}
-
-void MarkDirectMode() {
-    variables().writeByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_CURLIN + 1u), 0xffu);
-}
-
-std::uint8_t ReadZeroPageByte(std::uint8_t address);
-void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
-void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
-std::uint16_t ReadZeroPageWord(std::uint8_t address);
-constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs);
 std::uint8_t CHRGOT();
 void LINGET();
 void SYNERR();
-
-std::uint8_t ReadZeroPageByte(std::uint8_t address) {
-    return variables_const().readByte(address);
-}
-
-void WriteZeroPageByte(std::uint8_t address, std::uint8_t value) {
-    variables().writeByte(address, value);
-}
-
-void WriteZeroPageWord(std::uint8_t address, std::uint16_t value) {
-    variables().writeWord(address, value);
-}
-
-std::uint16_t ReadZeroPageWord(std::uint8_t address) {
-    return variables_const().readWord(address);
-}
-
-constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
-    return static_cast<std::uint8_t>(lhs + rhs);
-}
 
 void RESTORE();
 void SETDA(std::uint16_t dataPointer);
@@ -2172,15 +2141,6 @@ void MON_WRITE() {
 
 void MON_READ() {
     // TODO(asm-port): port monitor tape read handler used by LOAD.
-}
-
-void SYNERR() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: SYNERR (inclusive) .. ERROR (exclusive)
-    // Name normalization: none (assembler label SYNERR kept verbatim).
-    // ROM sequence is `ldx #ERR_SYNTAX` followed by an unconditional transfer
-    // into ERROR. In C++, dispatch directly with the syntax error code.
-    ERROR(ERR_SYNTAX);
 }
 
 void PushForPntFrame() {

@@ -239,4 +239,13 @@ void SETDA(std::uint16_t dataPointer) {
     WriteZeroPageWord(kDATPTR, dataPointer);
 }
 
+void SYNERR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SYNERR (inclusive) .. ERROR (exclusive)
+    // Name normalization: none (assembler label SYNERR kept verbatim).
+    // ROM sequence is `ldx #ERR_SYNTAX` followed by an unconditional transfer
+    // into ERROR. In C++, dispatch directly with the syntax error code.
+    ERROR(ERR_SYNTAX);
+}
+
 }  // namespace applesoft::asm_port
