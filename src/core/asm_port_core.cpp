@@ -34,8 +34,21 @@ void ARRAY();
 void MI1();
 void MI2();
 void CMPDONE();
+void NUMCMP();
+void PLOTFNS();
+void SYNCHR(std::uint8_t expected);
+void CHKNUM();
+void FRMEVL();
+void STRCMP();
 std::int8_t FCOMP(std::uint16_t argAddress);
 void FLOAT();
+void FLOAT_1(std::uint8_t exponent);
+bool CHKVAL(std::uint8_t savedValTyp);
+std::uint8_t MON_SCRN(std::uint8_t row, std::uint8_t column);
+std::uint8_t FREFAC();
+std::uint8_t FRETMP(std::uint16_t descriptorAddress);
+void GARBAG();
+std::int8_t CompareArgAndFacStrings();
 void GOTO();
 void NEWSTT();
 extern std::int8_t gNumericCompareResult;
@@ -742,6 +755,127 @@ void HANDLERR() {
     CHRGOT();
     GOTO();
     NEWSTT();
+}
+
+
+void SCREEN() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SCREEN (inclusive) .. UNARY (exclusive)
+    // Name normalization: none (assembler label SCREEN kept verbatim).
+
+    constexpr std::uint8_t kFIRST = ApplesoftVariables::ZP_FIRST;
+
+    CHRGET();
+    PLOTFNS();
+
+    // PLOTFNS returns row in X and column in FIRST in ROM.
+    const std::uint8_t row = ReadZeroPageByte(kFIRST);
+    const std::uint8_t column = ReadZeroPageByte(kFIRST);
+    const std::uint8_t color = MON_SCRN(row, column);
+
+    SNGFLT(color);
+    SYNCHR(static_cast<std::uint8_t>(')'));
+}
+
+
+void UNARY() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: UNARY (inclusive) .. OR (exclusive)
+    // Name normalization: none (assembler label UNARY kept verbatim).
+
+    constexpr std::uint8_t kTOKEN_SCRN = 0xd7u;
+
+    if (CHRGOT() == kTOKEN_SCRN) {
+        // ROM branches back to SCREEN for SCRN(.
+        SCREEN();
+        return;
+    }
+
+    CHRGET();
+
+    // TODO(asm-port): complete unary-function dispatch through UNFNC/JMPADRS.
+    FRMEVL();
+    CHKNUM();
+}
+
+
+void RELOPS() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: RELOPS (inclusive) .. STRCMP (exclusive)
+    // Name normalization: none (assembler label RELOPS kept verbatim).
+
+    constexpr std::uint8_t kCPRTYP = ApplesoftVariables::ZP_CPRTYP;
+    constexpr std::uint16_t kARG = ApplesoftVariables::ZP_ARG;
+
+    const std::uint8_t compareTypeFlags = ReadZeroPageByte(kCPRTYP);
+    if (CHKVAL(compareTypeFlags)) {
+        // Carry set in ROM indicates string compare path.
+        STRCMP();
+        return;
+    }
+
+    gNumericCompareResult = FCOMP(kARG);
+    gNumericCompareCarry = gNumericCompareResult >= 0;
+    NUMCMP();
+}
+
+
+void STRCMP() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: STRCMP (inclusive) .. NUMCMP (exclusive)
+    // Name normalization: none (assembler label STRCMP kept verbatim).
+
+    constexpr std::uint8_t kVALTYP = ApplesoftVariables::ZP_VALTYP;
+    constexpr std::uint8_t kCPRTYP = ApplesoftVariables::ZP_CPRTYP;
+
+    WriteZeroPageByte(kVALTYP, 0u);
+    WriteZeroPageByte(kCPRTYP, static_cast<std::uint8_t>(ReadZeroPageByte(kCPRTYP) - 1u));
+
+    FREFAC();
+    (void)FRETMP(ReadZeroPageWord(ApplesoftVariables::ZP_DSCPTR));
+
+    gNumericCompareResult = CompareArgAndFacStrings();
+    gNumericCompareCarry = gNumericCompareResult >= 0;
+    NUMCMP();
+}
+
+
+void FRE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FRE (inclusive) .. GIVAYF (exclusive)
+    // Name normalization: none (assembler label FRE kept verbatim).
+    // FRETOP and STREND are one logical address pair each; model the subtraction
+    // as one 16-bit free-space computation before floating the signed result.
+
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_VALTYP) != 0u) {
+        (void)FREFAC();
+    }
+
+    GARBAG();
+
+    const std::uint16_t fretop = ReadZeroPageWord(ApplesoftVariables::ZP_FRETOP);
+    const std::uint16_t strend = ReadZeroPageWord(ApplesoftVariables::ZP_STREND);
+    const std::uint16_t freeSpace = static_cast<std::uint16_t>(fretop - strend);
+    GIVAYF(static_cast<std::int16_t>(freeSpace));
+}
+
+
+void GIVAYF(std::int16_t value) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: GIVAYF (inclusive) .. POS (exclusive)
+    // Name normalization: none (assembler label GIVAYF kept verbatim).
+    // The A/Y pair is one signed 16-bit integer on entry; represent it as one
+    // C++ value instead of split low/high byte locals.
+
+    const std::uint16_t rawValue = static_cast<std::uint16_t>(value);
+
+    WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP, 0u);
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 1u), ApplesoftVariables::lowByte(rawValue));
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 2u), ApplesoftVariables::highByte(rawValue));
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 3u), 0u);
+    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_FAC, 4u), 0u);
+
+    FLOAT_1(0x90u);
 }
 
 
