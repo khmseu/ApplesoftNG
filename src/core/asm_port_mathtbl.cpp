@@ -14,6 +14,7 @@
 namespace applesoft::asm_port {
 
 void OR();
+void RELOPS();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for math operator handlers not yet ported.
@@ -34,7 +35,6 @@ void OR_op() {
 }
 static void NEGOP()  {} // TODO(asm-port): NEGOP  $CF...207...>
 static void EQUOP()  {} // TODO(asm-port): EQUOP  $D0...208...=
-static void RELOPS() {} // TODO(asm-port): RELOPS $D1...209...<
 
 // ---------------------------------------------------------------------------
 // Math operator table: precedence + handler for tokens $C8-$D1.
@@ -51,7 +51,7 @@ MathTblEntry MATHTBL(std::size_t index) {
         { P_OR,  OR_op  }, // [6]        $CE...206...OR
         { P_NEQ, NEGOP  }, // [7] M_NEG  $CF...207...>
         { P_NEQ, EQUOP  }, // [8] MEQUU  $D0...208...=
-        { P_REL, RELOPS }, // [9] M_REL  $D1...209...<
+        { P_REL, RELOPS }, // [9] M_REL  $D1...209...< (dispatches to core RELOPS)
     };
     return table[index];
 }
