@@ -228,12 +228,10 @@ struct ProgramPointer {
     }
 };
 
-std::uint8_t gStackPointer = 0xffu;
-bool gReturnFromPopContext = false;
+void SetStackPointer(std::uint8_t value);
+std::uint8_t ReadStackPointer();
 
-void SetStackPointer(std::uint8_t value) {
-    gStackPointer = value;
-}
+bool gReturnFromPopContext = false;
 
 bool IsStatementEndOfParsedInput() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -1371,50 +1369,13 @@ bool ISCNTC() {
     return true;
 }
 
-std::uint8_t ReadStackPointer() {
-    return gStackPointer;
-}
-
-void PopReturnAddress() {
-    (void)PopByteFromStack();
-    (void)PopByteFromStack();
-}
-
-void PushByteToStack(std::uint8_t value) {
-    WriteProgramByte(static_cast<std::uint16_t>(0x0100u + ReadStackPointer()), value);
-    SetStackPointer(static_cast<std::uint8_t>(ReadStackPointer() - 1u));
-}
-
-void PushWordToStack(std::uint16_t value) {
-    // Push word big-endian (hi first) per 6502 stack convention.
-    PushByteToStack(ApplesoftVariables::highByte(value));
-    PushByteToStack(ApplesoftVariables::lowByte(value));
-}
-
-std::uint16_t PopWordFromStack() {
-    // Pop word in reverse order: lo byte popped first, then hi.
-    const std::uint8_t lo = PopByteFromStack();
-    const std::uint8_t hi = PopByteFromStack();
-    return ApplesoftVariables::makeWord(lo, hi);
-}
-
-void PushTextPointerAddress() {
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    const std::uint16_t textPointer = ReadZeroPageWord(kTXTPTR);
-    PushByteToStack(ApplesoftVariables::highByte(textPointer));
-    PushByteToStack(ApplesoftVariables::lowByte(textPointer));
-}
-
-void PushCurrentLineNumber() {
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
-    PushByteToStack(ApplesoftVariables::highByte(currentLine));
-    PushByteToStack(ApplesoftVariables::lowByte(currentLine));
-}
-
-void PushTokenTo(std::uint8_t token) {
-    PushByteToStack(token);
-}
+void PopReturnAddress();
+void PushByteToStack(std::uint8_t value);
+void PushWordToStack(std::uint16_t value);
+std::uint16_t PopWordFromStack();
+void PushTextPointerAddress();
+void PushCurrentLineNumber();
+void PushTokenTo(std::uint8_t token);
 
 void ApplyFacSign() {
     // TODO(asm-port): update FAC+1 with the signed value produced by FRMNUM.
@@ -2027,11 +1988,6 @@ bool FL1(std::uint16_t startAddress) {
 
 bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
     return FL1(ApplesoftVariables::makeWord(startLo, startHi));
-}
-
-std::uint8_t PopByteFromStack() {
-    SetStackPointer(static_cast<std::uint8_t>(ReadStackPointer() + 1u));
-    return ReadProgramByte(static_cast<std::uint16_t>(0x0100u + ReadStackPointer()));
 }
 
 bool ReturnWasFromPOPContext() {

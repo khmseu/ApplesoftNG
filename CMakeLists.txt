@@ -44,6 +44,7 @@ set(SOURCES
     src/core/asm_port_graphics.cpp
     src/core/asm_port_parser.cpp
     src/core/asm_port_print.cpp
+    src/core/asm_port_stack.cpp
 )
 
 # Add executable
