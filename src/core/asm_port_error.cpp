@@ -548,37 +548,6 @@ void PRINT_ERROR_LINNUM(std::string_view prefix) {
     RESTART();
 }
 
-void RUN() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: RUN (inclusive) .. GOSUB (exclusive)
-    // Name normalization: none (assembler label RUN kept verbatim).
-    //
-    // Executes the "RUN" command:
-    // - Modifies CURLIN+1 to mark running mode (converts $FF direct mode to $FE)
-    // - If no line number specified: starts execution at beginning of program (SETPTRS)
-    // - If line number specified: clears variables (CLEARC) then searches for and jumps to that line
-
-    constexpr std::uint8_t kCURLIN_hi = add_u8(ApplesoftVariables::ZP_CURLIN, 1u);
-
-    // Decrement CURLIN+1 to mark as running (6502: dec CURLIN+1)
-    std::uint8_t curlinHi = ReadZeroPageByte(kCURLIN_hi);
-    WriteZeroPageByte(kCURLIN_hi, static_cast<std::uint8_t>(curlinHi - 1));
-    
-    // Check if there's a line number argument following RUN
-    // (CHRGET sets Z flag if no more input; CHRGOT returns current char)
-    const std::uint8_t currentChar = CHRGOT();
-    if (currentChar == 0) {
-        // No line number: start at beginning of program
-        SETPTRS();
-        return;
-    }
-    
-    // Line number specified: clear variables then go to that line
-    CLEARC();
-    
-    GO_TO_LINE();
-}
-
 void RTS_5() {
     // Shared RTS target for GOTO/POP in ROM.
 }

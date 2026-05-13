@@ -55,6 +55,7 @@ bool SETPTRS_impl();
 bool CLEAR_impl();
 void CLEARC_impl();
 void STXTPT_impl();
+void GO_TO_LINE();
 
 bool NEW_impl() {
     if (!IsStatementEndOfParsedInput()) {
@@ -149,6 +150,26 @@ void CLEARC() {
 void STXTPT() {
     STXTPT_impl();
 }
+
+void RUN() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: RUN (inclusive) .. GOSUB (exclusive)
+    // Name normalization: none (assembler label RUN kept verbatim).
+    constexpr std::uint8_t kCURLIN_hi = static_cast<std::uint8_t>(ApplesoftVariables::ZP_CURLIN + 1u);
+
+    std::uint8_t curlinHi = ReadZeroPageByte(kCURLIN_hi);
+    WriteZeroPageByte(kCURLIN_hi, static_cast<std::uint8_t>(curlinHi - 1));
+
+    const std::uint8_t currentChar = CHRGOT();
+    if (currentChar == 0) {
+        SETPTRS();
+        return;
+    }
+
+    CLEARC();
+    GO_TO_LINE();
+}
+
 
 struct TokenMatch {
     std::uint8_t code;
