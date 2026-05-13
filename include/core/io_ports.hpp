@@ -10,6 +10,7 @@ public:
     static constexpr std::uint16_t ADDR_BASE = 0xc000u;
     static constexpr std::uint16_t ADDR_END = 0xd000u;
     static constexpr std::uint16_t ADDR_KEYBOARD = 0xc000u;
+    static constexpr std::uint16_t ADDR_KEYBOARD_STROBE = 0xc010u;
     static constexpr std::uint16_t ADDR_SW_MIXCLR = 0xc052u;
     static constexpr std::uint16_t ADDR_SW_MIXSET = 0xc053u;
     static constexpr std::uint16_t ADDR_SW_LOWSCR = 0xc054u;
