@@ -195,7 +195,7 @@ The following describes how `asm_port_error.cpp` should be split into logical, m
 
 ### Phase 3: Gradual Extraction
 
-- ⏳ Extract parsing/tokenization functions (in progress: `SYNCHR`/`CHKNUM`/`CHKSTR`/`CHKCOM`/`CHKCLS`/`CHKOPN` + `LINGET`/`GTBYTC`/`GETBYT`/`GTNUM`/`COMBYTE`/`GETADR` moved to `asm_port_parser.cpp`)
+- ⏳ Extract parsing/tokenization functions (in progress: `SYNCHR`/`CHKNUM`/`CHKSTR`/`CHKCOM`/`CHKCLS`/`CHKOPN` + `LINGET`/`GTBYTC`/`GETBYT`/`GTNUM`/`COMBYTE`/`GETADR` + `GENERIC_CHRGET`/`CHRGET`/`CHRGOT` + `CurrentStatementChar`/`RESTORE`/`SETDA` moved to `asm_port_parser.cpp`)
 - Extract core utilities (if not already done)
 - Extract statement functions
 - Extract control flow

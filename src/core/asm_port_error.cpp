@@ -80,39 +80,6 @@ constexpr std::array<std::uint8_t, 29> kGenericCHRGETImage = {
     0x38, 0xe9, 0xd0, 0x60, 0x80, 0x4f, 0xc7, 0x52, 0x58,
 };
 
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: GENERIC_CHRGET (inclusive) .. GENERIC_END (exclusive)
-// Name normalization: none (assembler label GENERIC_CHRGET kept verbatim).
-std::uint8_t GENERIC_CHRGET() {
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-
-    // Generic CHRGET increments TXTPTR first, then examines the current character.
-    const std::uint16_t next = static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + 1u);
-    WriteZeroPageWord(kTXTPTR, next);
-
-    std::uint8_t current = variables_const().pointer(next).read();
-    if (current >= static_cast<std::uint8_t>(':')) {
-        return current;
-    }
-
-    if (current == static_cast<std::uint8_t>(' ')) {
-        return GENERIC_CHRGET();
-    }
-
-    // Preserve the ROM arithmetic side effect used by numeric parsing.
-    current = static_cast<std::uint8_t>(current - static_cast<std::uint8_t>('0'));
-    current = static_cast<std::uint8_t>(current - 0xd0u);
-    return current;
-}
-
-std::uint8_t CHRGET() {
-    return GENERIC_CHRGET();
-}
-
-std::uint8_t CHRGOT() {
-    return variables_const().pointer(ReadZeroPageWord(ApplesoftVariables::ZP_TXTPTR)).read();
-}
-
 void COLD_START();
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -1622,15 +1589,6 @@ bool IsTraceEnabled() {
     return (ReadZeroPageByte(kTRCFLG) & 0x80u) != 0u;
 }
 
-std::uint8_t CurrentStatementChar() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: EXECUTE_STATEMENT (inclusive) .. EXECUTE_STATEMENT_1 (exclusive)
-    // Name normalization: helper name chosen for the inline EXECUTE_STATEMENT load.
-    // EXECUTE_STATEMENT uses `ldy #0` then `lda (TXTPTR),Y`.
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    return ReadProgramByte(ReadZeroPageWord(kTXTPTR));
-}
-
 void EXECUTE_STATEMENT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: EXECUTE_STATEMENT (inclusive) .. EXECUTE_STATEMENT_1 (exclusive)
@@ -1678,18 +1636,6 @@ void COLON_() {
 
     SYNERR();
 }
-void RESTORE() {
-    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
-    const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
-    const std::uint16_t dataPointer = static_cast<std::uint16_t>(textTable - 1u);
-    SETDA(dataPointer);
-}
-
-void SETDA(std::uint16_t dataPointer) {
-    constexpr std::uint8_t kDATPTR = ApplesoftVariables::ZP_DATPTR;
-    WriteZeroPageWord(kDATPTR, dataPointer);
-}
-
 void CONTROL_C_TYPED() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: CONTROL_C_TYPED (inclusive) .. STOP (exclusive)
