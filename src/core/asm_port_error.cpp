@@ -2504,26 +2504,6 @@ void FRMEVL() {
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: GETADR (inclusive) .. PEEK (exclusive)
-// Name normalization: none (assembler label GETADR kept verbatim).
-void GETADR() {
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
-
-    if (ReadZeroPageByte(kFAC) >= 0x91u) {
-        IQERR();
-        return;
-    }
-
-    QINT();
-
-    const std::uint8_t lo = ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u));
-    const std::uint8_t hi = ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u));
-    WriteZeroPageByte(kLINNUM, lo);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1u), hi);
-}
-
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: PEEK (inclusive) .. POKE (exclusive)
 // Name normalization: none (assembler label PEEK kept verbatim).
 void PEEK() {

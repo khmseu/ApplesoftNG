@@ -15,8 +15,9 @@ std::uint8_t CHRGET();
 void SYNERR();
 void FRMNUM();
 void CONINT();
-void GETADR();
 std::uint8_t COMBYTE();
+void GETADR();
+void IQERR();
 
 void SYNCHR(std::uint8_t expected) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -157,6 +158,29 @@ std::uint8_t GTNUM() {
 std::uint8_t COMBYTE() {
     CHKCOM();
     return GETBYT();
+}
+
+// TODO(asm-port): port QINT label.
+void QINT() {}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: GETADR (inclusive) .. PEEK (exclusive)
+// Name normalization: none (assembler label GETADR kept verbatim).
+void GETADR() {
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+
+    if (ReadZeroPageByte(kFAC) >= 0x91u) {
+        IQERR();
+        return;
+    }
+
+    QINT();
+
+    const std::uint8_t lo = ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u));
+    const std::uint8_t hi = ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u));
+    WriteZeroPageByte(kLINNUM, lo);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1u), hi);
 }
 
 }  // namespace applesoft::asm_port
