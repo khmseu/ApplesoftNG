@@ -20,6 +20,7 @@ void RESTART();
 void MON_WRITE();
 void MON_READ();
 void MON_INPORT(std::uint8_t slot);
+void MON_OUTPORT(std::uint8_t slot);
 bool SETPTRS();
 void FIX_LINKS();
 void VARTIO();
@@ -963,6 +964,15 @@ void IN_NUMBER() {
 
     const std::uint8_t slot = GETBYT();
     MON_INPORT(slot);
+}
+
+void PR_NUMBER() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PR_NUMBER (inclusive) .. PLOTFNS (exclusive)
+    // Name normalization: none (assembler label PR_NUMBER kept verbatim).
+
+    const std::uint8_t slot = GETBYT();
+    MON_OUTPORT(slot);
 }
 
 }  // namespace applesoft::asm_port
