@@ -45,6 +45,110 @@ void CRDO();
 void LINPRT();
 void OUTDO(std::uint8_t value);
 bool FL1(std::uint16_t startAddress);
+void RESTORE();
+void STKINI();
+std::uint8_t ReadProgramByte(std::uint16_t address);
+void WriteProgramByte(std::uint16_t address, std::uint8_t value);
+bool NEW_impl();
+void SCRTCH_impl();
+bool SETPTRS_impl();
+bool CLEAR_impl();
+void CLEARC_impl();
+void STXTPT_impl();
+
+bool NEW_impl() {
+    if (!IsStatementEndOfParsedInput()) {
+        return false;
+    }
+
+    SCRTCH_impl();
+    return true;
+}
+
+void SCRTCH_impl() {
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
+    constexpr std::uint8_t kLOCK = ApplesoftVariables::ZP_LOCK;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kPRGEND = ApplesoftVariables::ZP_PRGEND;
+    constexpr std::uint8_t kARYTAB = ApplesoftVariables::ZP_ARYTAB;
+    constexpr std::uint8_t kSTREND = ApplesoftVariables::ZP_STREND;
+    constexpr std::uint8_t kMEMSIZ = ApplesoftVariables::ZP_MEMSIZ;
+    constexpr std::uint8_t kFRETOP = ApplesoftVariables::ZP_FRETOP;
+
+    const std::uint16_t txtTabAddr = ReadZeroPageWord(kTXTTAB);
+    WriteZeroPageByte(kLOCK, 0);
+    WriteProgramByte(txtTabAddr, 0);
+    WriteProgramByte(static_cast<std::uint16_t>(txtTabAddr + 1u), 0);
+
+    const std::uint16_t nextFree = static_cast<std::uint16_t>(txtTabAddr + 2u);
+    WriteZeroPageWord(kVARTAB, nextFree);
+    WriteZeroPageWord(kPRGEND, nextFree);
+    WriteZeroPageWord(kFRETOP, ReadZeroPageWord(kMEMSIZ));
+    WriteZeroPageWord(kARYTAB, ReadZeroPageWord(kVARTAB));
+    WriteZeroPageWord(kSTREND, ReadZeroPageWord(kVARTAB));
+
+    SETPTRS_impl();
+}
+
+bool SETPTRS_impl() {
+    STXTPT_impl();
+    return CLEAR_impl();
+}
+
+bool CLEAR_impl() {
+    if (!IsStatementEndOfParsedInput()) {
+        return false;
+    }
+
+    CLEARC_impl();
+    return true;
+}
+
+void CLEARC_impl() {
+    constexpr std::uint8_t kMEMSIZ = ApplesoftVariables::ZP_MEMSIZ;
+    constexpr std::uint8_t kFRETOP = ApplesoftVariables::ZP_FRETOP;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kARYTAB = ApplesoftVariables::ZP_ARYTAB;
+    constexpr std::uint8_t kSTREND = ApplesoftVariables::ZP_STREND;
+
+    WriteZeroPageWord(kFRETOP, ReadZeroPageWord(kMEMSIZ));
+    WriteZeroPageWord(kARYTAB, ReadZeroPageWord(kVARTAB));
+    WriteZeroPageWord(kSTREND, ReadZeroPageWord(kVARTAB));
+    RESTORE();
+    STKINI();
+}
+
+void STXTPT_impl() {
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+
+    const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
+    WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(textTable - 1u));
+}
+
+bool NEW() {
+    return NEW_impl();
+}
+
+bool SETPTRS() {
+    return SETPTRS_impl();
+}
+
+bool CLEAR() {
+    return CLEAR_impl();
+}
+
+void SCRTCH() {
+    SCRTCH_impl();
+}
+
+void CLEARC() {
+    CLEARC_impl();
+}
+
+void STXTPT() {
+    STXTPT_impl();
+}
 
 struct TokenMatch {
     std::uint8_t code;

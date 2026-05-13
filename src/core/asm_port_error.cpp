@@ -165,13 +165,8 @@ void COLD_START() {
     RESTART();
 }
 
-bool NEW_impl();
-void SCRTCH_impl();
-bool SETPTRS_impl();
-bool CLEAR_impl();
-void CLEARC_impl();
-void STXTPT_impl();
 void CONTROL_C_TYPED();
+bool SETPTRS();
 
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
@@ -331,76 +326,6 @@ void STOP_impl(bool shouldPrintBreak);
 
 void PRINT_ERROR_LINNUM();
 void PRINT_ERROR_LINNUM(std::string_view prefix);
-
-bool NEW_impl() {
-    if (!IsStatementEndOfParsedInput()) {
-        return false;
-    }
-
-    SCRTCH_impl();
-    return true;
-}
-
-void SCRTCH_impl() {
-    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
-    constexpr std::uint8_t kLOCK = ApplesoftVariables::ZP_LOCK;
-    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
-    constexpr std::uint8_t kPRGEND = ApplesoftVariables::ZP_PRGEND;
-    constexpr std::uint8_t kARYTAB = ApplesoftVariables::ZP_ARYTAB;
-    constexpr std::uint8_t kSTREND = ApplesoftVariables::ZP_STREND;
-    constexpr std::uint8_t kMEMSIZ = ApplesoftVariables::ZP_MEMSIZ;
-    constexpr std::uint8_t kFRETOP = ApplesoftVariables::ZP_FRETOP;
-
-    const ProgramPointer programStart{ReadZeroPageWord(kTXTTAB)};
-    WriteZeroPageByte(kLOCK, 0);
-    programStart.write(0);
-    programStart.write(0, 1u);
-
-    const std::uint16_t nextFree = programStart.advanced(2u).address;
-    WriteZeroPageWord(kVARTAB, nextFree);
-    WriteZeroPageWord(kPRGEND, nextFree);
-    WriteZeroPageWord(kFRETOP, ReadZeroPageWord(kMEMSIZ));
-    WriteZeroPageWord(kARYTAB, ReadZeroPageWord(kVARTAB));
-    WriteZeroPageWord(kSTREND, ReadZeroPageWord(kVARTAB));
-
-    SETPTRS_impl();
-}
-
-bool SETPTRS_impl() {
-    STXTPT_impl();
-    return CLEAR_impl();
-}
-
-bool CLEAR_impl() {
-    if (!IsStatementEndOfParsedInput()) {
-        return false;
-    }
-
-    CLEARC_impl();
-    return true;
-}
-
-void CLEARC_impl() {
-    constexpr std::uint8_t kMEMSIZ = ApplesoftVariables::ZP_MEMSIZ;
-    constexpr std::uint8_t kFRETOP = ApplesoftVariables::ZP_FRETOP;
-    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
-    constexpr std::uint8_t kARYTAB = ApplesoftVariables::ZP_ARYTAB;
-    constexpr std::uint8_t kSTREND = ApplesoftVariables::ZP_STREND;
-
-    WriteZeroPageWord(kFRETOP, ReadZeroPageWord(kMEMSIZ));
-    WriteZeroPageWord(kARYTAB, ReadZeroPageWord(kVARTAB));
-    WriteZeroPageWord(kSTREND, ReadZeroPageWord(kVARTAB));
-    RESTORE();
-    STKINI();
-}
-
-void STXTPT_impl() {
-    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-
-    const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
-    WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(textTable - 1u));
-}
 
 void FOR() {
     constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
@@ -592,30 +517,6 @@ void NEXT() {
     CHRGET();
     // jsr NEXT_1 (does not return in ROM when comma-separated variables remain).
     NEXT();
-}
-
-bool NEW() {
-    return NEW_impl();
-}
-
-bool SETPTRS() {
-    return SETPTRS_impl();
-}
-
-bool CLEAR() {
-    return CLEAR_impl();
-}
-
-void SCRTCH() {
-    SCRTCH_impl();
-}
-
-void CLEARC() {
-    CLEARC_impl();
-}
-
-void STXTPT() {
-    STXTPT_impl();
 }
 
 void ERROR(std::uint8_t error_code_offset) {
