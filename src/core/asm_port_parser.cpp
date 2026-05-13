@@ -14,6 +14,7 @@ std::uint8_t CHRGOT();
 std::uint8_t CHRGET();
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void SYNERR();
+void FRMEVL();
 void FRMNUM();
 void CONINT();
 void MKINT();
@@ -73,6 +74,17 @@ void CHKCOM() {
     // Name normalization: none (assembler label CHKCOM kept verbatim).
 
     SYNCHR(static_cast<std::uint8_t>(','));
+}
+
+void FRMNUM() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FRMNUM (inclusive) .. FRMEVL (exclusive)
+    // Name normalization: none (assembler label FRMNUM kept verbatim).
+    //
+    // FRMNUM does JSR FRMEVL and falls through into CHKNUM in ROM.
+
+    FRMEVL();
+    CHKNUM();
 }
 
 void CHKCLS() {

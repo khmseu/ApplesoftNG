@@ -343,17 +343,6 @@ void PushTextPointerAddress();
 void PushCurrentLineNumber();
 void PushTokenTo(std::uint8_t token);
 
-void FRMNUM() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FRMNUM (inclusive) .. FRMEVL (exclusive)
-    // Name normalization: none (assembler label FRMNUM kept verbatim).
-    //
-    // FRMNUM does JSR FRMEVL and falls through into CHKNUM in ROM.
-
-    FRMEVL();
-    CHKNUM();
-}
-
 
 void PRINT_ERROR_LINNUM(std::string_view prefix) {
     STROUT(prefix);
