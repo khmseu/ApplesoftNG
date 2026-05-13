@@ -26,6 +26,7 @@ void PROGIO();
 std::uint16_t PTRGET();
 void SYNCHR(std::uint8_t expected);
 void FRMEVL();
+void FRMNUM();
 bool CHKVAL(std::uint8_t savedValTyp);
 void ROUND_FAC();
 void AYINT();
@@ -933,6 +934,25 @@ void MON_WRITE() {
 
 void MON_READ() {
     // TODO(asm-port): port monitor tape read handler used by LOAD.
+}
+
+void CALL() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: CALL (inclusive) .. IN_NUMBER (exclusive)
+    // Name normalization: none (assembler label CALL kept verbatim).
+    //
+    // Execute machine language subroutine at expression address.
+    // Evaluates the numeric expression to a 16-bit address, then performs
+    // an indirect jump to that address. The called routine returns with RTS.
+
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+
+    FRMNUM();
+    GETADR();
+
+    const std::uint16_t callAddress = ReadZeroPageWord(kLINNUM);
+    auto callRoutine = reinterpret_cast<void (*)()>(callAddress);
+    callRoutine();
 }
 
 }  // namespace applesoft::asm_port
