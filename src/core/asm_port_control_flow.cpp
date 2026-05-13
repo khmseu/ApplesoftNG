@@ -452,6 +452,13 @@ std::uint8_t REMN() {
     return ScanAheadOffset(0);
 }
 
+void PushForPntFrame() {
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
+    PushByteToStack(ReadZeroPageByte(add_u8(kFORPNT, 1u)));
+    PushByteToStack(ReadZeroPageByte(kFORPNT));
+    PushTokenTo(TOKEN_FOR);
+}
+
 void FOR() {
     constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
     constexpr std::uint8_t kTOKEN_TO = 0xc1u;
