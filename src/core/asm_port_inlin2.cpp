@@ -3,6 +3,7 @@
 #include "platform/asm_port_getln.hpp"
 
 #include <cstdint>
+#include <iostream>
 
 namespace applesoft::asm_port {
 namespace {
@@ -29,9 +30,17 @@ void write_INPUT_BUFFER_minus_1(std::uint8_t index, std::uint8_t v) {
 
 // MON_RDKEY: monitor label RDKEY (keyin.o65.lst).
 // All monitor labels carry a virtual MON_ prefix in C++; RDKEY -> MON_RDKEY.
-// TODO(asm-port): port MON_RDKEY monitor key-read routine.
 std::uint8_t MON_RDKEY() {
-    return 0;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/keyin.o65.lst
+    // Labels: RDKEY (inclusive) .. KEYIN (exclusive)
+    // Name normalization: monitor label RDKEY mapped to MON_RDKEY in C++.
+
+    const int ch = std::cin.get();
+    if (ch == EOF) {
+        return 0u;
+    }
+
+    return static_cast<std::uint8_t>(ch);
 }
 
 Inlin2Result INLIN2(std::uint8_t x) {

@@ -176,9 +176,9 @@
 | HTAB_Handler                      | src/core/asm_port_token_address_table.cpp | 92   | real   |
 | IF                                | src/core/asm_port_control_flow.cpp        | 788  | real   |
 | IF_TRUE                           | src/core/asm_port_control_flow.cpp        | 820  | real   |
-| INCHR                             | src/core/asm_port_inlin2.cpp              | 62   | real   |
+| INCHR                             | src/core/asm_port_inlin2.cpp              | 71   | real   |
 | INLIN                             | src/core/asm_port_inlin.cpp               | 7    | real   |
-| INLIN2                            | src/core/asm_port_inlin2.cpp              | 37   | real   |
+| INLIN2                            | src/core/asm_port_inlin2.cpp              | 46   | real   |
 | INPERR                            | src/core/asm_port_input.cpp               | 219  | real   |
 | INPRT                             | src/core/asm_port_print.cpp               | 42   | real   |
 | INPUT                             | src/core/asm_port_input.cpp               | 61   | real   |
@@ -242,7 +242,7 @@
 | MON_OUTPORT                       | src/core/asm_port_graphics.cpp            | 74   | stub   |
 | MON_PLOT                          | src/core/asm_port_graphics.cpp            | 80   | stub   |
 | MON_PREAD                         | src/core/asm_port_core.cpp                | 1239 | stub   |
-| MON_RDKEY                         | src/core/asm_port_inlin2.cpp              | 33   | stub   |
+| MON_RDKEY                         | src/core/asm_port_inlin2.cpp              | 33   | real   |
 | MON_READ                          | src/core/asm_port_statements.cpp          | 937  | stub   |
 | MON_SCRN                          | src/core/asm_port_core.cpp                | 1227 | stub   |
 | MON_SETCOL                        | src/core/asm_port_graphics.cpp            | 56   | stub   |
@@ -361,7 +361,7 @@
 | READ_Handler                      | src/core/asm_port_token_address_table.cpp | 77   | real   |
 | read_INDEX                        | src/core/asm_port_strlt2.cpp              | 98   | real   |
 | read_INPUT_BUFFER                 | src/core/asm_port_statements.cpp          | 238  | real   |
-| read_INPUT_BUFFER_minus_1         | src/core/asm_port_inlin2.cpp              | 20   | real   |
+| read_INPUT_BUFFER_minus_1         | src/core/asm_port_inlin2.cpp              | 21   | real   |
 | read_LENGTH                       | src/core/asm_port_strlt2.cpp              | 134  | real   |
 | read_LOWTR                        | src/core/asm_port_strlt2.cpp              | 106  | real   |
 | read_MEMSIZ                       | src/core/asm_port_strlt2.cpp              | 82   | real   |
@@ -482,14 +482,14 @@
 | write_GARFLG                      | src/core/asm_port_strlt2.cpp              | 66   | real   |
 | write_HIGHTR                      | src/core/asm_port_strlt2.cpp              | 151  | real   |
 | write_INDEX                       | src/core/asm_port_strlt2.cpp              | 102  | real   |
-| write_INPUT_BUFFER                | src/core/asm_port_inlin2.cpp              | 16   | real   |
+| write_INPUT_BUFFER                | src/core/asm_port_inlin2.cpp              | 17   | real   |
 | write_input_buffer                | src/platform/asm_port_getln.cpp           | 12   | stub   |
-| write_INPUT_BUFFER_minus_1        | src/core/asm_port_inlin2.cpp              | 24   | real   |
+| write_INPUT_BUFFER_minus_1        | src/core/asm_port_inlin2.cpp              | 25   | real   |
 | write_INPUT_BUFFER_minus_5        | src/core/asm_port_statements.cpp          | 242  | real   |
 | write_LASTPT                      | src/core/asm_port_strlt2.cpp              | 58   | real   |
 | write_LENGTH                      | src/core/asm_port_strlt2.cpp              | 138  | real   |
 | write_LOWTR                       | src/core/asm_port_strlt2.cpp              | 110  | real   |
-| write_MON_PROMPT                  | src/core/asm_port_inlin2.cpp              | 12   | real   |
+| write_MON_PROMPT                  | src/core/asm_port_inlin2.cpp              | 13   | real   |
 | write_STRNG1                      | src/core/asm_port_strlt2.cpp              | 34   | real   |
 | write_STRNG2                      | src/core/asm_port_strlt2.cpp              | 46   | real   |
 | write_TEMPPT                      | src/core/asm_port_strlt2.cpp              | 54   | real   |
