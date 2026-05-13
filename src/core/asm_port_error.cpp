@@ -343,18 +343,6 @@ void PushTextPointerAddress();
 void PushCurrentLineNumber();
 void PushTokenTo(std::uint8_t token);
 
-void ApplyFacSign() {
-    // TODO(asm-port): update FAC+1 with the signed value produced by FRMNUM.
-}
-
-void SetBranchTargetToSTEP() {
-    // TODO(asm-port): set the indirect jump target used by FRM_STACK_3 to STEP.
-}
-
-void LOAD_FAC_FROM_YA() {
-    // TODO(asm-port): load the constant 1.0 into FAC from the Y,A pointer.
-}
-
 void FRMNUM() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: FRMNUM (inclusive) .. FRMEVL (exclusive)
@@ -366,17 +354,6 @@ void FRMNUM() {
     CHKNUM();
 }
 
-void SIGN() {
-    // TODO(asm-port): normalize the sign of the current FAC value.
-}
-
-void FRM_STACK_2() {
-    // TODO(asm-port): prepare FOR frame storage on the Applesoft stack.
-}
-
-void FRM_STACK_3() {
-    // TODO(asm-port): consume the current frame data and continue at STEP.
-}
 
 void PRINT_ERROR_LINNUM(std::string_view prefix) {
     STROUT(prefix);

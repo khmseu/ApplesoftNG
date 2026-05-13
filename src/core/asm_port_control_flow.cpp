@@ -39,15 +39,9 @@ void ONGOTO();
 void CONTROL_C_TYPED();
 void STEP();
 void TRACE_();
-void LOAD_FAC_FROM_YA();
 void FRMNUM();
 void FRMEVL();
-void SIGN();
 void CHKNUM();
-void ApplyFacSign();
-void SetBranchTargetToSTEP();
-void FRM_STACK_2();
-void FRM_STACK_3();
 void PushForPntFrame();
 void PushTextPointerAddress();
 void PushCurrentLineNumber();
@@ -119,6 +113,30 @@ struct ProgramPointer {
 std::uint8_t readStackByteAt(std::uint8_t x, std::uint8_t plus) {
     const std::uint8_t offset = static_cast<std::uint8_t>(x + plus);
     return ReadProgramByte(static_cast<std::uint16_t>(0x0100u + offset));
+}
+
+void ApplyFacSign() {
+    // TODO(asm-port): update FAC+1 with the signed value produced by FRMNUM.
+}
+
+void SetBranchTargetToSTEP() {
+    // TODO(asm-port): set the indirect jump target used by FRM_STACK_3 to STEP.
+}
+
+void LOAD_FAC_FROM_YA() {
+    // TODO(asm-port): load the constant 1.0 into FAC from the Y,A pointer.
+}
+
+void SIGN() {
+    // TODO(asm-port): normalize the sign of the current FAC value.
+}
+
+void FRM_STACK_2() {
+    // TODO(asm-port): prepare FOR frame storage on the Applesoft stack.
+}
+
+void FRM_STACK_3() {
+    // TODO(asm-port): consume the current frame data and continue at STEP.
 }
 
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
