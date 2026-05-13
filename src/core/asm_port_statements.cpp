@@ -56,6 +56,11 @@ bool CLEAR_impl();
 void CLEARC_impl();
 void STXTPT_impl();
 void GO_TO_LINE();
+void GETADR();
+void SNGFLT(std::uint8_t value);
+std::uint8_t GTNUM();
+std::uint8_t COMBYTE();
+void RTS_10();
 
 bool NEW_impl() {
     if (!IsStatementEndOfParsedInput()) {
@@ -170,6 +175,56 @@ void RUN() {
     GO_TO_LINE();
 }
 
+
+void PEEK() {
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+
+    const std::uint16_t savedLinnum = ReadZeroPageWord(kLINNUM);
+    GETADR();
+    const std::uint8_t value = ReadProgramByte(ReadZeroPageWord(kLINNUM));
+    WriteZeroPageWord(kLINNUM, savedLinnum);
+    SNGFLT(value);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: POKE (inclusive) .. WAIT (exclusive)
+// Name normalization: none (assembler label POKE kept verbatim).
+void POKE() {
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+
+    const std::uint8_t value = GTNUM();
+    WriteProgramByte(ReadZeroPageWord(kLINNUM), value);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: WAIT (inclusive) .. FADDH (exclusive)
+// Name normalization: none (assembler label WAIT kept verbatim).
+void WAIT() {
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
+
+    const std::uint8_t mask = GTNUM();
+    WriteZeroPageByte(kFORPNT, mask);
+
+    std::uint8_t xorMask = 0u;
+    if (CHRGOT() != 0u) {
+        xorMask = COMBYTE();
+    }
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFORPNT + 1u), xorMask);
+
+    while (true) {
+        const std::uint8_t value = ReadProgramByte(ReadZeroPageWord(kLINNUM));
+        const std::uint8_t masked = static_cast<std::uint8_t>((value ^ xorMask) & mask);
+        if (masked != 0u) {
+            RTS_10();
+            return;
+        }
+    }
+}
+
+void RTS_10() {
+    // Shared RTS target for WAIT in ROM.
+}
 
 struct TokenMatch {
     std::uint8_t code;
