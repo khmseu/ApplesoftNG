@@ -208,31 +208,11 @@ std::int8_t gNumericCompareResult = 0;
 bool gNumericCompareCarry = false;
 std::uint8_t gFloatInput = 0;
 
-// TODO(asm-port): port MON_SCRN monitor handler.
-std::uint8_t MON_SCRN(std::uint8_t /*row*/, std::uint8_t /*column*/) {
-    return 0;
-}
-
-// TODO(asm-port): port FCOMP label.
-std::int8_t FCOMP(std::uint16_t /*argAddress*/) {
-    return 0;
-}
-// TODO(asm-port): port FLOAT_1 label.
 std::uint8_t gPendingErrorCode = ERR_SYNTAX;
-
-// TODO(asm-port): compare temporary ARG and FAC strings and return -1/0/1.
-std::int8_t CompareArgAndFacStrings() {
-    return 0;
-}
 
 std::uint8_t gJerErrorCode = ERR_SYNTAX;
 constexpr std::uint8_t kNEG32768Data[4] = {0x90u, 0x80u, 0x00u, 0x00u};
 constexpr std::uint8_t kCZeroData[2] = {0x00u, 0x00u};
-
-// TODO(asm-port): port MON_PREAD monitor paddle reader.
-std::uint8_t MON_PREAD() {
-    return 0;
-}
 
 
 // void OUTDO() {

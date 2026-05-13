@@ -1237,6 +1237,21 @@ void FRMEVL() {
     frmevl_eval(frmevl_eval, 0u, true);
 }
 
+std::uint8_t MON_SCRN(std::uint8_t /*row*/, std::uint8_t /*column*/) {
+    return 0;
+}
+
+std::int8_t FCOMP(std::uint16_t /*argAddress*/) {
+    return 0;
+}
+
+std::int8_t CompareArgAndFacStrings() {
+    return 0;
+}
+
+std::uint8_t MON_PREAD() {
+    return 0;
+}
 
 
 }  // namespace applesoft::asm_port
