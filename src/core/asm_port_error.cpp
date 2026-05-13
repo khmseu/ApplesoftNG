@@ -4,7 +4,6 @@
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_chkmem.hpp"
 #include "core/asm_port_gtforpnt.hpp"
-#include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_reason.hpp"
 #include "core/io_ports.hpp"
 #include "core/applesoft_variables.hpp"
@@ -19,15 +18,6 @@
 
 namespace applesoft::asm_port {
 
-constexpr std::uint8_t RESTART_PROMPT = ']' | 0x80u;
-
-bool isDigit(std::uint8_t ch) {
-    return ch >= '0' && ch <= '9';
-}
-
-void SetTextPointer(std::uint16_t address);
-void ClearErrFlag();
-void MarkDirectMode();
 std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
@@ -47,8 +37,6 @@ std::uint8_t MEMERR();
 void CLEARC();
 std::uint8_t GETBYT();
 void IQERR();
-void PARSE_INPUT_LINE();
-void HandleNumberedLine();
 
 void MON_SETCOL(std::uint8_t color);
 void MON_TABV(std::uint8_t row_zero_based);
@@ -673,33 +661,6 @@ void PRINT_ERROR_LINNUM() {
 
     INPRT();
     RESTART();
-}
-
-void RESTART() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: RESTART (inclusive)
-    // Name normalization: none (assembler label RESTART kept verbatim).
-
-    CRDO();
-    const Inlin2Result inlin2 = INLIN2(RESTART_PROMPT);
-    SetTextPointer(inlin2.address());
-    ClearErrFlag();
-
-    const std::uint8_t firstChar = CHRGET();
-    if (firstChar == 0) {
-        RESTART();
-        return;
-    }
-
-    MarkDirectMode();
-
-    if (isDigit(firstChar)) {
-        HandleNumberedLine();
-        return;
-    }
-
-    PARSE_INPUT_LINE();
-    TRACE_();
 }
 
 // void OUTDO() {

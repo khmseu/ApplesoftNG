@@ -3,6 +3,7 @@
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_gtforpnt.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_token_address_table.hpp"
 #include "core/io_ports.hpp"
 
@@ -73,9 +74,16 @@ std::uint8_t REMN();
 bool FL1(std::uint16_t startAddress);
 void HANDLERR();
 void SetPendingErrorCode(std::uint8_t errorCode);
-void INCHR();
+std::uint8_t INCHR();
+void SetTextPointer(std::uint16_t address);
+void ClearErrFlag();
+void MarkDirectMode();
+void PARSE_INPUT_LINE();
+void HandleNumberedLine();
+void CRDO();
 
 constexpr std::uint8_t kTokenBase = 0x80u;
+constexpr std::uint8_t RESTART_PROMPT = ']' | 0x80u;
 
 void STOP_impl(bool shouldPrintBreak);
 void ENDX_impl(bool shouldPrintBreak);
@@ -101,6 +109,10 @@ struct ProgramPointer {
 std::uint8_t readStackByteAt(std::uint8_t x, std::uint8_t plus) {
     const std::uint8_t offset = static_cast<std::uint8_t>(x + plus);
     return ReadProgramByte(static_cast<std::uint16_t>(0x0100u + offset));
+}
+
+bool isDigit(std::uint8_t ch) {
+    return ch >= '0' && ch <= '9';
 }
 
 }  // namespace
@@ -179,6 +191,33 @@ void ENDX_impl(bool shouldPrintBreak) {
     }
 
     RESTART();
+}
+
+void RESTART() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: RESTART (inclusive)
+    // Name normalization: none (assembler label RESTART kept verbatim).
+
+    CRDO();
+    const Inlin2Result inlin2 = INLIN2(RESTART_PROMPT);
+    SetTextPointer(inlin2.address());
+    ClearErrFlag();
+
+    const std::uint8_t firstChar = CHRGET();
+    if (firstChar == 0) {
+        RESTART();
+        return;
+    }
+
+    MarkDirectMode();
+
+    if (isDigit(firstChar)) {
+        HandleNumberedLine();
+        return;
+    }
+
+    PARSE_INPUT_LINE();
+    TRACE_();
 }
 
 void CONTROL_C_TYPED() {
