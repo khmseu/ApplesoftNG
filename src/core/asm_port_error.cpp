@@ -75,22 +75,6 @@ void COLD_START();
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
 
-struct ProgramPointer {
-    std::uint16_t address = 0;
-
-    std::uint8_t read(std::uint16_t offset = 0) const {
-        return ReadProgramByte(static_cast<std::uint16_t>(address + offset));
-    }
-
-    void write(std::uint8_t value, std::uint16_t offset = 0) const {
-        WriteProgramByte(static_cast<std::uint16_t>(address + offset), value);
-    }
-
-    ProgramPointer advanced(std::uint16_t offset) const {
-        return ProgramPointer{static_cast<std::uint16_t>(address + offset)};
-    }
-};
-
 std::uint8_t ReadStackPointer();
 void PopReturnAddress();
 void PushByteToStack(std::uint8_t value);
@@ -203,7 +187,6 @@ void BASIC2();
 void PTRGET4();
 bool ISLETC();
 void NAME_NOT_FOUND();
-void C_ZERO();
 void MAKE_NEW_VARIABLE();
 void FNC_();
 void PARCHK();
@@ -268,8 +251,6 @@ void FLOAT_1(std::uint8_t exponent) {
 }
 
 std::uint8_t gPendingErrorCode = ERR_SYNTAX;
-constexpr std::uint8_t kNEG32768Data[4] = {0x90u, 0x80u, 0x00u, 0x00u};
-constexpr std::uint8_t kCZeroData[2] = {0x00u, 0x00u};
 
 // TODO(asm-port): compare temporary ARG and FAC strings and return -1/0/1.
 std::int8_t CompareArgAndFacStrings() {
@@ -279,6 +260,8 @@ std::int8_t CompareArgAndFacStrings() {
 } // namespace
 
 std::uint8_t gJerErrorCode = ERR_SYNTAX;
+constexpr std::uint8_t kNEG32768Data[4] = {0x90u, 0x80u, 0x00u, 0x00u};
+constexpr std::uint8_t kCZeroData[2] = {0x00u, 0x00u};
 
 // TODO(asm-port): port MON_PREAD monitor paddle reader.
 std::uint8_t MON_PREAD() {
@@ -751,15 +734,6 @@ void NAME_NOT_FOUND() {
     MAKE_NEW_VARIABLE();
 }
 
-void C_ZERO() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: C_ZERO (inclusive) .. MAKE_NEW_VARIABLE (exclusive)
-    // Name normalization: none (assembler label C_ZERO kept verbatim).
-
-    WriteZeroPageByte(ApplesoftVariables::ZP_RESULT, kCZeroData[0]);
-    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 1u), kCZeroData[1]);
-}
-
 void MAKE_NEW_VARIABLE() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: MAKE_NEW_VARIABLE (inclusive) .. SET_VARPNT_AND_YA (exclusive)
@@ -779,36 +753,6 @@ void SET_VARPNT_AND_YA() {
 
     const ProgramPointer lowtr{ReadZeroPageWord(ApplesoftVariables::ZP_LOWTR)};
     WriteZeroPageWord(ApplesoftVariables::ZP_VARPNT, lowtr.advanced(2u).address); // VARPNT
-}
-
-void GETARY() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: GETARY (inclusive) .. GETARY2 (exclusive)
-    // Name normalization: none (assembler label GETARY kept verbatim).
-
-    GETARY2();
-}
-
-void GETARY2() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: GETARY2 (inclusive) .. NEG32768 (exclusive)
-    // Name normalization: none (assembler label GETARY2 kept verbatim).
-
-    const std::uint8_t numDim = ReadZeroPageByte(ApplesoftVariables::ZP_NUMDIM);
-    const ProgramPointer lowtr{ReadZeroPageWord(ApplesoftVariables::ZP_LOWTR)};
-    const std::uint16_t arypntOffset = static_cast<std::uint16_t>(numDim * 2u) + 5u;
-    WriteZeroPageWord(ApplesoftVariables::ZP_ARYPNT, lowtr.advanced(arypntOffset).address);
-}
-
-void NEG32768() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: NEG32768 (inclusive) .. MAKINT (exclusive)
-    // Name normalization: none (assembler label NEG32768 kept verbatim).
-
-    WriteZeroPageByte(ApplesoftVariables::ZP_RESULT, kNEG32768Data[0]);
-    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 1u), kNEG32768Data[1]);
-    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 2u), kNEG32768Data[2]);
-    WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 3u), kNEG32768Data[3]);
 }
 
 void AYINT() {

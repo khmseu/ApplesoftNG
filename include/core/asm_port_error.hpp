@@ -7,6 +7,25 @@
 
 namespace applesoft::asm_port {
 
+std::uint8_t ReadProgramByte(std::uint16_t address);
+void WriteProgramByte(std::uint16_t address, std::uint8_t value);
+
+struct ProgramPointer {
+    std::uint16_t address = 0;
+
+    std::uint8_t read(std::uint16_t offset = 0) const {
+        return ReadProgramByte(static_cast<std::uint16_t>(address + offset));
+    }
+
+    void write(std::uint8_t value, std::uint16_t offset = 0) const {
+        WriteProgramByte(static_cast<std::uint16_t>(address + offset), value);
+    }
+
+    ProgramPointer advanced(std::uint16_t offset) const {
+        return ProgramPointer{static_cast<std::uint16_t>(address + offset)};
+    }
+};
+
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: CHRGET / CHRGOT
 // Name normalization: none (assembler labels kept verbatim).
