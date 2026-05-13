@@ -15,6 +15,18 @@ bool SETPTRS();
 void FIX_LINKS();
 void VARTIO();
 void PROGIO();
+std::uint16_t PTRGET();
+void SYNCHR(std::uint8_t expected);
+void FRMEVL();
+bool CHKVAL(std::uint8_t savedValTyp);
+void ROUND_FAC();
+void AYINT();
+void SETFOR();
+void STRINI(std::uint8_t length);
+void MOVINS();
+bool FRETMS(std::uint16_t descriptorAddress);
+void LET2(std::uint8_t savedValTypPlus1);
+void PUTSTR();
 
 std::uint8_t ScanAheadOffsetForData(std::uint8_t terminator) {
     constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
@@ -72,6 +84,120 @@ void DATA() {
 
     const std::uint8_t offset = DATAN();
     ADDON(offset);
+}
+
+void LET() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: LET (inclusive) .. LET2 (exclusive)
+    // Name normalization: none (assembler label LET kept verbatim).
+
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
+    constexpr std::uint8_t kTOKEN_EQUAL = 0xd0;
+    constexpr std::uint8_t kVALTYP = ApplesoftVariables::ZP_VALTYP;
+
+    const std::uint16_t variablePtr = PTRGET();
+    WriteZeroPageWord(kFORPNT, variablePtr);
+
+    SYNCHR(kTOKEN_EQUAL);
+
+    const std::uint8_t savedValTyp = ReadZeroPageByte(kVALTYP);
+    const std::uint8_t savedValTypPlus1 = ReadZeroPageByte(static_cast<std::uint8_t>(kVALTYP + 1u));
+
+    FRMEVL();
+
+    if (CHKVAL(savedValTyp)) {
+        // LET_STRING branch falls through to PUTSTR in ROM.
+        PUTSTR();
+        return;
+    }
+
+    // Explicitly model LET -> LET2 fall-through.
+    LET2(savedValTypPlus1);
+}
+
+void LET2(std::uint8_t savedValTypPlus1) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: LET2 (inclusive) .. PUTSTR (exclusive)
+    // Name normalization: none (assembler label LET2 kept verbatim).
+
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
+    constexpr std::uint8_t kFAC_PLUS_3 = static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 3u);
+    constexpr std::uint8_t kFAC_PLUS_4 = static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 4u);
+
+    // Positive means real variable; ROM jumps directly to SETFOR.
+    if ((savedValTypPlus1 & 0x80u) == 0u) {
+        SETFOR();
+        return;
+    }
+
+    ROUND_FAC();
+    AYINT();
+
+    const std::uint16_t forPtr = ReadZeroPageWord(kFORPNT);
+    auto forPtrByte = variables().pointer(forPtr);
+    forPtrByte.write(ReadZeroPageByte(kFAC_PLUS_3));
+    forPtrByte.write(ReadZeroPageByte(kFAC_PLUS_4), 1u);
+}
+
+void PUTSTR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PUTSTR (inclusive) .. PR_STRING (exclusive)
+    // Name normalization: none (assembler label PUTSTR kept verbatim).
+
+    constexpr std::uint8_t kFAC_PLUS_3 = static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 3u);
+    constexpr std::uint8_t kDSCPTR = ApplesoftVariables::ZP_DSCPTR;
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
+    constexpr std::uint8_t kFRETOP = ApplesoftVariables::ZP_FRETOP;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kSTRNG1 = ApplesoftVariables::ZP_STRNG1;
+
+    const std::uint16_t facDescriptor = ReadZeroPageWord(kFAC_PLUS_3);
+    const auto facDescriptorPtr = variables_const().pointer(facDescriptor);
+    auto readDescriptorByte = [&](std::uint8_t offset) {
+        return facDescriptorPtr.read(offset);
+    };
+
+    std::uint16_t descriptorPointer = ReadZeroPageWord(kFAC_PLUS_3);
+
+    const std::uint8_t descDataHigh = readDescriptorByte(2);
+    const std::uint8_t fretopHigh = ReadZeroPageByte(static_cast<std::uint8_t>(kFRETOP + 1u));
+
+    bool useExistingDescriptor = false;
+    bool descriptorIsVariable = false;
+
+    if (descDataHigh < fretopHigh) {
+        useExistingDescriptor = true;
+    } else if (descDataHigh == fretopHigh) {
+        const std::uint8_t descDataLow = readDescriptorByte(1);
+        if (descDataLow < ReadZeroPageByte(kFRETOP)) {
+            useExistingDescriptor = true;
+        }
+    }
+
+    if (!useExistingDescriptor) {
+        if (descriptorPointer >= ReadZeroPageWord(kVARTAB)) {
+            descriptorIsVariable = true;
+        }
+    }
+
+    if (descriptorIsVariable) {
+        STRINI(readDescriptorByte(0));
+        WriteZeroPageWord(kSTRNG1, ReadZeroPageWord(kDSCPTR));
+        MOVINS();
+        descriptorPointer = kFAC_PLUS_3;
+    }
+
+    WriteZeroPageWord(kDSCPTR, descriptorPointer);
+
+    (void)FRETMS(descriptorPointer);
+
+    const std::uint16_t source = ReadZeroPageWord(kDSCPTR);
+    const std::uint16_t dest = ReadZeroPageWord(kFORPNT);
+    const auto sourcePtr = variables_const().pointer(source);
+    auto destPtr = variables().pointer(dest);
+    for (std::uint8_t i = 0; i < 3; ++i) {
+        destPtr.write(sourcePtr.read(i), i);
+    }
 }
 
 void SAVE() {
