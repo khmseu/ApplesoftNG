@@ -177,40 +177,16 @@ void COLD_START() {
     RESTART();
 }
 
-std::uint8_t CHRGOT();
-void LINGET();
-void SYNERR();
-
-void RESTORE();
-void SETDA(std::uint16_t dataPointer);
+bool NEW_impl();
+void SCRTCH_impl();
+bool SETPTRS_impl();
+bool CLEAR_impl();
+void CLEARC_impl();
+void STXTPT_impl();
 void CONTROL_C_TYPED();
-void STOP();
-void ENDX();
-void CONT();
-void SAVE();
-void LOAD();
-void RUN();
-void GOSUB();
-void GO_TO_LINE();
-void GOTO();
-void POP();
-void RETURN();
-void VARTIO();
-void PROGIO();
-void STOP_impl(bool shouldPrintBreak);
-void ENDX_impl(bool shouldPrintBreak);
-void EXECUTE_STATEMENT_1();
-std::uint8_t CurrentStatementChar();
-void SYNERR();
-
-void PRINT_ERROR_LINNUM();
-void PRINT_ERROR_LINNUM(std::string_view prefix);
 
 std::uint8_t ReadProgramByte(std::uint16_t address);
-
-void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
-    variables().writeByte(address, value);
-}
+void WriteProgramByte(std::uint16_t address, std::uint8_t value);
 
 struct ProgramPointer {
     std::uint16_t address = 0;
@@ -227,27 +203,6 @@ struct ProgramPointer {
         return ProgramPointer{static_cast<std::uint16_t>(address + offset)};
     }
 };
-
-void SetStackPointer(std::uint8_t value);
-std::uint8_t ReadStackPointer();
-
-bool gReturnFromPopContext = false;
-
-bool IsStatementEndOfParsedInput() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: END2 (inclusive) .. SAVE (exclusive)
-    // Name normalization: helper name chosen for the inline `bne RTS_4` guard.
-    // STOP/END/CONT continue only when parser is at end-of-statement; model the
-    // zero-flag check via the current parsed character at TXTPTR.
-    return CHRGOT() == 0u;
-}
-
-bool NEW_impl();
-void SCRTCH_impl();
-bool SETPTRS_impl();
-bool CLEAR_impl();
-void CLEARC_impl();
-void STXTPT_impl();
 
 std::uint8_t ReadStackPointer();
 void PopReturnAddress();
@@ -267,6 +222,9 @@ void FRM_STACK_2();
 void FRM_STACK_3();
 void MON_WRITE();
 void MON_READ();
+void VARTIO();
+void PROGIO();
+std::uint8_t CurrentStatementChar();
 void ADDON(std::uint8_t offset);
 std::uint8_t DATAN();
 void GOEND();
@@ -276,19 +234,22 @@ std::uint16_t ReadLineNumberFromTextPointer();
 void AdvanceTextPointerToNextLine();
 bool IsRunningMode();
 bool IsTraceEnabled();
+bool IsStatementEndOfParsedInput();
 std::uint8_t REMN();
 bool FL1(std::uint16_t startAddress);
 bool FL1(std::uint8_t startLo, std::uint8_t startHi);
 std::uint8_t PopByteFromStack();
-bool ReturnWasFromPOPContext();
 std::uint8_t PeekTopControlTokenAfterGTFORPNT();
 void PULL3();
 void RTS_5();
 void OUTSP();
 void EXECUTE_STATEMENT();
+void EXECUTE_STATEMENT_1();
 void PushForPntFrame();
 
 std::uint8_t CHRGOT();
+void LINGET();
+void SYNERR();
 bool ISCNTC();
 void LINPRT();
 // void OUTDO();
@@ -311,6 +272,8 @@ std::uint8_t GETBYT();
 std::uint8_t GTNUM();
 std::uint8_t COMBYTE();
 void GETADR();
+void GO_TO_LINE();
+void GOTO();
 void PEEK();
 void POKE();
 void WAIT();
@@ -373,6 +336,11 @@ void FIND_ARRAY_ELEMENT();
 void FAE_1();
 void GSE();
 void GME();
+void SYNERR();
+void STOP_impl(bool shouldPrintBreak);
+
+void PRINT_ERROR_LINNUM();
+void PRINT_ERROR_LINNUM(std::string_view prefix);
 
 bool NEW_impl() {
     if (!IsStatementEndOfParsedInput()) {
@@ -724,6 +692,19 @@ std::uint8_t ReadProgramByte(std::uint16_t address) {
     // Program text lives in the same flat address space as zero-page variables;
     // ApplesoftVariables::readByte handles all address regions.
     return variables_const().readByte(address);
+}
+
+void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
+    variables().writeByte(address, value);
+}
+
+bool IsStatementEndOfParsedInput() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: END2 (inclusive) .. SAVE (exclusive)
+    // Name normalization: helper name chosen for the inline `bne RTS_4` guard.
+    // STOP/END/CONT continue only when parser is at end-of-statement; model the
+    // zero-flag check via the current parsed character at TXTPTR.
+    return CHRGOT() == 0u;
 }
 
 bool IsEndOfProgram(ProgramPointer currentPtr);
@@ -1586,52 +1567,6 @@ void CONTROL_C_TYPED() {
     STOP_impl(true);
 }
 
-void STOP() {
-    STOP_impl(false);
-}
-
-void STOP_impl(bool shouldPrintBreak) {
-    if (!IsStatementEndOfParsedInput()) {
-        return;
-    }
-
-    ENDX_impl(shouldPrintBreak);
-}
-
-void ENDX() {
-    ENDX_impl(false);
-}
-
-void ENDX_impl(bool shouldPrintBreak) {
-    if (!IsStatementEndOfParsedInput()) {
-        return;
-    }
-
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
-    constexpr std::uint8_t kOLDLIN = ApplesoftVariables::ZP_OLDLIN;
-
-    const std::uint16_t textPointer = ReadZeroPageWord(kTXTPTR);
-    const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
-    const std::uint8_t currentPageHi = ApplesoftVariables::highByte(currentLine);
-
-    if (add_u8(currentPageHi, 1u) != 0u) {
-        WriteZeroPageWord(kOLDTEXT, textPointer);
-        WriteZeroPageWord(kOLDLIN, currentLine);
-    }
-
-    PopReturnAddress();
-    PopReturnAddress();
-
-    if (shouldPrintBreak) {
-        PRINT_ERROR_LINNUM(QT_ERROR(QT_BREAK_INDEX));
-        return;
-    }
-
-    RESTART();
-}
-
 void PRINT_ERROR_LINNUM(std::string_view prefix) {
     STROUT(prefix);
 
@@ -1642,31 +1577,6 @@ void PRINT_ERROR_LINNUM(std::string_view prefix) {
 
     INPRT();
     RESTART();
-}
-
-void CONT() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: CONT (inclusive) .. SAVE (exclusive)
-    // Name normalization: none (assembler label CONT kept verbatim).
-    // Internal label mapping: "bne RTS_4" is modeled as an early return.
-
-    if (!IsStatementEndOfParsedInput()) {
-        return;
-    }
-
-    constexpr std::uint8_t kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
-    constexpr std::uint8_t kOLDTEXT_plus_1 = add_u8(ApplesoftVariables::ZP_OLDTEXT, 1u);
-    constexpr std::uint8_t kOLDLIN = ApplesoftVariables::ZP_OLDLIN;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-
-    if (ReadZeroPageByte(kOLDTEXT_plus_1) == 0) {
-        ERROR(ERR_CANTCONT);
-        return;
-    }
-
-    WriteZeroPageWord(kTXTPTR, ReadZeroPageWord(kOLDTEXT));
-    WriteZeroPageWord(kCURLIN, ReadZeroPageWord(kOLDLIN));
 }
 
 void SAVE() {
@@ -1791,138 +1701,6 @@ void RUN() {
     GO_TO_LINE();
 }
 
-void GOSUB() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: GOSUB (inclusive) .. GO_TO_LINE (exclusive)
-    // Name normalization: none (assembler label GOSUB kept verbatim).
-    //
-    // Executes the "GOSUB" command:
-    // - Checks stack space for the return frame (7 bytes)
-    // - Pushes return frame containing: TXTPTR (2), CURLIN (2), TOKEN_GOSUB (1)
-    // - Falls through to shared GO_TO_LINE logic to find and execute the target line
-    // - On RETURN, restores execution state from the stack frame
-
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kTOKEN_GOSUB = 0xb0;
-
-    CHKMEMState chkmemState{};
-    chkmemState.a = 3;
-    chkmemState.stackPointer = ReadStackPointer();
-    const auto chkmemResult = CHKMEM(chkmemState);
-    if (!chkmemResult.ok) {
-        return;
-    }
-
-    const std::uint16_t textPointer = ReadZeroPageWord(kTXTPTR);
-    const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
-
-    PushWordToStack(textPointer);
-    PushWordToStack(currentLine);
-    PushByteToStack(kTOKEN_GOSUB);
-
-    // Fall-through in ROM from GOSUB to GO_TO_LINE.
-    GO_TO_LINE();
-}
-
-void GO_TO_LINE() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: GO_TO_LINE (inclusive) .. GOTO (exclusive)
-    // Name normalization: none (assembler label GO_TO_LINE kept verbatim).
-
-    (void)CHRGOT();
-    GOTO();
-    NEWSTT();
-}
-
-void GOTO() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: GOTO (inclusive) .. POP (exclusive)
-    // Name normalization: none (assembler label GOTO kept verbatim).
-
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
-    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
-
-    LINGET();
-    const std::uint8_t remnOffset = REMN();
-
-    const std::uint8_t currentPage = ReadZeroPageByte(add_u8(kCURLIN, 1u));
-    const std::uint8_t targetPage = ReadZeroPageByte(add_u8(kLINNUM, 1u));
-
-    ProgramPointer start{};
-    if (currentPage >= targetPage) {
-        start = ProgramPointer{ReadZeroPageWord(kTXTTAB)};
-    } else {
-        const ProgramPointer textPtr{ReadZeroPageWord(kTXTPTR)};
-        start = textPtr.advanced(static_cast<std::uint16_t>(remnOffset) + 1u);
-    }
-
-    if (!FL1(start.address)) {
-        ERROR(ERR_UNDEFSTAT);
-        return;
-    }
-
-    const std::uint16_t destination = static_cast<std::uint16_t>(ReadZeroPageWord(kLOWTR) - 1u);
-    WriteZeroPageWord(kTXTPTR, destination);
-}
-
-void POP() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: POP (inclusive) .. RETURN (exclusive)
-    // Name normalization: none (assembler label POP kept verbatim).
-
-    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
-    constexpr std::uint8_t kTOKEN_GOSUB = 0xb0;
-
-    if (!IsStatementEndOfParsedInput()) {
-        RTS_5();
-        return;
-    }
-
-    // Preserve original ROM bug: writes $FF to FORPNT low byte, not FORPNT+1.
-    WriteZeroPageByte(kFORPNT, 0xffu);
-
-    GTFORPNTState gtforpntState{};
-    const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
-    SetStackPointer(gtforpntResult.x);
-
-    if (PeekTopControlTokenAfterGTFORPNT() == kTOKEN_GOSUB) {
-        // Fall-through in ROM from POP to RETURN when top frame is GOSUB.
-        gReturnFromPopContext = true;
-        RETURN();
-        return;
-    }
-
-    ERROR(ERR_NOGOSUB);
-}
-
-void RETURN() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: RETURN (inclusive) .. DATA (exclusive)
-    // Name normalization: none (assembler label RETURN kept verbatim).
-
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-
-    (void)PopByteFromStack(); // discard GOSUB token
-    const std::uint8_t currentLineLo = PopByteFromStack();
-
-    if (ReturnWasFromPOPContext()) {
-        PULL3();
-        return;
-    }
-
-    const std::uint8_t currentLineHi = PopByteFromStack();
-    const std::uint8_t textPointerLo = PopByteFromStack();
-    const std::uint8_t textPointerHi = PopByteFromStack();
-
-    WriteZeroPageWord(kCURLIN, ApplesoftVariables::makeWord(currentLineLo, currentLineHi));
-    WriteZeroPageWord(kTXTPTR, ApplesoftVariables::makeWord(textPointerLo, textPointerHi));
-}
-
 void RTS_5() {
     // Shared RTS target for GOTO/POP in ROM.
 }
@@ -1988,19 +1766,6 @@ bool FL1(std::uint16_t startAddress) {
 
 bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
     return FL1(ApplesoftVariables::makeWord(startLo, startHi));
-}
-
-bool ReturnWasFromPOPContext() {
-    if (!gReturnFromPopContext) {
-        return false;
-    }
-
-    gReturnFromPopContext = false;
-    return true;
-}
-
-std::uint8_t PeekTopControlTokenAfterGTFORPNT() {
-    return readStackByteAt(ReadStackPointer(), 1u);
 }
 
 void DATA() {
