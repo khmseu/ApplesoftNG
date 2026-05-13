@@ -113,7 +113,7 @@ The following describes how `asm_port_error.cpp` should be split into logical, m
 
 **Rationale**: Program management and data handling are closely related and separate from expression evaluation and execution control. These functions manage the program structure itself.
 
-**Current Progress**: `SAVE()`, `LOAD()`, `VARTIO()`, and `PROGIO()` now live in `asm_port_statements.cpp`; line-editing/data handlers (`LIST()`, `DEL()`, `DATA()`, `READ()`, `LET()`, `PARSE_INPUT_LINE()`, and pointer-fix helpers) remain in `asm_port_error.cpp`.
+**Current Progress**: `SAVE()`, `LOAD()`, `VARTIO()`, `PROGIO()`, and `DATA()` now live in `asm_port_statements.cpp`; line-editing/data handlers (`LIST()`, `DEL()`, `READ()`, `LET()`, `PARSE_INPUT_LINE()`, and pointer-fix helpers) remain in `asm_port_error.cpp`.
 
 ---
 

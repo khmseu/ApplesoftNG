@@ -232,6 +232,7 @@ bool IsEndOfLineAtTextPointer();
 bool IsEndOfProgramAtTextPointer();
 std::uint16_t ReadLineNumberFromTextPointer();
 void AdvanceTextPointerToNextLine();
+void DATA();
 bool IsRunningMode();
 bool IsTraceEnabled();
 bool IsStatementEndOfParsedInput();
@@ -1495,15 +1496,6 @@ bool FL1(std::uint16_t startAddress) {
 
 bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
     return FL1(ApplesoftVariables::makeWord(startLo, startHi));
-}
-
-void DATA() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: DATA (inclusive) .. ADDON (exclusive)
-    // Name normalization: none (assembler label DATA kept verbatim).
-
-    const std::uint8_t offset = DATAN();
-    ADDON(offset);
 }
 
 void PushForPntFrame() {
