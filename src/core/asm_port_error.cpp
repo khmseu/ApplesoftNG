@@ -314,22 +314,6 @@ void ERROR(std::uint8_t error_code_offset) {
     PRINT_ERROR_LINNUM();
 }
 
-void PRINT_ERROR_LINNUM() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PRINT_ERROR_LINNUM (inclusive) .. RESTART (exclusive)
-    // Name normalization: none (assembler label PRINT_ERROR_LINNUM kept verbatim).
-
-    STROUT(QT_ERROR(QT_ERROR_INDEX));
-
-    if (IsDirectMode()) {
-        RESTART();
-        return;
-    }
-
-    INPRT();
-    RESTART();
-}
-
 // void OUTDO() {
 //     // TODO(asm-port): write the current output character from the Applesoft line
 //     // printer to the console.
@@ -342,21 +326,6 @@ std::uint16_t PopWordFromStack();
 void PushTextPointerAddress();
 void PushCurrentLineNumber();
 void PushTokenTo(std::uint8_t token);
-
-
-void PRINT_ERROR_LINNUM(std::string_view prefix) {
-    STROUT(prefix);
-
-    if (IsDirectMode()) {
-        RESTART();
-        return;
-    }
-
-    INPRT();
-    RESTART();
-}
-
-
 
 
 void FRMEVL() {
