@@ -7,6 +7,7 @@
 // computing (token - 0xD2) as the index and invoking the returned pointer.
 
 #include "core/asm_port_unfnc.hpp"
+#include "core/applesoft_variables.hpp"
 #include "core/asm_port_strlit.hpp"
 #include "core/asm_port_strlt2.hpp"
 
@@ -14,6 +15,7 @@ namespace applesoft::asm_port {
 
 std::uint8_t MON_PREAD();
 void CONINT();
+std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void SNGFLT(std::uint8_t value);
 void PEEK();
 
@@ -37,7 +39,13 @@ static void USR()      {} // TODO(asm-port): USR        $D5...213  (user-defined
 static void FRE()      {} // TODO(asm-port): FRE        $D6...214
 static void ERROR()    {} // TODO(asm-port): ERROR/SCRN $D7...215  (SCRN( token dispatches to ERROR handler)
 static void PDL_fn()   { PDL(); }
-static void POS()      {} // TODO(asm-port): POS        $D9...217
+void POS() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: POS (inclusive) .. SNGFLT (exclusive)
+    // Name normalization: none (assembler label POS kept verbatim).
+
+    SNGFLT(ReadZeroPageByte(ApplesoftVariables::ZP_MON_CH));
+}
 static void SQR()      {} // TODO(asm-port): SQR        $DA...218
 static void RND()      {} // TODO(asm-port): RND        $DB...219
 static void LOG()      {} // TODO(asm-port): LOG        $DC...220

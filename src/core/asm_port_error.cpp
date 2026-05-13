@@ -1132,14 +1132,6 @@ void GIVAYF(std::int16_t value) {
 
 } // namespace
 
-void POS() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: POS (inclusive) .. SNGFLT (exclusive)
-    // Name normalization: none (assembler label POS kept verbatim).
-
-    SNGFLT(ReadZeroPageByte(ApplesoftVariables::ZP_MON_CH));
-}
-
 void UNDFNC() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: UNDFNC (inclusive) .. DEF (exclusive)
