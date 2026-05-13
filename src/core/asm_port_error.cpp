@@ -480,13 +480,6 @@ std::int8_t gNumericCompareResult = 0;
 bool gNumericCompareCarry = false;
 std::uint8_t gFloatInput = 0;
 
-void GOERR() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: GOERR (inclusive) .. LINCOOR (exclusive)
-    // Name normalization: none (assembler label GOERR kept verbatim).
-    IQERR();
-}
-
 // TODO(asm-port): port MON_SCRN monitor handler.
 std::uint8_t MON_SCRN(std::uint8_t /*row*/, std::uint8_t /*column*/) {
     return 0;
