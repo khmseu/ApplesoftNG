@@ -19,6 +19,7 @@ std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void SNGFLT(std::uint8_t value);
 void GIVAYF(std::int16_t value);
+void FRE();
 void PEEK();
 
 void PDL() {
@@ -60,7 +61,14 @@ void ABS() {
     WriteZeroPageByte(kFAC_SIGN, static_cast<std::uint8_t>(ReadZeroPageByte(kFAC_SIGN) >> 1u));
 }
 static void USR()      {} // TODO(asm-port): USR        $D5...213  (user-defined function via zero-page JMP at $0A)
-static void FRE()      {} // TODO(asm-port): FRE        $D6...214
+void FRE_fn() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FRE (inclusive) .. ERROR (exclusive)
+    // Name normalization: wrapper name FRE_fn used to avoid clashing with the
+    // existing FRE implementation in core.
+
+    FRE();
+}
 static void ERROR()    {} // TODO(asm-port): ERROR/SCRN $D7...215  (SCRN( token dispatches to ERROR handler)
 static void PDL_fn()   { PDL(); }
 void POS() {
@@ -98,7 +106,7 @@ UNFNC_fn UNFNC(std::size_t index) {
         INT_fn,   // [1]  $D3...211...INT   (INT_fn: INT is a reserved C++ keyword)
         ABS,      // [2]  $D4...212...ABS
         USR,      // [3]  $D5...213...USR
-        FRE,      // [4]  $D6...214...FRE
+        FRE_fn,   // [4]  $D6...214...FRE
         ERROR,    // [5]  $D7...215...SCRN(
         PDL_fn,   // [6]  $D8...216...PDL
         POS,      // [7]  $D9...217...POS
