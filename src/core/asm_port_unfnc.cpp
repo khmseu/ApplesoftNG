@@ -12,8 +12,19 @@
 
 namespace applesoft::asm_port {
 
-void PDL();
+std::uint8_t MON_PREAD();
+void CONINT();
+void SNGFLT(std::uint8_t value);
 void PEEK();
+
+void PDL() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PDL (inclusive) .. NXDIM (exclusive)
+    // Name normalization: none (assembler label PDL kept verbatim).
+
+    CONINT();
+    SNGFLT(MON_PREAD());
+}
 
 // ---------------------------------------------------------------------------
 // Stub implementations for function handlers not yet ported.

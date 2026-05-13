@@ -256,10 +256,6 @@ std::int8_t FCOMP(std::uint16_t /*argAddress*/) {
 // TODO(asm-port): port FLOAT label.
 void FLOAT() {}
 
-// TODO(asm-port): port MON_PREAD monitor paddle reader.
-std::uint8_t MON_PREAD() {
-    return 0;
-}
 
 void GIVAYF(std::int16_t value);
 
@@ -282,6 +278,11 @@ std::int8_t CompareArgAndFacStrings() {
 }
 
 } // namespace
+
+// TODO(asm-port): port MON_PREAD monitor paddle reader.
+std::uint8_t MON_PREAD() {
+    return 0;
+}
 
 void SetPendingErrorCode(std::uint8_t errorCode) {
     gPendingErrorCode = errorCode;
@@ -644,15 +645,6 @@ void CMPDONE() {
     gFloatInput = (a == 0u) ? 0u : 1u;
     SNGFLT(gFloatInput);
     FLOAT();
-}
-
-void PDL() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PDL (inclusive) .. NXDIM (exclusive)
-    // Name normalization: none (assembler label PDL kept verbatim).
-
-    CONINT();
-    SNGFLT(MON_PREAD());
 }
 
 void NXDIM() {
