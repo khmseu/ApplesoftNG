@@ -3,6 +3,7 @@
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_gtforpnt.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_token_address_table.hpp"
 
 #include <cstdint>
 #include <string_view>
@@ -27,6 +28,26 @@ std::uint8_t CHRGOT();
 std::uint8_t CHRGET();
 void LINGET();
 void SYNERR();
+void LET();
+void STEP();
+void TRACE_();
+void LOAD_FAC_FROM_YA();
+void FRMNUM();
+void SIGN();
+void FRM_STACK_2();
+void PushForPntFrame();
+bool ISCNTC();
+void OUTSP();
+void LINPRT();
+void OUTDO(std::uint8_t value);
+std::uint8_t CurrentStatementChar();
+bool IsRunningMode();
+bool IsTraceEnabled();
+bool IsEndOfLineAtTextPointer();
+bool IsEndOfProgramAtTextPointer();
+std::uint16_t ReadLineNumberFromTextPointer();
+void AdvanceTextPointerToNextLine();
+void GOEND();
 void EXECUTE_STATEMENT();
 void EXECUTE_STATEMENT_1();
 void NEWSTT();
@@ -40,6 +61,8 @@ void RETURN();
 void PULL3();
 std::uint8_t REMN();
 bool FL1(std::uint16_t startAddress);
+
+constexpr std::uint8_t kTokenBase = 0x80u;
 
 void STOP_impl(bool shouldPrintBreak);
 void ENDX_impl(bool shouldPrintBreak);
@@ -269,6 +292,171 @@ void RETURN() {
 
     WriteZeroPageWord(kCURLIN, ApplesoftVariables::makeWord(currentLineLo, currentLineHi));
     WriteZeroPageWord(kTXTPTR, ApplesoftVariables::makeWord(textPointerLo, textPointerHi));
+}
+
+void STEP() {
+    constexpr std::uint8_t kTOKEN_STEP = 0xc7u;
+
+    LOAD_FAC_FROM_YA();
+    if (CHRGOT() == kTOKEN_STEP) {
+        CHRGET();
+        FRMNUM();
+    }
+
+    SIGN();
+    FRM_STACK_2();
+    PushForPntFrame();
+    NEWSTT();
+}
+
+void NEWSTT() {
+    constexpr std::uint8_t kREMSTK = ApplesoftVariables::ZP_REMSTK;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    constexpr std::uint8_t kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
+
+    WriteZeroPageByte(kREMSTK, ReadStackPointer());
+
+    if (ISCNTC()) {
+        return;
+    }
+
+    if (ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1u)) != 0xffu) {
+        WriteZeroPageWord(kOLDTEXT, ReadZeroPageWord(kTXTPTR));
+    } else {
+        WriteZeroPageWord(kOLDTEXT, 0);
+    }
+
+    if (IsEndOfLineAtTextPointer()) {
+        if (IsEndOfProgramAtTextPointer()) {
+            GOEND();
+            return;
+        }
+    }
+
+    WriteZeroPageWord(kCURLIN, ReadLineNumberFromTextPointer());
+    AdvanceTextPointerToNextLine();
+    TRACE_();
+}
+
+void TRACE_() {
+    if (IsTraceEnabled()) {
+        if (IsRunningMode()) {
+            OUTDO('#'&0x7fu);
+            LINPRT();
+            OUTSP();
+        }
+    }
+
+    CHRGET();
+    EXECUTE_STATEMENT();
+    NEWSTT();
+}
+
+void GOEND() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: GOEND (inclusive) .. EXECUTE_STATEMENT (exclusive)
+    // Name normalization: none (assembler label GOEND kept verbatim).
+    // End-of-program path in NEWSTT jumps into END4 with carry clear, which
+    // restarts without printing BREAK. Model that directly here.
+    RESTART();
+}
+
+bool IsEndOfLineAtTextPointer() {
+    // Source: NEWSTT inline — ldy #0 / lda (TXTPTR),Y: end-of-statement when byte is 0.
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    return ReadProgramByte(ReadZeroPageWord(kTXTPTR)) == 0u;
+}
+
+bool IsEndOfProgramAtTextPointer() {
+    // Source: NEWSTT inline — ldy #2 / lda (TXTPTR),Y: next-line link high byte;
+    // if zero the program has ended (null forward pointer).
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    return ReadProgramByte(static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + 2u)) == 0u;
+}
+
+std::uint16_t ReadLineNumberFromTextPointer() {
+    // Source: NEWSTT inline — reads CURLIN from (TXTPTR)+3 and (TXTPTR)+4.
+    // Memory layout at TXTPTR when it sits on an EOL 0x00:
+    //   [0] = 0x00 (EOL), [1] = link.lo, [2] = link.hi, [3] = lineno.lo, [4] = lineno.hi.
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    const std::uint16_t txtptr = ReadZeroPageWord(kTXTPTR);
+    const std::uint8_t lo = ReadProgramByte(static_cast<std::uint16_t>(txtptr + 3u));
+    const std::uint8_t hi = ReadProgramByte(static_cast<std::uint16_t>(txtptr + 4u));
+    return ApplesoftVariables::makeWord(lo, hi);
+}
+
+void AdvanceTextPointerToNextLine() {
+    // Source: NEWSTT inline — tya (A=4) + adc TXTPTR → TXTPTR += 4.
+    // CHRGET called next by TRACE_ adds 1 more, landing on the first content byte.
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + 4u));
+}
+
+bool IsRunningMode() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: TRACE_ (inclusive) .. EXECUTE_STATEMENT (exclusive)
+    // Name normalization: helper name chosen for the inline TRACE_ predicate.
+    // TRACE_ checks CURLIN+1 and only traces when non-zero (running mode).
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    return ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1u)) != 0u;
+}
+
+bool IsTraceEnabled() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: TRACE_ (inclusive) .. EXECUTE_STATEMENT (exclusive)
+    // Name normalization: helper name chosen for the inline TRACE_ predicate.
+    // `bit TRCFLG` + `bpl` means tracing is enabled when TRCFLG bit 7 is set.
+    constexpr std::uint8_t kTRCFLG = ApplesoftVariables::ZP_TRCFLG;
+    return (ReadZeroPageByte(kTRCFLG) & 0x80u) != 0u;
+}
+
+void EXECUTE_STATEMENT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: EXECUTE_STATEMENT (inclusive) .. EXECUTE_STATEMENT_1 (exclusive)
+    // Name normalization: none (assembler label EXECUTE_STATEMENT kept verbatim).
+
+    if (CurrentStatementChar() == 0) {
+        // EMPTY STATEMENT: fall through to caller behavior.
+        return;
+    }
+
+    EXECUTE_STATEMENT_1();
+}
+
+void EXECUTE_STATEMENT_1() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: EXECUTE_STATEMENT_1 (inclusive) .. COLON_ (exclusive)
+    // Name normalization: none (assembler label EXECUTE_STATEMENT_1 kept verbatim).
+
+    const std::uint8_t ch = CurrentStatementChar();
+    if ((ch & 0x80u) == 0u) {
+        LET();
+        return;
+    }
+
+    const std::uint8_t tokenIndex = static_cast<std::uint8_t>(ch - kTokenBase);
+    if (tokenIndex >= 0x40u) {
+        SYNERR();
+        return;
+    }
+
+    CHRGET();
+    const TOKEN_ADDRESS_TABLE_fn handler = TOKEN_ADDRESS_TABLE(static_cast<std::size_t>(tokenIndex));
+    handler();
+}
+
+void COLON_() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: COLON_ (inclusive) .. RESTORE (exclusive)
+    // Name normalization: none (assembler label COLON_ kept verbatim).
+
+    if (CurrentStatementChar() == static_cast<std::uint8_t>(':' )) {
+        TRACE_();
+        return;
+    }
+
+    SYNERR();
 }
 
 }  // namespace applesoft::asm_port

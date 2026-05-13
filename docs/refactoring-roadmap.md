@@ -78,7 +78,7 @@ The following describes how `asm_port_error.cpp` should be split into logical, m
 
 **Rationale**: Control flow is a distinct feature from data manipulation, I/O, and graphics. These functions primarily manage the execution stack and program flow.
 
-**Current Progress**: `STOP()`, `ENDX()`, `CONT()`, `GOSUB()`, `GO_TO_LINE()`, `GOTO()`, `POP()`, and `RETURN()` now live in `asm_port_control_flow.cpp`; the remaining dispatcher helpers (`CONTROL_C_TYPED()`, `EXECUTE_STATEMENT_1()`, `TRACE_()`, `STEP()`, `NEWSTT()`) are still in `asm_port_error.cpp`.
+**Current Progress**: `STOP()`, `ENDX()`, `CONT()`, `GOSUB()`, `GO_TO_LINE()`, `GOTO()`, `POP()`, `RETURN()`, `GOEND()`, `COLON_()`, `EXECUTE_STATEMENT()`, `EXECUTE_STATEMENT_1()`, `TRACE_()`, `STEP()`, and `NEWSTT()` now live in `asm_port_control_flow.cpp`; `CONTROL_C_TYPED()` remains in `asm_port_error.cpp` because it still manipulates the local `gPendingErrorCode` + `HANDLERR()` error path.
 
 ---
 
