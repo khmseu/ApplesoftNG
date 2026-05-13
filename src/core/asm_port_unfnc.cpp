@@ -16,6 +16,7 @@ namespace applesoft::asm_port {
 std::uint8_t MON_PREAD();
 void CONINT();
 std::uint8_t ReadZeroPageByte(std::uint8_t address);
+void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void SNGFLT(std::uint8_t value);
 void PEEK();
 
@@ -34,7 +35,14 @@ void PDL() {
 
 static void SGN()      {} // TODO(asm-port): SGN        $D2...210
 static void INT_fn()   {} // TODO(asm-port): INT        $D3...211  (INT is a C++ keyword; normalized to INT_fn)
-static void ABS()      {} // TODO(asm-port): ABS        $D4...212
+void ABS() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ABS (inclusive) .. FCOMP (exclusive)
+    // Name normalization: none (assembler label ABS kept verbatim).
+
+    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+    WriteZeroPageByte(kFAC_SIGN, static_cast<std::uint8_t>(ReadZeroPageByte(kFAC_SIGN) >> 1u));
+}
 static void USR()      {} // TODO(asm-port): USR        $D5...213  (user-defined function via zero-page JMP at $0A)
 static void FRE()      {} // TODO(asm-port): FRE        $D6...214
 static void ERROR()    {} // TODO(asm-port): ERROR/SCRN $D7...215  (SCRN( token dispatches to ERROR handler)
