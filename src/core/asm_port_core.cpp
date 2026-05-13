@@ -2,6 +2,7 @@
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_memerr.hpp"
+#include "core/asm_port_print.hpp"
 #include "core/asm_port_reason.hpp"
 #include "core/io_ports.hpp"
 
@@ -51,6 +52,7 @@ void GARBAG();
 std::int8_t CompareArgAndFacStrings();
 void GOTO();
 void NEWSTT();
+void PRINT_ERROR_LINNUM();
 extern std::int8_t gNumericCompareResult;
 extern bool gNumericCompareCarry;
 extern std::uint8_t gFloatInput;
@@ -672,6 +674,26 @@ void PTRGET4() {
 
 void SetPendingErrorCode(std::uint8_t errorCode) {
     gPendingErrorCode = errorCode;
+}
+
+
+void ERROR(std::uint8_t error_code_offset) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ERROR (inclusive) .. PRINT_ERROR_LINNUM (exclusive)
+    // Name normalization: none (assembler label ERROR kept verbatim).
+
+    gPendingErrorCode = error_code_offset;
+
+    if (IsOnErr()) {
+        HANDLERR();
+        return;
+    }
+
+    CRDO();
+    OUTQUES();
+    STROUT(ERROR_MESSAGES(error_code_offset));
+    STKINI();
+    PRINT_ERROR_LINNUM();
 }
 
 

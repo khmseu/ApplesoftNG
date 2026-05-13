@@ -246,25 +246,6 @@ std::uint8_t MON_PREAD() {
 }
 
 
-void ERROR(std::uint8_t error_code_offset) {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ERROR (inclusive) .. PRINT_ERROR_LINNUM (exclusive)
-    // Name normalization: none (assembler label ERROR kept verbatim).
-
-    gPendingErrorCode = error_code_offset;
-
-    if (IsOnErr()) {
-        HANDLERR();
-        return;
-    }
-
-    CRDO();
-    OUTQUES();
-    STROUT(ERROR_MESSAGES(error_code_offset));
-    STKINI();
-    PRINT_ERROR_LINNUM();
-}
-
 // void OUTDO() {
 //     // TODO(asm-port): write the current output character from the Applesoft line
 //     // printer to the console.
