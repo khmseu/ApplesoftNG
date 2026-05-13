@@ -22,6 +22,7 @@ void ERRDIR();
 void SYNCHR(std::uint8_t expected);
 void SETDA(std::uint16_t data_ptr);
 void SetPendingErrorCode(std::uint8_t errorCode);
+std::uint8_t PopByteFromStack();
 
 namespace {
 
@@ -33,9 +34,6 @@ std::uint8_t CHRGET_INPUT() { return CHRGET(); }
 
 // TODO(asm-port): port INLIN label.
 // void INLIN() {}
-
-// TODO(asm-port): pop one byte from the emulated 6502 stack.
-void popStackByte() {}
 
 // TODO(asm-port): port PTRGET label.
 // std::uint16_t PTRGET() { return 0; }
@@ -219,7 +217,7 @@ void RESPERR() {
 // Labels: INPERR (inclusive) .. RESPERR (exclusive)
 // Name normalization: none (assembler label INPERR kept verbatim).
 void INPERR() {
-    popStackByte();
+    (void)PopByteFromStack();
     RESPERR();
 }
 
