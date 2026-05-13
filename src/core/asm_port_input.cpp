@@ -21,6 +21,7 @@ void SYNERR();
 void ERRDIR();
 void SYNCHR(std::uint8_t expected);
 void SETDA(std::uint16_t data_ptr);
+void SetPendingErrorCode(std::uint8_t errorCode);
 
 namespace {
 
@@ -204,7 +205,8 @@ void READERR() {
 // Name normalization: none (assembler label RESPERR kept verbatim).
 void RESPERR() {
     if ((variables_const().ERRFLG & 0x80u) != 0u) {
-        // TODO(asm-port): propagate X=254 into HANDLERR once register model is shared.
+        // ROM RESPERR sets X=254 before jumping to HANDLERR.
+        SetPendingErrorCode(0xfeu);
         HANDLERR();
         return;
     }

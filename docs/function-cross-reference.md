@@ -40,7 +40,7 @@
 | CHKSTR                            | src/core/asm_port_parser.cpp              | 62   | real   |
 | CHKVAL                            | src/core/asm_port_parser.cpp              | 306  | real   |
 | CHRGET                            | src/core/asm_port_parser.cpp              | 239  | real   |
-| CHRGET_INPUT                      | src/core/asm_port_input.cpp               | 31   | real   |
+| CHRGET_INPUT                      | src/core/asm_port_input.cpp               | 32   | real   |
 | CHRGOT                            | src/core/asm_port_parser.cpp              | 243  | real   |
 | CHRSTR                            | src/core/asm_port_strlt2.cpp              | 678  | real   |
 | CHRSTR_fn                         | src/core/asm_port_unfnc.cpp               | 103  | real   |
@@ -83,7 +83,7 @@
 | ENDX                              | src/core/asm_port_control_flow.cpp        | 227  | real   |
 | ENDX_impl                         | src/core/asm_port_control_flow.cpp        | 231  | real   |
 | EQUOP                             | src/core/asm_port_mathtbl.cpp             | 37   | stub   |
-| ERLIN                             | src/core/asm_port_input.cpp               | 190  | real   |
+| ERLIN                             | src/core/asm_port_input.cpp               | 191  | real   |
 | ERRDIR                            | src/core/asm_port_core.cpp                | 220  | real   |
 | ERROR                             | src/core/asm_port_core.cpp                | 677  | real   |
 | ERROR_fn                          | src/core/asm_port_unfnc.cpp               | 75   | real   |
@@ -97,7 +97,7 @@
 | FCOMP                             | src/core/asm_port_core.cpp                | 1231 | stub   |
 | FCOMP2                            | src/core/asm_port_control_flow.cpp        | 138  | stub   |
 | FDIVT                             | src/core/asm_port_mathtbl.cpp             | 26   | stub   |
-| FINDATA                           | src/core/asm_port_input.cpp               | 52   | stub   |
+| FINDATA                           | src/core/asm_port_input.cpp               | 53   | stub   |
 | FIND_ARRAY_ELEMENT                | src/core/asm_port_core.cpp                | 383  | stub   |
 | FIND_HIGHEST_STRING               | src/core/asm_port_strlt2.cpp              | 276  | real   |
 | FIX_LINKS                         | src/core/asm_port_statements.cpp          | 647  | real   |
@@ -133,7 +133,7 @@
 | GARBAG                            | src/core/asm_port_strlt2.cpp              | 602  | real   |
 | GENERIC_CHRGET                    | src/core/asm_port_parser.cpp              | 217  | real   |
 | GENERIC_END                       | src/core/asm_port_core.cpp                | 134  | real   |
-| GET                               | src/core/asm_port_input.cpp               | 245  | real   |
+| GET                               | src/core/asm_port_input.cpp               | 247  | real   |
 | GETADR                            | src/core/asm_port_parser.cpp              | 250  | real   |
 | GETARY                            | src/core/asm_port_core.cpp                | 319  | real   |
 | GETARY2                           | src/core/asm_port_core.cpp                | 327  | real   |
@@ -179,11 +179,11 @@
 | INCHR                             | src/core/asm_port_inlin2.cpp              | 62   | real   |
 | INLIN                             | src/core/asm_port_inlin.cpp               | 7    | real   |
 | INLIN2                            | src/core/asm_port_inlin2.cpp              | 37   | real   |
-| INPERR                            | src/core/asm_port_input.cpp               | 219  | real   |
+| INPERR                            | src/core/asm_port_input.cpp               | 221  | real   |
 | INPRT                             | src/core/asm_port_print.cpp               | 42   | real   |
-| INPUT                             | src/core/asm_port_input.cpp               | 62   | real   |
-| INPUTERR                          | src/core/asm_port_input.cpp               | 227  | real   |
-| INPUT_FLAG_ZERO                   | src/core/asm_port_input.cpp               | 103  | real   |
+| INPUT                             | src/core/asm_port_input.cpp               | 63   | real   |
+| INPUTERR                          | src/core/asm_port_input.cpp               | 229  | real   |
+| INPUT_FLAG_ZERO                   | src/core/asm_port_input.cpp               | 104  | real   |
 | INPUT_Handler                     | src/core/asm_port_token_address_table.cpp | 74   | real   |
 | InsertNewLine                     | src/core/asm_port_statements.cpp          | 491  | real   |
 | INT_fn                            | src/core/asm_port_unfnc.cpp               | 57   | stub   |
@@ -286,8 +286,8 @@
 | OUTQUES                           | src/platform/asm_port_outdo.cpp           | 70   | real   |
 | OUTSP                             | src/platform/asm_port_outdo.cpp           | 62   | real   |
 | PARCHK                            | src/core/asm_port_parser.cpp              | 93   | stub   |
-| parseNumericInputAndStore         | src/core/asm_port_input.cpp               | 49   | stub   |
-| parseStringInputAndStore          | src/core/asm_port_input.cpp               | 46   | stub   |
+| parseNumericInputAndStore         | src/core/asm_port_input.cpp               | 50   | stub   |
+| parseStringInputAndStore          | src/core/asm_port_input.cpp               | 47   | stub   |
 | PARSE_INPUT_LINE                  | src/core/asm_port_statements.cpp          | 544  | real   |
 | PDL                               | src/core/asm_port_unfnc.cpp               | 28   | real   |
 | PDL_fn                            | src/core/asm_port_unfnc.cpp               | 82   | real   |
@@ -303,7 +303,7 @@
 | POP                               | src/core/asm_port_control_flow.cpp        | 579  | real   |
 | PopByteFromStack                  | src/core/asm_port_stack.cpp               | 34   | real   |
 | PopReturnAddress                  | src/core/asm_port_stack.cpp               | 46   | stub   |
-| popStackByte                      | src/core/asm_port_input.cpp               | 37   | stub   |
+| popStackByte                      | src/core/asm_port_input.cpp               | 38   | stub   |
 | PopWordFromStack                  | src/core/asm_port_stack.cpp               | 39   | real   |
 | POS                               | src/core/asm_port_unfnc.cpp               | 83   | real   |
 | PRINT                             | src/core/asm_port_print.cpp               | 237  | real   |
@@ -314,7 +314,7 @@
 | PRINT_ERROR_LINNUM                | src/core/asm_port_print.cpp               | 388  | real   |
 | PRINT_Handler                     | src/core/asm_port_token_address_table.cpp | 127  | real   |
 | print_list_loop                   | src/core/asm_port_print.cpp               | 157  | stub   |
-| PROCESS_INPUT_LIST                | src/core/asm_port_input.cpp               | 110  | real   |
+| PROCESS_INPUT_LIST                | src/core/asm_port_input.cpp               | 111  | real   |
 | PROGIO                            | src/core/asm_port_statements.cpp          | 913  | real   |
 | PR_COMMA                          | src/core/asm_port_print.cpp               | 303  | real   |
 | PR_NUMBER                         | src/core/asm_port_statements.cpp          | 969  | real   |
@@ -337,8 +337,8 @@
 | PUTSTR                            | src/core/asm_port_statements.cpp          | 403  | real   |
 | QINT                              | src/core/asm_port_parser.cpp              | 212  | stub   |
 | RDCHAR                            | src/platform/asm_port_getln.cpp           | 21   | stub   |
-| READ                              | src/core/asm_port_input.cpp               | 92   | real   |
-| READERR                           | src/core/asm_port_input.cpp               | 198  | real   |
+| READ                              | src/core/asm_port_input.cpp               | 93   | real   |
+| READERR                           | src/core/asm_port_input.cpp               | 199  | real   |
 | readLine                          | src/platform/console.cpp                  | 8    | real   |
 | ReadLineNumberFromTextPointer     | src/core/asm_port_control_flow.cpp        | 704  | real   |
 | ReadProgramByte                   | src/core/asm_port_core.cpp                | 97   | real   |
@@ -378,7 +378,7 @@
 | RELOPS                            | src/core/asm_port_core.cpp                | 821  | real   |
 | REM                               | src/core/asm_port_control_flow.cpp        | 811  | real   |
 | REMN                              | src/core/asm_port_control_flow.cpp        | 453  | real   |
-| RESPERR                           | src/core/asm_port_input.cpp               | 205  | stub   |
+| RESPERR                           | src/core/asm_port_input.cpp               | 206  | real   |
 | RESTART                           | src/core/asm_port_control_flow.cpp        | 261  | real   |
 | RESTORE                           | src/core/asm_port_parser.cpp              | 285  | real   |
 | RESUME                            | src/core/asm_port_control_flow.cpp        | 402  | real   |
