@@ -53,7 +53,7 @@
 | CLEAR_impl                        | src/core/asm_port_statements.cpp          | 98   | real   |
 | CLREOL                            | src/platform/asm_port_getln.cpp           | 24   | stub   |
 | CMPDONE                           | src/core/asm_port_error.cpp               | 975  | real   |
-| COLD_START                        | src/core/asm_port_core.cpp                | 72   | real   |
+| COLD_START                        | src/core/asm_port_core.cpp                | 84   | real   |
 | COLON\_                           | src/core/asm_port_control_flow.cpp        | 533  | real   |
 | COLOR                             | src/core/asm_port_graphics.cpp            | 188  | real   |
 | COLOR_Handler                     | src/core/asm_port_token_address_table.cpp | 114  | real   |
@@ -132,7 +132,7 @@
 | GARBAG                            | src/core/asm_port_reason.cpp              | 14   | stub   |
 | GARBAG                            | src/core/asm_port_strlt2.cpp              | 602  | real   |
 | GENERIC_CHRGET                    | src/core/asm_port_parser.cpp              | 194  | real   |
-| GENERIC_END                       | src/core/asm_port_core.cpp                | 64   | real   |
+| GENERIC_END                       | src/core/asm_port_core.cpp                | 76   | real   |
 | GET                               | src/core/asm_port_input.cpp               | 251  | real   |
 | GETADR                            | src/core/asm_port_parser.cpp              | 227  | real   |
 | GETARY                            | src/core/asm_port_error.cpp               | 1181 | real   |
@@ -194,12 +194,12 @@
 | IQERR                             | src/core/asm_port_error.cpp               | 1296 | real   |
 | ISCNTC                            | src/core/asm_port_control_flow.cpp        | 138  | real   |
 | isDigit                           | src/core/asm_port_control_flow.cpp        | 114  | real   |
-| IsDirectMode                      | src/core/asm_port_error.cpp               | 1807 | real   |
+| IsDirectMode                      | src/core/asm_port_core.cpp                | 57   | real   |
 | IsEndOfLineAtTextPointer          | src/core/asm_port_control_flow.cpp        | 449  | real   |
 | IsEndOfProgram                    | src/core/asm_port_statements.cpp          | 548  | real   |
 | IsEndOfProgramAtTextPointer       | src/core/asm_port_control_flow.cpp        | 455  | real   |
 | ISLETC                            | src/core/asm_port_error.cpp               | 1133 | real   |
-| IsOnErr                           | src/core/asm_port_error.cpp               | 1799 | real   |
+| IsOnErr                           | src/core/asm_port_core.cpp                | 49   | real   |
 | IsRunningMode                     | src/core/asm_port_control_flow.cpp        | 480  | real   |
 | IsStatementEndOfParsedInput       | src/core/asm_port_parser.cpp              | 253  | real   |
 | IsTraceEnabled                    | src/core/asm_port_control_flow.cpp        | 489  | real   |

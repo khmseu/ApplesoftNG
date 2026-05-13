@@ -46,6 +46,18 @@ void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
     variables().writeByte(address, value);
 }
 
+bool IsOnErr() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ERROR (inclusive) .. L_ERROR_1 (exclusive)
+    // Name normalization: helper name chosen for the inline ERROR predicate.
+    // `bit ERRFLG` + `bpl` means ON ERR is active when ERRFLG bit 7 is set.
+    return (ReadZeroPageByte(ApplesoftVariables::ZP_ERRFLG) & 0x80u) != 0u;
+}
+
+bool IsDirectMode() {
+    return ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_CURLIN + 1u)) == 0xffu;
+}
+
 void SetStackPointer(std::uint8_t value);
 void PushByteToStack(std::uint8_t value);
 void NORMAL();
