@@ -20,6 +20,7 @@ void CONINT();
 void MKINT();
 bool ISLETC();
 void AYINT();
+void PTRGET4();
 std::uint8_t COMBYTE();
 void GETADR();
 void IQERR();
@@ -370,6 +371,16 @@ void MKINT() {
 
 void ROUND_FAC() {
     // TODO(asm-port): port ROUND_FAC label.
+}
+
+void NAMOK() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: NAMOK (inclusive) .. BASIC (exclusive)
+    // Name normalization: none (assembler label NAMOK kept verbatim).
+
+    WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP, 0u); // VALTYP
+    WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP_PLUS_1, 0u); // VALTYP+1
+    PTRGET4();
 }
 
 }  // namespace applesoft::asm_port

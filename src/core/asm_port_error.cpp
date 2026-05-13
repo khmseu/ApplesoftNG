@@ -693,16 +693,6 @@ void PTRGET3() {
     NAMOK();
 }
 
-void NAMOK() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: NAMOK (inclusive) .. BASIC (exclusive)
-    // Name normalization: none (assembler label NAMOK kept verbatim).
-
-    WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP, 0u); // VALTYP
-    WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP_PLUS_1, 0u); // VALTYP+1
-    PTRGET4();
-}
-
 void PTRGET4() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: PTRGET4 (inclusive) .. ISLETC (exclusive)
@@ -854,32 +844,6 @@ void ARRAY() {
     MAKE_NEW_ARRAY();
 }
 
-void SUBERR() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: SUBERR (inclusive) .. IQERR (exclusive)
-    // Name normalization: none (assembler label SUBERR kept verbatim).
-
-    gJerErrorCode = ERR_BADSUBS;
-    JER();
-}
-
-void IQERR() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: IQERR (inclusive) .. JER (exclusive)
-    // Name normalization: none (assembler label IQERR kept verbatim).
-
-    gJerErrorCode = ERR_ILLQTY;
-    JER();
-}
-
-void JER() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: JER (inclusive) .. USE_OLD_ARRAY (exclusive)
-    // Name normalization: none (assembler label JER kept verbatim).
-
-    ERROR(gJerErrorCode);
-}
-
 void USE_OLD_ARRAY() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: USE_OLD_ARRAY (inclusive) .. MAKE_NEW_ARRAY (exclusive)
@@ -923,27 +887,6 @@ void FIND_ARRAY_ELEMENT() {
     WriteZeroPageByte(ApplesoftVariables::ZP_NUMDIM, ReadZeroPageByte(ApplesoftVariables::ZP_NUMDIM)); // TODO(asm-port): fetch #dims from descriptor pointer.
     WriteZeroPageWord(ApplesoftVariables::ZP_STRNG2, 0u); // STRNG2 accumulator
     FAE_1();
-}
-
-void FAE_1() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FAE_1 (inclusive) .. GSE (exclusive)
-    // Name normalization: none (assembler label FAE_1 kept verbatim).
-
-    if (ReadZeroPageByte(ApplesoftVariables::ZP_NUMDIM) == 0u) {
-        return;
-    }
-
-    // TODO(asm-port): complete per-dimension bounds and offset accumulation.
-    GSE();
-}
-
-void GSE() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: GSE (inclusive) .. GME (exclusive)
-    // Name normalization: none (assembler label GSE kept verbatim).
-
-    SUBERR();
 }
 
 std::uint16_t MULTIPLY_SUBS_1(std::uint8_t multiplierHigh);

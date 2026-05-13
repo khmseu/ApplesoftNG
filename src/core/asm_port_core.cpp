@@ -11,6 +11,9 @@
 namespace applesoft::asm_port {
 
 void SYNERR();
+extern std::uint8_t gJerErrorCode;
+void GETARY();
+void FIND_ARRAY_ELEMENT();
 
 void SetTextPointer(std::uint16_t address) {
     variables().writeWord(ApplesoftVariables::ZP_TXTPTR, address);
@@ -213,6 +216,53 @@ void GME() {
     // Name normalization: none (assembler label GME kept verbatim).
 
     (void)MEMERR();
+}
+
+void JER() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: JER (inclusive) .. USE_OLD_ARRAY (exclusive)
+    // Name normalization: none (assembler label JER kept verbatim).
+
+    ERROR(gJerErrorCode);
+}
+
+void SUBERR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SUBERR (inclusive) .. IQERR (exclusive)
+    // Name normalization: none (assembler label SUBERR kept verbatim).
+
+    gJerErrorCode = ERR_BADSUBS;
+    JER();
+}
+
+void IQERR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: IQERR (inclusive) .. JER (exclusive)
+    // Name normalization: none (assembler label IQERR kept verbatim).
+
+    gJerErrorCode = ERR_ILLQTY;
+    JER();
+}
+
+void GSE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: GSE (inclusive) .. GME (exclusive)
+    // Name normalization: none (assembler label GSE kept verbatim).
+
+    SUBERR();
+}
+
+void FAE_1() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FAE_1 (inclusive) .. GSE (exclusive)
+    // Name normalization: none (assembler label FAE_1 kept verbatim).
+
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_NUMDIM) == 0u) {
+        return;
+    }
+
+    // TODO(asm-port): complete per-dimension bounds and offset accumulation.
+    GSE();
 }
 
 }  // namespace applesoft::asm_port
