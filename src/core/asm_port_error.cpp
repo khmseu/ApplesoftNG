@@ -528,6 +528,10 @@ std::int8_t CompareArgAndFacStrings() {
 
 } // namespace
 
+void SetPendingErrorCode(std::uint8_t errorCode) {
+    gPendingErrorCode = errorCode;
+}
+
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: CONINT (inclusive) .. VAL (exclusive)
 // Name normalization: none (assembler label CONINT kept verbatim).
@@ -1381,26 +1385,6 @@ std::uint8_t DATAN() {
     // Name normalization: none (assembler label DATAN kept verbatim).
 
     return ScanAheadOffset(static_cast<std::uint8_t>(':'));
-}
-
-void CONTROL_C_TYPED() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: CONTROL_C_TYPED (inclusive) .. STOP (exclusive)
-    // Name normalization: none (assembler label CONTROL_C_TYPED kept verbatim).
-    constexpr std::uint8_t kERRFLG = ApplesoftVariables::ZP_ERRFLG;
-    const std::uint8_t errFlags = ReadZeroPageByte(kERRFLG);
-
-    // `bit ERRFLG` / `bpl` in ROM: when sign bit is set, ON ERR is active and
-    // CONTROL-C dispatches to HANDLERR with code $FF semantics.
-    if ((errFlags & 0x80u) != 0u) {
-        gPendingErrorCode = 0xffu;
-        HANDLERR();
-        return;
-    }
-
-    // Control-C attempts to fall through to the STOP/END handler with an
-    // implicit "break" condition.
-    STOP_impl(true);
 }
 
 void PRINT_ERROR_LINNUM(std::string_view prefix) {
