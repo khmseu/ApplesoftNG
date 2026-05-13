@@ -300,4 +300,22 @@ void SYNERR() {
     ERROR(ERR_SYNTAX);
 }
 
+bool CHKVAL(std::uint8_t savedValTyp) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: CHKVAL (inclusive) .. FRMEVL (exclusive)
+    // Name normalization: none (assembler label CHKVAL kept verbatim).
+
+    constexpr std::uint8_t kVALTYP = ApplesoftVariables::ZP_VALTYP;
+
+    const bool facIsString = (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u;
+    const bool expectedString = (savedValTyp & 0x80u) != 0u;
+
+    if (facIsString != expectedString) {
+        ERROR(ERR_BADTYPE);
+        return false;
+    }
+
+    return facIsString;
+}
+
 }  // namespace applesoft::asm_port
