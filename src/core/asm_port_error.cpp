@@ -594,16 +594,6 @@ void NEXT() {
     NEXT();
 }
 
-std::uint8_t ReadProgramByte(std::uint16_t address) {
-    // Program text lives in the same flat address space as zero-page variables;
-    // ApplesoftVariables::readByte handles all address regions.
-    return variables_const().readByte(address);
-}
-
-void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
-    variables().writeByte(address, value);
-}
-
 bool NEW() {
     return NEW_impl();
 }
