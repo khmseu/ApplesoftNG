@@ -113,7 +113,7 @@ The following describes how `asm_port_error.cpp` should be split into logical, m
 
 **Rationale**: Program management and data handling are closely related and separate from expression evaluation and execution control. These functions manage the program structure itself.
 
-**Current Progress**: `SAVE()`, `LOAD()`, `VARTIO()`, `PROGIO()`, `ADDON()`, `DATAN()`, `DATA()`, `LET()`, `LET2()`, `PUTSTR()`, `DEL()`, `LIST()`, `PARSE_INPUT_LINE()`, numbered-line helpers, and line-search helpers (`FNDLIN()`/`FL1()`) now live in `asm_port_statements.cpp`; parser-side helper `IsStatementEndOfParsedInput()` now lives in `asm_port_parser.cpp`; obsolete LIST-era helpers (including unused `GETCHR`) were removed from `asm_port_error.cpp`, leaving mostly pointer-fix/runtime plumbing there.
+**Current Progress**: `SAVE()`, `LOAD()`, `VARTIO()`, `PROGIO()`, `ADDON()`, `DATAN()`, `DATA()`, `LET()`, `LET2()`, `PUTSTR()`, `DEL()`, `LIST()`, `PARSE_INPUT_LINE()`, numbered-line helpers, line-search helpers (`FNDLIN()`/`FL1()`), and the `FIX_LINKS` support cluster now live in `asm_port_statements.cpp`; parser-side helper `IsStatementEndOfParsedInput()` now lives in `asm_port_parser.cpp`; obsolete LIST-era helpers (including unused `GETCHR`) were removed from `asm_port_error.cpp`, leaving mostly pointer-fix/runtime plumbing there.
 
 ---
 

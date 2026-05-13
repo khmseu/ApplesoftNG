@@ -644,9 +644,6 @@ void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
     variables().writeByte(address, value);
 }
 
-bool IsEndOfProgram(ProgramPointer currentPtr);
-ProgramPointer AdvanceToNextLine(ProgramPointer currentPtr);
-
 void PrintDecimalUnsigned(std::uint16_t value) {
     char digits[5];
     std::uint8_t length = 0;
@@ -746,51 +743,6 @@ void RESTART() {
 
     PARSE_INPUT_LINE();
     TRACE_();
-}
-
-ProgramPointer GetTextTablePointer() {
-    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
-    return ProgramPointer{ReadZeroPageWord(kTXTTAB)};
-}
-
-bool IsEndOfProgram(ProgramPointer currentPtr) {
-    return currentPtr.address == 0;
-}
-
-ProgramPointer AdvanceToNextLine(ProgramPointer currentPtr) {
-    // The original FIX_LINKS routine scans from the current line until it finds the
-    // end-of-line marker, then computes the address of the next line.
-    std::uint8_t offset = 4;
-    while (currentPtr.read(offset) != 0) {
-        ++offset;
-    }
-
-    return currentPtr.advanced(static_cast<std::uint16_t>(offset) + 1u);
-}
-
-void WriteForwardPointer(ProgramPointer currentPtr, ProgramPointer nextPtr) {
-    currentPtr.write(ApplesoftVariables::lowByte(nextPtr.address), 0u);
-    currentPtr.write(ApplesoftVariables::highByte(nextPtr.address), 1u);
-}
-
-void FIX_LINKS() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FIX_LINKS (inclusive) .. INLIN (exclusive)
-    // Name normalization: none (assembler label FIX_LINKS kept verbatim).
-
-    SETPTRS();
-
-    ProgramPointer currentPtr = GetTextTablePointer();
-    while (true) {
-        if (IsEndOfProgram(currentPtr)) {
-            RESTART();
-            return;
-        }
-
-        const ProgramPointer nextPtr = AdvanceToNextLine(currentPtr);
-        WriteForwardPointer(currentPtr, nextPtr);
-        currentPtr = nextPtr;
-    }
 }
 
 void STROUT(std::string_view text) {

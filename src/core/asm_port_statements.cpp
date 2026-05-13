@@ -16,6 +16,7 @@ std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void SetTextPointer(std::uint16_t address);
+void RESTART();
 void MON_WRITE();
 void MON_READ();
 bool SETPTRS();
@@ -433,6 +434,51 @@ void HandleNumberedLine() {
 
     InsertNewLine();
     FIX_LINKS();
+}
+
+std::uint16_t GetTextTablePointer() {
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
+    return ReadZeroPageWord(kTXTTAB);
+}
+
+bool IsEndOfProgram(std::uint16_t current) {
+    return current == 0u;
+}
+
+std::uint16_t AdvanceToNextLine(std::uint16_t current) {
+    // The original FIX_LINKS routine scans from the current line until it finds the
+    // end-of-line marker, then computes the address of the next line.
+    std::uint16_t offset = 4u;
+    while (variables_const().readByte(static_cast<std::uint16_t>(current + offset)) != 0u) {
+        ++offset;
+    }
+
+    return static_cast<std::uint16_t>(current + offset + 1u);
+}
+
+void WriteForwardPointer(std::uint16_t current, std::uint16_t next) {
+    variables().writeByte(current, ApplesoftVariables::lowByte(next));
+    variables().writeByte(static_cast<std::uint16_t>(current + 1u), ApplesoftVariables::highByte(next));
+}
+
+void FIX_LINKS() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FIX_LINKS (inclusive) .. INLIN (exclusive)
+    // Name normalization: none (assembler label FIX_LINKS kept verbatim).
+
+    SETPTRS();
+
+    std::uint16_t current = GetTextTablePointer();
+    while (true) {
+        if (IsEndOfProgram(current)) {
+            RESTART();
+            return;
+        }
+
+        const std::uint16_t next = AdvanceToNextLine(current);
+        WriteForwardPointer(current, next);
+        current = next;
+    }
 }
 
 bool FNDLIN() {
