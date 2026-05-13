@@ -108,8 +108,8 @@
 | FLOAT                             | src/core/asm_port_error.cpp               | 225  | stub   |
 | FLOAT_1                           | src/core/asm_port_error.cpp               | 228  | stub   |
 | FMULTT                            | src/core/asm_port_mathtbl.cpp             | 22   | stub   |
-| FNCDATA                           | src/core/asm_port_error.cpp               | 551  | stub   |
-| FNC\_                             | src/core/asm_port_error.cpp               | 459  | real   |
+| FNCDATA                           | src/core/asm_port_error.cpp               | 520  | stub   |
+| FNC\_                             | src/core/asm_port_core.cpp                | 904  | real   |
 | FNDLIN                            | src/core/asm_port_statements.cpp          | 667  | real   |
 | FOR                               | src/core/asm_port_control_flow.cpp        | 468  | real   |
 | FOUT                              | src/core/asm_port_print.cpp               | 61   | stub   |
@@ -128,7 +128,7 @@
 | FRM_STACK_2                       | src/core/asm_port_control_flow.cpp        | 118  | stub   |
 | FRM_STACK_3                       | src/core/asm_port_control_flow.cpp        | 122  | stub   |
 | FSUBT                             | src/core/asm_port_mathtbl.cpp             | 21   | stub   |
-| FUNCT                             | src/core/asm_port_error.cpp               | 490  | stub   |
+| FUNCT                             | src/core/asm_port_error.cpp               | 459  | stub   |
 | GARBAG                            | src/core/asm_port_reason.cpp              | 14   | stub   |
 | GARBAG                            | src/core/asm_port_strlt2.cpp              | 602  | real   |
 | GENERIC_CHRGET                    | src/core/asm_port_parser.cpp              | 217  | real   |

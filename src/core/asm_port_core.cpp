@@ -901,4 +901,36 @@ void GIVAYF(std::int16_t value) {
 }
 
 
+void FNC_() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FNC_ (inclusive) .. FUNCT (exclusive)
+    // Name normalization: none (assembler label FNC_ kept verbatim).
+    //
+    // Common routine for "DEF" and "FN" - parse FN token and function name.
+    // Requires "FN" token, sets SUBFLG high bit, parses name to FNCNAM.
+
+    // Require "FN" token
+    SYNCHR(static_cast<std::uint8_t>(0xc2u));  // TOKEN_FN = 0xc2
+
+    // Set high bit in SUBFLG to signal this is from DEF/FN context
+    constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
+    const std::uint8_t subflg = ReadZeroPageByte(kSUBFLG);
+    WriteZeroPageByte(kSUBFLG, static_cast<std::uint8_t>(subflg | 0x80u));
+
+    // Parse function name via PTRGET3
+    PTRGET3();
+
+    // PTRGET3 leaves A=name_lo, Y=name_hi
+    // Store to FNCNAM
+    constexpr std::uint8_t kFNCNAM = ApplesoftVariables::ZP_FNCNAM;
+    const std::uint8_t nameA = ReadZeroPageByte(ApplesoftVariables::ZP_STRNG1);  // Temp storage from PTRGET3
+    const std::uint8_t nameY = ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_STRNG1 + 1u));
+    WriteZeroPageByte(kFNCNAM, nameA);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFNCNAM + 1u), nameY);
+
+    // Jump to CHKNUM to validate numeric type
+    CHKNUM();
+}
+
+
 }  // namespace applesoft::asm_port
