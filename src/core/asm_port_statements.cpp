@@ -43,6 +43,7 @@ bool ISCNTC();
 void CRDO();
 void LINPRT();
 void OUTDO(std::uint8_t value);
+bool FL1(std::uint16_t startAddress);
 
 struct TokenMatch {
     std::uint8_t code;
@@ -432,6 +433,62 @@ void HandleNumberedLine() {
 
     InsertNewLine();
     FIX_LINKS();
+}
+
+bool FNDLIN() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FNDLIN (inclusive) .. FL1 (exclusive)
+    // Name normalization: none (assembler label FNDLIN kept verbatim).
+
+    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
+
+    // Assembler falls through from FNDLIN directly into FL1 with A=TXTTAB, X=TXTTAB+1.
+    return FL1(ReadZeroPageWord(kTXTTAB));
+}
+
+bool FL1(std::uint16_t startAddress) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FL1 (inclusive) .. NEW (exclusive)
+    // Name normalization: none (assembler label FL1 kept verbatim).
+
+    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+
+    const std::uint8_t targetLo = ReadZeroPageByte(kLINNUM);
+    const std::uint8_t targetHi = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1u));
+
+    std::uint16_t current = startAddress;
+
+    while (true) {
+        WriteZeroPageWord(kLOWTR, current);
+
+        const std::uint8_t nextHi = variables_const().readByte(static_cast<std::uint16_t>(current + 1u));
+        if (nextHi == 0u) {
+            return false;
+        }
+
+        const std::uint8_t lineHi = variables_const().readByte(static_cast<std::uint16_t>(current + 3u));
+        if (targetHi < lineHi) {
+            return false;
+        }
+
+        if (targetHi == lineHi) {
+            const std::uint8_t lineLo = variables_const().readByte(static_cast<std::uint16_t>(current + 2u));
+            if (targetLo < lineLo) {
+                return false;
+            }
+            if (targetLo == lineLo) {
+                return true;
+            }
+        }
+
+        const std::uint8_t nextLo = variables_const().readByte(current);
+        current = ApplesoftVariables::makeWord(nextLo, nextHi);
+    }
+}
+
+bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
+    return FL1(ApplesoftVariables::makeWord(startLo, startHi));
 }
 
 void DEL() {

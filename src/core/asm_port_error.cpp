@@ -693,17 +693,6 @@ void PrintListLine(ProgramPointer currentPtr) {
     }
 }
 
-bool FNDLIN() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FNDLIN (inclusive) .. FL1 (exclusive)
-    // Name normalization: none (assembler label FNDLIN kept verbatim).
-
-    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
-
-    // Assembler falls through from FNDLIN directly into FL1 with A=TXTTAB, X=TXTTAB+1.
-    return FL1(ReadZeroPageWord(kTXTTAB));
-}
-
 void PrintDecimalUnsigned(std::uint16_t value) {
     char digits[5];
     std::uint8_t length = 0;
@@ -1044,51 +1033,6 @@ std::uint8_t REMN() {
     // Name normalization: none (assembler label REMN kept verbatim).
 
     return ScanAheadOffset(0);
-}
-
-bool FL1(std::uint16_t startAddress) {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FL1 (inclusive) .. NEW (exclusive)
-    // Name normalization: none (assembler label FL1 kept verbatim).
-
-    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
-    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
-
-    const std::uint8_t targetLo = ReadZeroPageByte(kLINNUM);
-    const std::uint8_t targetHi = ReadZeroPageByte(add_u8(kLINNUM, 1u));
-
-    ProgramPointer currentPtr{startAddress};
-
-    while (true) {
-        WriteZeroPageWord(kLOWTR, currentPtr.address);
-
-        const std::uint8_t nextHi = currentPtr.read(1u);
-        if (nextHi == 0) {
-            return false;
-        }
-
-        const std::uint8_t lineHi = currentPtr.read(3u);
-        if (targetHi < lineHi) {
-            return false;
-        }
-
-        if (targetHi == lineHi) {
-            const std::uint8_t lineLo = currentPtr.read(2u);
-            if (targetLo < lineLo) {
-                return false;
-            }
-            if (targetLo == lineLo) {
-                return true;
-            }
-        }
-
-        const std::uint8_t nextLo = currentPtr.read();
-        currentPtr = ProgramPointer{ApplesoftVariables::makeWord(nextLo, nextHi)};
-    }
-}
-
-bool FL1(std::uint8_t startLo, std::uint8_t startHi) {
-    return FL1(ApplesoftVariables::makeWord(startLo, startHi));
 }
 
 void PushForPntFrame() {
