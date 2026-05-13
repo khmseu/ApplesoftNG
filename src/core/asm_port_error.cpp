@@ -169,6 +169,7 @@ void WAIT();
 void RTS_10();
 // std::uint16_t PTRGET();
 bool CHKVAL(std::uint8_t savedValTyp);
+void ERRDIR();
 void ROUND_FAC();
 void AYINT();
 void SETFOR();
@@ -1145,18 +1146,6 @@ void POS() {
     // Name normalization: none (assembler label POS kept verbatim).
 
     SNGFLT(ReadZeroPageByte(ApplesoftVariables::ZP_MON_CH));
-}
-
-void ERRDIR() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ERRDIR (inclusive) .. DEF (exclusive)
-    // Name normalization: none (assembler label ERRDIR kept verbatim).
-
-    if (!IsDirectMode()) {
-        return;
-    }
-
-    ERROR(ERR_ILLDIR);
 }
 
 void UNDFNC() {

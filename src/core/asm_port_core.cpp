@@ -1,5 +1,6 @@
 #include "core/asm_port_error.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_reason.hpp"
 #include "core/io_ports.hpp"
 
@@ -157,6 +158,18 @@ void COLD_START() {
 
     // ROM uses JMP (GOWARM+1), which resolves to RESTART after vectors are installed.
     RESTART();
+}
+
+void ERRDIR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ERRDIR (inclusive) .. DEF (exclusive)
+    // Name normalization: none (assembler label ERRDIR kept verbatim).
+
+    if (!IsDirectMode()) {
+        return;
+    }
+
+    ERROR(ERR_ILLDIR);
 }
 
 }  // namespace applesoft::asm_port
