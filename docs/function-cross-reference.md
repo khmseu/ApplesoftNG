@@ -71,7 +71,7 @@
 | C_ZERO                            | src/core/asm_port_error.cpp               | 796  | real   |
 | DATA                              | src/core/asm_port_statements.cpp          | 341  | real   |
 | DATAN                             | src/core/asm_port_statements.cpp          | 333  | real   |
-| DEF                               | src/core/asm_port_error.cpp               | 1143 | real   |
+| DEF                               | src/core/asm_port_error.cpp               | 1135 | real   |
 | DEF_Handler                       | src/core/asm_port_token_address_table.cpp | 125  | real   |
 | DEL                               | src/core/asm_port_statements.cpp          | 723  | real   |
 | DeleteExistingLine                | src/core/asm_port_statements.cpp          | 464  | real   |
@@ -108,8 +108,8 @@
 | FLOAT                             | src/core/asm_port_error.cpp               | 257  | stub   |
 | FLOAT_1                           | src/core/asm_port_error.cpp               | 266  | stub   |
 | FMULTT                            | src/core/asm_port_mathtbl.cpp             | 22   | stub   |
-| FNCDATA                           | src/core/asm_port_error.cpp               | 1284 | stub   |
-| FNC\_                             | src/core/asm_port_error.cpp               | 1192 | real   |
+| FNCDATA                           | src/core/asm_port_error.cpp               | 1276 | stub   |
+| FNC\_                             | src/core/asm_port_error.cpp               | 1184 | real   |
 | FNDLIN                            | src/core/asm_port_statements.cpp          | 667  | real   |
 | FOR                               | src/core/asm_port_control_flow.cpp        | 484  | real   |
 | FOUT                              | src/core/asm_port_print.cpp               | 61   | stub   |
@@ -128,7 +128,7 @@
 | FRM_STACK_2                       | src/core/asm_port_control_flow.cpp        | 134  | stub   |
 | FRM_STACK_3                       | src/core/asm_port_control_flow.cpp        | 138  | stub   |
 | FSUBT                             | src/core/asm_port_mathtbl.cpp             | 21   | stub   |
-| FUNCT                             | src/core/asm_port_error.cpp               | 1223 | stub   |
+| FUNCT                             | src/core/asm_port_error.cpp               | 1215 | stub   |
 | GARBAG                            | src/core/asm_port_reason.cpp              | 14   | stub   |
 | GARBAG                            | src/core/asm_port_strlt2.cpp              | 602  | real   |
 | GENERIC_CHRGET                    | src/core/asm_port_parser.cpp              | 214  | real   |
@@ -157,7 +157,7 @@
 | GTFORPNT                          | src/core/asm_port_gtforpnt.cpp            | 25   | real   |
 | GTNUM                             | src/core/asm_port_parser.cpp              | 194  | real   |
 | HandleNumberedLine                | src/core/asm_port_statements.cpp          | 610  | real   |
-| HANDLERR                          | src/core/asm_port_error.cpp               | 1305 | real   |
+| HANDLERR                          | src/core/asm_port_error.cpp               | 1297 | real   |
 | HANDLERR                          | src/core/asm_port_print.cpp               | 69   | stub   |
 | has_room                          | src/core/asm_port_reason.cpp              | 8    | real   |
 | HCOLOR                            | src/core/asm_port_graphics.cpp            | 168  | stub   |
@@ -458,7 +458,7 @@
 | TRACE\_                           | src/core/asm_port_control_flow.cpp        | 684  | real   |
 | TRUE                              | src/core/asm_port_error.cpp               | 572  | real   |
 | UNARY                             | src/core/asm_port_error.cpp               | 510  | stub   |
-| UNDFNC                            | src/core/asm_port_error.cpp               | 1135 | real   |
+| UNDFNC                            | src/core/asm_port_core.cpp                | 175  | real   |
 | UNFNC                             | src/core/asm_port_unfnc.cpp               | 71   | real   |
 | USE_OLD_ARRAY                     | src/core/asm_port_error.cpp               | 958  | real   |
 | USR                               | src/core/asm_port_unfnc.cpp               | 38   | stub   |

@@ -172,4 +172,12 @@ void ERRDIR() {
     ERROR(ERR_ILLDIR);
 }
 
+void UNDFNC() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: UNDFNC (inclusive) .. DEF (exclusive)
+    // Name normalization: none (assembler label UNDFNC kept verbatim).
+
+    ERROR(ERR_UNDEFFUNC);
+}
+
 }  // namespace applesoft::asm_port

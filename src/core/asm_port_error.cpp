@@ -1132,14 +1132,6 @@ void GIVAYF(std::int16_t value) {
 
 } // namespace
 
-void UNDFNC() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: UNDFNC (inclusive) .. DEF (exclusive)
-    // Name normalization: none (assembler label UNDFNC kept verbatim).
-
-    ERROR(ERR_UNDEFFUNC);
-}
-
 void DEF() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: DEF (inclusive) .. FNC_ (exclusive)
