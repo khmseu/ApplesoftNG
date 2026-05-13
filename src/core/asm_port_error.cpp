@@ -407,26 +407,4 @@ void FRMEVL() {
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: PEEK (inclusive) .. POKE (exclusive)
 // Name normalization: none (assembler label PEEK kept verbatim).
-void FNCDATA() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FNCDATA (inclusive) .. STR (exclusive)
-    // Name normalization: none (assembler label FNCDATA kept verbatim).
-    //
-    // STORE FIVE BYTES FROM STACK AT (FNCNAM)
-    // Pop 5 stack bytes and store to (FNCNAM),Y with Y incrementing.
-
-    constexpr std::uint8_t kFNCNAM = ApplesoftVariables::ZP_FNCNAM;
-    const std::uint16_t fncnampnt = ReadZeroPageWord(kFNCNAM);
-    
-    // Loop 5 times: pop stack and store
-    for (std::uint8_t y = 0u; y < 5u; ++y) {
-        // TODO(asm-port): pop stack byte
-        // Store to (fncnampnt + y)
-    }
-}
-
-
-
-
-
 } // namespace applesoft::asm_port

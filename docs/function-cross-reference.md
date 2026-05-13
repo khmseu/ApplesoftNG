@@ -108,7 +108,7 @@
 | FLOAT                             | src/core/asm_port_error.cpp               | 225  | stub   |
 | FLOAT_1                           | src/core/asm_port_error.cpp               | 228  | stub   |
 | FMULTT                            | src/core/asm_port_mathtbl.cpp             | 22   | stub   |
-| FNCDATA                           | src/core/asm_port_error.cpp               | 410  | stub   |
+| FNCDATA                           | src/core/asm_port_core.cpp                | 1058 | stub   |
 | FNC\_                             | src/core/asm_port_core.cpp                | 912  | real   |
 | FNDLIN                            | src/core/asm_port_statements.cpp          | 667  | real   |
 | FOR                               | src/core/asm_port_control_flow.cpp        | 468  | real   |
