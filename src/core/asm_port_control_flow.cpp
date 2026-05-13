@@ -140,6 +140,36 @@ bool NEXT_shouldTerminateLoop() {
     return false;
 }
 
+std::uint8_t ScanAheadOffset(std::uint8_t terminator) {
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kCHARAC = ApplesoftVariables::ZP_CHARAC;
+    constexpr std::uint8_t kENDCHR = ApplesoftVariables::ZP_ENDCHR;
+
+    WriteZeroPageByte(kCHARAC, terminator);
+    std::uint8_t offset = 0;
+    WriteZeroPageByte(kENDCHR, 0);
+
+    while (true) {
+        const std::uint8_t previousEnd = ReadZeroPageByte(kENDCHR);
+        const std::uint8_t previousCharac = ReadZeroPageByte(kCHARAC);
+        WriteZeroPageByte(kCHARAC, previousEnd);
+        WriteZeroPageByte(kENDCHR, previousCharac);
+
+        while (true) {
+            const ProgramPointer textPtr{ReadZeroPageWord(kTXTPTR)};
+            const std::uint8_t ch = textPtr.read(offset);
+            if (ch == 0 || ch == ReadZeroPageByte(kENDCHR)) {
+                return offset;
+            }
+
+            ++offset;
+            if (ch == static_cast<std::uint8_t>('"')) {
+                break;
+            }
+        }
+    }
+}
+
 bool isDigit(std::uint8_t ch) {
     return ch >= '0' && ch <= '9';
 }
@@ -412,6 +442,14 @@ void PULL3() {
     (void)PopByteFromStack();
     (void)PopByteFromStack();
     (void)PopByteFromStack();
+}
+
+std::uint8_t REMN() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: REMN (inclusive) .. PULL3 (exclusive)
+    // Name normalization: none (assembler label REMN kept verbatim).
+
+    return ScanAheadOffset(0);
 }
 
 void FOR() {
