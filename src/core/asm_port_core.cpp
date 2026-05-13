@@ -1084,4 +1084,11 @@ void FLOAT_1(std::uint8_t exponent) {
 }
 
 
+void FLOAT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FLOAT (inclusive) .. QINT (exclusive)
+    // Name normalization: none (assembler label FLOAT kept verbatim).
+}
+
+
 }  // namespace applesoft::asm_port

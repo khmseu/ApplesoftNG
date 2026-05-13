@@ -58,7 +58,7 @@
 | COLOR                             | src/core/asm_port_graphics.cpp            | 188  | real   |
 | COLOR_Handler                     | src/core/asm_port_token_address_table.cpp | 114  | real   |
 | COMBYTE                           | src/core/asm_port_parser.cpp              | 206  | real   |
-| CompareArgAndFacStrings           | src/core/asm_port_error.cpp               | 231  | stub   |
+| CompareArgAndFacStrings           | src/core/asm_port_error.cpp               | 224  | stub   |
 | CONINT                            | src/core/asm_port_parser.cpp              | 182  | real   |
 | CONT                              | src/core/asm_port_control_flow.cpp        | 308  | real   |
 | CONTROL_C_TYPED                   | src/core/asm_port_control_flow.cpp        | 288  | real   |
@@ -105,7 +105,7 @@
 | FL1                               | src/core/asm_port_statements.cpp          | 719  | real   |
 | FLASH                             | src/core/asm_port_graphics.cpp            | 44   | real   |
 | FLASH_Handler                     | src/core/asm_port_token_address_table.cpp | 113  | real   |
-| FLOAT                             | src/core/asm_port_error.cpp               | 225  | stub   |
+| FLOAT                             | src/core/asm_port_core.cpp                | 1087 | stub   |
 | FLOAT_1                           | src/core/asm_port_core.cpp                | 1079 | real   |
 | FMULTT                            | src/core/asm_port_mathtbl.cpp             | 22   | stub   |
 | FNCDATA                           | src/core/asm_port_core.cpp                | 1058 | stub   |
@@ -121,7 +121,7 @@
 | FRESTR                            | src/core/asm_port_strlt2.cpp              | 504  | real   |
 | FRETMP                            | src/core/asm_port_strlt2.cpp              | 633  | real   |
 | FRETMS                            | src/core/asm_port_strlt2.cpp              | 652  | real   |
-| FRMEVL                            | src/core/asm_port_error.cpp               | 259  | stub   |
+| FRMEVL                            | src/core/asm_port_error.cpp               | 252  | stub   |
 | FRMEVL_2                          | src/core/asm_port_strlt2.cpp              | 202  | stub   |
 | FRMNUM                            | src/core/asm_port_parser.cpp              | 82   | real   |
 | FRM_ELEMENT                       | src/core/asm_port_strlt2.cpp              | 199  | stub   |
@@ -241,7 +241,7 @@
 | MON_INPORT                        | src/core/asm_port_graphics.cpp            | 68   | stub   |
 | MON_OUTPORT                       | src/core/asm_port_graphics.cpp            | 74   | stub   |
 | MON_PLOT                          | src/core/asm_port_graphics.cpp            | 80   | stub   |
-| MON_PREAD                         | src/core/asm_port_error.cpp               | 240  | stub   |
+| MON_PREAD                         | src/core/asm_port_error.cpp               | 233  | stub   |
 | MON_RDKEY                         | src/core/asm_port_inlin2.cpp              | 33   | stub   |
 | MON_READ                          | src/core/asm_port_statements.cpp          | 937  | stub   |
 | MON_SCRN                          | src/core/asm_port_error.cpp               | 212  | stub   |

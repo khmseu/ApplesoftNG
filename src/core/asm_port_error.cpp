@@ -217,13 +217,6 @@ std::uint8_t MON_SCRN(std::uint8_t /*row*/, std::uint8_t /*column*/) {
 std::int8_t FCOMP(std::uint16_t /*argAddress*/) {
     return 0;
 }
-
-// TODO(asm-port): port FREFAC label.
-// void FREFAC() {}
-
-// TODO(asm-port): port FLOAT label.
-void FLOAT() {}
-
 // TODO(asm-port): port FLOAT_1 label.
 std::uint8_t gPendingErrorCode = ERR_SYNTAX;
 
