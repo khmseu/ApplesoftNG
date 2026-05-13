@@ -1369,25 +1369,6 @@ std::uint8_t ScanAheadOffset(std::uint8_t terminator) {
     }
 }
 
-void ADDON(std::uint8_t offset) {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ADDON (inclusive) .. DATAN (exclusive)
-    // Name normalization: none (assembler label ADDON kept verbatim).
-
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-
-    const ProgramPointer textPtr{ReadZeroPageWord(kTXTPTR)};
-    WriteZeroPageWord(kTXTPTR, textPtr.advanced(offset).address);
-}
-
-std::uint8_t DATAN() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: DATAN (inclusive) .. REMN (exclusive)
-    // Name normalization: none (assembler label DATAN kept verbatim).
-
-    return ScanAheadOffset(static_cast<std::uint8_t>(':'));
-}
-
 void PRINT_ERROR_LINNUM(std::string_view prefix) {
     STROUT(prefix);
 

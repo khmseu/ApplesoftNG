@@ -13,10 +13,57 @@ void MON_WRITE();
 void MON_READ();
 bool SETPTRS();
 void FIX_LINKS();
-void ADDON(std::uint8_t offset);
-std::uint8_t DATAN();
 void VARTIO();
 void PROGIO();
+
+std::uint8_t ScanAheadOffsetForData(std::uint8_t terminator) {
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kCHARAC = ApplesoftVariables::ZP_CHARAC;
+    constexpr std::uint8_t kENDCHR = ApplesoftVariables::ZP_ENDCHR;
+
+    WriteZeroPageByte(kCHARAC, terminator);
+    std::uint8_t offset = 0;
+    WriteZeroPageByte(kENDCHR, 0);
+
+    while (true) {
+        const std::uint8_t previousEnd = ReadZeroPageByte(kENDCHR);
+        const std::uint8_t previousCharac = ReadZeroPageByte(kCHARAC);
+        WriteZeroPageByte(kCHARAC, previousEnd);
+        WriteZeroPageByte(kENDCHR, previousCharac);
+
+        while (true) {
+            const std::uint16_t textPtr = ReadZeroPageWord(kTXTPTR);
+            const std::uint8_t ch = variables_const().pointer(textPtr).read(offset);
+            if (ch == 0 || ch == ReadZeroPageByte(kENDCHR)) {
+                return offset;
+            }
+
+            ++offset;
+            if (ch == static_cast<std::uint8_t>('"')) {
+                break;
+            }
+        }
+    }
+}
+
+void ADDON(std::uint8_t offset) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ADDON (inclusive) .. DATAN (exclusive)
+    // Name normalization: none (assembler label ADDON kept verbatim).
+
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+
+    const std::uint16_t textPtr = ReadZeroPageWord(kTXTPTR);
+    WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(textPtr + offset));
+}
+
+std::uint8_t DATAN() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: DATAN (inclusive) .. REMN (exclusive)
+    // Name normalization: none (assembler label DATAN kept verbatim).
+
+    return ScanAheadOffsetForData(static_cast<std::uint8_t>(':'));
+}
 
 void DATA() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
