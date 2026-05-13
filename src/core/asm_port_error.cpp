@@ -647,12 +647,6 @@ void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
 bool IsEndOfProgram(ProgramPointer currentPtr);
 ProgramPointer AdvanceToNextLine(ProgramPointer currentPtr);
 
-std::uint8_t CHRGOT();
-bool ISCNTC();
-void LINPRT();
-// void OUTDO();
-std::uint8_t GETCHR();
-
 void PrintDecimalUnsigned(std::uint16_t value) {
     char digits[5];
     std::uint8_t length = 0;
@@ -837,12 +831,6 @@ void LINPRT() {
     constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
 
     PrintDecimalUnsigned(ReadZeroPageWord(kCURLIN));
-}
-
-std::uint8_t GETCHR() {
-    // TODO(asm-port): fetch the next keyword character from the Applesoft token
-    // table during LIST output.
-    return 0;
 }
 
 bool ISCNTC() {
