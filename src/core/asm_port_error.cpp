@@ -420,19 +420,6 @@ void PRINT_ERROR_LINNUM(std::string_view prefix) {
     RESTART();
 }
 
-void RTS_5() {
-    // Shared RTS target for GOTO/POP in ROM.
-}
-
-void PULL3() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PULL3 (inclusive) .. IF (exclusive)
-    // Name normalization: none (assembler label PULL3 kept verbatim).
-
-    (void)PopByteFromStack();
-    (void)PopByteFromStack();
-    (void)PopByteFromStack();
-}
 
 std::uint8_t REMN() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst

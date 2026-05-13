@@ -400,6 +400,20 @@ void ONERR() {
     ADDON(REMN());
 }
 
+void RTS_5() {
+    // Shared RTS target for GOTO/POP in ROM.
+}
+
+void PULL3() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PULL3 (inclusive) .. IF (exclusive)
+    // Name normalization: none (assembler label PULL3 kept verbatim).
+
+    (void)PopByteFromStack();
+    (void)PopByteFromStack();
+    (void)PopByteFromStack();
+}
+
 void FOR() {
     constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
     constexpr std::uint8_t kTOKEN_TO = 0xc1u;
