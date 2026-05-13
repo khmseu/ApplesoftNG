@@ -18,6 +18,8 @@ void FRMEVL();
 void FRMNUM();
 void CONINT();
 void MKINT();
+bool ISLETC();
+void AYINT();
 std::uint8_t COMBYTE();
 void GETADR();
 void IQERR();
@@ -342,6 +344,32 @@ void MI2() {
     // Name normalization: none (assembler label MI2 kept verbatim).
 
     QINT();
+}
+
+bool ISLETC() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ISLETC (inclusive) .. NAME_NOT_FOUND (exclusive)
+    // Name normalization: none (assembler label ISLETC kept verbatim).
+
+    const std::uint8_t ch = CHRGOT();
+    return ch >= static_cast<std::uint8_t>('A') && ch <= static_cast<std::uint8_t>('Z');
+}
+
+void MKINT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: MKINT (inclusive) .. AYINT (exclusive)
+    // Name normalization: none (assembler label MKINT kept verbatim).
+
+    if ((ReadZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN) & 0x80u) != 0u) {
+        MI1();
+        return;
+    }
+
+    AYINT();
+}
+
+void ROUND_FAC() {
+    // TODO(asm-port): port ROUND_FAC label.
 }
 
 }  // namespace applesoft::asm_port

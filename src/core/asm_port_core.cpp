@@ -9,6 +9,8 @@
 
 namespace applesoft::asm_port {
 
+void SYNERR();
+
 void SetTextPointer(std::uint16_t address) {
     variables().writeWord(ApplesoftVariables::ZP_TXTPTR, address);
 }
@@ -178,6 +180,14 @@ void UNDFNC() {
     // Name normalization: none (assembler label UNDFNC kept verbatim).
 
     ERROR(ERR_UNDEFFUNC);
+}
+
+void BADNAM() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: BADNAM (inclusive) .. NAMOK (exclusive)
+    // Name normalization: none (assembler label BADNAM kept verbatim).
+
+    SYNERR();
 }
 
 }  // namespace applesoft::asm_port

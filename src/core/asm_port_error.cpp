@@ -692,14 +692,6 @@ void PTRGET3() {
     NAMOK();
 }
 
-void BADNAM() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: BADNAM (inclusive) .. NAMOK (exclusive)
-    // Name normalization: none (assembler label BADNAM kept verbatim).
-
-    SYNERR();
-}
-
 void NAMOK() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: NAMOK (inclusive) .. BASIC (exclusive)
@@ -775,15 +767,6 @@ void PTRGET4() {
     NAME_NOT_FOUND();
 }
 
-bool ISLETC() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ISLETC (inclusive) .. NAME_NOT_FOUND (exclusive)
-    // Name normalization: none (assembler label ISLETC kept verbatim).
-
-    const std::uint8_t ch = CHRGOT();
-    return ch >= static_cast<std::uint8_t>('A') && ch <= static_cast<std::uint8_t>('Z');
-}
-
 void NAME_NOT_FOUND() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: NAME_NOT_FOUND (inclusive) .. C_ZERO (exclusive)
@@ -851,23 +834,6 @@ void NEG32768() {
     WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 1u), kNEG32768Data[1]);
     WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 2u), kNEG32768Data[2]);
     WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 3u), kNEG32768Data[3]);
-}
-
-void MKINT() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: MKINT (inclusive) .. AYINT (exclusive)
-    // Name normalization: none (assembler label MKINT kept verbatim).
-
-    if ((ReadZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN) & 0x80u) != 0u) {
-        MI1();
-        return;
-    }
-
-    AYINT();
-}
-
-void ROUND_FAC() {
-    // TODO(asm-port): port ROUND_FAC label.
 }
 
 void AYINT() {
