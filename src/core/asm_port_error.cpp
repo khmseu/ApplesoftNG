@@ -1140,15 +1140,6 @@ void UNDFNC() {
     ERROR(ERR_UNDEFFUNC);
 }
 
-void IN_NUMBER() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: IN_NUMBER (inclusive) .. PR_NUMBER (exclusive)
-    // Name normalization: none (assembler label IN_NUMBER kept verbatim).
-
-    const std::uint8_t slot = GETBYT();
-    MON_INPORT(slot);
-}
-
 void PR_NUMBER() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: PR_NUMBER (inclusive) .. PLOTFNS (exclusive)
