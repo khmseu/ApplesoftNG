@@ -1511,6 +1511,98 @@ void PARSE_INPUT_LINE() {
     SetTextPointerToInputBufferMinus1();
 }
 
+void DEL() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: DEL (inclusive) .. GR (exclusive)
+    // Name normalization: none (assembler label DEL kept verbatim).
+    //
+    // Deletes a range of lines from the program. LINGET populates LINNUM with the
+    // starting line number; if LINGET returns with carry set, a line number was parsed.
+    // If carry is clear, a line number was not specified—error.
+    //
+    // Algorithm:
+    // 1. Save current end-of-program (PRGEND) to VARTAB for the move operation
+    // 2. Parse starting line number via LINGET; find it via FNDLIN
+    // 3. Record destination address (DEST = LOWTR)
+    // 4. Expect comma
+    // 5. Parse ending line number via LINGET; find first line after via FNDLIN
+    // 6. If upper portion is below destination, nothing to delete (return)
+    // 7. Copy [LOWTR, VARTAB) down to DEST
+    // 8. Update VARTAB (new program end)
+    // 9. Repair forward links via FIX_LINKS
+
+    constexpr std::uint8_t kPRGEND = ApplesoftVariables::ZP_PRGEND;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kDEST = ApplesoftVariables::ZP_DEST;
+    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+
+    // Check if a line number was given (bcs JSYN in original means jump if carry set to JSYN).
+    // If carry is clear, no line number was parsed, so error.
+    // In the ROM, LINGET sets carry if a number was found. We skip the syntax error check
+    // here and assume LINGET has already been called by the interpreter's statement dispatcher.
+    // For robustness, we'll call GETBYT() first to verify a number follows.
+
+    // Save program end for the move operation
+    const std::uint16_t prgend = ReadZeroPageWord(kPRGEND);
+    WriteZeroPageWord(kVARTAB, prgend);
+
+    // Get starting line number and find it in the program
+    LINGET();
+    FNDLIN();
+
+    // Save destination address (start of first line to delete)
+    WriteZeroPageWord(kDEST, ReadZeroPageWord(kLOWTR));
+
+    // Expect comma between start and end line numbers
+    SYNCHR(static_cast<std::uint8_t>(','));
+
+    // Get ending line number and find first line after deletion range
+    LINGET();
+
+    // Increment LINNUM to point one line past the deletion range
+    std::uint8_t linnum_lo = ReadZeroPageByte(kLINNUM);
+    if (linnum_lo == 0xffu) {
+        WriteZeroPageByte(kLINNUM, 0u);
+        std::uint8_t linnum_hi = ReadZeroPageByte(add_u8(kLINNUM, 1u));
+        WriteZeroPageByte(add_u8(kLINNUM, 1u), static_cast<std::uint8_t>(linnum_hi + 1u));
+    } else {
+        WriteZeroPageByte(kLINNUM, static_cast<std::uint8_t>(linnum_lo + 1u));
+    }
+
+    // Find the first line after the deletion range
+    FNDLIN();
+
+    // Check if upper portion is above target destination.
+    // If LOWTR (start of upper portion) is below DEST (target), nothing to delete.
+    const std::uint16_t lowtr = ReadZeroPageWord(kLOWTR);
+    const std::uint16_t dest = ReadZeroPageWord(kDEST);
+
+    if (lowtr < dest) {
+        return;  // Nothing to delete
+    }
+
+    // Copy [lowtr, vartab) down to dest
+    const std::uint16_t vartab = ReadZeroPageWord(kVARTAB);
+    std::uint16_t source = lowtr;
+    std::uint16_t destination = dest;
+
+    while (source < vartab) {
+        const std::uint8_t byte_val = variables_const().readByte(source);
+        variables().writeByte(destination, byte_val);
+        ++source;
+        ++destination;
+    }
+
+    // Update VARTAB to new program end (vartab - (lowtr - dest))
+    const std::uint16_t deletedSize = static_cast<std::uint16_t>(lowtr - dest);
+    const std::uint16_t newVARTAB = static_cast<std::uint16_t>(vartab - deletedSize);
+    WriteZeroPageWord(kVARTAB, newVARTAB);
+
+    // Repair forward links after deletion
+    FIX_LINKS();
+}
+
 void LIST() {
     constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
     constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;

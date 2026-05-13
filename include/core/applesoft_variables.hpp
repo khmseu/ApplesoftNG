@@ -33,6 +33,7 @@ public:
     static constexpr std::uint8_t ZP_LASTPT = 0x53;
     static constexpr std::uint8_t ZP_TEMPST = 0x55;
     static constexpr std::uint8_t ZP_INDEX = 0x5e;
+    static constexpr std::uint8_t ZP_DEST = 0x60;
     static constexpr std::uint8_t ZP_RESULT = 0x62;
     static constexpr std::uint8_t ZP_TXTTAB = 0x67;
     static constexpr std::uint8_t ZP_VARTAB = 0x69;

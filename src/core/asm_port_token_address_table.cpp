@@ -30,6 +30,7 @@ void GET();
 void INPUT();
 void READ();
 void DIM();
+void DEL();
 void LET();
 void PR_NUMBER();
 void IN_NUMBER();
@@ -71,7 +72,7 @@ void HTAB();
 void FOR();
 static void NEXT_Handler()     { NEXT(); }
 static void INPUT_Handler()    { INPUT(); }
-static void DEL()              {} // TODO(asm-port): DEL
+static void DEL_Handler()      { DEL(); }
 static void DIM_Handler()      { DIM(); }
 static void READ_Handler()     { READ(); }
 static void GR_Handler()   { GR(); }
@@ -141,7 +142,7 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         NEXT_Handler,     // [2]  $82...130...NEXT
         DATA,             // [3]  $83...131...DWTA
         INPUT_Handler,    // [4]  $84...132...INPUT
-        DEL,              // [5]  $85...133...DEL
+        DEL_Handler,      // [5]  $85...133...DEL
         DIM_Handler,      // [6]  $86...134...DIM
         READ_Handler,     // [7]  $87...135...READ
         GR_Handler,       // [8]  $88...136...GR
