@@ -731,18 +731,6 @@ void RESTART() {
     TRACE_();
 }
 
-void STKINI() {
-    constexpr std::uint8_t kTEMPPT = ApplesoftVariables::ZP_TEMPPT;
-    constexpr std::uint8_t kTEMPST = ApplesoftVariables::ZP_TEMPST;
-    constexpr std::uint8_t kOLDTEXT_plus_1 = add_u8(ApplesoftVariables::ZP_OLDTEXT, 1u);
-    constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
-
-    WriteZeroPageByte(kTEMPPT, kTEMPST);
-    SetStackPointer(0xf8);
-    WriteZeroPageByte(kOLDTEXT_plus_1, 0);
-    WriteZeroPageByte(kSUBFLG, 0);
-}
-
 // void OUTDO() {
 //     // TODO(asm-port): write the current output character from the Applesoft line
 //     // printer to the console.

@@ -8,6 +8,7 @@ namespace applesoft::asm_port {
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
 std::uint16_t ReadZeroPageWord(std::uint8_t address);
+void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 
 static std::uint8_t gStackPointer = 0xffu;
 
@@ -63,6 +64,19 @@ void PushCurrentLineNumber() {
 
 void PushTokenTo(std::uint8_t token) {
     PushByteToStack(token);
+}
+
+void STKINI() {
+    constexpr std::uint8_t kTEMPPT = ApplesoftVariables::ZP_TEMPPT;
+    constexpr std::uint8_t kTEMPST = ApplesoftVariables::ZP_TEMPST;
+    constexpr std::uint8_t kOLDTEXT_plus_1 =
+        static_cast<std::uint8_t>(ApplesoftVariables::ZP_OLDTEXT + 1u);
+    constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
+
+    WriteZeroPageByte(kTEMPPT, kTEMPST);
+    SetStackPointer(0xf8);
+    WriteZeroPageByte(kOLDTEXT_plus_1, 0);
+    WriteZeroPageByte(kSUBFLG, 0);
 }
 
 }  // namespace applesoft::asm_port
