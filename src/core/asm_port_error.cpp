@@ -407,55 +407,6 @@ void FRMEVL() {
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: PEEK (inclusive) .. POKE (exclusive)
 // Name normalization: none (assembler label PEEK kept verbatim).
-void DEF() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: DEF (inclusive) .. FNC_ (exclusive)
-    // Name normalization: none (assembler label DEF kept verbatim).
-    //
-    // "DEF" STATEMENT
-    // Parse: DEF FN name (arg) = expression
-    // Stacks VARPNT, TXTPTR, and 5 bytes of FAC, then jumps to FNCDATA to store.
-
-    // Parse "FN name"
-    FNC_();
-    
-    // Error if in direct mode
-    ERRDIR();
-    
-    // Require "("
-    CHKOPN();
-    
-    // Set SUBFLG to flag DEF context for PTRGET
-    constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
-    WriteZeroPageByte(kSUBFLG, 0x80u);
-    
-    // Get pointer to argument variable
-    PTRGET();
-    
-    // Argument must be numeric
-    CHKNUM();
-    
-    // Require ")"
-    CHKCLS();
-    
-    // Require "=" and advance past it
-    SYNCHR(static_cast<std::uint8_t>(0xd0u));  // TOKEN_EQUAL = 0xd0
-    
-    // Stack the argument variable pointer (VARPNT)
-    constexpr std::uint8_t kVARPNT = ApplesoftVariables::ZP_VARPNT;
-    WriteZeroPageByte(kVARPNT + 1u, ReadZeroPageByte(kVARPNT + 1u));
-    WriteZeroPageByte(kVARPNT, ReadZeroPageByte(kVARPNT));
-    
-    // Stack the text pointer (TXTPTR)
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    const std::uint16_t txtPtr = ReadZeroPageWord(kTXTPTR);
-    
-    // Scan to next statement
-    DATA();
-    
-    // Fall through to FNCDATA to store 5-byte FAC
-}
-
 void FUNCT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: FUNCT (inclusive) .. FNCDATA (exclusive)
