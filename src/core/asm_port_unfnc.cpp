@@ -18,6 +18,7 @@ void CONINT();
 std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void SNGFLT(std::uint8_t value);
+void GIVAYF(std::int16_t value);
 void PEEK();
 
 void PDL() {
@@ -33,7 +34,22 @@ void PDL() {
 // Stub implementations for function handlers not yet ported.
 // ---------------------------------------------------------------------------
 
-static void SGN()      {} // TODO(asm-port): SGN        $D2...210
+void SGN() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SGN (inclusive) .. ABS (exclusive)
+    // Name normalization: none (assembler label SGN kept verbatim).
+
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+
+    // ROM path: jsr SIGN then fall through to FLOAT to convert A=-1/0/+1 to FAC.
+    std::int16_t signValue = 0;
+    if (ReadZeroPageByte(kFAC) != 0u) {
+        signValue = ((ReadZeroPageByte(kFAC_SIGN) & 0x80u) != 0u) ? -1 : 1;
+    }
+
+    GIVAYF(signValue);
+}
 static void INT_fn()   {} // TODO(asm-port): INT        $D3...211  (INT is a C++ keyword; normalized to INT_fn)
 void ABS() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
