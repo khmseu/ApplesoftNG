@@ -27,6 +27,15 @@ void MOVINS();
 bool FRETMS(std::uint16_t descriptorAddress);
 void LET2(std::uint8_t savedValTypPlus1);
 void PUTSTR();
+void LINGET();
+bool FNDLIN();
+std::uint8_t CHRGOT();
+std::uint8_t CHRGET();
+bool IsStatementEndOfParsedInput();
+bool ISCNTC();
+void CRDO();
+void LINPRT();
+void OUTDO(std::uint8_t value);
 
 std::uint8_t ScanAheadOffsetForData(std::uint8_t terminator) {
     constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
@@ -198,6 +207,125 @@ void PUTSTR() {
     for (std::uint8_t i = 0; i < 3; ++i) {
         destPtr.write(sourcePtr.read(i), i);
     }
+}
+
+void DEL() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: DEL (inclusive) .. GR (exclusive)
+    // Name normalization: none (assembler label DEL kept verbatim).
+
+    constexpr std::uint8_t kPRGEND = ApplesoftVariables::ZP_PRGEND;
+    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
+    constexpr std::uint8_t kDEST = ApplesoftVariables::ZP_DEST;
+    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+
+    const std::uint16_t prgend = ReadZeroPageWord(kPRGEND);
+    WriteZeroPageWord(kVARTAB, prgend);
+
+    LINGET();
+    FNDLIN();
+    WriteZeroPageWord(kDEST, ReadZeroPageWord(kLOWTR));
+
+    SYNCHR(static_cast<std::uint8_t>(','));
+    LINGET();
+
+    std::uint8_t linnumLo = ReadZeroPageByte(kLINNUM);
+    if (linnumLo == 0xffu) {
+        WriteZeroPageByte(kLINNUM, 0u);
+        const std::uint8_t linnumHi = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1u));
+        WriteZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1u), static_cast<std::uint8_t>(linnumHi + 1u));
+    } else {
+        WriteZeroPageByte(kLINNUM, static_cast<std::uint8_t>(linnumLo + 1u));
+    }
+
+    FNDLIN();
+
+    const std::uint16_t lowtr = ReadZeroPageWord(kLOWTR);
+    const std::uint16_t dest = ReadZeroPageWord(kDEST);
+    if (lowtr < dest) {
+        return;
+    }
+
+    const std::uint16_t vartab = ReadZeroPageWord(kVARTAB);
+    std::uint16_t source = lowtr;
+    std::uint16_t destination = dest;
+    while (source < vartab) {
+        const std::uint8_t byteVal = variables_const().readByte(source);
+        variables().writeByte(destination, byteVal);
+        ++source;
+        ++destination;
+    }
+
+    const std::uint16_t deletedSize = static_cast<std::uint16_t>(lowtr - dest);
+    const std::uint16_t newVartab = static_cast<std::uint16_t>(vartab - deletedSize);
+    WriteZeroPageWord(kVARTAB, newVartab);
+
+    FIX_LINKS();
+}
+
+void LIST() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: LIST (inclusive) .. AUTO (exclusive)
+    // Name normalization: none (assembler label LIST kept verbatim).
+
+    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
+    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+    constexpr std::uint8_t kMON_CH = ApplesoftVariables::ZP_MON_CH;
+    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+
+    if (!IsStatementEndOfParsedInput()) {
+        return;
+    }
+
+    LINGET();
+    FNDLIN();
+
+    const std::uint8_t rangeChar = CHRGOT();
+    if (rangeChar == static_cast<std::uint8_t>('-') || rangeChar == static_cast<std::uint8_t>(',')) {
+        CHRGET();
+        LINGET();
+    }
+
+    std::uint16_t endRange = ReadZeroPageWord(kLINNUM);
+    if (endRange == 0u) {
+        endRange = 0xffffu;
+    }
+
+    std::uint16_t current = ReadZeroPageWord(kLOWTR);
+    while (current != 0u) {
+        if (ISCNTC()) {
+            break;
+        }
+
+        CRDO();
+
+        const std::uint16_t currentLine = ApplesoftVariables::makeWord(
+            variables_const().readByte(static_cast<std::uint16_t>(current + 2u)),
+            variables_const().readByte(static_cast<std::uint16_t>(current + 3u)));
+        if (currentLine > endRange) {
+            break;
+        }
+
+        WriteZeroPageWord(kCURLIN, currentLine);
+        LINPRT();
+        WriteZeroPageByte(kMON_CH, 5u);
+
+        std::uint16_t offset = 4u;
+        while (true) {
+            const std::uint8_t ch = variables_const().readByte(static_cast<std::uint16_t>(current + offset));
+            if (ch == 0u) {
+                break;
+            }
+            OUTDO(static_cast<std::uint8_t>(ch & 0x7fu));
+            ++offset;
+        }
+
+        current = static_cast<std::uint16_t>(current + offset + 1u);
+        WriteZeroPageWord(kLOWTR, current);
+    }
+
+    CRDO();
 }
 
 void SAVE() {
