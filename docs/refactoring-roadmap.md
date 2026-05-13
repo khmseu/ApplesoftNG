@@ -189,7 +189,7 @@ The following describes how `asm_port_error.cpp` should be split into logical, m
 ### Phase 2: Low-Risk Extraction (Next Iteration)
 
 - ✅ Extract first graphics/display functions (NORMAL..SPEED and MON\_\* stubs)
-- ⏳ Continue extracting remaining graphics functions (`PLOT`/`HLIN`/`VLIN` and helpers)
+- ✅ Extract remaining graphics functions (`PLOT`/`HLIN`/`VLIN` and helpers `PLOTFNS`/`LINCOOR`)
 - ✅ Update CMakeLists.txt and build wiring
 - ✅ Verify compilation and cross-reference regeneration
 

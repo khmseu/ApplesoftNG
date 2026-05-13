@@ -70,6 +70,8 @@ void VTAB();
 void HIMEM();
 void LOMEM();
 void SPEED();
+std::uint8_t PLOTFNS();
+std::uint8_t LINCOOR();
 
 
 constexpr std::array<std::uint8_t, 29> kGenericCHRGETImage = {
@@ -612,76 +614,6 @@ void GOERR() {
     IQERR();
 }
 
-std::uint8_t PLOTFNS() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PLOTFNS (inclusive) .. GOERR (exclusive)
-    // Name normalization: none (assembler label PLOTFNS kept verbatim).
-    //
-    // Parses "A,B" with each coordinate constrained to < 48.
-    // Stores A in FIRST and mirrors B into MON_H2/MON_V2.
-
-    constexpr std::uint8_t kFIRST = ApplesoftVariables::ZP_FIRST;
-    constexpr std::uint8_t kMON_H2 = ApplesoftVariables::ZP_MON_H2;
-    constexpr std::uint8_t kMON_V2 = ApplesoftVariables::ZP_MON_V2;
-    constexpr std::uint8_t kMaxCoordExclusive = 48u;
-    constexpr std::uint8_t kComma = static_cast<std::uint8_t>(',' & 0x7fu);
-
-    const std::uint8_t first = GETBYT();
-    if (first >= kMaxCoordExclusive) {
-        GOERR();
-        return 0u;
-    }
-    WriteZeroPageByte(kFIRST, first);
-
-    SYNCHR(kComma);
-
-    const std::uint8_t second = GETBYT();
-    if (second >= kMaxCoordExclusive) {
-        GOERR();
-        return 0u;
-    }
-
-    WriteZeroPageByte(kMON_H2, second);
-    WriteZeroPageByte(kMON_V2, second);
-    return second;
-}
-
-std::uint8_t LINCOOR() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: LINCOOR (inclusive) .. PLOT (exclusive)
-    // Name normalization: none (assembler label LINCOOR kept verbatim).
-    //
-    // Parses "A,B AT C" used by HLIN/VLIN:
-    // - normalizes endpoints so FIRST <= MON_H2
-    // - requires AT token
-    // - returns C coordinate when C < 48
-
-    constexpr std::uint8_t kFIRST = ApplesoftVariables::ZP_FIRST;
-    constexpr std::uint8_t kMON_H2 = ApplesoftVariables::ZP_MON_H2;
-    constexpr std::uint8_t kMON_V2 = ApplesoftVariables::ZP_MON_V2;
-    constexpr std::uint8_t kMaxCoordExclusive = 48u;
-    constexpr std::uint8_t kTOKEN_AT = 0xc5u;
-
-    const std::uint8_t bValue = PLOTFNS();
-    const std::uint8_t aValue = ReadZeroPageByte(kFIRST);
-
-    if (bValue < aValue) {
-        WriteZeroPageByte(kMON_H2, aValue);
-        WriteZeroPageByte(kMON_V2, aValue);
-        WriteZeroPageByte(kFIRST, bValue);
-    }
-
-    SYNCHR(kTOKEN_AT);
-
-    const std::uint8_t cValue = GETBYT();
-    if (cValue >= kMaxCoordExclusive) {
-        GOERR();
-        return 0u;
-    }
-
-    return cValue;
-}
-
 // TODO(asm-port): port MON_SCRN monitor handler.
 std::uint8_t MON_SCRN(std::uint8_t /*row*/, std::uint8_t /*column*/) {
     return 0;
@@ -724,63 +656,6 @@ std::int8_t CompareArgAndFacStrings() {
 }
 
 } // namespace
-
-void PLOT() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PLOT (inclusive) .. HLIN (exclusive)
-    // Name normalization: none (assembler label PLOT kept verbatim).
-
-    constexpr std::uint8_t kFIRST = ApplesoftVariables::ZP_FIRST;
-    constexpr std::uint8_t kMaxXExclusive = 40u;
-
-    const std::uint8_t yCoord = PLOTFNS();
-    const std::uint8_t xCoord = ReadZeroPageByte(kFIRST);
-
-    if (xCoord >= kMaxXExclusive) {
-        GOERR();
-        return;
-    }
-
-    MON_PLOT(yCoord, xCoord);
-}
-
-void HLIN() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: HLIN (inclusive) .. VLIN (exclusive)
-    // Name normalization: none (assembler label HLIN kept verbatim).
-
-    constexpr std::uint8_t kFIRST = ApplesoftVariables::ZP_FIRST;
-    constexpr std::uint8_t kMON_H2 = ApplesoftVariables::ZP_MON_H2;
-    constexpr std::uint8_t kMaxXExclusive = 40u;
-
-    const std::uint8_t yCoord = LINCOOR();
-    const std::uint8_t right = ReadZeroPageByte(kMON_H2);
-    if (right >= kMaxXExclusive) {
-        GOERR();
-        return;
-    }
-
-    const std::uint8_t left = ReadZeroPageByte(kFIRST);
-    MON_HLINE(yCoord, right, left);
-}
-
-void VLIN() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: VLIN (inclusive) .. COLOR (exclusive)
-    // Name normalization: none (assembler label VLIN kept verbatim).
-
-    constexpr std::uint8_t kFIRST = ApplesoftVariables::ZP_FIRST;
-    constexpr std::uint8_t kMaxXExclusive = 40u;
-
-    const std::uint8_t xCoord = LINCOOR();
-    if (xCoord >= kMaxXExclusive) {
-        GOERR();
-        return;
-    }
-
-    const std::uint8_t top = ReadZeroPageByte(kFIRST);
-    MON_VLINE(xCoord, top);
-}
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: CONINT (inclusive) .. VAL (exclusive)
