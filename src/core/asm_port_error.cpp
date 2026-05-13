@@ -653,37 +653,6 @@ void LINPRT();
 // void OUTDO();
 std::uint8_t GETCHR();
 
-struct LineNumber {
-    std::uint8_t lo = 0;
-    std::uint8_t hi = 0;
-};
-
-bool IsLineNumberGreater(LineNumber current, LineNumber limit) {
-    if (current.hi != limit.hi) {
-        return current.hi > limit.hi;
-    }
-    return current.lo > limit.lo;
-}
-
-LineNumber ReadProgramLineNumber(ProgramPointer currentPtr) {
-    return LineNumber{currentPtr.read(2u), currentPtr.read(3u)};
-}
-
-void PrintListLine(ProgramPointer currentPtr) {
-    std::uint8_t offset = 4;
-    while (true) {
-        const std::uint8_t ch = currentPtr.read(offset);
-        if (ch == 0) {
-            break;
-        }
-
-        // TODO(asm-port): reproduce LIST token/keyword conversion and output
-        // behavior from the original Applesoft source.
-        OUTDO(ch&0x7fu);
-        ++offset;
-    }
-}
-
 void PrintDecimalUnsigned(std::uint16_t value) {
     char digits[5];
     std::uint8_t length = 0;
