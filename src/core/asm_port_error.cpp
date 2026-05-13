@@ -253,6 +253,7 @@ void LINGET();
 void SYNERR();
 bool ISCNTC();
 void LINPRT();
+void PrintDecimalUnsigned(std::uint16_t value);
 // void OUTDO();
 std::uint8_t MEMERR();
 
@@ -644,21 +645,6 @@ void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
     variables().writeByte(address, value);
 }
 
-void PrintDecimalUnsigned(std::uint16_t value) {
-    char digits[5];
-    std::uint8_t length = 0;
-
-    do {
-        digits[length++] = static_cast<char>('0' + static_cast<char>(value % 10u));
-        value = static_cast<std::uint16_t>(value / 10u);
-    } while (value != 0u);
-
-    while (length != 0u) {
-        --length;
-        OUTDO(static_cast<std::uint8_t>(digits[length]));
-    }
-}
-
 bool NEW() {
     return NEW_impl();
 }
@@ -778,12 +764,6 @@ void STKINI() {
 //     // TODO(asm-port): write the current output character from the Applesoft line
 //     // printer to the console.
 // }
-
-void LINPRT() {
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-
-    PrintDecimalUnsigned(ReadZeroPageWord(kCURLIN));
-}
 
 bool ISCNTC() {
     constexpr std::uint8_t kCTRL_C_CODE = 0x83;

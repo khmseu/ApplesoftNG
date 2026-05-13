@@ -12,6 +12,25 @@ std::uint8_t CHRGET();
 std::uint8_t CHRGOT();
 void FRMEVL();
 
+void PrintDecimalUnsigned(std::uint16_t value) {
+    char digits[5];
+    std::uint8_t length = 0;
+
+    do {
+        digits[length++] = static_cast<char>('0' + static_cast<char>(value % 10u));
+        value = static_cast<std::uint16_t>(value / 10u);
+    } while (value != 0u);
+
+    while (length != 0u) {
+        --length;
+        OUTDO(static_cast<std::uint8_t>(digits[length]));
+    }
+}
+
+void LINPRT() {
+    PrintDecimalUnsigned(variables_const().CURLIN);
+}
+
 // ---------------------------------------------------------------------------
 // Forward declarations for callees not yet in public headers.
 // ---------------------------------------------------------------------------
