@@ -252,6 +252,7 @@ std::uint8_t CHRGOT();
 void LINGET();
 void SYNERR();
 void LINPRT();
+void INPRT();
 void PrintDecimalUnsigned(std::uint16_t value);
 // void OUTDO();
 std::uint8_t MEMERR();
@@ -734,17 +735,6 @@ void STROUT(std::string_view text) {
     for (const char ch : text) {
         OUTDO(static_cast<std::uint8_t>(ch));
     }
-}
-
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: INPRT (inclusive) .. GO_STROUT (exclusive)
-// Name normalization: none (assembler label INPRT kept verbatim).
-// Print the " IN " prefix and the current running line number.
-void INPRT() {
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-
-    STROUT(QT_ERROR(QT_IN_INDEX));
-    PrintDecimalUnsigned(ReadZeroPageWord(kCURLIN));
 }
 
 void STKINI() {

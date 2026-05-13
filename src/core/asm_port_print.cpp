@@ -1,6 +1,7 @@
 #include "core/asm_port_print.hpp"
 
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_qt_error.hpp"
 #include "core/asm_port_strlit.hpp"
 #include "platform/asm_port_outdo.hpp"
 
@@ -29,6 +30,17 @@ void PrintDecimalUnsigned(std::uint16_t value) {
 
 void LINPRT() {
     PrintDecimalUnsigned(variables_const().CURLIN);
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Labels: INPRT (inclusive) .. GO_STROUT (exclusive)
+// Name normalization: none (assembler label INPRT kept verbatim).
+void INPRT() {
+    const std::string_view prefix = QT_ERROR(QT_IN_INDEX);
+    for (const char ch : prefix) {
+        OUTDO(static_cast<std::uint8_t>(ch));
+    }
+    LINPRT();
 }
 
 // ---------------------------------------------------------------------------
