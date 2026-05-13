@@ -164,10 +164,6 @@ std::uint8_t FRETMP(std::uint16_t descriptorAddress);
 void GARBAG();
 void SCREEN();
 void UNARY();
-void OR();
-void ANDOP();
-void FALSE();
-void TRUE();
 void RELOPS();
 void STRCMP();
 void NUMCMP();
@@ -211,6 +207,7 @@ void GSE();
 void GME();
 void SYNERR();
 void STOP_impl(bool shouldPrintBreak);
+void GIVAYF(std::int16_t value);
 
 void PRINT_ERROR_LINNUM();
 void PRINT_ERROR_LINNUM(std::string_view prefix);
@@ -240,8 +237,6 @@ std::int8_t FCOMP(std::uint16_t /*argAddress*/) {
 void FLOAT() {}
 
 
-void GIVAYF(std::int16_t value);
-
 // TODO(asm-port): port QINT label.
 void QINT() {}
 
@@ -270,14 +265,6 @@ std::uint8_t MON_PREAD() {
 
 void SetPendingErrorCode(std::uint8_t errorCode) {
     gPendingErrorCode = errorCode;
-}
-
-void SNGFLT(std::uint8_t value) {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: SNGFLT (inclusive) .. ERRDIR (exclusive)
-    // Name normalization: none (assembler label SNGFLT kept verbatim).
-
-    GIVAYF(static_cast<std::int16_t>(value));
 }
 
 
@@ -509,56 +496,6 @@ void UNARY() {
     // TODO(asm-port): complete unary-function dispatch through UNFNC/JMPADRS.
     FRMEVL();
     CHKNUM();
-}
-
-void OR() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: OR (inclusive) .. ANDOP (exclusive)
-    // Name normalization: none (assembler label OR kept verbatim).
-
-    constexpr std::uint8_t kARG = ApplesoftVariables::ZP_ARG;
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-
-    if ((ReadZeroPageByte(kARG) | ReadZeroPageByte(kFAC)) != 0u) {
-        TRUE();
-        return;
-    }
-
-    // Fall-through in ROM from OR to ANDOP.
-    ANDOP();
-}
-
-void ANDOP() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ANDOP (inclusive) .. FALSE (exclusive)
-    // Name normalization: none (assembler label ANDOP kept verbatim).
-
-    constexpr std::uint8_t kARG = ApplesoftVariables::ZP_ARG;
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-
-    if (ReadZeroPageByte(kARG) == 0u || ReadZeroPageByte(kFAC) == 0u) {
-        FALSE();
-        return;
-    }
-
-    // Fall-through in ROM from ANDOP to TRUE.
-    TRUE();
-}
-
-void FALSE() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FALSE (inclusive) .. TRUE (exclusive)
-    // Name normalization: none (assembler label FALSE kept verbatim).
-
-    SNGFLT(0u);
-}
-
-void TRUE() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: TRUE (inclusive) .. RELOPS (exclusive)
-    // Name normalization: none (assembler label TRUE kept verbatim).
-
-    SNGFLT(1u);
 }
 
 void RELOPS() {
@@ -807,8 +744,6 @@ void FRE() {
     GIVAYF(static_cast<std::int16_t>(freeSpace));
 }
 
-namespace {
-
 void GIVAYF(std::int16_t value) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: GIVAYF (inclusive) .. POS (exclusive)
@@ -826,8 +761,6 @@ void GIVAYF(std::int16_t value) {
 
     FLOAT_1(0x90u);
 }
-
-} // namespace
 
 void DEF() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst

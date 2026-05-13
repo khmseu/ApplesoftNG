@@ -22,6 +22,11 @@ void GETARY2();
 void FIND_ARRAY_ELEMENT();
 void ERROR(std::uint8_t error_code_offset);
 std::uint16_t MULTIPLY_SUBS_1(std::uint8_t multiplierHigh);
+void GIVAYF(std::int16_t value);
+void SNGFLT(std::uint8_t value);
+void FALSE();
+void TRUE();
+void ANDOP();
 
 void SetTextPointer(std::uint16_t address) {
     variables().writeWord(ApplesoftVariables::ZP_TXTPTR, address);
@@ -416,6 +421,65 @@ std::uint16_t MULTIPLY_SUBS_1(std::uint8_t multiplierHigh) {
 
     WriteZeroPageByte(ApplesoftVariables::ZP_INDX, 0u);
     return product;
+}
+
+
+void SNGFLT(std::uint8_t value) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SNGFLT (inclusive) .. ERRDIR (exclusive)
+    // Name normalization: none (assembler label SNGFLT kept verbatim).
+
+    GIVAYF(static_cast<std::int16_t>(value));
+}
+
+void OR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: OR (inclusive) .. ANDOP (exclusive)
+    // Name normalization: none (assembler label OR kept verbatim).
+
+    constexpr std::uint8_t kARG = ApplesoftVariables::ZP_ARG;
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+
+    if ((ReadZeroPageByte(kARG) | ReadZeroPageByte(kFAC)) != 0u) {
+        TRUE();
+        return;
+    }
+
+    // Fall-through in ROM from OR to ANDOP.
+    ANDOP();
+}
+
+void ANDOP() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ANDOP (inclusive) .. FALSE (exclusive)
+    // Name normalization: none (assembler label ANDOP kept verbatim).
+
+    constexpr std::uint8_t kARG = ApplesoftVariables::ZP_ARG;
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+
+    if (ReadZeroPageByte(kARG) == 0u || ReadZeroPageByte(kFAC) == 0u) {
+        FALSE();
+        return;
+    }
+
+    // Fall-through in ROM from ANDOP to TRUE.
+    TRUE();
+}
+
+void FALSE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FALSE (inclusive) .. TRUE (exclusive)
+    // Name normalization: none (assembler label FALSE kept verbatim).
+
+    SNGFLT(0u);
+}
+
+void TRUE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: TRUE (inclusive) .. RELOPS (exclusive)
+    // Name normalization: none (assembler label TRUE kept verbatim).
+
+    SNGFLT(1u);
 }
 
 }  // namespace applesoft::asm_port
