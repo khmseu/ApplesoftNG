@@ -1678,41 +1678,5 @@ void HANDLERR() {
     NEWSTT();
 }
 
-void RESUME() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: RESUME (inclusive) .. JSYN (exclusive)
-    // Name normalization: none (assembler label RESUME kept verbatim).
-    constexpr std::uint8_t kERRLIN = ApplesoftVariables::ZP_ERRLIN;
-    constexpr std::uint8_t kERRPOS = ApplesoftVariables::ZP_ERRPOS;
-    constexpr std::uint8_t kERRSTK = ApplesoftVariables::ZP_ERRSTK;
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-
-    WriteZeroPageWord(kCURLIN, ReadZeroPageWord(kERRLIN));
-    WriteZeroPageWord(kTXTPTR, ReadZeroPageWord(kERRPOS));
-    SetStackPointer(ReadZeroPageByte(kERRSTK));
-    NEWSTT();
-}
-
-void ONERR() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ONERR (inclusive) .. HANDLERR (exclusive)
-    // Name normalization: none (assembler label ONERR kept verbatim).
-    constexpr std::uint8_t kTOKEN_GOTO = 0xabu;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    constexpr std::uint8_t kTXTPSV = ApplesoftVariables::ZP_TXTPSV;
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kCURLSV = ApplesoftVariables::ZP_CURLSV;
-    constexpr std::uint8_t kERRFLG = ApplesoftVariables::ZP_ERRFLG;
-
-    SYNCHR(kTOKEN_GOTO);
-    WriteZeroPageWord(kTXTPSV, ReadZeroPageWord(kTXTPTR));
-
-    const std::uint8_t errflg = ReadZeroPageByte(kERRFLG);
-    WriteZeroPageByte(kERRFLG, static_cast<std::uint8_t>((errflg >> 1u) | 0x80u));
-
-    WriteZeroPageWord(kCURLSV, ReadZeroPageWord(kCURLIN));
-    ADDON(REMN());
-}
 
 } // namespace applesoft::asm_port
