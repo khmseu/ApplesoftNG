@@ -1,6 +1,7 @@
 #include "core/asm_port_error.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_memerr.hpp"
 #include "core/asm_port_reason.hpp"
 #include "core/io_ports.hpp"
 
@@ -188,6 +189,30 @@ void BADNAM() {
     // Name normalization: none (assembler label BADNAM kept verbatim).
 
     SYNERR();
+}
+
+void BASIC() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: BASIC (inclusive) .. BASIC2 (exclusive)
+    // Name normalization: none (assembler label BASIC kept verbatim).
+
+    COLD_START();
+}
+
+void BASIC2() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: BASIC2 (inclusive) .. PTRGET4 (exclusive)
+    // Name normalization: none (assembler label BASIC2 kept verbatim).
+
+    RESTART();
+}
+
+void GME() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: GME (inclusive) .. MULTIPLY_SUBSCRIPT (exclusive)
+    // Name normalization: none (assembler label GME kept verbatim).
+
+    (void)MEMERR();
 }
 
 }  // namespace applesoft::asm_port

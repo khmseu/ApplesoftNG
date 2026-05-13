@@ -267,7 +267,6 @@ void FLOAT_1(std::uint8_t exponent) {
     WriteZeroPageByte(ApplesoftVariables::ZP_FAC, exponent);
 }
 
-std::uint8_t gJerErrorCode = ERR_SYNTAX;
 std::uint8_t gPendingErrorCode = ERR_SYNTAX;
 constexpr std::uint8_t kNEG32768Data[4] = {0x90u, 0x80u, 0x00u, 0x00u};
 constexpr std::uint8_t kCZeroData[2] = {0x00u, 0x00u};
@@ -278,6 +277,8 @@ std::int8_t CompareArgAndFacStrings() {
 }
 
 } // namespace
+
+std::uint8_t gJerErrorCode = ERR_SYNTAX;
 
 // TODO(asm-port): port MON_PREAD monitor paddle reader.
 std::uint8_t MON_PREAD() {
@@ -702,22 +703,6 @@ void NAMOK() {
     PTRGET4();
 }
 
-void BASIC() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: BASIC (inclusive) .. BASIC2 (exclusive)
-    // Name normalization: none (assembler label BASIC kept verbatim).
-
-    COLD_START();
-}
-
-void BASIC2() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: BASIC2 (inclusive) .. PTRGET4 (exclusive)
-    // Name normalization: none (assembler label BASIC2 kept verbatim).
-
-    RESTART();
-}
-
 void PTRGET4() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: PTRGET4 (inclusive) .. ISLETC (exclusive)
@@ -959,14 +944,6 @@ void GSE() {
     // Name normalization: none (assembler label GSE kept verbatim).
 
     SUBERR();
-}
-
-void GME() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: GME (inclusive) .. MULTIPLY_SUBSCRIPT (exclusive)
-    // Name normalization: none (assembler label GME kept verbatim).
-
-    (void)MEMERR();
 }
 
 std::uint16_t MULTIPLY_SUBS_1(std::uint8_t multiplierHigh);
