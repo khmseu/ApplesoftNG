@@ -853,16 +853,6 @@ void NEG32768() {
     WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_RESULT, 3u), kNEG32768Data[3]);
 }
 
-void MAKINT() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: MAKINT (inclusive) .. MKINT (exclusive)
-    // Name normalization: none (assembler label MAKINT kept verbatim).
-
-    CHRGET();
-    FRMNUM();
-    MKINT();
-}
-
 void MKINT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: MKINT (inclusive) .. AYINT (exclusive)
@@ -897,22 +887,6 @@ void AYINT() {
     }
 
     MI2();
-}
-
-void MI1() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: MI1 (inclusive) .. MI2 (exclusive)
-    // Name normalization: none (assembler label MI1 kept verbatim).
-
-    IQERR();
-}
-
-void MI2() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: MI2 (inclusive) .. ARRAY (exclusive)
-    // Name normalization: none (assembler label MI2 kept verbatim).
-
-    QINT();
 }
 
 void ARRAY() {

@@ -318,4 +318,30 @@ bool CHKVAL(std::uint8_t savedValTyp) {
     return facIsString;
 }
 
+void MAKINT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: MAKINT (inclusive) .. MKINT (exclusive)
+    // Name normalization: none (assembler label MAKINT kept verbatim).
+
+    CHRGET();
+    FRMNUM();
+    MKINT();
+}
+
+void MI1() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: MI1 (inclusive) .. MI2 (exclusive)
+    // Name normalization: none (assembler label MI1 kept verbatim).
+
+    IQERR();
+}
+
+void MI2() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: MI2 (inclusive) .. ARRAY (exclusive)
+    // Name normalization: none (assembler label MI2 kept verbatim).
+
+    QINT();
+}
+
 }  // namespace applesoft::asm_port
