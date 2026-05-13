@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string_view>
 
 namespace applesoft::asm_port {
 
@@ -25,6 +26,9 @@ void STRPRT();
 // Makes the string at address (a=lo, y=hi) into a FAC descriptor via STRLIT,
 // then falls through to STRPRT.
 void STROUT(std::uint16_t address);
+
+// Helper for direct string literal output used by error/input paths.
+void STROUT(std::string_view text);
 
 // Labels: PR_STRING (inclusive) .. PRINT (exclusive)
 // Name normalization: none (assembler label PR_STRING kept verbatim).

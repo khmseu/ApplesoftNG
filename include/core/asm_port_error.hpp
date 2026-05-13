@@ -68,7 +68,6 @@ void FIX_LINKS();
 
 // Helper stubs for error printing and restart handling.
 void CRDO();
-void STROUT(std::string_view text);
 void INPRT();
 void STKINI();
 void HANDLERR();

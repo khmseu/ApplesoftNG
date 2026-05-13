@@ -19,7 +19,6 @@ void CONTROL_C_TYPED();
 void HANDLERR();
 void SYNERR();
 void ERRDIR();
-void STROUT(std::string_view text);
 
 namespace {
 

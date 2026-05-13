@@ -731,12 +731,6 @@ void RESTART() {
     TRACE_();
 }
 
-void STROUT(std::string_view text) {
-    for (const char ch : text) {
-        OUTDO(static_cast<std::uint8_t>(ch));
-    }
-}
-
 void STKINI() {
     constexpr std::uint8_t kTEMPPT = ApplesoftVariables::ZP_TEMPPT;
     constexpr std::uint8_t kTEMPST = ApplesoftVariables::ZP_TEMPST;

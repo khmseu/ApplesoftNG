@@ -43,6 +43,12 @@ void INPRT() {
     LINPRT();
 }
 
+void STROUT(std::string_view text) {
+    for (const char ch : text) {
+        OUTDO(static_cast<std::uint8_t>(ch));
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Forward declarations for callees not yet in public headers.
 // ---------------------------------------------------------------------------
