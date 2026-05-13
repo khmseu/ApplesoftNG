@@ -1420,9 +1420,6 @@ void FNCDATA() {
 }
 
 
-void STORE_FACDB_YX_ROUNDED() {
-    // TODO(asm-port): store 5-byte FAC to address in Y,X with rounding.
-}
 
 
 void HANDLERR() {
