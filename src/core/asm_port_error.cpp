@@ -644,15 +644,6 @@ void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
     variables().writeByte(address, value);
 }
 
-bool IsStatementEndOfParsedInput() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: END2 (inclusive) .. SAVE (exclusive)
-    // Name normalization: helper name chosen for the inline `bne RTS_4` guard.
-    // STOP/END/CONT continue only when parser is at end-of-statement; model the
-    // zero-flag check via the current parsed character at TXTPTR.
-    return CHRGOT() == 0u;
-}
-
 bool IsEndOfProgram(ProgramPointer currentPtr);
 ProgramPointer AdvanceToNextLine(ProgramPointer currentPtr);
 

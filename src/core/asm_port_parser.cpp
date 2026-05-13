@@ -227,6 +227,15 @@ std::uint8_t CurrentStatementChar() {
     return ReadProgramByte(ReadZeroPageWord(kTXTPTR));
 }
 
+bool IsStatementEndOfParsedInput() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: END2 (inclusive) .. SAVE (exclusive)
+    // Name normalization: helper name chosen for the inline `bne RTS_4` guard.
+    // STOP/END/CONT continue only when parser is at end-of-statement; model the
+    // zero-flag check via the current parsed character at TXTPTR.
+    return CHRGOT() == 0u;
+}
+
 void RESTORE() {
     constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
     const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
