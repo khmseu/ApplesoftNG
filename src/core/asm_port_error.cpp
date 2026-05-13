@@ -407,67 +407,6 @@ void FRMEVL() {
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: PEEK (inclusive) .. POKE (exclusive)
 // Name normalization: none (assembler label PEEK kept verbatim).
-void FUNCT() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FUNCT (inclusive) .. FNCDATA (exclusive)
-    // Name normalization: none (assembler label FUNCT kept verbatim).
-    //
-    // "FN" FUNCTION CALL - invoke user-defined function
-    // Parse FN name, save old argument value, evaluate expression with new value,
-    // restore old value via FNCDATA.
-
-    // Parse "FN name"
-    FNC_();
-    
-    constexpr std::uint8_t kFNCNAM = ApplesoftVariables::ZP_FNCNAM;
-    constexpr std::uint8_t kVARPNT = ApplesoftVariables::ZP_VARPNT;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    
-    // Stack function address for nested FN calls
-    const std::uint16_t fncAddr = ReadZeroPageWord(kFNCNAM);
-    
-    // Parse "(expression)" and evaluate
-    PARCHK();
-    
-    // Result in FAC - must be numeric
-    CHKNUM();
-    
-    // Get argument variable pointer from FNCNAM+2,+3
-    const std::uint16_t argVarAddr = fncAddr + 2u;
-    WriteZeroPageWord(kVARPNT, argVarAddr);
-    
-    // Save old value of argument variable (5 bytes) to stack
-    for (std::uint8_t i = 4u; i >= 0u && i <= 4u; --i) {
-        const std::uint8_t byte = variables_const().pointer(argVarAddr).read(i);
-        // TODO(asm-port): push byte to stack
-    }
-    
-    // Store FAC to argument variable (rounded)
-    STORE_FACDB_YX_ROUNDED();
-    
-    // Save current TXTPTR
-    const std::uint16_t savedTxtPtr = ReadZeroPageWord(kTXTPTR);
-    
-    // Load function definition address from FNCNAM+0,+1
-    const std::uint16_t defAddr = fncAddr;  // Will read via pointer arithmetic
-    WriteZeroPageWord(kTXTPTR, defAddr);
-    
-    // Stack argument variable address for later
-    
-    // Evaluate function expression
-    FRMNUM();
-    
-    // Validate at ":" or EOL
-    if (CHRGOT() != 0u && CHRGOT() != static_cast<std::uint8_t>(':')) {
-        SYNERR();
-    }
-    
-    // Restore TXTPTR
-    WriteZeroPageWord(kTXTPTR, savedTxtPtr);
-    
-    // Stack now contains 5 saved bytes - fall through to FNCDATA to restore
-}
-
 void FNCDATA() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: FNCDATA (inclusive) .. STR (exclusive)

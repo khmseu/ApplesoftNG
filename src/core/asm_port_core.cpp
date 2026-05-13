@@ -39,12 +39,15 @@ void NUMCMP();
 void PLOTFNS();
 void SYNCHR(std::uint8_t expected);
 void CHKNUM();
+void FRMNUM();
 void CHKOPN();
 void CHKCLS();
 std::uint16_t PTRGET();
 void DATA();
 void FRMEVL();
 void STRCMP();
+void PARCHK();
+void STORE_FACDB_YX_ROUNDED();
 void ERRDIR();
 std::int8_t FCOMP(std::uint16_t argAddress);
 void FLOAT();
@@ -986,6 +989,69 @@ void DEF() {
     DATA();
 
     // Fall through to FNCDATA to store 5-byte FAC
+}
+
+
+void FUNCT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FUNCT (inclusive) .. FNCDATA (exclusive)
+    // Name normalization: none (assembler label FUNCT kept verbatim).
+    //
+    // "FN" FUNCTION CALL - invoke user-defined function
+    // Parse FN name, save old argument value, evaluate expression with new value,
+    // restore old value via FNCDATA.
+
+    // Parse "FN name"
+    FNC_();
+
+    constexpr std::uint8_t kFNCNAM = ApplesoftVariables::ZP_FNCNAM;
+    constexpr std::uint8_t kVARPNT = ApplesoftVariables::ZP_VARPNT;
+    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+
+    // Stack function address for nested FN calls
+    const std::uint16_t fncAddr = ReadZeroPageWord(kFNCNAM);
+
+    // Parse "(expression)" and evaluate
+    PARCHK();
+
+    // Result in FAC - must be numeric
+    CHKNUM();
+
+    // Get argument variable pointer from FNCNAM+2,+3
+    const std::uint16_t argVarAddr = static_cast<std::uint16_t>(fncAddr + 2u);
+    WriteZeroPageWord(kVARPNT, argVarAddr);
+
+    // Save old value of argument variable (5 bytes) to stack
+    for (std::uint8_t i = 4u; i <= 4u; --i) {
+        const std::uint8_t byte = variables_const().pointer(argVarAddr).read(i);
+        (void)byte;
+        // TODO(asm-port): push byte to stack
+    }
+
+    // Store FAC to argument variable (rounded)
+    STORE_FACDB_YX_ROUNDED();
+
+    // Save current TXTPTR
+    const std::uint16_t savedTxtPtr = ReadZeroPageWord(kTXTPTR);
+
+    // Load function definition address from FNCNAM+0,+1
+    const std::uint16_t defAddr = fncAddr;  // Will read via pointer arithmetic
+    WriteZeroPageWord(kTXTPTR, defAddr);
+
+    // Stack argument variable address for later
+
+    // Evaluate function expression
+    FRMNUM();
+
+    // Validate at ":" or EOL
+    if (CHRGOT() != 0u && CHRGOT() != static_cast<std::uint8_t>(':')) {
+        SYNERR();
+    }
+
+    // Restore TXTPTR
+    WriteZeroPageWord(kTXTPTR, savedTxtPtr);
+
+    // Stack now contains 5 saved bytes - fall through to FNCDATA to restore
 }
 
 
