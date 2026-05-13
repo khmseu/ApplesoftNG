@@ -28,14 +28,22 @@ std::uint8_t CHRGOT();
 std::uint8_t CHRGET();
 void LINGET();
 void SYNERR();
+void SYNCHR(std::uint8_t expected);
 void LET();
+void IF();
+void REM();
+void IF_TRUE();
+void ONGOTO();
 void STEP();
 void TRACE_();
 void LOAD_FAC_FROM_YA();
 void FRMNUM();
+void FRMEVL();
 void SIGN();
 void FRM_STACK_2();
 void PushForPntFrame();
+std::uint8_t GETBYT();
+void ADDON(std::uint8_t offset);
 bool ISCNTC();
 void OUTSP();
 void LINPRT();
@@ -457,6 +465,85 @@ void COLON_() {
     }
 
     SYNERR();
+}
+
+void IF() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: IF (inclusive) .. REM (exclusive)
+    // Name normalization: none (assembler label IF kept verbatim).
+
+    constexpr std::uint8_t kTOKEN_GOTO = 0xabu;
+    constexpr std::uint8_t kTOKEN_THEN = 0xc4u;
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+
+    FRMEVL();
+    if (CHRGOT() != kTOKEN_GOTO) {
+        SYNCHR(kTOKEN_THEN);
+    }
+
+    if (ReadZeroPageByte(kFAC) != 0u) {
+        IF_TRUE();
+        return;
+    }
+
+    // False IF falls through to REM in ROM.
+    REM();
+}
+
+void REM() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: REM (inclusive) .. IF_TRUE (exclusive)
+    // Name normalization: none (assembler label REM kept verbatim).
+
+    const std::uint8_t offset = REMN();
+    ADDON(offset);
+}
+
+void IF_TRUE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: IF_TRUE (inclusive) .. ONGOTO (exclusive)
+    // Name normalization: none (assembler label IF_TRUE kept verbatim).
+
+    if (CHRGOT() >= kTokenBase) {
+        EXECUTE_STATEMENT();
+        return;
+    }
+
+    GOTO();
+}
+
+void ONGOTO() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ONGOTO (inclusive) .. LINGET (exclusive)
+    // Name normalization: none (assembler label ONGOTO kept verbatim).
+
+    constexpr std::uint8_t kTOKEN_GOSUB = 0xb0u;
+    constexpr std::uint8_t kTOKEN_GOTO = 0xabu;
+    constexpr std::uint8_t kFAC_PLUS_4 = static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 4u);
+
+    const std::uint8_t token = GETBYT();
+    if (token != kTOKEN_GOSUB && token != kTOKEN_GOTO) {
+        SYNERR();
+        return;
+    }
+
+    while (true) {
+        const std::uint8_t selector = ReadZeroPageByte(kFAC_PLUS_4);
+        WriteZeroPageByte(kFAC_PLUS_4, static_cast<std::uint8_t>(selector - 1u));
+
+        if (selector == 1u) {
+            EXECUTE_STATEMENT_1();
+            return;
+        }
+
+        CHRGET();
+        LINGET();
+        if (CHRGOT() == static_cast<std::uint8_t>(',')) {
+            continue;
+        }
+
+        return;
+    }
 }
 
 }  // namespace applesoft::asm_port
