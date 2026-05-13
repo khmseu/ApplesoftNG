@@ -1427,9 +1427,6 @@ void STORE_FACDB_YX_ROUNDED() {
     // TODO(asm-port): store 5-byte FAC to address in Y,X with rounding.
 }
 
-void SETFOR() {
-    // TODO(asm-port): port SETFOR label.
-}
 
 void HANDLERR() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
