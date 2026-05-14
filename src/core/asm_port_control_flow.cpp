@@ -165,7 +165,7 @@ void FRM_STACK_2(std::uint8_t signByte) {
     // Net effect of ROM sequence PLA / STA INDEX / INC INDEX:
     // store the low return-address byte plus one as an 8-bit value so INDEX
     // points at the byte immediately after the JSR call-site return location.
-    // The original routine explicitly assumes no page-boundary carry into INDEX+1.
+    // The uint8_t cast intentionally truncates carry; ROM assumes no page-boundary carry into INDEX+1.
     WriteZeroPageByte(kINDEXZeroPageAddress, static_cast<std::uint8_t>(returnAddressLow + 1u));
     WriteZeroPageByte(kINDEXHighByteAddress, PopByteFromStack());
 
