@@ -3,16 +3,98 @@
 #include "core/applesoft_variables.hpp"
 
 #include <cstdint>
-#include <iostream>
 
 namespace applesoft::asm_port {
 
+void MON_TABV(std::uint8_t row_zero_based);
+
 namespace {
 
-// MON_VIDOUT -- the ROM's VIDOUT ($fb3c in display2.o65): the actual character
-// renderer that strips the Apple II high-bit encoding and maps monitor control
-// codes ($8d CR, $8a LF, $88 BS, $87 BEL) to host terminal equivalents.
-// Called from MON_COUT via LFB78.  File-local: implementation detail only.
+using MonitorOutputRoutine = void (*)(std::uint8_t);
+
+constexpr std::uint16_t kMonitorCout1Vector = 0xfd62u;
+
+std::uint8_t readZeroPageByte(std::uint8_t address) {
+    return variables_const().readByte(address);
+}
+
+void writeZeroPageByte(std::uint8_t address, std::uint8_t value) {
+    variables().writeByte(address, value);
+}
+
+std::uint16_t readZeroPageWord(std::uint8_t address) {
+    return ApplesoftVariables::makeWord(readZeroPageByte(address),
+                                        readZeroPageByte(static_cast<std::uint8_t>(address + 1u)));
+}
+
+std::uint16_t computeTextRowBase(std::uint8_t row_zero_based) {
+    const bool carryFromLsr = (row_zero_based & 0x01u) != 0u;
+    const std::uint8_t bash = static_cast<std::uint8_t>(((row_zero_based >> 1u) & 0x03u) | 0x04u);
+
+    std::uint8_t basl = static_cast<std::uint8_t>(row_zero_based & 0x18u);
+    if (carryFromLsr) {
+        basl = static_cast<std::uint8_t>(basl + 0x80u);
+    }
+
+    const std::uint8_t baslBase = basl;
+    basl = static_cast<std::uint8_t>((basl << 2u) | baslBase);
+    basl = static_cast<std::uint8_t>(basl + readZeroPageByte(ApplesoftVariables::ZP_MON_WNDLFT));
+
+    return ApplesoftVariables::makeWord(basl, bash);
+}
+
+void setCursorRow(std::uint8_t row_zero_based) {
+    MON_TABV(row_zero_based);
+}
+
+void scrollWindowUp() {
+    constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
+
+    const std::uint8_t top = readZeroPageByte(ApplesoftVariables::ZP_MON_WNDTOP);
+    const std::uint8_t bottom = readZeroPageByte(ApplesoftVariables::ZP_MON_WNDBTM);
+    const std::uint8_t width = readZeroPageByte(ApplesoftVariables::ZP_MON_WNDWDTH);
+
+    for (std::uint8_t row = top; static_cast<std::uint8_t>(row + 1u) < bottom; ++row) {
+        const auto dstBase = computeTextRowBase(row);
+        const auto srcBase = computeTextRowBase(static_cast<std::uint8_t>(row + 1u));
+        for (std::uint8_t col = 0u; col < width; ++col) {
+            variables().writeByte(static_cast<std::uint16_t>(dstBase + col),
+                                  variables_const().readByte(static_cast<std::uint16_t>(srcBase + col)));
+        }
+    }
+
+    const auto lastRowBase = computeTextRowBase(static_cast<std::uint8_t>(bottom - 1u));
+    for (std::uint8_t col = 0u; col < width; ++col) {
+        variables().writeByte(static_cast<std::uint16_t>(lastRowBase + col), kBlank);
+    }
+}
+
+void advanceCursorToNextLine(bool resetColumn) {
+    const std::uint8_t top = readZeroPageByte(ApplesoftVariables::ZP_MON_WNDTOP);
+    const std::uint8_t bottom = readZeroPageByte(ApplesoftVariables::ZP_MON_WNDBTM);
+    std::uint8_t row = readZeroPageByte(ApplesoftVariables::ZP_MON_CV);
+
+    if (resetColumn) {
+        writeZeroPageByte(ApplesoftVariables::ZP_MON_CH, 0u);
+    }
+
+    if (bottom <= top) {
+        setCursorRow(top);
+        return;
+    }
+
+    if (static_cast<std::uint8_t>(row + 1u) >= bottom) {
+        scrollWindowUp();
+        row = static_cast<std::uint8_t>(bottom - 1u);
+    } else {
+        row = static_cast<std::uint8_t>(row + 1u);
+    }
+
+    setCursorRow(row);
+}
+
+// MON_VIDOUT -- the ROM's VIDOUT ($fb3c in display2.o65): the character
+// renderer that updates monitor screen state. Called from MON_COUT1 via LFB78.
 void MON_VIDOUT(std::uint8_t a) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst
     // Labels: VIDOUT (inclusive) .. ESC1 (exclusive)
@@ -20,28 +102,63 @@ void MON_VIDOUT(std::uint8_t a) {
     //
     // VIDOUT  cmp #$a0 / bcs STOADV -- printable high-bit chars fall through to output.
     // Control chars with bit 7 set ($80-$9f): dispatch on code.
-    // Strip high bit before passing to host terminal.
 
     const std::uint8_t ch = static_cast<std::uint8_t>(a & 0x7fu);
 
     switch (ch) {
-    case 0x07u: // BEL  ($87 with high bit set)
-        std::cout << '\a';
+    case 0x07u: // BEL ($87) -- speaker toggle not modeled yet.
         break;
-    case 0x08u: // BS   ($88)
-        std::cout << '\b';
-        break;
-    case 0x0au: // LF   ($8a)
-        std::cout << '\n';
-        break;
-    case 0x0du: // CR   ($8d) -- Apple II carriage return, maps to newline
-        std::cout << '\n';
-        break;
-    default:
-        if (ch >= 0x20u && ch < 0x7fu) {
-            std::cout << static_cast<char>(ch);
+    case 0x08u: { // BS ($88)
+        const std::uint8_t column = readZeroPageByte(ApplesoftVariables::ZP_MON_CH);
+        if (column != 0u) {
+            writeZeroPageByte(ApplesoftVariables::ZP_MON_CH, static_cast<std::uint8_t>(column - 1u));
         }
         break;
+    }
+    case 0x0au: // LF ($8a)
+        advanceCursorToNextLine(false);
+        break;
+    case 0x0du: // CR ($8d)
+        advanceCursorToNextLine(true);
+        break;
+    default:
+        if (a >= 0xa0u) {
+            const std::uint8_t column = readZeroPageByte(ApplesoftVariables::ZP_MON_CH);
+            const std::uint8_t width = readZeroPageByte(ApplesoftVariables::ZP_MON_WNDWDTH);
+            const std::uint16_t base = readZeroPageWord(ApplesoftVariables::ZP_MON_BASL);
+
+            variables().writeByte(static_cast<std::uint16_t>(base + column), a);
+
+            const std::uint8_t nextColumn = static_cast<std::uint8_t>(column + 1u);
+            if (nextColumn >= width) {
+                advanceCursorToNextLine(true);
+            } else {
+                writeZeroPageByte(ApplesoftVariables::ZP_MON_CH, nextColumn);
+            }
+        }
+        break;
+    }
+}
+
+void MON_COUT1(std::uint8_t a) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // Labels: COUT1 (inclusive) .. LFB78 call site tail (exclusive)
+    // Name normalization: COUT1 -> MON_COUT1 (monitor label gets MON_ prefix).
+
+    if (a >= 0xa0u) {
+        a &= readZeroPageByte(ApplesoftVariables::ZP_MON_INVFLG); // and $32
+    }
+
+    MON_VIDOUT(a);
+}
+
+MonitorOutputRoutine resolveMonitorOutputVector(std::uint16_t vector) {
+    switch (vector) {
+    case kMonitorCout1Vector:
+        return &MON_COUT1;
+    default:
+        // Slot ROM output vectors are not ported yet; keep monitor default semantics.
+        return &MON_COUT1;
     }
 }
 
@@ -81,19 +198,10 @@ void MON_COUT(std::uint8_t a) {
     // Name normalization: COUT -> MON_COUT (monitor label gets MON_ prefix).
     //
     // COUT      jmp ($36)             ; dispatch through CSW output vector ($36/$37)
-    //                                 ; default target: COUT1 at $fdf0
-    // COUT1     cmp #$a0              ; printable char (A >= $a0)?
-    //           bcc COUTZ             ;   no: control char -- skip INVFLG masking
-    //           and $32               ;   yes: mask with INVFLG ($ff=normal, $3f=inverse)
-    // COUTZ     jsr LFB78             ; LFB78 -> jmp VIDOUT: write to screen/terminal
+    //                                 ; default target: COUT1 at $fd62
 
-    // COUT1: apply INVFLG mask for printable (high-bit) chars only.
-    if (a >= 0xa0u) {
-        a &= variables_const().MON_INVFLG; // and $32
-    }
-
-    // LFB78 -> VIDOUT: write character to host terminal.
-    MON_VIDOUT(a);
+    const auto routine = resolveMonitorOutputVector(readZeroPageWord(ApplesoftVariables::ZP_MON_CSW));
+    routine(a);
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
