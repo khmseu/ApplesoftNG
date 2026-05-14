@@ -181,6 +181,7 @@ public:
     std::uint8_t MON_CH = 0;      // $24
     std::uint8_t MON_COLOR = 0;   // $30
     std::uint8_t MON_PROMPT = 0;  // $33
+        std::uint8_t MON_INVFLG = 0xffu; // $32  $ff=normal, $3f=inverse
 
     std::uint16_t MON_A1 = 0;     // $3c/$3d
     std::uint16_t MON_A2 = 0;     // $3e/$3f

@@ -143,6 +143,9 @@ void GENERIC_END() {
     COLD_START();
 }
 
+// Forward declaration: MON_COUT is defined in asm_port_outdo.cpp.
+void MON_COUT(std::uint8_t value);
+
 namespace {
 
 void MON_SETNORM() {
@@ -184,8 +187,6 @@ void MON_SETKBD() {
     MON_INPORT(0u);
 }
 
-void MON_COUT(std::uint8_t value);
-
 void MON_BELL() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
     // Labels: BELL (inclusive) .. RESTORE (exclusive)
@@ -207,14 +208,6 @@ void MON_CROUT() {
     // `lda #$8d` + `bne COUT` is an unconditional transfer to COUT with CR.
     constexpr std::uint8_t kCarriageReturn = 0x8du;
     MON_COUT(kCarriageReturn);
-}
-
-void MON_COUT(std::uint8_t value) {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
-    // Labels: COUT (inclusive) .. COUT1 (exclusive)
-    // Name normalization: COUT -> MON_COUT (monitor label gets MON_ prefix).
-
-    OUTDO(static_cast<std::uint8_t>(value & 0x7fu));
 }
 
 void MON_PRBYTE(std::uint8_t value) {
