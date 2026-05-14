@@ -10,6 +10,7 @@
 
 #include "core/asm_port_mathtbl.hpp"
 #include "core/asm_port_error.hpp"
+#include "core/applesoft_variables.hpp"
 
 namespace applesoft::asm_port {
 
@@ -33,7 +34,24 @@ void OR_op() {
 
     OR();
 }
-static void NEGOP()  {} // TODO(asm-port): NEGOP  $CF...207...>
+
+void NEGOP() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: NEGOP (inclusive) .. CON_LOG_E (exclusive)
+    // Name normalization: none (assembler label NEGOP kept verbatim).
+
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+
+    // ROM: if FAC exponent is zero, value is 0 so sign toggle is skipped.
+    if (variables_const().readByte(kFAC) == 0u) {
+        return;
+    }
+
+    const std::uint8_t sign = variables_const().readByte(kFAC_SIGN);
+    variables().writeByte(kFAC_SIGN, static_cast<std::uint8_t>(sign ^ 0xffu));
+}
+
 static void EQUOP()  {} // TODO(asm-port): EQUOP  $D0...208...=
 
 // ---------------------------------------------------------------------------
