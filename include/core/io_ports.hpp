@@ -22,6 +22,7 @@ public:
     static constexpr std::uint16_t ADDR_SW_AN2 = 0xc05du;
     static constexpr std::uint16_t ADDR_SW_AN3 = 0xc05fu;
     static constexpr std::uint16_t ADDR_SW_TXTCLR = 0xc050u;
+    static constexpr std::uint16_t ADDR_SW_TXTSET = 0xc051u;
     static constexpr std::uint16_t ADDR_PADDLE_0 = 0xc064u;
     static constexpr std::uint16_t ADDR_PADDLE_TRIGGER = 0xc070u;
     static constexpr std::uint16_t ADDR_ROM_SIGNATURE = 0xcfffu;

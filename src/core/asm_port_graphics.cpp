@@ -1,5 +1,6 @@
 #include "core/asm_port_error.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/io_ports.hpp"
 
 #include <cstdint>
 
@@ -183,9 +184,27 @@ void MON_HOME() {
 }
 
 void MON_SETTXT() {
-    // TODO(asm-port): port MON_SETTXT monitor handler.
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst label SETTXT.
-    // Sets full-screen text window; reads TXTSET soft-switch then calls SETWND.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst
+    // Labels: SETTXT (inclusive) .. SETGR (exclusive)
+    // Name normalization: SETTXT -> MON_SETTXT (monitor label gets MON_ prefix).
+    //
+    // ROM fall-through: SETTXT unconditionally branches to SETWND; modeled
+    // directly here by writing the window fields and tabbing to row 23.
+
+    constexpr std::uint8_t kMON_WNDLFT = ApplesoftVariables::ZP_MON_WNDLFT;
+    constexpr std::uint8_t kMON_WNDWDTH = ApplesoftVariables::ZP_MON_WNDWDTH;
+    constexpr std::uint8_t kMON_WNDTOP = ApplesoftVariables::ZP_MON_WNDTOP;
+    constexpr std::uint8_t kMON_WNDBTM = ApplesoftVariables::ZP_MON_WNDBTM;
+
+    (void)variables_const().readByte(IOPorts::ADDR_SW_TXTSET);
+
+    WriteZeroPageByte(kMON_WNDTOP, 0u);
+    WriteZeroPageByte(kMON_WNDLFT, 0u);
+    WriteZeroPageByte(kMON_WNDWDTH, 40u);
+    WriteZeroPageByte(kMON_WNDBTM, 24u);
+
+    // SETWND tail sets A=23 and jumps to VTAB.
+    MON_TABV(23u);
 }
 
 void MON_SETGR() {
