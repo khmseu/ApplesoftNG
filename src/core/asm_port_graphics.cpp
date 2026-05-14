@@ -208,9 +208,29 @@ void MON_SETTXT() {
 }
 
 void MON_SETGR() {
-    // TODO(asm-port): port MON_SETGR monitor handler.
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst label SETGR.
-    // Sets up lo-res graphics window; reads TXTCLR+MIXSET soft-switches, calls CLRTOP.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst
+    // Labels: SETGR (inclusive) .. SETWND (exclusive)
+    // Name normalization: SETGR -> MON_SETGR (monitor label gets MON_ prefix).
+    //
+    // Falls through into SETWND in ROM; modeled here by writing the window
+    // fields and tabbing to row 23.
+
+    constexpr std::uint8_t kMON_WNDLFT = ApplesoftVariables::ZP_MON_WNDLFT;
+    constexpr std::uint8_t kMON_WNDWDTH = ApplesoftVariables::ZP_MON_WNDWDTH;
+    constexpr std::uint8_t kMON_WNDTOP = ApplesoftVariables::ZP_MON_WNDTOP;
+    constexpr std::uint8_t kMON_WNDBTM = ApplesoftVariables::ZP_MON_WNDBTM;
+
+    (void)variables_const().readByte(IOPorts::ADDR_SW_TXTCLR);
+    (void)variables_const().readByte(IOPorts::ADDR_SW_MIXSET);
+
+    // CLRTOP call target is still pending; window state is applied directly here.
+
+    WriteZeroPageByte(kMON_WNDTOP, 20u);
+    WriteZeroPageByte(kMON_WNDLFT, 0u);
+    WriteZeroPageByte(kMON_WNDWDTH, 40u);
+    WriteZeroPageByte(kMON_WNDBTM, 24u);
+
+    MON_TABV(23u);
 }
 
 void HOME() {
