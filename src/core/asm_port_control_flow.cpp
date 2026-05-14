@@ -127,6 +127,7 @@ void SetBranchTargetToSTEP() {
 void LOAD_FAC_FROM_YA() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: LOAD_FAC_FROM_YA (inclusive) .. STORE_FAC_IN_TEMP2_ROUNDED (exclusive)
+    // This function ports only LOAD_FAC_FROM_YA; STORE_FAC_IN_TEMP2_ROUNDED starts at the exclusive end label.
     // Name normalization: none (assembler label LOAD_FAC_FROM_YA kept verbatim).
     constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
     constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
@@ -734,11 +735,9 @@ void RETURN() {
 void STEP() {
     constexpr std::uint8_t kTOKEN_STEP = 0xc7u;
 
-    WriteProgramByte(kConOneScratchAddress + 0u, kConOnePacked[0]);
-    WriteProgramByte(kConOneScratchAddress + 1u, kConOnePacked[1]);
-    WriteProgramByte(kConOneScratchAddress + 2u, kConOnePacked[2]);
-    WriteProgramByte(kConOneScratchAddress + 3u, kConOnePacked[3]);
-    WriteProgramByte(kConOneScratchAddress + 4u, kConOnePacked[4]);
+    for (std::uint8_t i = 0; i < 5u; ++i) {
+        WriteProgramByte(static_cast<std::uint16_t>(kConOneScratchAddress + i), kConOnePacked[i]);
+    }
     WriteZeroPageWord(ApplesoftVariables::ZP_INDEX, kConOneScratchAddress);
     LOAD_FAC_FROM_YA();
     if (CHRGOT() == kTOKEN_STEP) {
