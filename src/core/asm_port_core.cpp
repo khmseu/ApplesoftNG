@@ -64,6 +64,8 @@ std::int8_t CompareArgAndFacStrings();
 void GOTO();
 void NEWSTT();
 void PRINT_ERROR_LINNUM();
+void MON_INPORT(std::uint8_t slot);
+void MON_OUTPORT(std::uint8_t slot);
 extern std::int8_t gNumericCompareResult;
 extern bool gNumericCompareCarry;
 extern std::uint8_t gFloatInput;
@@ -142,7 +144,12 @@ void GENERIC_END() {
 namespace {
 
 void MON_SETNORM() {
-    // TODO(asm-port): port SETNORM monitor label.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // Labels: SETNORM (inclusive) .. SETKBD (exclusive)
+    // Name normalization: SETNORM -> MON_SETNORM (monitor label gets MON_ prefix).
+
+    constexpr std::uint8_t kMON_INVFLG = ApplesoftVariables::ZP_MON_INVFLG;
+    WriteZeroPageByte(kMON_INVFLG, 0xffu);
 }
 
 void MON_INIT() {
@@ -150,11 +157,19 @@ void MON_INIT() {
 }
 
 void MON_SETVID() {
-    // TODO(asm-port): port SETVID monitor label.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // Labels: SETVID (inclusive) .. OUTPORT (exclusive)
+    // Name normalization: SETVID -> MON_SETVID (monitor label gets MON_ prefix).
+
+    MON_OUTPORT(0u);
 }
 
 void MON_SETKBD() {
-    // TODO(asm-port): port SETKBD monitor label.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // Labels: SETKBD (inclusive) .. INPORT (exclusive)
+    // Name normalization: SETKBD -> MON_SETKBD (monitor label gets MON_ prefix).
+
+    MON_INPORT(0u);
 }
 
 void MON_BELL() {
