@@ -22,6 +22,8 @@ public:
     static constexpr std::uint8_t ZP_INPUTFLG = 0x15;
     static constexpr std::uint8_t ZP_CPRMASK = 0x16;
     static constexpr std::uint8_t ZP_MON_CH = 0x24;
+    static constexpr std::uint8_t ZP_MON_BASL = 0x28;
+    static constexpr std::uint8_t ZP_MON_BASH = 0x29;
     static constexpr std::uint8_t ZP_MON_H2 = 0x2c;
     static constexpr std::uint8_t ZP_MON_V2 = 0x2d;
     static constexpr std::uint8_t ZP_MON_INVFLG = 0x32;
@@ -29,6 +31,8 @@ public:
     static constexpr std::uint8_t ZP_MON_A1 = 0x3c;
     static constexpr std::uint8_t ZP_MON_A2 = 0x3e;
     static constexpr std::uint8_t ZP_LINNUM = 0x50;
+    static constexpr std::uint8_t ZP_RNDL = 0x4e;
+    static constexpr std::uint8_t ZP_RNDH = 0x4f;
     static constexpr std::uint8_t ZP_TEMPPT = 0x52;
     static constexpr std::uint8_t ZP_LASTPT = 0x53;
     static constexpr std::uint8_t ZP_TEMPST = 0x55;
