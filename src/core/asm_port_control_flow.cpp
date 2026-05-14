@@ -211,17 +211,19 @@ void SETFOR() {
 
     ROUND_FAC();
 
-    const ProgramPointer forValue{ReadZeroPageWord(kFORPNT)};
-    forValue.write(ReadZeroPageByte(kFAC), 0u);
+    const ProgramPointer forVariablePtr{ReadZeroPageWord(kFORPNT)};
+    forVariablePtr.write(ReadZeroPageByte(kFAC), 0u);
 
     const std::uint8_t facMantissaHigh = ReadZeroPageByte(add_u8(kFAC, 1u));
     const std::uint8_t facSign = ReadZeroPageByte(kFAC_SIGN);
+    // ROM sequence: (FAC+1) is masked by (FAC_SIGN | $7F), preserving mantissa
+    // low 7 bits while applying sign-bit packing semantics.
     const std::uint8_t packedMantissaHigh = static_cast<std::uint8_t>(
         facMantissaHigh & static_cast<std::uint8_t>(facSign | 0x7fu));
-    forValue.write(packedMantissaHigh, 1u);
-    forValue.write(ReadZeroPageByte(add_u8(kFAC, 2u)), 2u);
-    forValue.write(ReadZeroPageByte(add_u8(kFAC, 3u)), 3u);
-    forValue.write(ReadZeroPageByte(add_u8(kFAC, 4u)), 4u);
+    forVariablePtr.write(packedMantissaHigh, 1u);
+    forVariablePtr.write(ReadZeroPageByte(add_u8(kFAC, 2u)), 2u);
+    forVariablePtr.write(ReadZeroPageByte(add_u8(kFAC, 3u)), 3u);
+    forVariablePtr.write(ReadZeroPageByte(add_u8(kFAC, 4u)), 4u);
 
     WriteZeroPageByte(kFAC_EXTENSION, 0u);
 }
