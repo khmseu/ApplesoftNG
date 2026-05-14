@@ -145,12 +145,21 @@ def _is_stub(body: str, preceding_comments: str = "") -> bool:
 # ---------------------------------------------------------------------------
 
 
-def extract_functions(src_root: Path) -> list[tuple[str, int, str, str]]:
+def extract_functions(src_root: Path) -> list[tuple[str, int, str, str, int]]:
     """
     Scan all .cpp files under *src_root* and return a list of
-    (rel_path, 1-based-line, func_name, status) tuples.
+    (rel_path, 1-based-line, func_name, status, caller_count) tuples.
     """
-    results: list[tuple[str, int, str, str]] = []
+    results: list[tuple[str, int, str, str, int]] = []
+    all_names: list[str] = []
+
+    # First pass: collect all function names across all files.
+    for cpp_file in sorted(src_root.rglob("*.cpp")):
+        try:
+            text = cpp_file.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        all_names.extend(re.findall(r"([A-Za-z_][A-Za-z0-9_]*)\s*\(", text))
 
     for cpp_file in sorted(src_root.rglob("*.cpp")):
         rel = str(cpp_file.relative_to(REPO_ROOT)).replace("\\", "/")
@@ -186,7 +195,12 @@ def extract_functions(src_root: Path) -> list[tuple[str, int, str, str]]:
                     continue
 
                 status = "stub" if _is_stub(body, preceding) else "real"
-                results.append((rel, i + 1, func_name, status))
+
+                # Crude count of occurrences of func_name in all source files.
+                # Subtract 1 because its own definition matches.
+                caller_count = max(0, all_names.count(func_name) - 1)
+
+                results.append((rel, i + 1, func_name, status, caller_count))
 
                 # Jump past the consumed body.
                 i = end_line + 1
@@ -203,6 +217,7 @@ def extract_functions(src_root: Path) -> list[tuple[str, int, str, str]]:
 
 _HEADER = """\
 # Applesoft Function Cross-Reference
+<!-- This file is auto-generated; do not edit manually. Regenerate with: python3 ./tools/gen_cross_reference.py -->
 
 **Status Legend:**
 
@@ -212,16 +227,19 @@ _HEADER = """\
 """
 
 _TABLE_HEADER = (
-    "| {:<19} | {:<41} | {:<4} | {:<6} |\n" "| {:<19} | {:<41} | {:<4} | {:<6} |\n"
+    "| {:<19} | {:<6} | {:<7} | {:<41} | {:<4} |\n"
+    "| {:<19} | {:<6} | {:<7} | {:<41} | {:<4} |\n"
 ).format(
     "Function",
+    "Status",
+    "Callers",
     "File",
     "Line",
-    "Status",
     "-" * 19,
+    "-" * 6,
+    "-" * 7,
     "-" * 41,
     "-" * 4,
-    "-" * 6,
 )
 
 
@@ -230,14 +248,16 @@ def _escape_md(name: str) -> str:
     return name.replace("_", r"\_") if name.endswith("_") else name
 
 
-def write_table(entries: list[tuple[str, int, str, str]], output: Path) -> None:
+def write_table(entries: list[tuple[str, int, str, str, int]], output: Path) -> None:
     """Sort entries by function name and write the Markdown table."""
     entries_sorted = sorted(entries, key=lambda e: e[2].upper())
 
     lines: list[str] = [_HEADER, _TABLE_HEADER]
-    for rel, lineno, name, status in entries_sorted:
+    for rel, lineno, name, status, callers in entries_sorted:
         md_name = _escape_md(name)
-        lines.append(f"| {md_name:<19} | {rel:<41} | {lineno:<4} | {status:<6} |\n")
+        lines.append(
+            f"| {md_name:<19} | {status:<6} | {callers:<7} | {rel:<41} | {lineno:<4} |\n"
+        )
 
     output.write_text("".join(lines), encoding="utf-8")
     print(f"wrote {len(entries_sorted)} entries to {output}")
