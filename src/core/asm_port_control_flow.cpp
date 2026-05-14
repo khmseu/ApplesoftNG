@@ -8,7 +8,6 @@
 #include "core/io_ports.hpp"
 
 #include <cstdint>
-#include <mutex>
 #include <string_view>
 
 namespace applesoft::asm_port {
@@ -144,6 +143,7 @@ void LOAD_FAC_FROM_YA() {
     WriteZeroPageByte(kFAC + 2u, source.read(2u));
 
     const std::uint8_t signPackedMantissa = source.read(1u);
+    // Applesoft stores FAC_SIGN as this full sign-packed byte from packed float byte #1.
     WriteZeroPageByte(kFAC_SIGN, signPackedMantissa);
     WriteZeroPageByte(kFAC + 1u, static_cast<std::uint8_t>(signPackedMantissa | 0x80u));
     WriteZeroPageByte(kFAC, source.read(0u));
@@ -738,13 +738,10 @@ void RETURN() {
 
 void STEP() {
     constexpr std::uint8_t kTOKEN_STEP = 0xc7u;
-    static std::once_flag conOneSeededFlag;
 
-    std::call_once(conOneSeededFlag, []() {
-        for (std::uint8_t i = 0; i < 5u; ++i) {
-            WriteProgramByte(static_cast<std::uint16_t>(kConOneScratchAddress + i), kConOnePacked[i]);
-        }
-    });
+    for (std::uint8_t i = 0; i < 5u; ++i) {
+        WriteProgramByte(static_cast<std::uint16_t>(kConOneScratchAddress + i), kConOnePacked[i]);
+    }
     WriteZeroPageWord(ApplesoftVariables::ZP_INDEX, kConOneScratchAddress);
     LOAD_FAC_FROM_YA();
     if (CHRGOT() == kTOKEN_STEP) {
