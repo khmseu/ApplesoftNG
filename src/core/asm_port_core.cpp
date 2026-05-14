@@ -17,6 +17,7 @@ void SYNERR();
 extern std::uint8_t gJerErrorCode;
 void MON_M6502VEC();
 void MON_RESET2();
+void MON_REGDSP();
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
     return static_cast<std::uint8_t>(lhs + rhs);
 }
@@ -164,6 +165,20 @@ void MON_LFB60() {
     // TODO(asm-port): port LFB60 monitor label.
 }
 
+void MON_CROUT() {
+    // TODO(asm-port): port CROUT monitor label.
+}
+
+void MON_COUT(std::uint8_t value) {
+    // TODO(asm-port): port COUT monitor label.
+    (void)value;
+}
+
+void MON_PRBYTE(std::uint8_t value) {
+    // TODO(asm-port): port PRBYTE monitor label.
+    (void)value;
+}
+
 bool MON_JumpByAddress(std::uint16_t target) {
     // Keep reset-range control flow explicit while most monitor entrypoints
     // remain unported.
@@ -276,6 +291,40 @@ void MON_RESET2() {
 
         (void)MON_JumpByAddress(scanPtr);
         return;
+    }
+}
+
+void MON_REGDSP() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
+    // Labels: REGDSP (inclusive) .. LFB01 (exclusive)
+    // Name normalization: REGDSP -> MON_REGDSP (monitor label gets MON_ prefix).
+    //
+    // Prints monitor register labels and the saved register byte values.
+
+    constexpr std::uint8_t kMON_A4 = ApplesoftVariables::ZP_MON_A4;
+    constexpr std::uint8_t kRegBase = ApplesoftVariables::ZP_MON_DEBUG_REG_A;
+    constexpr std::uint8_t kSpace = static_cast<std::uint8_t>(' ' | 0x80u);
+    constexpr std::uint8_t kEquals = static_cast<std::uint8_t>('=' | 0x80u);
+    constexpr std::array<std::uint8_t, 5> kRTBL = {
+        static_cast<std::uint8_t>('A' | 0x80u),
+        static_cast<std::uint8_t>('X' | 0x80u),
+        static_cast<std::uint8_t>('Y' | 0x80u),
+        static_cast<std::uint8_t>('P' | 0x80u),
+        static_cast<std::uint8_t>('S' | 0x80u),
+    };
+
+    MON_CROUT();
+
+    // Unified pointer candidate from RGDSP1: $40/$41 points at the saved-register block.
+    const std::uint16_t regPointer = kRegBase;
+    WriteZeroPageWord(kMON_A4, regPointer);
+
+    for (std::size_t i = 0; i < kRTBL.size(); ++i) {
+        MON_COUT(kSpace);
+        MON_COUT(kRTBL[i]);
+        MON_COUT(kEquals);
+        const std::uint8_t regValue = variables_const().readByte(static_cast<std::uint16_t>(regPointer + i));
+        MON_PRBYTE(regValue);
     }
 }
 
