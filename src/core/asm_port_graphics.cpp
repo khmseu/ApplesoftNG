@@ -157,10 +157,37 @@ void MON_OUTPORT(std::uint8_t slot) {
 }
 
 void MON_PLOT(std::uint8_t y, std::uint8_t x) {
-    // TODO(asm-port): port MON_PLOT monitor handler.
-    // Placeholder to preserve PLOT statement call flow until monitor integration.
-    (void)y;
-    (void)x;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/lores.o65.lst
+    // Labels: PLOT (inclusive) .. HLINE (exclusive)
+    // Name normalization: PLOT -> MON_PLOT (monitor label gets MON_ prefix).
+    //
+    // Mirrors ROM PLOT/PLOT1 behavior: compute lo-res cell base from Y,
+    // then replace only the selected nibble (even row: low, odd row: high).
+
+    constexpr std::uint8_t kMON_COLOR = ApplesoftVariables::ZP_MON_COLOR;
+
+    const std::uint8_t halfRow = static_cast<std::uint8_t>(y >> 1u);
+    const bool oddRow = (y & 0x01u) != 0u;
+
+    // Inline GBASCALC for page $0400-$07ff lo-res screen mapping.
+    const std::uint8_t gbash = static_cast<std::uint8_t>(((halfRow >> 1u) & 0x03u) | 0x04u);
+    std::uint8_t gbasl = static_cast<std::uint8_t>(halfRow & 0x18u);
+    if (oddRow) {
+        gbasl = static_cast<std::uint8_t>(gbasl + 0x80u);
+    }
+    const std::uint8_t gbaslBase = gbasl;
+    gbasl = static_cast<std::uint8_t>((gbasl << 2u) | gbaslBase);
+
+    const std::uint16_t baseAddress = ApplesoftVariables::makeWord(gbasl, gbash);
+    const std::uint16_t screenAddress = static_cast<std::uint16_t>(baseAddress + x);
+
+    const std::uint8_t color = ReadZeroPageByte(kMON_COLOR);
+    const std::uint8_t existing = variables_const().readByte(screenAddress);
+    const std::uint8_t merged = oddRow
+        ? static_cast<std::uint8_t>((existing & 0x0fu) | (color & 0xf0u))
+        : static_cast<std::uint8_t>((existing & 0xf0u) | (color & 0x0fu));
+
+    variables().writeByte(screenAddress, merged);
 }
 
 void MON_HLINE(std::uint8_t y, std::uint8_t right, std::uint8_t left) {
