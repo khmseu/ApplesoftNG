@@ -15,6 +15,9 @@ void GARBAG();
 // Labels: STRINI (inclusive) .. STRSPA (exclusive)
 void STRINI(std::uint8_t length);
 
+// Labels: STRSPA (inclusive) .. L_STRSPA_1 (exclusive)
+void STRSPA(std::uint8_t length);
+
 // Labels: MOVINS (inclusive) .. MOVSTR (exclusive)
 void MOVINS();
 

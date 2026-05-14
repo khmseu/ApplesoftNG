@@ -20,8 +20,16 @@ void STRLIT_from_word(std::uint16_t address) {
     STRLIT(address);
 }
 
-// TODO(asm-port): port POINT label.
-void POINT() {}
+} // namespace
+
+// Labels: POINT (inclusive) .. GTNUM (exclusive)
+// Name normalization: none (assembler label POINT kept verbatim).
+void POINT() {
+    const std::uint16_t strng2 = variables_const().readWord(ApplesoftVariables::ZP_STRNG2);
+    variables().writeWord(ApplesoftVariables::ZP_TXTPTR, strng2);
+}
+
+namespace {
 
 } // namespace
 

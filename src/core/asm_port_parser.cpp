@@ -391,6 +391,7 @@ void MKINT() {
     AYINT();
 }
 
+#if 0
 void ROUND_FAC() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: ROUND_FAC (inclusive) .. SIGN (exclusive)
@@ -457,13 +458,13 @@ void ROUND_FAC() {
         WriteZeroPageByte(address, rotated);
         carry = newCarry;
     };
-
     rorByte(static_cast<std::uint8_t>(kFAC + 1u));
     rorByte(static_cast<std::uint8_t>(kFAC + 2u));
     rorByte(static_cast<std::uint8_t>(kFAC + 3u));
     rorByte(static_cast<std::uint8_t>(kFAC + 4u));
     rorByte(kFAC_EXTENSION);
 }
+#endif
 
 void NAMOK() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst

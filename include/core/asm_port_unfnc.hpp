@@ -19,4 +19,7 @@ using UNFNC_fn = void(*)();
 /// The caller is responsible for invoking the returned pointer.
 UNFNC_fn UNFNC(std::size_t index);
 
+// Labels: VAL (inclusive) .. L_VAL_1 (exclusive)
+void VAL();
+
 } // namespace applesoft::asm_port

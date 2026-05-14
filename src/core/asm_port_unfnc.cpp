@@ -138,7 +138,7 @@ static void LEN_fn()   { LEN(); }
 static void STR_fn()   { STR(); }
 // Labels: VAL (inclusive) .. L_VAL_1 (exclusive)
 // Name normalization: none (assembler label VAL kept verbatim).
-static void VAL() {
+void VAL() {
     (void)GETSTR();
     FIN();
 }

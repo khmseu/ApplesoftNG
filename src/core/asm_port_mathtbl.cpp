@@ -9,6 +9,7 @@
 // The -1 RTS-dispatch offset is dropped; callers invoke entry.handler directly.
 
 #include "core/asm_port_mathtbl.hpp"
+#include "core/asm_port_math.hpp"
 #include "core/asm_port_error.hpp"
 #include "core/applesoft_variables.hpp"
 
@@ -23,7 +24,9 @@ void ANDOP();
 // Stub implementations for math operator handlers not yet ported.
 // ---------------------------------------------------------------------------
 
-static void FADDT()  {} // TODO(asm-port): FADDT  $C8...200...+
+namespace {
+// static void FADDT()  {} // Removed to avoid conflict with asm_port_math.cpp
+} // namespace
 static void FSUBT()  {} // TODO(asm-port): FSUBT  $C9...201...-
 static void FMULTT() {} // TODO(asm-port): FMULTT $CA...202...*
 static void FDIVT()  {} // TODO(asm-port): FDIVT  $CB...203.../

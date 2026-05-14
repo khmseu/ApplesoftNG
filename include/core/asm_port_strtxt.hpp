@@ -7,4 +7,7 @@ namespace applesoft::asm_port {
 // Name normalization: none (assembler label STRTXT kept verbatim).
 void STRTXT();
 
+// Labels: POINT (inclusive) .. L_POINT_1 (exclusive)
+void POINT();
+
 } // namespace applesoft::asm_port

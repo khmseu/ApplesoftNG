@@ -49,7 +49,7 @@ void PRINT_ERROR_LINNUM() {
     // Source: applesoft.o65.lst:1356
     
     // QT_ERROR(0) is " ERROR" + BELL
-    PRINT_ERROR_LINNUM(QT_ERROR(QT_ERROR_INDEX));
+    PRINT_ERROR_LINNUM(std::string_view(QT_ERROR(0))); // Use index 0 for " ERROR"
 }
 
 void PRINT_ERROR_LINNUM(std::string_view prefix) {

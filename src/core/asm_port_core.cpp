@@ -1269,6 +1269,7 @@ void FNCDATA() {
 }
 
 
+#if 0
 void FLOAT_1(std::uint8_t exponent) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: FLOAT_1 (inclusive) .. FLOAT_2 (exclusive)
@@ -1282,6 +1283,7 @@ void FLOAT() {
     // Labels: FLOAT (inclusive) .. QINT (exclusive)
     // Name normalization: none (assembler label FLOAT kept verbatim).
 }
+#endif
 
 
 void FRMEVL() {

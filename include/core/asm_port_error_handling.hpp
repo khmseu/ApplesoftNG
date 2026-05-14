@@ -14,6 +14,7 @@ std::uint8_t MEMERR();
 
 // Target: PRINT_ERROR_LINNUM (Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst Line 1356)
 void PRINT_ERROR_LINNUM();
+void PRINT_ERROR_LINNUM(std::string_view prefix);
 
 // Labels: FIN (inclusive) .. FIN_9 (exclusive)
 void FIN();
