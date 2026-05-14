@@ -67,9 +67,38 @@ void MON_SETCOL(std::uint8_t color) {
 }
 
 void MON_TABV(std::uint8_t row_zero_based) {
-    // TODO(asm-port): port MON_TABV monitor handler.
-    // Placeholder to preserve VTAB statement call flow until monitor integration.
-    (void)row_zero_based;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst
+    // Labels: TABV (inclusive) .. external VTAB jump target (exclusive)
+    // Name normalization: TABV -> MON_TABV (monitor label gets MON_ prefix).
+    //
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst
+    // Labels: VTAB (inclusive) .. ESC1 (exclusive)
+    // Name normalization: VTAB logic inlined into MON_TABV.
+
+    constexpr std::uint8_t kMON_WNDLFT = ApplesoftVariables::ZP_MON_WNDLFT;
+    constexpr std::uint8_t kMON_CV = ApplesoftVariables::ZP_MON_CV;
+    constexpr std::uint8_t kMON_BASL = ApplesoftVariables::ZP_MON_BASL;
+    constexpr std::uint8_t kMON_BASH = ApplesoftVariables::ZP_MON_BASH;
+
+    // display1 TABV: sta CV ; jmp VTAB
+    WriteZeroPageByte(kMON_CV, row_zero_based);
+
+    // display2 VTAB/VTABZ path:
+    // BASCALC computes BASL/BASH for row in CV, then VTAB adds WNDLFT to BASL.
+    const std::uint8_t line = ReadZeroPageByte(kMON_CV);
+    const bool carryFromLsr = (line & 0x01u) != 0u;
+    const std::uint8_t bash = static_cast<std::uint8_t>(((line >> 1u) & 0x03u) | 0x04u);
+
+    std::uint8_t basl = static_cast<std::uint8_t>(line & 0x18u);
+    if (carryFromLsr) {
+        basl = static_cast<std::uint8_t>(basl + 0x80u);
+    }
+    const std::uint8_t baslBase = basl;
+    basl = static_cast<std::uint8_t>((basl << 2u) | baslBase);
+    basl = static_cast<std::uint8_t>(basl + ReadZeroPageByte(kMON_WNDLFT));
+
+    WriteZeroPageByte(kMON_BASL, basl);
+    WriteZeroPageByte(kMON_BASH, bash);
 }
 
 void MON_INPORT(std::uint8_t slot) {
