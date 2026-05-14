@@ -7,6 +7,7 @@
 #include "core/asm_port_chkmem.hpp"
 #include "core/asm_port_mathtbl.hpp"
 #include "core/io_ports.hpp"
+#include "platform/asm_port_outdo.hpp"
 
 #include <array>
 #include <cstdint>
@@ -198,8 +199,11 @@ void MON_CROUT() {
 }
 
 void MON_COUT(std::uint8_t value) {
-    // TODO(asm-port): port COUT monitor label.
-    (void)value;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // Labels: COUT (inclusive) .. COUT1 (exclusive)
+    // Name normalization: COUT -> MON_COUT (monitor label gets MON_ prefix).
+
+    OUTDO(static_cast<std::uint8_t>(value & 0x7fu));
 }
 
 void MON_PRBYTE(std::uint8_t value) {
