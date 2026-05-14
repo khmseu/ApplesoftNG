@@ -42,6 +42,7 @@ void TRACE_();
 void FRMNUM();
 void FRMEVL();
 void CHKNUM();
+void FADD();
 void PushForPntFrame();
 void PushTextPointerAddress();
 void PushCurrentLineNumber();
@@ -95,21 +96,61 @@ void ENDX_impl(bool shouldPrintBreak);
 
 namespace {
 
+constexpr std::uint16_t kStepLabelAddress = 0x07afu;
+constexpr std::uint16_t kConOneScratchAddress = 0x03fbu;
+constexpr std::uint8_t kPackedFloatByteCount = 5u;
+constexpr std::uint8_t kStepValueOffsetInForFrame = 4u;
+// Applesoft packed float for 1.0:
+// exponent=0x81 (biased exponent for 2^0), then sign-packed high mantissa, mid mantissa, low mantissa, extension byte.
+constexpr std::uint8_t kConOnePacked[kPackedFloatByteCount] = {0x81u, 0x00u, 0x00u, 0x00u, 0x00u};
+
 std::uint8_t readStackByteAt(std::uint8_t x, std::uint8_t plus) {
     const std::uint8_t offset = static_cast<std::uint8_t>(x + plus);
     return ReadProgramByte(static_cast<std::uint16_t>(0x0100u + offset));
 }
 
 void ApplyFacSign() {
-    // TODO(asm-port): update FAC+1 with the signed value produced by FRMNUM.
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+
+    const std::uint8_t facSign = ReadZeroPageByte(kFAC_SIGN);
+    const std::uint8_t facMantissaHigh = ReadZeroPageByte(kFAC + 1u);
+    // ROM sequence at $079C: LDA FAC_SIGN / ORA #$7F / AND FAC+1 / STA FAC+1.
+    // This clears bit 7 for positive values and preserves FAC+1 when FAC_SIGN is negative.
+    const std::uint8_t signedMantissaHigh =
+        static_cast<std::uint8_t>(facMantissaHigh & (facSign | 0x7fu));
+    WriteZeroPageByte(kFAC + 1u, signedMantissaHigh);
 }
 
 void SetBranchTargetToSTEP() {
-    // TODO(asm-port): set the indirect jump target used by FRM_STACK_3 to STEP.
+    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
+
+    WriteZeroPageWord(kINDEX, kStepLabelAddress);
 }
 
 void LOAD_FAC_FROM_YA() {
-    // TODO(asm-port): load the constant 1.0 into FAC from the Y,A pointer.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: LOAD_FAC_FROM_YA (inclusive) .. STORE_FAC_IN_TEMP2_ROUNDED (exclusive)
+    // This function ports only LOAD_FAC_FROM_YA; STORE_FAC_IN_TEMP2_ROUNDED starts at the exclusive end label.
+    // Name normalization: none (assembler label LOAD_FAC_FROM_YA kept verbatim).
+    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+    constexpr std::uint8_t kFAC_EXTENSION = ApplesoftVariables::ZP_FAC_EXTENSION;
+
+    // Caller precondition: INDEX points to the packed 5-byte source value.
+    const ProgramPointer source{ReadZeroPageWord(kINDEX)};
+    WriteZeroPageByte(kFAC + 4u, source.read(4u));
+    WriteZeroPageByte(kFAC + 3u, source.read(3u));
+    WriteZeroPageByte(kFAC + 2u, source.read(2u));
+
+    const std::uint8_t signPackedMantissa = source.read(1u);
+    // FAC_SIGN stores packed byte #1 (bit 7 is sign, remaining bits are high mantissa bits).
+    // FAC+1 then reuses mantissa bits with bit 7 forced set by OR #$80 to restore normalized form.
+    WriteZeroPageByte(kFAC_SIGN, signPackedMantissa);
+    WriteZeroPageByte(kFAC + 1u, static_cast<std::uint8_t>(signPackedMantissa | 0x80u));
+    WriteZeroPageByte(kFAC, source.read(0u));
+    WriteZeroPageByte(kFAC_EXTENSION, 0u);
 }
 
 std::int8_t SIGN2(std::uint8_t sign) {
@@ -140,12 +181,45 @@ void FCOMP2() {
     // Target branches to L_FCOMP2_1 or RTS depending on comparison.
 }
 
-void FRM_STACK_2() {
-    // TODO(asm-port): prepare FOR frame storage on the Applesoft stack.
+void FRM_STACK_2(std::uint8_t signByte) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FRM_STACK_2 (inclusive) .. FRM_STACK_3 (exclusive)
+    // Name normalization: none (assembler label FRM_STACK_2 kept verbatim).
+    constexpr std::uint8_t kINDEXZeroPageAddress = ApplesoftVariables::ZP_INDEX;
+    constexpr std::uint8_t kINDEXHighByteAddress =
+        static_cast<std::uint8_t>(kINDEXZeroPageAddress + 1u);
+
+    const std::uint8_t returnAddressLow = PopByteFromStack();
+    // Net effect of ROM sequence PLA / STA INDEX / INC INDEX:
+    // store the low return-address byte plus one as an 8-bit value so INDEX
+    // points at the byte immediately after the JSR call-site return location.
+    // The uint8_t cast intentionally truncates carry; ROM assumes no page-boundary carry into INDEX+1.
+    WriteZeroPageByte(kINDEXZeroPageAddress, static_cast<std::uint8_t>(returnAddressLow + 1u));
+    WriteZeroPageByte(kINDEXHighByteAddress, PopByteFromStack());
+
+    PushByteToStack(signByte);
 }
 
 void FRM_STACK_3() {
-    // TODO(asm-port): consume the current frame data and continue at STEP.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FRM_STACK_3 (inclusive) .. NOTMATH (exclusive)
+    // Name normalization: none (assembler label FRM_STACK_3 kept verbatim).
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
+
+    ROUND_FAC();
+
+    PushByteToStack(ReadZeroPageByte(kFAC + 4u));
+    PushByteToStack(ReadZeroPageByte(kFAC + 3u));
+    PushByteToStack(ReadZeroPageByte(kFAC + 2u));
+    PushByteToStack(ReadZeroPageByte(kFAC + 1u));
+    PushByteToStack(ReadZeroPageByte(kFAC));
+
+    const std::uint16_t branchTarget = ReadZeroPageWord(kINDEX);
+    if (branchTarget == kStepLabelAddress) {
+        STEP();
+    }
+    // Other indirect targets used by FRM_STACK_3 are not ported yet; return to caller.
 }
 
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
@@ -155,9 +229,6 @@ constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
 std::uint16_t readStackWordAt(std::uint8_t x, std::uint8_t lowOffset, std::uint8_t highOffset) {
     return ApplesoftVariables::makeWord(readStackByteAt(x, lowOffset), readStackByteAt(x, highOffset));
 }
-
-// TODO(asm-port): port FADD label.
-void FADD() {}
 
 // TODO(asm-port): decide branch condition after comparing FOR value with end value.
 bool NEXT_shouldTerminateLoop() {
@@ -590,6 +661,8 @@ void NEXT() {
     // STEP arithmetic path (LOAD_FAC_FROM_YA / FADD / SETFOR / FCOMP2).
     // Stack offsets follow ROM comments; helpers are placeholders until stack
     // memory and FAC math ports are fully wired.
+    WriteZeroPageWord(ApplesoftVariables::ZP_INDEX,
+                      static_cast<std::uint16_t>(0x0100u + add_u8(gtforpntResult.x, kStepValueOffsetInForFrame)));
     LOAD_FAC_FROM_YA();
     WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, readStackByteAt(gtforpntResult.x, 9u)); // FAC_SIGN
     WriteZeroPageWord(kFORPNT, ReadZeroPageWord(kFORPNT));
@@ -668,14 +741,18 @@ void RETURN() {
 void STEP() {
     constexpr std::uint8_t kTOKEN_STEP = 0xc7u;
 
+    for (std::uint8_t i = 0; i < kPackedFloatByteCount; ++i) {
+        WriteProgramByte(static_cast<std::uint16_t>(kConOneScratchAddress + i), kConOnePacked[i]);
+    }
+    WriteZeroPageWord(ApplesoftVariables::ZP_INDEX, kConOneScratchAddress);
     LOAD_FAC_FROM_YA();
     if (CHRGOT() == kTOKEN_STEP) {
         CHRGET();
         FRMNUM();
     }
 
-    SIGN();
-    FRM_STACK_2();
+    const std::int8_t stepSign = SIGN();
+    FRM_STACK_2(static_cast<std::uint8_t>(stepSign));
     PushForPntFrame();
     NEWSTT();
 }
