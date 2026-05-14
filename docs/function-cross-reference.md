@@ -279,7 +279,7 @@
 | MULTIPLY_SUBSCRIPT                | src/core/asm_port_core.cpp                | 635  | real   |
 | MULTIPLY_SUBS_1                   | src/core/asm_port_core.cpp                | 651  | real   |
 | NAME_NOT_FOUND                    | src/core/asm_port_core.cpp                | 778  | stub   |
-| NAMOK                             | src/core/asm_port_parser.cpp              | 453  | real   |
+| NAMOK                             | src/core/asm_port_parser.cpp              | 523  | real   |
 | NEG32768                          | src/core/asm_port_parser.cpp              | 388  | real   |
 | NEGATE                            | src/core/asm_port_print.cpp               | 288  | real   |
 | NEGOP                             | src/core/asm_port_mathtbl.cpp             | 40   | real   |
@@ -414,7 +414,7 @@
 | RIGHTSTR_fn                       | src/core/asm_port_unfnc.cpp               | 141  | real   |
 | RND                               | src/core/asm_port_unfnc.cpp               | 127  | stub   |
 | ROT                               | src/core/asm_port_token_address_table.cpp | 94   | stub   |
-| ROUND_FAC                         | src/core/asm_port_parser.cpp              | 449  | stub   |
+| ROUND_FAC                         | src/core/asm_port_parser.cpp              | 449  | real   |
 | RTS_10                            | src/core/asm_port_statements.cpp          | 228  | stub   |
 | RTS_5                             | src/core/asm_port_control_flow.cpp        | 439  | stub   |
 | RUN                               | src/core/asm_port_statements.cpp          | 162  | real   |

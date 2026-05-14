@@ -447,7 +447,77 @@ void MKINT() {
 }
 
 void ROUND_FAC() {
-    // TODO(asm-port): port ROUND_FAC label.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ROUND_FAC (inclusive) .. SIGN (exclusive)
+    // Name normalization: none (assembler label ROUND_FAC kept verbatim).
+    //
+    // ROUND_FAC rounds FAC using FAC_EXTENSION. If extension bit 7 is set,
+    // increment mantissa; if that overflows the top mantissa byte, perform the
+    // NORMALIZE_FAC_6 path (increment exponent and rotate mantissa/extension right).
+
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kFAC_EXTENSION = static_cast<std::uint8_t>(ApplesoftVariables::ZP_STRNG1 + 1u);
+
+    // lda FAC / beq RTS_14
+    if (ReadZeroPageByte(kFAC) == 0u) {
+        return;
+    }
+
+    // asl FAC_EXTENSION / bcc RTS_14
+    const std::uint8_t extension = ReadZeroPageByte(kFAC_EXTENSION);
+    const bool roundUp = (extension & 0x80u) != 0u;
+    WriteZeroPageByte(kFAC_EXTENSION, static_cast<std::uint8_t>(extension << 1u));
+    if (!roundUp) {
+        return;
+    }
+
+    // INCREMENT_FAC_MANTISSA: increment FAC+4..FAC+1 with carry chain.
+    std::uint8_t fac4 = static_cast<std::uint8_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u)) + 1u);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u), fac4);
+    if (fac4 != 0u) {
+        return;
+    }
+
+    std::uint8_t fac3 = static_cast<std::uint8_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u)) + 1u);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u), fac3);
+    if (fac3 != 0u) {
+        return;
+    }
+
+    std::uint8_t fac2 = static_cast<std::uint8_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u)) + 1u);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u), fac2);
+    if (fac2 != 0u) {
+        return;
+    }
+
+    std::uint8_t fac1 = static_cast<std::uint8_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u)) + 1u);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u), fac1);
+    if (fac1 != 0u) {
+        return;
+    }
+
+    // NORMALIZE_FAC_6: exponent++ then rotate FAC+1..FAC+4/FAC_EXTENSION right with carry set.
+    const std::uint8_t nextExponent = static_cast<std::uint8_t>(ReadZeroPageByte(kFAC) + 1u);
+    WriteZeroPageByte(kFAC, nextExponent);
+    if (nextExponent == 0u) {
+        ERROR(ERR_OVERFLOW);
+        return;
+    }
+
+    bool carry = true;
+    auto rorByte = [&](std::uint8_t address) {
+        const std::uint8_t value = ReadZeroPageByte(address);
+        const bool newCarry = (value & 0x01u) != 0u;
+        const std::uint8_t rotated = static_cast<std::uint8_t>((value >> 1u) | (carry ? 0x80u : 0x00u));
+        WriteZeroPageByte(address, rotated);
+        carry = newCarry;
+    };
+
+    rorByte(static_cast<std::uint8_t>(kFAC + 1u));
+    rorByte(static_cast<std::uint8_t>(kFAC + 2u));
+    rorByte(static_cast<std::uint8_t>(kFAC + 3u));
+    rorByte(static_cast<std::uint8_t>(kFAC + 4u));
+    rorByte(kFAC_EXTENSION);
 }
 
 void NAMOK() {
