@@ -369,32 +369,4 @@ void PR_TAB_OR_SPC(bool is_tab) {
     // Fall through to PR_NEXT_CHAR (caller handles jsr CHRGET / jmp PRINT2).
 }
 
-void PRINT_ERROR_LINNUM() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PRINT_ERROR_LINNUM (inclusive) .. RESTART (exclusive)
-    // Name normalization: none (assembler label PRINT_ERROR_LINNUM kept verbatim).
-
-    STROUT(QT_ERROR(QT_ERROR_INDEX));
-
-    if (IsDirectMode()) {
-        RESTART();
-        return;
-    }
-
-    INPRT();
-    RESTART();
-}
-
-void PRINT_ERROR_LINNUM(std::string_view prefix) {
-    STROUT(prefix);
-
-    if (IsDirectMode()) {
-        RESTART();
-        return;
-    }
-
-    INPRT();
-    RESTART();
-}
-
 } // namespace applesoft::asm_port

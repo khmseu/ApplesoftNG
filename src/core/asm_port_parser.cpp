@@ -1,7 +1,7 @@
 #include "core/asm_port_error.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_error_messages.hpp"
-
+#include "core/asm_port_error_handling.hpp"
 #include <cstdint>
 
 namespace applesoft::asm_port {
@@ -356,15 +356,6 @@ void RESTORE() {
 void SETDA(std::uint16_t dataPointer) {
     constexpr std::uint8_t kDATPTR = ApplesoftVariables::ZP_DATPTR;
     WriteZeroPageWord(kDATPTR, dataPointer);
-}
-
-void SYNERR() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: SYNERR (inclusive) .. ERROR (exclusive)
-    // Name normalization: none (assembler label SYNERR kept verbatim).
-    // ROM sequence is `ldx #ERR_SYNTAX` followed by an unconditional transfer
-    // into ERROR. In C++, dispatch directly with the syntax error code.
-    ERROR(ERR_SYNTAX);
 }
 
 bool CHKVAL(std::uint8_t savedValTyp) {

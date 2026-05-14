@@ -78,6 +78,7 @@ public:
     static constexpr std::uint8_t ZP_INDX = 0x99;
     static constexpr std::uint8_t ZP_LOWTR = 0x9b;
     static constexpr std::uint8_t ZP_FAC = 0x9d;
+    static constexpr std::uint8_t ZP_FAC_EXTENSION = 0xac;
     static constexpr std::uint8_t ZP_FAC_SIGN = 0xa2;
     static constexpr std::uint8_t ZP_SHIFT_SIGN_EXT = 0xa4;
     static constexpr std::uint8_t ZP_ARG = 0xa5;

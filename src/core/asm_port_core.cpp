@@ -1,7 +1,7 @@
 #include "core/asm_port_error.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_error_messages.hpp"
-#include "core/asm_port_memerr.hpp"
+#include "core/asm_port_error_handling.hpp"
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_reason.hpp"
 #include "core/asm_port_chkmem.hpp"
@@ -25,7 +25,6 @@ constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
 void GETARY();
 void GETARY2();
 void FIND_ARRAY_ELEMENT();
-void ERROR(std::uint8_t error_code_offset);
 std::uint16_t MULTIPLY_SUBS_1(std::uint8_t multiplierHigh);
 void GIVAYF(std::int16_t value);
 void SNGFLT(std::uint8_t value);
@@ -511,29 +510,12 @@ void GME() {
     (void)MEMERR();
 }
 
-void JER() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: JER (inclusive) .. USE_OLD_ARRAY (exclusive)
-    // Name normalization: none (assembler label JER kept verbatim).
-
-    ERROR(gJerErrorCode);
-}
-
 void SUBERR() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: SUBERR (inclusive) .. IQERR (exclusive)
     // Name normalization: none (assembler label SUBERR kept verbatim).
 
     gJerErrorCode = ERR_BADSUBS;
-    JER();
-}
-
-void IQERR() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: IQERR (inclusive) .. JER (exclusive)
-    // Name normalization: none (assembler label IQERR kept verbatim).
-
-    gJerErrorCode = ERR_ILLQTY;
     JER();
 }
 
@@ -913,26 +895,6 @@ void PTRGET4() {
 
 void SetPendingErrorCode(std::uint8_t errorCode) {
     gPendingErrorCode = errorCode;
-}
-
-
-void ERROR(std::uint8_t error_code_offset) {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ERROR (inclusive) .. PRINT_ERROR_LINNUM (exclusive)
-    // Name normalization: none (assembler label ERROR kept verbatim).
-
-    gPendingErrorCode = error_code_offset;
-
-    if (IsOnErr()) {
-        HANDLERR();
-        return;
-    }
-
-    CRDO();
-    OUTQUES();
-    STROUT(ERROR_MESSAGES(error_code_offset));
-    STKINI();
-    PRINT_ERROR_LINNUM();
 }
 
 

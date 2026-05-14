@@ -111,8 +111,32 @@ void LOAD_FAC_FROM_YA() {
     // TODO(asm-port): load the constant 1.0 into FAC from the Y,A pointer.
 }
 
-void SIGN() {
-    // TODO(asm-port): normalize the sign of the current FAC value.
+std::int8_t SIGN2(std::uint8_t sign) {
+    // Labels: SIGN2 (inclusive) .. SGN (exclusive)
+    // MSBIT to carry, then return -1 if carry set, +1 if carry clear.
+    if ((sign & 0x80u) != 0u) {
+        return -1;
+    }
+    return 1;
+}
+
+std::int8_t SIGN1() {
+    // Labels: SIGN1 (inclusive) .. SIGN2 (exclusive)
+    return SIGN2(ReadZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN));
+}
+
+std::int8_t SIGN() {
+    // Labels: SIGN (inclusive) .. SIGN2 (exclusive)
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_FAC) == 0u) {
+        return 0; // Numbers are effectively zero
+    }
+    return SIGN1();
+}
+
+void FCOMP2() {
+    // TODO(asm-port): move implementation to return int8 once caller is updated.
+    // Labels: FCOMP2 (inclusive) .. L_FCOMP2_1 (exclusive)
+    // Target branches to L_FCOMP2_1 or RTS depending on comparison.
 }
 
 void FRM_STACK_2() {
@@ -133,9 +157,6 @@ std::uint16_t readStackWordAt(std::uint8_t x, std::uint8_t lowOffset, std::uint8
 
 // TODO(asm-port): port FADD label.
 void FADD() {}
-
-// TODO(asm-port): port FCOMP2 label.
-void FCOMP2() {}
 
 // TODO(asm-port): decide branch condition after comparing FOR value with end value.
 bool NEXT_shouldTerminateLoop() {
