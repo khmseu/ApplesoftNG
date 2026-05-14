@@ -157,11 +157,17 @@ void FRM_STACK_2(std::uint8_t signByte) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: FRM_STACK_2 (inclusive) .. FRM_STACK_3 (exclusive)
     // Name normalization: none (assembler label FRM_STACK_2 kept verbatim).
-    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
+    constexpr std::uint8_t kINDEXZeroPageAddress = ApplesoftVariables::ZP_INDEX;
+    constexpr std::uint8_t kINDEXHighByteAddress =
+        static_cast<std::uint8_t>(kINDEXZeroPageAddress + 1u);
 
     const std::uint8_t returnAddressLow = PopByteFromStack();
-    WriteZeroPageByte(kINDEX, static_cast<std::uint8_t>(returnAddressLow + 1u));
-    WriteZeroPageByte(static_cast<std::uint8_t>(kINDEX + 1u), PopByteFromStack());
+    // Net effect of ROM sequence PLA / STA INDEX / INC INDEX:
+    // store the low return-address byte plus one as an 8-bit value so INDEX
+    // points at the byte immediately after the JSR call-site return location.
+    // The original routine explicitly assumes no page-boundary carry into INDEX+1.
+    WriteZeroPageByte(kINDEXZeroPageAddress, static_cast<std::uint8_t>(returnAddressLow + 1u));
+    WriteZeroPageByte(kINDEXHighByteAddress, PopByteFromStack());
 
     PushByteToStack(signByte);
 }
