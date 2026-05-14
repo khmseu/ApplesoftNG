@@ -228,8 +228,41 @@ void MON_VLINE(std::uint8_t x, std::uint8_t top) {
 }
 
 void MON_HOME() {
-    // TODO(asm-port): port MON_HOME monitor handler.
-    // Placeholder to preserve HOME statement call flow until monitor integration.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst
+    // Labels: HOME (inclusive) .. CR (exclusive)
+    // Name normalization: HOME -> MON_HOME (monitor label gets MON_ prefix).
+    //
+    // Monitor HOME initializes cursor to top-left of current window and clears
+    // the window to blanks (high-bit set ASCII space).
+
+    constexpr std::uint8_t kMON_WNDLFT = ApplesoftVariables::ZP_MON_WNDLFT;
+    constexpr std::uint8_t kMON_WNDWDTH = ApplesoftVariables::ZP_MON_WNDWDTH;
+    constexpr std::uint8_t kMON_WNDTOP = ApplesoftVariables::ZP_MON_WNDTOP;
+    constexpr std::uint8_t kMON_WNDBTM = ApplesoftVariables::ZP_MON_WNDBTM;
+    constexpr std::uint8_t kMON_CH = ApplesoftVariables::ZP_MON_CH;
+    constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
+
+    const std::uint8_t windowTop = ReadZeroPageByte(kMON_WNDTOP);
+    const std::uint8_t windowBottom = ReadZeroPageByte(kMON_WNDBTM);
+    const std::uint8_t width = ReadZeroPageByte(kMON_WNDWDTH);
+    const std::uint8_t left = ReadZeroPageByte(kMON_WNDLFT);
+
+    WriteZeroPageByte(kMON_CH, 0u);
+
+    for (std::uint8_t row = windowTop; row < windowBottom; ++row) {
+        MON_TABV(row);
+        const std::uint16_t baseAddress = ApplesoftVariables::makeWord(
+            ReadZeroPageByte(ApplesoftVariables::ZP_MON_BASL),
+            ReadZeroPageByte(ApplesoftVariables::ZP_MON_BASH));
+
+        for (std::uint8_t col = 0u; col < width; ++col) {
+            const std::uint16_t address = static_cast<std::uint16_t>(baseAddress + left + col);
+            variables().writeByte(address, kBlank);
+        }
+    }
+
+    MON_TABV(windowTop);
+    WriteZeroPageByte(kMON_CH, 0u);
 }
 
 void MON_SETTXT() {
