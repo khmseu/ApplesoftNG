@@ -101,16 +101,58 @@ void MON_TABV(std::uint8_t row_zero_based) {
     WriteZeroPageByte(kMON_BASH, bash);
 }
 
+namespace {
+
+void MON_IOPRT(std::uint8_t slot, std::uint8_t vectorBase, std::uint8_t defaultVectorLow) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // Labels: IOPRT (inclusive) .. XBASIC (exclusive)
+    // Name normalization: helper name chosen for shared I/O-vector setup body.
+
+    constexpr std::uint8_t kSlotMask = 0x0fu;
+    constexpr std::uint8_t kIoBaseHigh = 0xc0u;     // >IOADR
+    constexpr std::uint8_t kDefaultHigh = 0xfdu;    // >COUT1 in Apple II+ monitor bank
+
+    std::uint8_t vectorLow = defaultVectorLow;
+    std::uint8_t vectorHigh;
+
+    const std::uint8_t slotNibble = static_cast<std::uint8_t>(slot & kSlotMask);
+    if (slotNibble == 0u) {
+        vectorHigh = kDefaultHigh;
+    } else {
+        vectorLow = 0u;
+        vectorHigh = static_cast<std::uint8_t>(slotNibble | kIoBaseHigh);
+    }
+
+    WriteZeroPageByte(vectorBase, vectorLow);
+    WriteZeroPageByte(static_cast<std::uint8_t>(vectorBase + 1u), vectorHigh);
+}
+
+} // namespace
+
 void MON_INPORT(std::uint8_t slot) {
-    // TODO(asm-port): port MON_INPORT monitor handler.
-    // Placeholder to preserve IN# statement call flow until monitor integration.
-    (void)slot;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // Labels: INPORT (inclusive) .. SETVID (exclusive)
+    // Name normalization: INPORT -> MON_INPORT (monitor label gets MON_ prefix).
+
+    constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
+    constexpr std::uint8_t kMON_KSW = ApplesoftVariables::ZP_MON_KSW;
+    constexpr std::uint8_t kKeyinLow = 0x0fu; // <KEYIN from keyin.o65.sym
+
+    WriteZeroPageByte(kMON_A2L, slot);
+    MON_IOPRT(ReadZeroPageByte(kMON_A2L), kMON_KSW, kKeyinLow);
 }
 
 void MON_OUTPORT(std::uint8_t slot) {
-    // TODO(asm-port): port MON_OUTPORT monitor handler.
-    // Placeholder to preserve PR# statement call flow until monitor integration.
-    (void)slot;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // Labels: OUTPORT (inclusive) .. IOPRT (exclusive)
+    // Name normalization: OUTPORT -> MON_OUTPORT (monitor label gets MON_ prefix).
+
+    constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
+    constexpr std::uint8_t kMON_CSW = ApplesoftVariables::ZP_MON_CSW;
+    constexpr std::uint8_t kCout1Low = 0x62u; // <COUT1 from cmd.o65.sym
+
+    WriteZeroPageByte(kMON_A2L, slot);
+    MON_IOPRT(ReadZeroPageByte(kMON_A2L), kMON_CSW, kCout1Low);
 }
 
 void MON_PLOT(std::uint8_t y, std::uint8_t x) {
