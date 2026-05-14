@@ -490,10 +490,9 @@ void PULL3() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: PULL3 (inclusive) .. IF (exclusive)
     // Name normalization: none (assembler label PULL3 kept verbatim).
-
-    (void)PopByteFromStack();
-    (void)PopByteFromStack();
-    (void)PopByteFromStack();
+    PopByteFromStack();
+    PopByteFromStack();
+    PopByteFromStack();
 }
 
 std::uint8_t REMN() {
