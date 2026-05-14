@@ -39,6 +39,7 @@ public:
     static constexpr std::uint8_t ZP_MON_A4 = 0x40;
     static constexpr std::uint8_t ZP_MON_CSW = 0x36;
     static constexpr std::uint8_t ZP_MON_KSW = 0x38;
+    static constexpr std::uint8_t ZP_MON_STATUS = 0x48;
     static constexpr std::uint8_t ZP_MON_DEBUG_REG_A = 0x45;
     static constexpr std::uint8_t ZP_LINNUM = 0x50;
     static constexpr std::uint8_t ZP_MON_RNDL = 0x4e;

@@ -67,6 +67,7 @@ void NEWSTT();
 void PRINT_ERROR_LINNUM();
 void MON_INPORT(std::uint8_t slot);
 void MON_OUTPORT(std::uint8_t slot);
+void MON_SETTXT();
 extern std::int8_t gNumericCompareResult;
 extern bool gNumericCompareCarry;
 extern std::uint8_t gFloatInput;
@@ -154,7 +155,17 @@ void MON_SETNORM() {
 }
 
 void MON_INIT() {
-    // TODO(asm-port): port INIT monitor label.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst
+    // Labels: INIT (inclusive) .. SETTXT (exclusive)
+    // Name normalization: INIT -> MON_INIT (monitor label gets MON_ prefix).
+    //
+    // Falls through into SETTXT in ROM; modeled by explicit call.
+
+    WriteZeroPageByte(ApplesoftVariables::ZP_MON_STATUS, 0u);
+    (void)variables_const().readByte(IOPorts::ADDR_SW_LORES);
+    (void)variables_const().readByte(IOPorts::ADDR_SW_LOWSCR);
+
+    MON_SETTXT();
 }
 
 void MON_SETVID() {
