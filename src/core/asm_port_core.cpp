@@ -207,8 +207,21 @@ void MON_COUT(std::uint8_t value) {
 }
 
 void MON_PRBYTE(std::uint8_t value) {
-    // TODO(asm-port): port PRBYTE monitor label.
-    (void)value;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // Labels: PRBYTE (inclusive) .. COUT (exclusive)
+    // Name normalization: PRBYTE -> MON_PRBYTE (monitor label gets MON_ prefix).
+
+    const auto emitHexNibble = [](std::uint8_t nibble) -> std::uint8_t {
+        // PRHEX/PRHEXZ: ORA #"0"|$80; if >= ':' add 6 to reach 'A'..'F'.
+        std::uint8_t ch = static_cast<std::uint8_t>((nibble & 0x0fu) | 0xb0u);
+        if (ch >= 0xbau) {
+            ch = static_cast<std::uint8_t>(ch + 0x06u);
+        }
+        return ch;
+    };
+
+    MON_COUT(emitHexNibble(static_cast<std::uint8_t>(value >> 4u)));
+    MON_COUT(emitHexNibble(value));
 }
 
 bool MON_JumpByAddress(std::uint16_t target) {
