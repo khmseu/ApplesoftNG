@@ -94,6 +94,14 @@ public:
     static constexpr std::uint8_t ZP_ERRPOS = 0xdc;
     static constexpr std::uint8_t ZP_ERRNUM = 0xde;
     static constexpr std::uint8_t ZP_ERRSTK = 0xdf;
+    static constexpr std::uint8_t ZP_HGR_BITS = 0x1c;
+    static constexpr std::uint8_t ZP_HGR_X = 0xe0;
+    static constexpr std::uint8_t ZP_HGR_Y = 0xe2;
+    static constexpr std::uint8_t ZP_HGR_PAGE = 0xe6;
+    static constexpr std::uint8_t ZP_HGR_SCALE = 0xe7;
+    static constexpr std::uint8_t ZP_HGR_SHAPE_PNTR = 0xe8;
+    static constexpr std::uint8_t ZP_HGR_SHAPE = 0x1a;
+    static constexpr std::uint8_t ZP_HGR_ROTATION = 0xf9;
     static constexpr std::uint8_t ZP_FIRST = 0xf0;
     static constexpr std::uint8_t ZP_SPEEDZ = 0xf1;
     static constexpr std::uint8_t ZP_TRCFLG = 0xf2;

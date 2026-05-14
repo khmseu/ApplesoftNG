@@ -42,6 +42,10 @@ void HPLOT();
 void DRAW();
 void XDRAW();
 void HOME();
+void ROT();
+void SCALE();
+void HGR2();
+void HGR();
 void IF();
 void REM();
 void ONGOTO();
@@ -83,17 +87,17 @@ static void CALL_Handler()     { CALL(); }
 static void PLOT_Handler()     { PLOT(); }
 static void HLIN_Handler()     { HLIN(); }
 static void VLIN_Handler()     { VLIN(); }
-static void HGR2_Handler()    { /* TODO(asm-port): HGR2 */ }
-static void HGR_Handler()     { /* TODO(asm-port): HGR */ }
+static void HGR2_Handler()     { HGR2(); }
+static void HGR_Handler()      { HGR(); }
 static void HCOLOR_Handler()   { HCOLOR(); }
 static void HPLOT_Handler()    { HPLOT(); }
 static void DRAW_Handler()     { DRAW(); }
 static void XDRAW_Handler()    { XDRAW(); }
 static void HTAB_Handler()     { HTAB(); }
 static void HOME_Handler()     { HOME(); }
-static void ROT()              {} // TODO(asm-port): ROT
-static void SCALE()            {} // TODO(asm-port): SCALE
-static void SHLOAD()           {} // TODO(asm-port): SHLOAD
+static void ROT_Handler()      { ROT(); }
+static void SCALE_Handler()    { SCALE(); }
+static void SHLOAD_Handler()   { /* SHLOAD stub */ }
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: TRACE (inclusive) .. NORMAL (exclusive)
 // Name normalization: none. TRACE: sec; ror TRCFLG → bit 7 set (trace on).
@@ -161,9 +165,9 @@ TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
         XDRAW_Handler,    // [21] $95...149...XDRAW
         HTAB_Handler,     // [22] $96...150...HTAB
         HOME_Handler,     // [23] $97...151...HOME
-        ROT,              // [24] $98...152...ROT=
-        SCALE,            // [25] $99...153...SCALE=
-        SHLOAD,           // [26] $9A...154...SHLOAD
+        ROT_Handler,      // [24] $98...152...ROT=
+        SCALE_Handler,    // [25] $99...153...SCALE=
+        SHLOAD_Handler,   // [26] $9A...154...SHLOAD
         TRACE,            // [27] $9B...155...TRACE
         NOTRACE,          // [28] $9C...156...NOTRACE
         NORMAL_Handler,   // [29] $9D...157...NORMAL

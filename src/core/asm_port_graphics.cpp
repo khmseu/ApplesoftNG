@@ -389,9 +389,88 @@ void HTAB() {
     variables().writeByte(ApplesoftVariables::ZP_MON_CH, col);
 }
 
+void HCOLOR();
+void STHPG();
+
+void HGR2() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: HGR2 (inclusive) .. SETHPG (exclusive)
+    // Name normalization: none (assembler label HGR2 kept verbatim).
+
+    // HGR2 bit SW_HISCR ; bit SW_MIXCLR ; lda #$40 ; bne SETHPG
+    ioPorts().readByte(IOPorts::ADDR_SW_HISCR);
+    ioPorts().readByte(IOPorts::ADDR_SW_MIXCLR);
+    WriteZeroPageByte(ApplesoftVariables::ZP_HGR_PAGE, 0x40u);
+    STHPG();
+}
+
+void HGR() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: HGR (inclusive) .. SETHPG (exclusive)
+    // Name normalization: none (assembler label HGR kept verbatim).
+
+    // HGR lda #$20 ; bit SW_LOWSCR ; bit SW_MIXSET
+    WriteZeroPageByte(ApplesoftVariables::ZP_HGR_PAGE, 0x20u);
+    ioPorts().readByte(IOPorts::ADDR_SW_LOWSCR);
+    ioPorts().readByte(IOPorts::ADDR_SW_MIXSET);
+    STHPG();
+}
+
+void STHPG() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SETHPG (inclusive) .. HCLR (exclusive)
+    // Name normalization: SETHPG -> STHPG (normalize based on typical 5-char limit or SET.. prefix).
+
+    // SETHPG sta HGR_PAGE ; lda SW_HIRES ; lda SW_TXTCLR
+    // (Note: HGR_PAGE already set by HGR/HGR2 in this port to simplify).
+    ioPorts().readByte(IOPorts::ADDR_SW_HIRES);
+    ioPorts().readByte(IOPorts::ADDR_SW_TXTCLR);
+
+    // HCLR lda #0 ; sta HGR_BITS
+    WriteZeroPageByte(ApplesoftVariables::ZP_HGR_BITS, 0x00u);
+
+    // BKGND lda HGR_PAGE ; sta HGR_SHAPE+1 ; ldy #0 ; sta HGR_SHAPE
+    const std::uint8_t page = ReadZeroPageByte(ApplesoftVariables::ZP_HGR_PAGE);
+    WriteZeroPageByte(ApplesoftVariables::ZP_HGR_SHAPE + 1, page);
+    WriteZeroPageByte(ApplesoftVariables::ZP_HGR_SHAPE, 0x00u);
+
+    // L.BKGND.1 lda HGR_BITS ; sta (HGR_SHAPE),Y ; jsr COLOR.SHIFT ; iny ; bne L.BKGND.1 ...
+    // Ported as a simple memory fill for now, ignoring COLOR.SHIFT delay/logic for background clear.
+    const std::uint16_t startAddr = static_cast<std::uint16_t>(page << 8u);
+    for (std::uint16_t i = 0; i < 0x2000u; ++i) {
+        WriteProgramByte(static_cast<std::uint16_t>(startAddr + i), 0u);
+    }
+}
+
 void HCOLOR() {
-    // TODO(asm-port): port HCOLOR label range from Applesoft ROM.
-    // Sets hi-res graphics color.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: HCOLOR (inclusive) .. HPLOT (exclusive)
+    // Name normalization: none (assembler label HCOLOR kept verbatim).
+
+    const std::uint8_t color = GETBYT();
+    if (color > 7u) {
+        IQERR();
+        return;
+    }
+    WriteZeroPageByte(ApplesoftVariables::ZP_HGR_BITS, color);
+}
+
+void ROT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: ROT (inclusive) .. SCALE (exclusive)
+    // Name normalization: none (assembler label ROT kept verbatim).
+
+    const std::uint8_t val = GETBYT();
+    WriteZeroPageByte(ApplesoftVariables::ZP_HGR_ROTATION, val);
+}
+
+void SCALE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SCALE (inclusive) .. DRWPNT (exclusive)
+    // Name normalization: none (assembler label SCALE kept verbatim).
+
+    const std::uint8_t val = GETBYT();
+    WriteZeroPageByte(ApplesoftVariables::ZP_HGR_SCALE, val);
 }
 
 void HPLOT() {
