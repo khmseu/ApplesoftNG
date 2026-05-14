@@ -63,6 +63,7 @@
 | CONINT                            | src/core/asm_port_parser.cpp              | 196  | real   |
 | CONT                              | src/core/asm_port_control_flow.cpp        | 329  | real   |
 | CONTROL_C_TYPED                   | src/core/asm_port_control_flow.cpp        | 309  | real   |
+| COPY_ARG_TO_FAC                   | src/core/asm_port_math.cpp                | 93   | real   |
 | copy_page_backward                | src/core/asm_port_bltu.cpp                | 7    | real   |
 | COS                               | src/core/asm_port_unfnc.cpp               | 130  | stub   |
 | COUT                              | src/platform/asm_port_getln.cpp           | 18   | stub   |
@@ -130,8 +131,8 @@
 | FRM_ELEMENT                       | src/core/asm_port_strlt2.cpp              | 199  | stub   |
 | FRM_STACK_2                       | src/core/asm_port_control_flow.cpp        | 142  | stub   |
 | FRM_STACK_3                       | src/core/asm_port_control_flow.cpp        | 146  | stub   |
-| FSUB                              | src/core/asm_port_math.cpp                | 25   | real   |
-| FSUBT                             | src/core/asm_port_math.cpp                | 35   | real   |
+| FSUB                              | src/core/asm_port_math.cpp                | 26   | real   |
+| FSUBT                             | src/core/asm_port_math.cpp                | 36   | real   |
 | FSUBT                             | src/core/asm_port_mathtbl.cpp             | 27   | stub   |
 | FUNCT                             | src/core/asm_port_core.cpp                | 1188 | stub   |
 | GARBAG                            | src/core/asm_port_reason.cpp              | 14   | stub   |
@@ -222,6 +223,7 @@
 | LINPRT                            | src/core/asm_port_print.cpp               | 35   | real   |
 | LIST                              | src/core/asm_port_statements.cpp          | 737  | real   |
 | LOAD                              | src/core/asm_port_statements.cpp          | 821  | real   |
+| LOAD_ARG_FROM_YA                  | src/core/asm_port_math.cpp                | 79   | real   |
 | LOAD_FAC_FROM_YA                  | src/core/asm_port_control_flow.cpp        | 110  | stub   |
 | LOG                               | src/core/asm_port_unfnc.cpp               | 128  | stub   |
 | LOMEM                             | src/core/asm_port_graphics.cpp            | 547  | real   |
