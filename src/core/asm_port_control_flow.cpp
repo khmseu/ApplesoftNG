@@ -97,6 +97,8 @@ void ENDX_impl(bool shouldPrintBreak);
 namespace {
 
 constexpr std::uint16_t kStepLabelAddress = 0x07afu;
+constexpr std::uint16_t kConOneScratchAddress = 0x03fbu;
+constexpr std::uint8_t kConOnePacked[5] = {0x81u, 0x00u, 0x00u, 0x00u, 0x00u};
 
 std::uint8_t readStackByteAt(std::uint8_t x, std::uint8_t plus) {
     const std::uint8_t offset = static_cast<std::uint8_t>(x + plus);
@@ -123,7 +125,24 @@ void SetBranchTargetToSTEP() {
 }
 
 void LOAD_FAC_FROM_YA() {
-    // TODO(asm-port): load the constant 1.0 into FAC from the Y,A pointer.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: LOAD_FAC_FROM_YA (inclusive) .. STORE_FAC_IN_TEMP2_ROUNDED (exclusive)
+    // Name normalization: none (assembler label LOAD_FAC_FROM_YA kept verbatim).
+    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+    constexpr std::uint8_t kFAC_EXTENSION = ApplesoftVariables::ZP_FAC_EXTENSION;
+
+    const ProgramPointer source{ReadZeroPageWord(kINDEX)};
+    WriteZeroPageByte(kFAC + 4u, source.read(4u));
+    WriteZeroPageByte(kFAC + 3u, source.read(3u));
+    WriteZeroPageByte(kFAC + 2u, source.read(2u));
+
+    const std::uint8_t signPackedMantissa = source.read(1u);
+    WriteZeroPageByte(kFAC_SIGN, signPackedMantissa);
+    WriteZeroPageByte(kFAC + 1u, static_cast<std::uint8_t>(signPackedMantissa | 0x80u));
+    WriteZeroPageByte(kFAC, source.read(0u));
+    WriteZeroPageByte(kFAC_EXTENSION, 0u);
 }
 
 std::int8_t SIGN2(std::uint8_t sign) {
@@ -635,6 +654,8 @@ void NEXT() {
     // STEP arithmetic path (LOAD_FAC_FROM_YA / FADD / SETFOR / FCOMP2).
     // Stack offsets follow ROM comments; helpers are placeholders until stack
     // memory and FAC math ports are fully wired.
+    WriteZeroPageWord(ApplesoftVariables::ZP_INDEX,
+                      static_cast<std::uint16_t>(0x0100u + add_u8(gtforpntResult.x, 4u)));
     LOAD_FAC_FROM_YA();
     WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, readStackByteAt(gtforpntResult.x, 9u)); // FAC_SIGN
     WriteZeroPageWord(kFORPNT, ReadZeroPageWord(kFORPNT));
@@ -713,6 +734,12 @@ void RETURN() {
 void STEP() {
     constexpr std::uint8_t kTOKEN_STEP = 0xc7u;
 
+    WriteProgramByte(kConOneScratchAddress + 0u, kConOnePacked[0]);
+    WriteProgramByte(kConOneScratchAddress + 1u, kConOnePacked[1]);
+    WriteProgramByte(kConOneScratchAddress + 2u, kConOnePacked[2]);
+    WriteProgramByte(kConOneScratchAddress + 3u, kConOnePacked[3]);
+    WriteProgramByte(kConOneScratchAddress + 4u, kConOnePacked[4]);
+    WriteZeroPageWord(ApplesoftVariables::ZP_INDEX, kConOneScratchAddress);
     LOAD_FAC_FROM_YA();
     if (CHRGOT() == kTOKEN_STEP) {
         CHRGET();
