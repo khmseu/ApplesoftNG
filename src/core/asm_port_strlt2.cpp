@@ -12,6 +12,7 @@ namespace applesoft::asm_port {
 void CHKSTR();
 void GARBAG();
 void STRINI(std::uint8_t length);
+void STRSPA(std::uint8_t length);
 void MOVINS();
 std::uint8_t FRETMP(std::uint16_t descriptorAddress);
 bool FRETMS(std::uint16_t descriptorAddress);
@@ -181,7 +182,6 @@ std::uint8_t g_jerr_error = ERR_FRMCPX;
 void JERR();
 void PUTEMP(std::uint8_t tempDescriptorAddress);
 std::uint16_t GETSPA(std::uint8_t length);
-void STRSPA(std::uint8_t length);
 void FIND_HIGHEST_STRING();
 void CHECK_SIMPLE_VARIABLE();
 void CHECK_VARIABLE(std::uint8_t descriptorOffset);
@@ -434,15 +434,6 @@ void MOVE_HIGHEST_STRING_TO_TOP() {
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: STRSPA (inclusive) .. STRLIT (exclusive)
-// Name normalization: none (assembler label STRSPA kept verbatim).
-void STRSPA(std::uint8_t length) {
-    const std::uint16_t allocated = GETSPA(length);
-    write_FAC(length);
-    write_FAC_descriptor_address(allocated);
-}
-
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: CAT (inclusive) .. MOVINS (exclusive)
 // Name normalization: none (assembler label CAT kept verbatim).
 void CAT() {
@@ -555,7 +546,31 @@ void PUTEMP(std::uint8_t tempDescriptorAddress) {
     write_TEMPPT(static_cast<std::uint8_t>(tempDescriptorAddress + 3u));
 }
 
+void STRLIT(std::uint16_t address);
 } // namespace
+
+// Labels: STRINI (inclusive) .. STRSPA (exclusive)
+// Name normalization: none (assembler label STRINI kept verbatim).
+void STRINI(std::uint8_t length) {
+    // Pointer candidate lifted: FAC+3/FAC+4 is one descriptor pointer.
+    const std::uint16_t descriptorAddress = read_FAC_descriptor_address();
+    write_DSCPTR(descriptorAddress);
+
+    // Original control flow falls through directly into STRSPA.
+    STRSPA(length);
+}
+
+// Labels: STRSPA (inclusive) .. L_STRSPA_1 (exclusive)
+// Name normalization: none (assembler label STRSPA kept verbatim).
+void STRSPA(std::uint8_t length) {
+    // GETSPA: allocate space at bottom of string space (A=length).
+    // Returns address in Y,X.
+    const std::uint16_t allocatedAddress = GETSPA(length);
+
+    // Store length and address into FAC.
+    variables().writeByte(ApplesoftVariables::ZP_FAC, length);
+    write_FAC_pointer(allocatedAddress);
+}
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: LEN (inclusive) .. GETSTR (exclusive)
@@ -603,17 +618,6 @@ void GARBAG() {
     // Collect from top down: initialize FRETOP from MEMSIZ, then fall through.
     write_FRETOP(read_MEMSIZ());
     FIND_HIGHEST_STRING();
-}
-
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: STRINI (inclusive) .. STRSPA (exclusive)
-// Name normalization: none (assembler label STRINI kept verbatim).
-void STRINI(std::uint8_t length) {
-    // Pointer candidate lifted: FAC+3/FAC+4 is one descriptor pointer.
-    write_DSCPTR(read_FAC_descriptor_address());
-
-    // Original control flow falls through directly into STRSPA.
-    STRSPA(length);
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst

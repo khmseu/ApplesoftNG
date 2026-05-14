@@ -21,6 +21,8 @@ std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void SNGFLT(std::uint8_t value);
 void GIVAYF(std::int16_t value);
+void FIN();
+std::uint8_t GETSTR();
 void FRE();
 void PEEK();
 void QINT();
@@ -134,7 +136,12 @@ static void ATN()      {} // TODO(asm-port): ATN        $E1...225
 static void PEEK_fn()  { PEEK(); }
 static void LEN_fn()   { LEN(); }
 static void STR_fn()   { STR(); }
-static void VAL()        {} // TODO(asm-port): VAL        $E5...229
+// Labels: VAL (inclusive) .. L_VAL_1 (exclusive)
+// Name normalization: none (assembler label VAL kept verbatim).
+static void VAL() {
+    (void)GETSTR();
+    FIN();
+}
 static void ASC_fn()     { ASC(); }
 static void CHRSTR_fn()  { CHRSTR(); }
 static void LEFTSTR_fn() { LEFTSTR(); }
