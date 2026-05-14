@@ -78,11 +78,16 @@ public:
     static constexpr std::uint8_t ZP_INDX = 0x99;
     static constexpr std::uint8_t ZP_LOWTR = 0x9b;
     static constexpr std::uint8_t ZP_FAC = 0x9d;
+    static constexpr std::uint8_t ZP_FAC_MANTISSA = 0x9e; // Start of 4-byte mantissa (9e, 9f, a0, a1)
     static constexpr std::uint8_t ZP_FAC_EXTENSION = 0xac;
     static constexpr std::uint8_t ZP_FAC_SIGN = 0xa2;
     static constexpr std::uint8_t ZP_SHIFT_SIGN_EXT = 0xa4;
     static constexpr std::uint8_t ZP_ARG = 0xa5;
-    static constexpr std::uint8_t ZP_STRNG1 = 0xab;
+    static constexpr std::uint8_t ZP_ARG_MANTISSA = 0xa6; // Start of 4-byte mantissa (a6, a7, a8, a9)
+    static constexpr std::uint8_t ZP_ARG_SIGN = 0xaa;
+    static constexpr std::uint8_t ZP_SGNCPR = 0xab;
+    static constexpr std::uint8_t ZP_ARG_EXTENSION = 0x92;
+    static constexpr std::uint8_t ZP_STRNG1 = 0xab; // Note: SGNCPR and STRNG1 share 0xAB in some contexts?
     static constexpr std::uint8_t ZP_STRNG2 = 0xad;
     static constexpr std::uint8_t ZP_PRGEND = 0xaf;
     static constexpr std::uint8_t ZP_CHRGET = 0xb1;

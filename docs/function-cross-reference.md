@@ -92,6 +92,8 @@
 | EXECUTE_STATEMENT_1               | src/core/asm_port_control_flow.cpp        | 774  | real   |
 | EXP                               | src/core/asm_port_unfnc.cpp               | 129  | stub   |
 | FADD                              | src/core/asm_port_control_flow.cpp        | 159  | stub   |
+| FADD                              | src/core/asm_port_math.cpp                | 52   | real   |
+| FADDT                             | src/core/asm_port_math.cpp                | 62   | real   |
 | FADDT                             | src/core/asm_port_mathtbl.cpp             | 26   | stub   |
 | FAE_1                             | src/core/asm_port_core.cpp                | 530  | stub   |
 | FALSE                             | src/core/asm_port_core.cpp                | 720  | real   |
@@ -128,6 +130,8 @@
 | FRM_ELEMENT                       | src/core/asm_port_strlt2.cpp              | 199  | stub   |
 | FRM_STACK_2                       | src/core/asm_port_control_flow.cpp        | 142  | stub   |
 | FRM_STACK_3                       | src/core/asm_port_control_flow.cpp        | 146  | stub   |
+| FSUB                              | src/core/asm_port_math.cpp                | 25   | real   |
+| FSUBT                             | src/core/asm_port_math.cpp                | 35   | real   |
 | FSUBT                             | src/core/asm_port_mathtbl.cpp             | 27   | stub   |
 | FUNCT                             | src/core/asm_port_core.cpp                | 1188 | stub   |
 | GARBAG                            | src/core/asm_port_reason.cpp              | 14   | stub   |
