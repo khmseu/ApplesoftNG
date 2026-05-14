@@ -23,7 +23,12 @@ void SNGFLT(std::uint8_t value);
 void GIVAYF(std::int16_t value);
 void FRE();
 void PEEK();
+void QINT();
 void ERROR(std::uint8_t error_code_offset);
+
+static void NORMALIZE_FAC_1() {
+    // TODO(asm-port): port NORMALIZE_FAC_1 label.
+}
 
 void PDL() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -54,7 +59,38 @@ void SGN() {
 
     GIVAYF(signValue);
 }
-static void INT_fn()   {} // TODO(asm-port): INT        $D3...211  (INT is a C++ keyword; normalized to INT_fn)
+void INT_fn() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: INT (inclusive) .. QINT_3 (exclusive)
+    // Name normalization: INT -> INT_fn (INT is a C++ keyword).
+
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kFAC_EXTENSION = static_cast<std::uint8_t>(ApplesoftVariables::ZP_STRNG1 + 1u);
+    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+    constexpr std::uint8_t kFAC_LAST = static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 4u);
+    constexpr std::uint8_t kCHARAC = ApplesoftVariables::ZP_CHARAC;
+
+    // If exponent >= 0xA0, FAC has no fractional bits and INT is already done.
+    if (ReadZeroPageByte(kFAC) >= 0xa0u) {
+        return;
+    }
+
+    // Convert FAC to integer form in FAC+1..FAC+4 (QINT contract).
+    QINT();
+
+    // ROM clears extension/sign, sets exponent to 32, saves FAC+4 in CHARAC,
+    // then continues at NORMALIZE_FAC_1 with carry encoding the sign.
+    WriteZeroPageByte(kFAC_EXTENSION, 0u);
+    const std::uint8_t facSign = ReadZeroPageByte(kFAC_SIGN);
+    WriteZeroPageByte(kFAC_SIGN, 0u);
+    WriteZeroPageByte(kFAC, 0xa0u);
+    WriteZeroPageByte(kCHARAC, ReadZeroPageByte(kFAC_LAST));
+
+    // Carry-sensitive normalization entry is not ported yet.
+    // TODO(asm-port): model carry handoff into NORMALIZE_FAC_1.
+    (void)facSign;
+    NORMALIZE_FAC_1();
+}
 void ABS() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: ABS (inclusive) .. FCOMP (exclusive)

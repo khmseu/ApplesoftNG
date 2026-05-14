@@ -7,7 +7,7 @@
 
 | Function                          | File                                      | Line | Status |
 | --------------------------------- | ----------------------------------------- | ---- | ------ |
-| ABS                               | src/core/asm_port_unfnc.cpp               | 58   | real   |
+| ABS                               | src/core/asm_port_unfnc.cpp               | 94   | real   |
 | ADDON                             | src/core/asm_port_statements.cpp          | 322  | real   |
 | add_u8                            | src/core/asm_port_gtforpnt.cpp            | 9    | real   |
 | AdvanceTextPointerToNextLine      | src/core/asm_port_control_flow.cpp        | 715  | real   |
@@ -17,8 +17,8 @@
 | ApplyFacSign                      | src/core/asm_port_control_flow.cpp        | 102  | stub   |
 | ARRAY                             | src/core/asm_port_core.cpp                | 583  | stub   |
 | ASC                               | src/core/asm_port_strlt2.cpp              | 588  | real   |
-| ASC_fn                            | src/core/asm_port_unfnc.cpp               | 102  | real   |
-| ATN                               | src/core/asm_port_unfnc.cpp               | 97   | stub   |
+| ASC_fn                            | src/core/asm_port_unfnc.cpp               | 138  | real   |
+| ATN                               | src/core/asm_port_unfnc.cpp               | 133  | stub   |
 | AYINT                             | src/core/asm_port_core.cpp                | 730  | real   |
 | BADNAM                            | src/core/asm_port_core.cpp                | 240  | real   |
 | BASIC                             | src/core/asm_port_core.cpp                | 248  | real   |
@@ -43,7 +43,7 @@
 | CHRGET_INPUT                      | src/core/asm_port_input.cpp               | 33   | real   |
 | CHRGOT                            | src/core/asm_port_parser.cpp              | 243  | real   |
 | CHRSTR                            | src/core/asm_port_strlt2.cpp              | 678  | real   |
-| CHRSTR_fn                         | src/core/asm_port_unfnc.cpp               | 103  | real   |
+| CHRSTR_fn                         | src/core/asm_port_unfnc.cpp               | 139  | real   |
 | CLEAR                             | src/core/asm_port_statements.cpp          | 146  | real   |
 | CLEARC                            | src/core/asm_port_statements.cpp          | 154  | real   |
 | CLEARC_impl                       | src/core/asm_port_statements.cpp          | 116  | real   |
@@ -63,7 +63,7 @@
 | CONT                              | src/core/asm_port_control_flow.cpp        | 308  | real   |
 | CONTROL_C_TYPED                   | src/core/asm_port_control_flow.cpp        | 288  | real   |
 | copy_page_backward                | src/core/asm_port_bltu.cpp                | 7    | real   |
-| COS                               | src/core/asm_port_unfnc.cpp               | 94   | stub   |
+| COS                               | src/core/asm_port_unfnc.cpp               | 130  | stub   |
 | COUT                              | src/platform/asm_port_getln.cpp           | 18   | stub   |
 | CRDO                              | src/core/asm_port_print.cpp               | 269  | real   |
 | CROUT                             | src/platform/asm_port_getln.cpp           | 33   | stub   |
@@ -86,10 +86,10 @@
 | ERLIN                             | src/core/asm_port_input.cpp               | 189  | real   |
 | ERRDIR                            | src/core/asm_port_core.cpp                | 220  | real   |
 | ERROR                             | src/core/asm_port_core.cpp                | 677  | real   |
-| ERROR_fn                          | src/core/asm_port_unfnc.cpp               | 75   | real   |
+| ERROR_fn                          | src/core/asm_port_unfnc.cpp               | 111  | real   |
 | EXECUTE_STATEMENT                 | src/core/asm_port_control_flow.cpp        | 740  | real   |
 | EXECUTE_STATEMENT_1               | src/core/asm_port_control_flow.cpp        | 753  | real   |
-| EXP                               | src/core/asm_port_unfnc.cpp               | 93   | stub   |
+| EXP                               | src/core/asm_port_unfnc.cpp               | 129  | stub   |
 | FADD                              | src/core/asm_port_control_flow.cpp        | 135  | stub   |
 | FADDT                             | src/core/asm_port_mathtbl.cpp             | 26   | stub   |
 | FAE_1                             | src/core/asm_port_core.cpp                | 306  | stub   |
@@ -120,7 +120,7 @@
 | FRESTR                            | src/core/asm_port_strlt2.cpp              | 504  | real   |
 | FRETMP                            | src/core/asm_port_strlt2.cpp              | 633  | real   |
 | FRETMS                            | src/core/asm_port_strlt2.cpp              | 652  | real   |
-| FRE_fn                            | src/core/asm_port_unfnc.cpp               | 67   | real   |
+| FRE_fn                            | src/core/asm_port_unfnc.cpp               | 103  | real   |
 | FRMEVL                            | src/core/asm_port_core.cpp                | 1083 | stub   |
 | FRMEVL_2                          | src/core/asm_port_strlt2.cpp              | 202  | stub   |
 | FRMNUM                            | src/core/asm_port_parser.cpp              | 82   | real   |
@@ -186,7 +186,7 @@
 | INPUT_FLAG_ZERO                   | src/core/asm_port_input.cpp               | 102  | real   |
 | INPUT_Handler                     | src/core/asm_port_token_address_table.cpp | 74   | real   |
 | InsertNewLine                     | src/core/asm_port_statements.cpp          | 491  | real   |
-| INT_fn                            | src/core/asm_port_unfnc.cpp               | 57   | stub   |
+| INT_fn                            | src/core/asm_port_unfnc.cpp               | 62   | stub   |
 | INVERSE                           | src/core/asm_port_graphics.cpp            | 32   | real   |
 | INVERSE_Handler                   | src/core/asm_port_token_address_table.cpp | 112  | real   |
 | IN_NUMBER                         | src/core/asm_port_statements.cpp          | 960  | real   |
@@ -206,9 +206,9 @@
 | JER                               | src/core/asm_port_core.cpp                | 272  | real   |
 | JERR                              | src/core/asm_port_strlt2.cpp              | 535  | real   |
 | LEFTSTR                           | src/core/asm_port_strlt2.cpp              | 704  | real   |
-| LEFTSTR_fn                        | src/core/asm_port_unfnc.cpp               | 104  | real   |
+| LEFTSTR_fn                        | src/core/asm_port_unfnc.cpp               | 140  | real   |
 | LEN                               | src/core/asm_port_strlt2.cpp              | 565  | real   |
-| LEN_fn                            | src/core/asm_port_unfnc.cpp               | 99   | real   |
+| LEN_fn                            | src/core/asm_port_unfnc.cpp               | 135  | real   |
 | LET                               | src/core/asm_port_statements.cpp          | 350  | real   |
 | LET2                              | src/core/asm_port_statements.cpp          | 379  | real   |
 | LINCOOR                           | src/core/asm_port_graphics.cpp            | 331  | real   |
@@ -217,7 +217,7 @@
 | LIST                              | src/core/asm_port_statements.cpp          | 778  | real   |
 | LOAD                              | src/core/asm_port_statements.cpp          | 862  | real   |
 | LOAD_FAC_FROM_YA                  | src/core/asm_port_control_flow.cpp        | 110  | stub   |
-| LOG                               | src/core/asm_port_unfnc.cpp               | 92   | stub   |
+| LOG                               | src/core/asm_port_unfnc.cpp               | 128  | stub   |
 | LOMEM                             | src/core/asm_port_graphics.cpp            | 244  | real   |
 | LOMEM_Handler                     | src/core/asm_port_token_address_table.cpp | 117  | real   |
 | main                              | src/main.cpp                              | 4    | real   |
@@ -232,7 +232,7 @@
 | MI1                               | src/core/asm_port_parser.cpp              | 347  | real   |
 | MI2                               | src/core/asm_port_parser.cpp              | 355  | real   |
 | MIDSTR                            | src/core/asm_port_strlt2.cpp              | 731  | real   |
-| MIDSTR_fn                         | src/core/asm_port_unfnc.cpp               | 106  | real   |
+| MIDSTR_fn                         | src/core/asm_port_unfnc.cpp               | 142  | real   |
 | MKINT                             | src/core/asm_port_parser.cpp              | 372  | real   |
 | MON_COUT                          | src/platform/asm_port_outdo.cpp           | 17   | stub   |
 | MON_GETLN                         | src/platform/asm_port_getln.cpp           | 37   | stub   |
@@ -271,6 +271,7 @@
 | NEXT_Handler                      | src/core/asm_port_token_address_table.cpp | 73   | real   |
 | NEXT_shouldTerminateLoop          | src/core/asm_port_control_flow.cpp        | 141  | stub   |
 | NORMAL                            | src/core/asm_port_graphics.cpp            | 20   | stub   |
+| NORMALIZE_FAC_1                   | src/core/asm_port_unfnc.cpp               | 29   | stub   |
 | NORMAL_Handler                    | src/core/asm_port_token_address_table.cpp | 111  | real   |
 | NOTCR                             | src/platform/asm_port_getln.cpp           | 30   | stub   |
 | NOTRACE                           | src/core/asm_port_token_address_table.cpp | 106  | real   |
@@ -289,11 +290,11 @@
 | parseNumericInputAndStore         | src/core/asm_port_input.cpp               | 48   | stub   |
 | parseStringInputAndStore          | src/core/asm_port_input.cpp               | 45   | stub   |
 | PARSE_INPUT_LINE                  | src/core/asm_port_statements.cpp          | 544  | real   |
-| PDL                               | src/core/asm_port_unfnc.cpp               | 28   | real   |
-| PDL_fn                            | src/core/asm_port_unfnc.cpp               | 82   | real   |
+| PDL                               | src/core/asm_port_unfnc.cpp               | 33   | real   |
+| PDL_fn                            | src/core/asm_port_unfnc.cpp               | 118  | real   |
 | PEEK                              | src/core/asm_port_statements.cpp          | 182  | real   |
 | PeekTopControlTokenAfterGTFORPNT  | src/core/asm_port_control_flow.cpp        | 199  | real   |
-| PEEK_fn                           | src/core/asm_port_unfnc.cpp               | 98   | real   |
+| PEEK_fn                           | src/core/asm_port_unfnc.cpp               | 134  | real   |
 | PLOT                              | src/core/asm_port_graphics.cpp            | 367  | real   |
 | PLOTFNS                           | src/core/asm_port_graphics.cpp            | 297  | real   |
 | PLOT_Handler                      | src/core/asm_port_token_address_table.cpp | 83   | real   |
@@ -304,7 +305,7 @@
 | PopByteFromStack                  | src/core/asm_port_stack.cpp               | 34   | real   |
 | PopReturnAddress                  | src/core/asm_port_stack.cpp               | 46   | stub   |
 | PopWordFromStack                  | src/core/asm_port_stack.cpp               | 39   | real   |
-| POS                               | src/core/asm_port_unfnc.cpp               | 83   | real   |
+| POS                               | src/core/asm_port_unfnc.cpp               | 119  | real   |
 | PRINT                             | src/core/asm_port_print.cpp               | 237  | real   |
 | print                             | src/platform/console.cpp                  | 4    | real   |
 | PRINT2                            | src/core/asm_port_print.cpp               | 254  | real   |
@@ -385,8 +386,8 @@
 | RETURN                            | src/core/asm_port_control_flow.cpp        | 603  | real   |
 | ReturnWasFromPOPContext           | src/core/asm_port_control_flow.cpp        | 190  | real   |
 | RIGHTSTR                          | src/core/asm_port_strlt2.cpp              | 717  | real   |
-| RIGHTSTR_fn                       | src/core/asm_port_unfnc.cpp               | 105  | real   |
-| RND                               | src/core/asm_port_unfnc.cpp               | 91   | stub   |
+| RIGHTSTR_fn                       | src/core/asm_port_unfnc.cpp               | 141  | real   |
+| RND                               | src/core/asm_port_unfnc.cpp               | 127  | stub   |
 | ROT                               | src/core/asm_port_token_address_table.cpp | 94   | stub   |
 | ROUND_FAC                         | src/core/asm_port_parser.cpp              | 385  | stub   |
 | RTS_10                            | src/core/asm_port_statements.cpp          | 228  | stub   |
@@ -409,14 +410,14 @@
 | SetTextPointer                    | src/core/asm_port_core.cpp                | 69   | real   |
 | SetTextPointerToInputBufferMinus1 | src/core/asm_port_statements.cpp          | 246  | stub   |
 | SET_VARPNT_AND_YA                 | src/core/asm_port_core.cpp                | 513  | real   |
-| SGN                               | src/core/asm_port_unfnc.cpp               | 41   | real   |
+| SGN                               | src/core/asm_port_unfnc.cpp               | 46   | real   |
 | SHLOAD                            | src/core/asm_port_token_address_table.cpp | 96   | stub   |
 | SIGN                              | src/core/asm_port_control_flow.cpp        | 114  | stub   |
-| SIN                               | src/core/asm_port_unfnc.cpp               | 95   | stub   |
+| SIN                               | src/core/asm_port_unfnc.cpp               | 131  | stub   |
 | SNGFLT                            | src/core/asm_port_core.cpp                | 454  | real   |
 | SPEED                             | src/core/asm_port_graphics.cpp            | 285  | real   |
 | SPEED_Handler                     | src/core/asm_port_token_address_table.cpp | 122  | real   |
-| SQR                               | src/core/asm_port_unfnc.cpp               | 90   | stub   |
+| SQR                               | src/core/asm_port_unfnc.cpp               | 126  | stub   |
 | stack_at                          | src/core/asm_port_gtforpnt.cpp            | 13   | real   |
 | stack_word_at                     | src/core/asm_port_gtforpnt.cpp            | 17   | real   |
 | STEP                              | src/core/asm_port_control_flow.cpp        | 623  | real   |
@@ -436,7 +437,7 @@
 | STRPRT                            | src/core/asm_port_print.cpp               | 113  | real   |
 | STRSPA                            | src/core/asm_port_strlt2.cpp              | 439  | real   |
 | STRTXT                            | src/core/asm_port_strtxt.cpp              | 28   | real   |
-| STR_fn                            | src/core/asm_port_unfnc.cpp               | 100  | real   |
+| STR_fn                            | src/core/asm_port_unfnc.cpp               | 136  | real   |
 | STXTPT                            | src/core/asm_port_statements.cpp          | 158  | real   |
 | STXTPT_impl                       | src/core/asm_port_statements.cpp          | 130  | real   |
 | SUBERR                            | src/core/asm_port_core.cpp                | 280  | real   |
@@ -444,7 +445,7 @@
 | SUBSTRING_SETUP                   | src/core/asm_port_strlt2.cpp              | 209  | real   |
 | SYNCHR                            | src/core/asm_port_parser.cpp              | 29   | real   |
 | SYNERR                            | src/core/asm_port_parser.cpp              | 297  | real   |
-| TAN                               | src/core/asm_port_unfnc.cpp               | 96   | stub   |
+| TAN                               | src/core/asm_port_unfnc.cpp               | 132  | stub   |
 | TEXT                              | src/core/asm_port_graphics.cpp            | 139  | real   |
 | TEXT_Handler                      | src/core/asm_port_token_address_table.cpp | 79   | real   |
 | TOKEN_ADDRESS_TABLE               | src/core/asm_port_token_address_table.cpp | 138  | real   |
@@ -453,10 +454,10 @@
 | TRUE                              | src/core/asm_port_core.cpp                | 504  | real   |
 | UNARY                             | src/core/asm_port_core.cpp                | 800  | stub   |
 | UNDFNC                            | src/core/asm_port_core.cpp                | 232  | real   |
-| UNFNC                             | src/core/asm_port_unfnc.cpp               | 112  | real   |
+| UNFNC                             | src/core/asm_port_unfnc.cpp               | 148  | real   |
 | USE_OLD_ARRAY                     | src/core/asm_port_core.cpp                | 348  | real   |
-| USR                               | src/core/asm_port_unfnc.cpp               | 66   | stub   |
-| VAL                               | src/core/asm_port_unfnc.cpp               | 101  | stub   |
+| USR                               | src/core/asm_port_unfnc.cpp               | 102  | stub   |
+| VAL                               | src/core/asm_port_unfnc.cpp               | 137  | stub   |
 | VARTIO                            | src/core/asm_port_statements.cpp          | 893  | real   |
 | VLIN                              | src/core/asm_port_graphics.cpp            | 406  | real   |
 | VLIN_Handler                      | src/core/asm_port_token_address_table.cpp | 85   | real   |
