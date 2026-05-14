@@ -40,6 +40,8 @@ public:
     static constexpr std::uint8_t ZP_MON_A2 = 0x3e;
     static constexpr std::uint8_t ZP_MON_A4 = 0x40;
     static constexpr std::uint8_t ZP_MON_DEBUG_REG_A = 0x45;
+    static constexpr std::uint8_t ZP_MON_DEBUG_REG_X = 0x46;
+    static constexpr std::uint8_t ZP_MON_DEBUG_REG_Y = 0x47;
     static constexpr std::uint8_t ZP_MON_STATUS = 0x48;
     static constexpr std::uint8_t ZP_MON_RNDL = 0x4e;
     static constexpr std::uint8_t ZP_MON_RNDH = 0x4f;

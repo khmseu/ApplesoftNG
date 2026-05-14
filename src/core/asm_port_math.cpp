@@ -8,6 +8,8 @@ namespace applesoft::asm_port {
 
 extern std::uint8_t ReadZeroPageByte(std::uint8_t address);
 extern void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
+extern std::uint8_t ReadProgramByte(std::uint16_t address);
+extern void ERROR(std::uint8_t error_code);
 extern void LOAD_ARG_FROM_YA();
 extern void COPY_ARG_TO_FAC();
 
@@ -332,22 +334,22 @@ void FADDT() {
  * Labels: LOAD_ARG_FROM_YA (inclusive) .. RTS_REG (exclusive)
  */
 void LOAD_ARG_FROM_YA() {
-    std::uint16_t addr = (static_cast<std::uint16_t>(GetRegY()) << 8) | GetRegA();
+    std::uint16_t addr = (static_cast<std::uint16_t>(ReadZeroPageByte(ApplesoftVariables::ZP_MON_DEBUG_REG_Y)) << 8) | ReadZeroPageByte(ApplesoftVariables::ZP_MON_DEBUG_REG_A);
     LOAD_ARG_FROM_YA(addr);
 }
 
 void LOAD_ARG_FROM_YA(std::uint16_t address) {
-    WriteZeroPageByte(ApplesoftVariables::ZP_ARG + 4, ReadMemory(address + 4));
-    WriteZeroPageByte(ApplesoftVariables::ZP_ARG + 3, ReadMemory(address + 3));
-    WriteZeroPageByte(ApplesoftVariables::ZP_ARG + 2, ReadMemory(address + 2));
+    WriteZeroPageByte(ApplesoftVariables::ZP_ARG + 4, ReadProgramByte(address + 4));
+    WriteZeroPageByte(ApplesoftVariables::ZP_ARG + 3, ReadProgramByte(address + 3));
+    WriteZeroPageByte(ApplesoftVariables::ZP_ARG + 2, ReadProgramByte(address + 2));
     
-    std::uint8_t arg_sign = ReadMemory(address + 1);
+    std::uint8_t arg_sign = ReadProgramByte(address + 1);
     WriteZeroPageByte(ApplesoftVariables::ZP_ARG_SIGN, arg_sign);
     WriteZeroPageByte(ApplesoftVariables::ZP_SGNCPR, arg_sign ^ ReadZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN));
     
     WriteZeroPageByte(ApplesoftVariables::ZP_ARG_MANTISSA, arg_sign | 0x80); // Implicit bit
     
-    WriteZeroPageByte(ApplesoftVariables::ZP_ARG, ReadMemory(address + 0));
+    WriteZeroPageByte(ApplesoftVariables::ZP_ARG, ReadProgramByte(address + 0));
 }
 
 /**
