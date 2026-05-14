@@ -153,8 +153,17 @@ void FCOMP2() {
     // Target branches to L_FCOMP2_1 or RTS depending on comparison.
 }
 
-void FRM_STACK_2() {
-    // TODO(asm-port): prepare FOR frame storage on the Applesoft stack.
+void FRM_STACK_2(std::uint8_t signByte) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FRM_STACK_2 (inclusive) .. FRM_STACK_3 (exclusive)
+    // Name normalization: none (assembler label FRM_STACK_2 kept verbatim).
+    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
+
+    const std::uint8_t returnAddressLow = PopByteFromStack();
+    WriteZeroPageByte(kINDEX, static_cast<std::uint8_t>(returnAddressLow + 1u));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kINDEX + 1u), PopByteFromStack());
+
+    PushByteToStack(signByte);
 }
 
 void FRM_STACK_3() {
@@ -706,8 +715,8 @@ void STEP() {
         FRMNUM();
     }
 
-    SIGN();
-    FRM_STACK_2();
+    const std::int8_t stepSign = SIGN();
+    FRM_STACK_2(static_cast<std::uint8_t>(stepSign));
     PushForPntFrame();
     NEWSTT();
 }
