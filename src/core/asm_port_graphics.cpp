@@ -265,6 +265,31 @@ void MON_HOME() {
     WriteZeroPageByte(kMON_CH, 0u);
 }
 
+void MON_CLREOL() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst
+    // Labels: CLREOL (inclusive) .. RTS (exclusive)
+    // Name normalization: CLREOL -> MON_CLREOL (monitor label gets MON_ prefix).
+    //
+    // Clears from current cursor position to end of line with high-bit-set spaces.
+
+    constexpr std::uint8_t kMON_CH = ApplesoftVariables::ZP_MON_CH;
+    constexpr std::uint8_t kMON_WNDWDTH = ApplesoftVariables::ZP_MON_WNDWDTH;
+    constexpr std::uint8_t kMON_BASL = ApplesoftVariables::ZP_MON_BASL;
+    constexpr std::uint8_t kMON_BASH = ApplesoftVariables::ZP_MON_BASH;
+    constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
+
+    const std::uint16_t baseAddress = ApplesoftVariables::makeWord(
+        ReadZeroPageByte(kMON_BASL),
+        ReadZeroPageByte(kMON_BASH));
+    const std::uint8_t startCol = ReadZeroPageByte(kMON_CH);
+    const std::uint8_t windowWidth = ReadZeroPageByte(kMON_WNDWDTH);
+
+    for (std::uint8_t col = startCol; col < windowWidth; ++col) {
+        const std::uint16_t address = static_cast<std::uint16_t>(baseAddress + col);
+        variables().writeByte(address, kBlank);
+    }
+}
+
 void MON_SETTXT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst
     // Labels: SETTXT (inclusive) .. SETGR (exclusive)
