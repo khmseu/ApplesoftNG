@@ -191,18 +191,40 @@ void MON_PLOT(std::uint8_t y, std::uint8_t x) {
 }
 
 void MON_HLINE(std::uint8_t y, std::uint8_t right, std::uint8_t left) {
-    // TODO(asm-port): port MON_HLINE monitor handler.
-    // Placeholder to preserve HLIN statement call flow until monitor integration.
-    (void)y;
-    (void)right;
-    (void)left;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/lores.o65.lst
+    // Labels: HLINE (inclusive) .. VLINEZ (exclusive)
+    // Name normalization: HLINE -> MON_HLINE (monitor label gets MON_ prefix).
+    //
+    // Draws a horizontal run from X=left through X=right at row Y.
+
+    std::uint8_t x = left;
+    for (;;) {
+        MON_PLOT(y, x);
+        if (x >= right) {
+            break;
+        }
+        x = static_cast<std::uint8_t>(x + 1u);
+    }
 }
 
 void MON_VLINE(std::uint8_t x, std::uint8_t top) {
-    // TODO(asm-port): port MON_VLINE monitor handler.
-    // Placeholder to preserve VLIN statement call flow until monitor integration.
-    (void)x;
-    (void)top;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/lores.o65.lst
+    // Labels: VLINEZ (inclusive) .. RTS1 (exclusive)
+    // Name normalization: VLINE -> MON_VLINE (monitor label gets MON_ prefix).
+    //
+    // Bottom endpoint is MON_V2 ($2d), as established by Applesoft LINCOOR.
+
+    constexpr std::uint8_t kMON_V2 = ApplesoftVariables::ZP_MON_V2;
+    const std::uint8_t bottom = ReadZeroPageByte(kMON_V2);
+
+    std::uint8_t y = top;
+    for (;;) {
+        MON_PLOT(y, x);
+        if (y >= bottom) {
+            break;
+        }
+        y = static_cast<std::uint8_t>(y + 1u);
+    }
 }
 
 void MON_HOME() {
