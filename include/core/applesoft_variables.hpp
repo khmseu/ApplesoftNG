@@ -34,16 +34,16 @@ public:
     static constexpr std::uint8_t ZP_MON_COLOR = 0x30;
     static constexpr std::uint8_t ZP_MON_INVFLG = 0x32;
     static constexpr std::uint8_t ZP_MON_PROMPT = 0x33;
+    static constexpr std::uint8_t ZP_MON_CSW = 0x36;
+    static constexpr std::uint8_t ZP_MON_KSW = 0x38;
     static constexpr std::uint8_t ZP_MON_A1 = 0x3c;
     static constexpr std::uint8_t ZP_MON_A2 = 0x3e;
     static constexpr std::uint8_t ZP_MON_A4 = 0x40;
-    static constexpr std::uint8_t ZP_MON_CSW = 0x36;
-    static constexpr std::uint8_t ZP_MON_KSW = 0x38;
-    static constexpr std::uint8_t ZP_MON_STATUS = 0x48;
     static constexpr std::uint8_t ZP_MON_DEBUG_REG_A = 0x45;
-    static constexpr std::uint8_t ZP_LINNUM = 0x50;
+    static constexpr std::uint8_t ZP_MON_STATUS = 0x48;
     static constexpr std::uint8_t ZP_MON_RNDL = 0x4e;
     static constexpr std::uint8_t ZP_MON_RNDH = 0x4f;
+    static constexpr std::uint8_t ZP_LINNUM = 0x50;
     static constexpr std::uint8_t ZP_TEMPPT = 0x52;
     static constexpr std::uint8_t ZP_LASTPT = 0x53;
     static constexpr std::uint8_t ZP_TEMPST = 0x55;
@@ -72,8 +72,7 @@ public:
     static constexpr std::uint8_t ZP_DSCPTR = 0x8c;
     static constexpr std::uint8_t ZP_DSCLEN = 0x8f;
     static constexpr std::uint8_t ZP_JMPADRS = 0x90;
-    // Dual-use byte in ROM: LENGTH shares storage with JMPADRS low byte.
-    static constexpr std::uint8_t ZP_LENGTH = 0x91;
+    static constexpr std::uint8_t ZP_LENGTH = 0x91; // Dual-use byte in ROM: LENGTH shares storage with JMPADRS low byte.
     static constexpr std::uint8_t ZP_ARYPNT = 0x94;
     static constexpr std::uint8_t ZP_HIGHTR = 0x96;
     static constexpr std::uint8_t ZP_INDX = 0x99;
@@ -100,15 +99,15 @@ public:
     static constexpr std::uint8_t ZP_CURLSV = 0xf6;
     static constexpr std::uint8_t ZP_REMSTK = 0xf8;
 
-    static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_1 = 0x01ffu;
-    static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_3 = 0x01fdu;
     static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_4 = 0x01fcu;
+    static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_3 = 0x01fdu;
+    static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_1 = 0x01ffu;
     static constexpr std::uint16_t ADDR_INPUT_BUFFER = 0x0200u;
+    static constexpr std::uint16_t ADDR_MON_DEBUG_BOOTSTRAP = 0x03efu;
     static constexpr std::uint16_t ADDR_MON_DEBUG_BRK_VECTOR = 0x03f0u;
     static constexpr std::uint16_t ADDR_MON_DEBUG_WARM_VECTOR = 0x03f2u;
     static constexpr std::uint16_t ADDR_MON_DEBUG_SENTINEL_1 = 0x03f3u;
     static constexpr std::uint16_t ADDR_MON_DEBUG_SENTINEL_2 = 0x03f4u;
-    static constexpr std::uint16_t ADDR_MON_DEBUG_BOOTSTRAP = 0x03efu;
     static constexpr std::uint16_t ADDR_MON_DEBUG_SCAN_PAGE = 0x07f8u;
 
     class ConstBytePointer {
@@ -164,13 +163,15 @@ public:
     };
 
     // Zero-page and fixed-address variables currently used in the C++ ports.
-    std::uint8_t NUMDIM = 0;      // $0f  number of dimensions
-    std::uint8_t GOWARM = 0;      // $00 opcode byte
+std::uint8_t GOWARM = 0;      // $00 opcode byte
     std::uint16_t GOWARM_TARGET = 0; // $01/$02
     std::uint8_t GOSTROUT = 0;    // $03 opcode byte
     std::uint16_t GOSTROUT_TARGET = 0; // $04/$05
     std::uint8_t USR = 0;         // $0a opcode byte
     std::uint16_t USR_TARGET = 0; // $0b/$0c
+    std::uint8_t CHARAC = 0;      // $0d
+    std::uint8_t ENDCHR = 0;      // $0e
+    std::uint8_t NUMDIM = 0;      // $0f  number of dimensions
     std::uint8_t DIMFLG = 0;      // $10  DIM-call flag
     std::uint8_t VALTYP = 0;      // $11  string flag: $ff = string, $00 = float
     std::uint8_t VALTYP_PLUS_1 = 0; // $12  integer type flag
@@ -180,15 +181,15 @@ public:
     std::uint8_t CPRMASK = 0;     // $16  relational comparison mask
     std::uint8_t MON_CH = 0;      // $24
     std::uint8_t MON_COLOR = 0;   // $30
-    std::uint8_t MON_PROMPT = 0;  // $33
         std::uint8_t MON_INVFLG = 0xffu; // $32  $ff=normal, $3f=inverse
-
+    std::uint8_t MON_PROMPT = 0;  // $33
     std::uint16_t MON_A1 = 0;     // $3c/$3d
     std::uint16_t MON_A2 = 0;     // $3e/$3f
-    std::uint16_t INDEX = 0;      // $5e/$5f scratch pointer (string data address)
     std::uint16_t LINNUM = 0;     // $50/$51
     std::uint8_t TEMPPT = 0;      // $52
     std::uint8_t LASTPT = 0;      // $53
+    std::uint16_t INDEX = 0;      // $5e/$5f scratch pointer (string data address)
+    std::array<std::uint8_t, 4> RESULT{}; // $62..$65
     std::uint16_t TXTTAB = 0;     // $67/$68
     std::uint16_t VARTAB = 0;     // $69/$6a
     std::uint16_t ARYTAB = 0;     // $6b/$6c
@@ -202,6 +203,8 @@ public:
     std::uint16_t DATLIN = 0;     // $7b/$7c line number of current DATA statement
     std::uint16_t DATPTR = 0;     // $7d/$7e
     std::uint16_t INPTR = 0;      // $7f/$80 input pointer
+    std::uint16_t VARNAM = 0;     // $81/$82
+    std::uint16_t VARPNT = 0;     // $83/$84
     std::uint16_t FORPNT = 0;     // $85/$86
     std::uint16_t TXPSV = 0;      // $87/$88 saved TXTPTR during input parsing
     std::uint8_t CPRTYP = 0;      // $89  relational operator flags
@@ -224,16 +227,11 @@ public:
     std::uint16_t TXTPTR = 0;     // $b8/$b9
     std::uint8_t LOCK = 0;        // $d6
     std::uint8_t ERRFLG = 0;      // $d8
-    std::uint16_t VARNAM = 0;     // $81/$82
-    std::uint16_t VARPNT = 0;     // $83/$84
-    std::array<std::uint8_t, 4> RESULT{}; // $62..$65
     std::uint8_t FIRST = 0;       // $f0
-    std::uint8_t TRCFLG = 0;      // $f2
     std::uint8_t SPEEDZ = 0;      // $f1  complement of speed value
+    std::uint8_t TRCFLG = 0;      // $f2
     std::uint8_t FLASH_BIT = 0;   // $f3  $40=flash mode, $00=normal
     std::uint8_t REMSTK = 0;      // $f8
-    std::uint8_t CHARAC = 0;      // $0d
-    std::uint8_t ENDCHR = 0;      // $0e
 
     // Non-zero-page fixed addresses currently used.
     std::uint8_t INPUT_BUFFER_MINUS_1 = 0; // $01ff
