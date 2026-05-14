@@ -188,7 +188,13 @@ void MON_LFB60() {
 }
 
 void MON_CROUT() {
-    // TODO(asm-port): port CROUT monitor label.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // Labels: CROUT (inclusive) .. PRA1 (exclusive)
+    // Name normalization: CROUT -> MON_CROUT (monitor label gets MON_ prefix).
+    //
+    // `lda #$8d` + `bne COUT` is an unconditional transfer to COUT with CR.
+    constexpr std::uint8_t kCarriageReturn = 0x8du;
+    MON_COUT(kCarriageReturn);
 }
 
 void MON_COUT(std::uint8_t value) {
