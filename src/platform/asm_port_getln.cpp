@@ -44,12 +44,12 @@ std::uint8_t RDCHAR() {
 // Name normalization: none (assembler label CLREOL kept verbatim).
 void CLREOL() {
     constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
-    const std::uint8_t yStart = variables_const().readByte(ApplesoftVariables::ZP_MON_CH);
+    const std::uint8_t columnStart = variables_const().readByte(ApplesoftVariables::ZP_MON_CH);
     const std::uint8_t width = variables_const().readByte(ApplesoftVariables::ZP_MON_WNDWDTH);
     const std::uint16_t base = variables_const().readWord(ApplesoftVariables::ZP_MON_BASL);
 
-    for (std::uint8_t y = yStart; y < width; ++y) {
-        variables().writeByte(static_cast<std::uint16_t>(base + y), kBlank);
+    for (std::uint8_t column = columnStart; column < width; ++column) {
+        variables().writeByte(static_cast<std::uint16_t>(base + column), kBlank);
     }
 }
 
