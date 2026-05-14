@@ -7,16 +7,27 @@
 
 namespace applesoft::asm_port {
 void MON_COUT(std::uint8_t a);
+// Implemented in src/core/asm_port_core.cpp (monitor BELL routine).
+void MON_BELL();
 namespace {
 
-// TODO(asm-port): map zero-page prompt character at $33.
-std::uint8_t read_prompt_char() { return 0; }
+std::uint8_t read_prompt_char() {
+    return variables_const().readByte(ApplesoftVariables::ZP_MON_PROMPT);
+}
 
-// TODO(asm-port): map indexed INPUT_BUFFER write at $0200,X.
-void write_input_buffer(std::uint8_t /*index*/, std::uint8_t /*value*/) {}
+void write_input_buffer(std::uint8_t index, std::uint8_t value) {
+    variables().writeByte(static_cast<std::uint16_t>(ApplesoftVariables::ADDR_INPUT_BUFFER + index), value);
+}
 
-// TODO(asm-port): map screen fetch through ($28),Y used by Ctrl-U handling.
-std::uint8_t read_screen_char_via_28_y() { return 0; }
+std::uint8_t read_input_buffer(std::uint8_t index) {
+    return variables_const().readByte(static_cast<std::uint16_t>(ApplesoftVariables::ADDR_INPUT_BUFFER + index));
+}
+
+std::uint8_t read_screen_char_via_28_y() {
+    const std::uint8_t y = variables_const().readByte(ApplesoftVariables::ZP_MON_CH);
+    const std::uint16_t base = variables_const().readWord(ApplesoftVariables::ZP_MON_BASL);
+    return variables_const().readByte(static_cast<std::uint16_t>(base + y));
+}
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
 // Labels: COUT (inclusive) .. COUT1 (exclusive)
@@ -53,12 +64,6 @@ void CLREOL() {
     }
 }
 
-// TODO(asm-port): port GETLNZ label.
-void GETLNZ() {}
-
-// TODO(asm-port): port NOTCR label handling (echo/edit/margin logic).
-void NOTCR(std::uint8_t& /*x*/) {}
-
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
 // Labels: CROUT (inclusive) .. PRA1 (exclusive)
 // Name normalization: none (assembler label CROUT kept verbatim).
@@ -66,11 +71,84 @@ void CROUT() {
     COUT(0x8du);
 }
 
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/keyin.o65.lst
+// Labels: GETLNZ (inclusive) .. BCKSPC (exclusive)
+// Name normalization: none (assembler label GETLNZ kept verbatim).
+std::uint8_t GETLNZ() {
+    constexpr std::uint8_t kInitialBufferIndex = 1u;
+    CROUT();
+    COUT(read_prompt_char());
+    // GETLNZ falls through into GETLN, which immediately executes `ldx #$01`.
+    return kInitialBufferIndex;
+}
+
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/keyin.o65.lst
+// Labels: NOTCR (inclusive) .. GETLNZ (exclusive)
+// Name normalization: none (assembler label NOTCR kept verbatim).
+void NOTCR(std::uint8_t& x) {
+    constexpr std::uint8_t kBackspace = 0x88u;
+    constexpr std::uint8_t kCtrlX = 0x98u;
+    constexpr std::uint8_t kMargin = 0xf8u;
+    constexpr std::uint8_t kCancelSlash = static_cast<std::uint8_t>('\\' | 0x80u);
+
+    const std::uint8_t savedInv = variables_const().readByte(ApplesoftVariables::ZP_MON_INVFLG);
+    variables().writeByte(ApplesoftVariables::ZP_MON_INVFLG, 0xffu);
+    // X is an 8-bit page-local index into $0200..$02FF; 0xff is the last valid slot.
+    // The subsequent ++x wrap to 0 intentionally triggers the cancel/restart path.
+    const std::uint8_t current = read_input_buffer(x);
+    COUT(current);
+    variables().writeByte(ApplesoftVariables::ZP_MON_INVFLG, savedInv);
+
+    if (current == kBackspace || current == kCtrlX) {
+        if (x == 0u) {
+            x = GETLNZ();
+            return;
+        }
+        --x;
+        return;
+    }
+
+    if (x >= kMargin) {
+        MON_BELL();
+    }
+
+    ++x;
+    if (x == 0u) {
+        COUT(kCancelSlash);
+        x = GETLNZ();
+    }
+}
+
 } // namespace
 
 std::uint8_t MON_GETLN() {
-    // TODO(asm-port): port GETLN monitor line-input routine.
-return 0;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/keyin.o65.lst
+    // Labels: GETLN (inclusive) .. CROUT (exclusive)
+    // Name normalization: GETLN -> MON_GETLN (monitor label gets MON_ prefix).
+    constexpr std::uint8_t kCtrlU = 0x95u;
+    constexpr std::uint8_t kCarriageReturn = 0x8du;
+    constexpr std::uint8_t kLowercaseThreshold = 0xe0u;
+
+    std::uint8_t x = GETLNZ();
+
+    while (true) {
+        std::uint8_t ch = RDCHAR();
+        if (ch == kCtrlU) {
+            ch = read_screen_char_via_28_y();
+        }
+
+        if (ch >= kLowercaseThreshold) {
+            ch = static_cast<std::uint8_t>(ch & 0xdfu);
+        }
+
+        write_input_buffer(x, ch);
+        if (ch == kCarriageReturn) {
+            CLREOL();
+            return x;
+        }
+
+        NOTCR(x);
+    }
 }
 
 } // namespace applesoft::asm_port
