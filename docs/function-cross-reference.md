@@ -58,7 +58,7 @@
 | COLOR                             | src/core/asm_port_graphics.cpp            | 195  | real   |
 | COLOR_Handler                     | src/core/asm_port_token_address_table.cpp | 114  | real   |
 | COMBYTE                           | src/core/asm_port_parser.cpp              | 206  | real   |
-| CompareArgAndFacStrings           | src/core/asm_port_core.cpp                | 1235 | stub   |
+| CompareArgAndFacStrings           | src/core/asm_port_core.cpp                | 1262 | stub   |
 | CONINT                            | src/core/asm_port_parser.cpp              | 182  | real   |
 | CONT                              | src/core/asm_port_control_flow.cpp        | 308  | real   |
 | CONTROL_C_TYPED                   | src/core/asm_port_control_flow.cpp        | 288  | real   |
@@ -94,7 +94,7 @@
 | FADDT                             | src/core/asm_port_mathtbl.cpp             | 26   | stub   |
 | FAE_1                             | src/core/asm_port_core.cpp                | 306  | stub   |
 | FALSE                             | src/core/asm_port_core.cpp                | 496  | real   |
-| FCOMP                             | src/core/asm_port_core.cpp                | 1231 | stub   |
+| FCOMP                             | src/core/asm_port_core.cpp                | 1258 | stub   |
 | FCOMP2                            | src/core/asm_port_control_flow.cpp        | 138  | stub   |
 | FDIVT                             | src/core/asm_port_mathtbl.cpp             | 29   | stub   |
 | FINDATA                           | src/core/asm_port_input.cpp               | 51   | stub   |
@@ -241,10 +241,10 @@
 | MON_INPORT                        | src/core/asm_port_graphics.cpp            | 75   | stub   |
 | MON_OUTPORT                       | src/core/asm_port_graphics.cpp            | 81   | stub   |
 | MON_PLOT                          | src/core/asm_port_graphics.cpp            | 87   | stub   |
-| MON_PREAD                         | src/core/asm_port_core.cpp                | 1239 | real   |
+| MON_PREAD                         | src/core/asm_port_core.cpp                | 1266 | real   |
 | MON_RDKEY                         | src/core/asm_port_inlin2.cpp              | 34   | real   |
 | MON_READ                          | src/core/asm_port_statements.cpp          | 937  | stub   |
-| MON_SCRN                          | src/core/asm_port_core.cpp                | 1227 | stub   |
+| MON_SCRN                          | src/core/asm_port_core.cpp                | 1227 | real   |
 | MON_SETCOL                        | src/core/asm_port_graphics.cpp            | 56   | real   |
 | MON_SETGR                         | src/core/asm_port_graphics.cpp            | 120  | stub   |
 | MON_SETTXT                        | src/core/asm_port_graphics.cpp            | 114  | stub   |

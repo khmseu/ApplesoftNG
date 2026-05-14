@@ -1224,8 +1224,35 @@ void FRMEVL() {
     frmevl_eval(frmevl_eval, 0u, true);
 }
 
-std::uint8_t MON_SCRN(std::uint8_t /*row*/, std::uint8_t /*column*/) {
-    return 0;
+std::uint8_t MON_SCRN(std::uint8_t row, std::uint8_t column) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/lores.o65.lst
+    // Labels: SCRN (inclusive) .. end of SCRN routine (exclusive)
+    // Name normalization: SCRN -> MON_SCRN (monitor label gets MON_ prefix).
+    //
+    // Monitor path:
+    //   lsr A / php / jsr GBASCALC / lda (GBASL),Y / plp
+    //   if odd row, shift high nibble down; then mask to 4-bit color.
+
+    const std::uint8_t halfRow = static_cast<std::uint8_t>(row >> 1u);
+    const bool gbasCarry = (row & 0x01u) != 0u;
+
+    // Inline GBASCALC for base address synthesis in page $0400-$07ff.
+    const std::uint8_t gbash = static_cast<std::uint8_t>(((halfRow >> 1u) & 0x03u) | 0x04u);
+    std::uint8_t gbasl = static_cast<std::uint8_t>(halfRow & 0x18u);
+    if (gbasCarry) {
+        gbasl = static_cast<std::uint8_t>(gbasl + 0x80u);
+    }
+    const std::uint8_t gbaslBase = gbasl;
+    gbasl = static_cast<std::uint8_t>((gbasl << 2u) | gbaslBase);
+
+    const std::uint16_t baseAddress = ApplesoftVariables::makeWord(gbasl, gbash);
+    const std::uint16_t screenAddress = static_cast<std::uint16_t>(baseAddress + column);
+
+    std::uint8_t value = variables_const().readByte(screenAddress);
+    if ((row & 0x01u) != 0u) {
+        value = static_cast<std::uint8_t>(value >> 4u);
+    }
+    return static_cast<std::uint8_t>(value & 0x0fu);
 }
 
 std::int8_t FCOMP(std::uint16_t /*argAddress*/) {
