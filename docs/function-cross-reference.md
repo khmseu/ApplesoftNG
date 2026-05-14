@@ -82,7 +82,7 @@
 | DRAW_Handler                      | src/core/asm_port_token_address_table.cpp | 90   | real   |
 | ENDX                              | src/core/asm_port_control_flow.cpp        | 227  | real   |
 | ENDX_impl                         | src/core/asm_port_control_flow.cpp        | 231  | real   |
-| EQUOP                             | src/core/asm_port_mathtbl.cpp             | 55   | stub   |
+| EQUOP                             | src/core/asm_port_mathtbl.cpp             | 57   | real   |
 | ERLIN                             | src/core/asm_port_input.cpp               | 189  | real   |
 | ERRDIR                            | src/core/asm_port_core.cpp                | 220  | real   |
 | ERROR                             | src/core/asm_port_core.cpp                | 677  | real   |
@@ -91,12 +91,12 @@
 | EXECUTE_STATEMENT_1               | src/core/asm_port_control_flow.cpp        | 753  | real   |
 | EXP                               | src/core/asm_port_unfnc.cpp               | 93   | stub   |
 | FADD                              | src/core/asm_port_control_flow.cpp        | 135  | stub   |
-| FADDT                             | src/core/asm_port_mathtbl.cpp             | 24   | stub   |
+| FADDT                             | src/core/asm_port_mathtbl.cpp             | 26   | stub   |
 | FAE_1                             | src/core/asm_port_core.cpp                | 306  | stub   |
 | FALSE                             | src/core/asm_port_core.cpp                | 496  | real   |
 | FCOMP                             | src/core/asm_port_core.cpp                | 1231 | stub   |
 | FCOMP2                            | src/core/asm_port_control_flow.cpp        | 138  | stub   |
-| FDIVT                             | src/core/asm_port_mathtbl.cpp             | 27   | stub   |
+| FDIVT                             | src/core/asm_port_mathtbl.cpp             | 29   | stub   |
 | FINDATA                           | src/core/asm_port_input.cpp               | 51   | stub   |
 | FIND_ARRAY_ELEMENT                | src/core/asm_port_core.cpp                | 383  | stub   |
 | FIND_HIGHEST_STRING               | src/core/asm_port_strlt2.cpp              | 276  | real   |
@@ -107,14 +107,14 @@
 | FLASH_Handler                     | src/core/asm_port_token_address_table.cpp | 113  | real   |
 | FLOAT                             | src/core/asm_port_core.cpp                | 1076 | stub   |
 | FLOAT_1                           | src/core/asm_port_core.cpp                | 1068 | real   |
-| FMULTT                            | src/core/asm_port_mathtbl.cpp             | 26   | stub   |
+| FMULTT                            | src/core/asm_port_mathtbl.cpp             | 28   | stub   |
 | FNCDATA                           | src/core/asm_port_core.cpp                | 1047 | stub   |
 | FNC\_                             | src/core/asm_port_core.cpp                | 901  | real   |
 | FNDLIN                            | src/core/asm_port_statements.cpp          | 667  | real   |
 | FOR                               | src/core/asm_port_control_flow.cpp        | 468  | real   |
 | FOUT                              | src/core/asm_port_print.cpp               | 63   | stub   |
 | FOUT_1                            | src/core/asm_port_strlit.cpp              | 21   | stub   |
-| FPWRT                             | src/core/asm_port_mathtbl.cpp             | 28   | stub   |
+| FPWRT                             | src/core/asm_port_mathtbl.cpp             | 30   | stub   |
 | FRE                               | src/core/asm_port_core.cpp                | 862  | real   |
 | FREFAC                            | src/core/asm_port_strlt2.cpp              | 512  | real   |
 | FRESTR                            | src/core/asm_port_strlt2.cpp              | 504  | real   |
@@ -127,7 +127,7 @@
 | FRM_ELEMENT                       | src/core/asm_port_strlt2.cpp              | 199  | stub   |
 | FRM_STACK_2                       | src/core/asm_port_control_flow.cpp        | 118  | stub   |
 | FRM_STACK_3                       | src/core/asm_port_control_flow.cpp        | 122  | stub   |
-| FSUBT                             | src/core/asm_port_mathtbl.cpp             | 25   | stub   |
+| FSUBT                             | src/core/asm_port_mathtbl.cpp             | 27   | stub   |
 | FUNCT                             | src/core/asm_port_core.cpp                | 984  | stub   |
 | GARBAG                            | src/core/asm_port_reason.cpp              | 14   | stub   |
 | GARBAG                            | src/core/asm_port_strlt2.cpp              | 602  | real   |
@@ -225,7 +225,7 @@
 | MAKE_NEW_VARIABLE                 | src/core/asm_port_core.cpp                | 523  | stub   |
 | MAKINT                            | src/core/asm_port_parser.cpp              | 337  | real   |
 | MarkDirectMode                    | src/core/asm_port_core.cpp                | 77   | real   |
-| MATHTBL                           | src/core/asm_port_mathtbl.cpp             | 61   | real   |
+| MATHTBL                           | src/core/asm_port_mathtbl.cpp             | 79   | real   |
 | MEMERR                            | src/core/asm_port_chkmem.cpp              | 9    | stub   |
 | MEMERR                            | src/core/asm_port_memerr.cpp              | 8    | real   |
 | MEMERR                            | src/core/asm_port_reason.cpp              | 19   | stub   |
@@ -262,7 +262,7 @@
 | NAMOK                             | src/core/asm_port_parser.cpp              | 389  | real   |
 | NEG32768                          | src/core/asm_port_parser.cpp              | 324  | real   |
 | NEGATE                            | src/core/asm_port_print.cpp               | 288  | real   |
-| NEGOP                             | src/core/asm_port_mathtbl.cpp             | 38   | real   |
+| NEGOP                             | src/core/asm_port_mathtbl.cpp             | 40   | real   |
 | NEW                               | src/core/asm_port_statements.cpp          | 138  | real   |
 | NEWSTT                            | src/core/asm_port_control_flow.cpp        | 638  | real   |
 | NEW_Handler                       | src/core/asm_port_token_address_table.cpp | 130  | real   |
@@ -281,7 +281,7 @@
 | ONERR_Handler                     | src/core/asm_port_token_address_table.cpp | 118  | real   |
 | ONGOTO                            | src/core/asm_port_control_flow.cpp        | 833  | real   |
 | OR                                | src/core/asm_port_core.cpp                | 462  | real   |
-| OR_op                             | src/core/asm_port_mathtbl.cpp             | 30   | real   |
+| OR_op                             | src/core/asm_port_mathtbl.cpp             | 32   | real   |
 | OUTDO                             | src/platform/asm_port_outdo.cpp           | 34   | real   |
 | OUTQUES                           | src/platform/asm_port_outdo.cpp           | 70   | real   |
 | OUTSP                             | src/platform/asm_port_outdo.cpp           | 62   | real   |

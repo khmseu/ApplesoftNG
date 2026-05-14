@@ -16,6 +16,8 @@ namespace applesoft::asm_port {
 
 void OR();
 void RELOPS();
+void SNGFLT(std::uint8_t value);
+void ANDOP();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for math operator handlers not yet ported.
@@ -52,7 +54,23 @@ void NEGOP() {
     variables().writeByte(kFAC_SIGN, static_cast<std::uint8_t>(sign ^ 0xffu));
 }
 
-static void EQUOP()  {} // TODO(asm-port): EQUOP  $D0...208...=
+void EQUOP() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: EQUOP (inclusive) .. FN_ (exclusive)
+    // Name normalization: none (assembler label EQUOP kept verbatim).
+    //
+    // Tests whether FAC == 0.  In the Applesoft float format the exponent byte
+    // is stored at ZP_FAC ($9D); a zero exponent means the value is exactly 0.0.
+    // Returns FAC = 1.0 (true) when the operand is zero, 0.0 (false) otherwise.
+    // Used both as the "=" operator handler (via MEQUU table entry) and as the
+    // implementation of the NOT pseudo-function (via NOT_ -> EQUL -> EQUOP).
+
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+
+    const std::uint8_t facExponent = variables_const().readByte(kFAC);
+    SNGFLT(facExponent == 0u ? static_cast<std::uint8_t>(1u)
+                             : static_cast<std::uint8_t>(0u));
+}
 
 // ---------------------------------------------------------------------------
 // Math operator table: precedence + handler for tokens $C8-$D1.
