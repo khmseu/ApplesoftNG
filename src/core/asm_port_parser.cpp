@@ -223,8 +223,57 @@ std::uint8_t COMBYTE() {
     return GETBYT();
 }
 
-// TODO(asm-port): port QINT label.
-void QINT() {}
+void QINT() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: QINT (inclusive) .. INT (exclusive)
+    // Name normalization: none (assembler label QINT kept verbatim).
+    //
+    // QINT converts the unpacked FAC mantissa into a signed 32-bit integer
+    // in FAC+1..FAC+4 by arithmetic right-shifting according to the exponent.
+    // The five-byte FAC is treated as one logical fixed-point value here rather
+    // than re-porting the ROM's bytewise shifter helpers separately.
+
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+
+    const std::uint8_t exponent = ReadZeroPageByte(kFAC);
+    if (exponent == 0u) {
+        WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u), 0u);
+        WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u), 0u);
+        WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u), 0u);
+        WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u), 0u);
+        return;
+    }
+
+    const std::uint32_t mantissa =
+        (static_cast<std::uint32_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u))) << 24u) |
+        (static_cast<std::uint32_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u))) << 16u) |
+        (static_cast<std::uint32_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u))) << 8u) |
+        static_cast<std::uint32_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u)));
+
+    const bool isNegative = (ReadZeroPageByte(kFAC_SIGN) & 0x80u) != 0u;
+    std::int64_t signedMantissa = static_cast<std::int64_t>(mantissa);
+    if (isNegative) {
+        signedMantissa = -signedMantissa;
+        WriteZeroPageByte(ApplesoftVariables::ZP_SHIFT_SIGN_EXT, 0xffu);
+    }
+
+    const std::uint8_t shiftCount = static_cast<std::uint8_t>(0xa0u - exponent);
+    std::int32_t integerValue;
+    if (shiftCount >= 32u) {
+        integerValue = isNegative ? static_cast<std::int32_t>(-1) : static_cast<std::int32_t>(0);
+    } else {
+        integerValue = static_cast<std::int32_t>(signedMantissa >> shiftCount);
+    }
+
+    const std::uint32_t packedInteger = static_cast<std::uint32_t>(integerValue);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u), static_cast<std::uint8_t>(packedInteger >> 24u));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u), static_cast<std::uint8_t>(packedInteger >> 16u));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u), static_cast<std::uint8_t>(packedInteger >> 8u));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u), static_cast<std::uint8_t>(packedInteger & 0xffu));
+
+    WriteZeroPageByte(ApplesoftVariables::ZP_SHIFT_SIGN_EXT, 0u);
+}
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: GENERIC_CHRGET (inclusive) .. GENERIC_END (exclusive)
