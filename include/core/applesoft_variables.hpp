@@ -31,8 +31,8 @@ public:
     static constexpr std::uint8_t ZP_MON_A1 = 0x3c;
     static constexpr std::uint8_t ZP_MON_A2 = 0x3e;
     static constexpr std::uint8_t ZP_LINNUM = 0x50;
-    static constexpr std::uint8_t ZP_RNDL = 0x4e;
-    static constexpr std::uint8_t ZP_RNDH = 0x4f;
+    static constexpr std::uint8_t ZP_MON_RNDL = 0x4e;
+    static constexpr std::uint8_t ZP_MON_RNDH = 0x4f;
     static constexpr std::uint8_t ZP_TEMPPT = 0x52;
     static constexpr std::uint8_t ZP_LASTPT = 0x53;
     static constexpr std::uint8_t ZP_TEMPST = 0x55;

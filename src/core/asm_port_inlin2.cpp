@@ -37,8 +37,8 @@ std::uint8_t MON_RDKEY() {
     // Name normalization: monitor label RDKEY mapped to MON_RDKEY in C++.
 
     constexpr std::uint8_t kMON_BASL = ApplesoftVariables::ZP_MON_BASL;
-    constexpr std::uint8_t kMON_RNDL = ApplesoftVariables::ZP_RNDL;
-    constexpr std::uint8_t kMON_RNDH = ApplesoftVariables::ZP_RNDH;
+    constexpr std::uint8_t kMON_RNDL = ApplesoftVariables::ZP_MON_RNDL;
+    constexpr std::uint8_t kMON_RNDH = ApplesoftVariables::ZP_MON_RNDH;
 
     // RDKEY prologue: fetch cursor row/column source char through ($28),Y,
     // then rewrite it in flashing form while waiting for input.
