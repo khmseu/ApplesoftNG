@@ -95,7 +95,7 @@ void ENDX_impl(bool shouldPrintBreak);
 
 namespace {
 
-constexpr std::uint16_t kStepAddress = 0x07afu;
+constexpr std::uint16_t kStepLabelAddress = 0x07afu;
 
 std::uint8_t readStackByteAt(std::uint8_t x, std::uint8_t plus) {
     const std::uint8_t offset = static_cast<std::uint8_t>(x + plus);
@@ -107,17 +107,18 @@ void ApplyFacSign() {
     constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
 
     const std::uint8_t facSign = ReadZeroPageByte(kFAC_SIGN);
-    const std::uint8_t facMantissaHigh =
-        ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u));
+    const std::uint8_t facMantissaHigh = ReadZeroPageByte(kFAC + 1u);
+    // ROM sequence at $079C: LDA FAC_SIGN / ORA #$7F / AND FAC+1 / STA FAC+1.
+    // This clears bit 7 for positive values and preserves FAC+1 when FAC_SIGN is negative.
     const std::uint8_t signedMantissaHigh =
-        static_cast<std::uint8_t>(facMantissaHigh & static_cast<std::uint8_t>(facSign | 0x7fu));
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u), signedMantissaHigh);
+        static_cast<std::uint8_t>(facMantissaHigh & (facSign | 0x7fu));
+    WriteZeroPageByte(kFAC + 1u, signedMantissaHigh);
 }
 
 void SetBranchTargetToSTEP() {
     constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
 
-    WriteZeroPageWord(kINDEX, kStepAddress);
+    WriteZeroPageWord(kINDEX, kStepLabelAddress);
 }
 
 void LOAD_FAC_FROM_YA() {
@@ -165,16 +166,17 @@ void FRM_STACK_3() {
 
     ROUND_FAC();
 
-    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u)));
-    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u)));
-    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u)));
-    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u)));
+    PushByteToStack(ReadZeroPageByte(kFAC + 4u));
+    PushByteToStack(ReadZeroPageByte(kFAC + 3u));
+    PushByteToStack(ReadZeroPageByte(kFAC + 2u));
+    PushByteToStack(ReadZeroPageByte(kFAC + 1u));
     PushByteToStack(ReadZeroPageByte(kFAC));
 
     const std::uint16_t branchTarget = ReadZeroPageWord(kINDEX);
-    if (branchTarget == kStepAddress) {
+    if (branchTarget == kStepLabelAddress) {
         STEP();
     }
+    // Other indirect targets used by FRM_STACK_3 are not ported yet; return to caller.
 }
 
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
