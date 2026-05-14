@@ -18,6 +18,8 @@ public:
     static constexpr std::uint16_t ADDR_SW_LORES = 0xc056u;
     static constexpr std::uint16_t ADDR_SW_HIRES = 0xc057u;
     static constexpr std::uint16_t ADDR_SW_TXTCLR = 0xc050u;
+    static constexpr std::uint16_t ADDR_PADDLE_0 = 0xc064u;
+    static constexpr std::uint16_t ADDR_PADDLE_TRIGGER = 0xc070u;
 
     std::uint8_t readByte(std::uint16_t address) const;
     void writeByte(std::uint16_t address, std::uint8_t value);

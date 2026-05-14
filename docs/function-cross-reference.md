@@ -241,7 +241,7 @@
 | MON_INPORT                        | src/core/asm_port_graphics.cpp            | 75   | stub   |
 | MON_OUTPORT                       | src/core/asm_port_graphics.cpp            | 81   | stub   |
 | MON_PLOT                          | src/core/asm_port_graphics.cpp            | 87   | stub   |
-| MON_PREAD                         | src/core/asm_port_core.cpp                | 1239 | stub   |
+| MON_PREAD                         | src/core/asm_port_core.cpp                | 1239 | real   |
 | MON_RDKEY                         | src/core/asm_port_inlin2.cpp              | 34   | real   |
 | MON_READ                          | src/core/asm_port_statements.cpp          | 937  | stub   |
 | MON_SCRN                          | src/core/asm_port_core.cpp                | 1227 | stub   |

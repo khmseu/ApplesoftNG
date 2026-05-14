@@ -1237,7 +1237,42 @@ std::int8_t CompareArgAndFacStrings() {
 }
 
 std::uint8_t MON_PREAD() {
-    return 0;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/paddles.o65.lst
+    // Labels: PREAD (inclusive) .. end of listing routine (exclusive)
+    // Name normalization: PREAD -> MON_PREAD (monitor label gets MON_ prefix).
+    //
+    // Monitor flow:
+    //   lda PTRIG        ; trigger paddle timing
+    //   ldy #$00         ; counter
+    // PREAD2:
+    //   lda PADDL0,X     ; selected paddle input
+    //   bpl RTS2D        ; return when bit 7 clears
+    //   iny              ; count while timing bit remains set
+    //   bne PREAD2       ; saturate at 255
+    //   dey
+    // RTS2D: rts
+
+    constexpr std::uint8_t kFAC_LAST = static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 4u);
+
+    // In the original monitor, paddle index is supplied in X.
+    // The current C++ calling path provides the converted operand in FAC+4.
+    const std::uint8_t paddleIndex = ReadZeroPageByte(kFAC_LAST);
+    const std::uint16_t paddleAddress = static_cast<std::uint16_t>(IOPorts::ADDR_PADDLE_0 + paddleIndex);
+
+    (void)variables_const().readByte(IOPorts::ADDR_PADDLE_TRIGGER);
+
+    std::uint8_t count = 0u;
+    for (;;) {
+        const std::uint8_t paddleValue = variables_const().readByte(paddleAddress);
+        if ((paddleValue & 0x80u) == 0u) {
+            return count;
+        }
+
+        count = static_cast<std::uint8_t>(count + 1u);
+        if (count == 0u) {
+            return 0xffu;
+        }
+    }
 }
 
 
