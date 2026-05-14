@@ -172,8 +172,15 @@ void MON_SETKBD() {
     MON_INPORT(0u);
 }
 
+void MON_COUT(std::uint8_t value);
+
 void MON_BELL() {
-    // TODO(asm-port): port BELL monitor label.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // Labels: BELL (inclusive) .. RESTORE (exclusive)
+    // Name normalization: BELL -> MON_BELL (monitor label gets MON_ prefix).
+
+    constexpr std::uint8_t kBellChar = 0x87u;
+    MON_COUT(kBellChar);
 }
 
 void MON_LFB60() {
