@@ -101,11 +101,22 @@ std::uint8_t readStackByteAt(std::uint8_t x, std::uint8_t plus) {
 }
 
 void ApplyFacSign() {
-    // TODO(asm-port): update FAC+1 with the signed value produced by FRMNUM.
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+
+    const std::uint8_t facSign = ReadZeroPageByte(kFAC_SIGN);
+    const std::uint8_t facMantissaHigh =
+        ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u));
+    const std::uint8_t signedMantissaHigh =
+        static_cast<std::uint8_t>(facMantissaHigh & static_cast<std::uint8_t>(facSign | 0x7fu));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u), signedMantissaHigh);
 }
 
 void SetBranchTargetToSTEP() {
-    // TODO(asm-port): set the indirect jump target used by FRM_STACK_3 to STEP.
+    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
+    constexpr std::uint16_t kStepAddress = 0x07afu;
+
+    WriteZeroPageWord(kINDEX, kStepAddress);
 }
 
 void LOAD_FAC_FROM_YA() {
@@ -145,7 +156,25 @@ void FRM_STACK_2() {
 }
 
 void FRM_STACK_3() {
-    // TODO(asm-port): consume the current frame data and continue at STEP.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: FRM_STACK_3 (inclusive) .. NOTMATH (exclusive)
+    // Name normalization: none (assembler label FRM_STACK_3 kept verbatim).
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
+    constexpr std::uint16_t kStepAddress = 0x07afu;
+
+    ROUND_FAC();
+
+    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u)));
+    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u)));
+    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u)));
+    PushByteToStack(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u)));
+    PushByteToStack(ReadZeroPageByte(kFAC));
+
+    const std::uint16_t branchTarget = ReadZeroPageWord(kINDEX);
+    if (branchTarget == kStepAddress) {
+        STEP();
+    }
 }
 
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
