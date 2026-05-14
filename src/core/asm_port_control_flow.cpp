@@ -42,6 +42,7 @@ void TRACE_();
 void FRMNUM();
 void FRMEVL();
 void CHKNUM();
+void FADD();
 void PushForPntFrame();
 void PushTextPointerAddress();
 void PushCurrentLineNumber();
@@ -201,9 +202,6 @@ constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
 std::uint16_t readStackWordAt(std::uint8_t x, std::uint8_t lowOffset, std::uint8_t highOffset) {
     return ApplesoftVariables::makeWord(readStackByteAt(x, lowOffset), readStackByteAt(x, highOffset));
 }
-
-// TODO(asm-port): port FADD label.
-void FADD() {}
 
 // TODO(asm-port): decide branch condition after comparing FOR value with end value.
 bool NEXT_shouldTerminateLoop() {
