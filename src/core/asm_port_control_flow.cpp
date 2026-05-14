@@ -98,9 +98,11 @@ namespace {
 
 constexpr std::uint16_t kStepLabelAddress = 0x07afu;
 constexpr std::uint16_t kConOneScratchAddress = 0x03fbu;
+constexpr std::uint8_t kPackedFloatByteCount = 5u;
+constexpr std::uint8_t kStepValueOffsetInForFrame = 4u;
 // Applesoft packed float for 1.0:
 // exponent=0x81 (biased exponent for 2^0), then sign-packed high mantissa, mid mantissa, low mantissa, extension byte.
-constexpr std::uint8_t kConOnePacked[5] = {0x81u, 0x00u, 0x00u, 0x00u, 0x00u};
+constexpr std::uint8_t kConOnePacked[kPackedFloatByteCount] = {0x81u, 0x00u, 0x00u, 0x00u, 0x00u};
 
 std::uint8_t readStackByteAt(std::uint8_t x, std::uint8_t plus) {
     const std::uint8_t offset = static_cast<std::uint8_t>(x + plus);
@@ -143,7 +145,8 @@ void LOAD_FAC_FROM_YA() {
     WriteZeroPageByte(kFAC + 2u, source.read(2u));
 
     const std::uint8_t signPackedMantissa = source.read(1u);
-    // Applesoft stores FAC_SIGN as this full sign-packed byte from packed float byte #1.
+    // FAC_SIGN stores packed byte #1 (bit 7 is sign, remaining bits are high mantissa bits).
+    // FAC+1 then reuses mantissa bits with bit 7 forced set by OR #$80 to restore normalized form.
     WriteZeroPageByte(kFAC_SIGN, signPackedMantissa);
     WriteZeroPageByte(kFAC + 1u, static_cast<std::uint8_t>(signPackedMantissa | 0x80u));
     WriteZeroPageByte(kFAC, source.read(0u));
@@ -660,7 +663,7 @@ void NEXT() {
     // Stack offsets follow ROM comments; helpers are placeholders until stack
     // memory and FAC math ports are fully wired.
     WriteZeroPageWord(ApplesoftVariables::ZP_INDEX,
-                      static_cast<std::uint16_t>(0x0100u + add_u8(gtforpntResult.x, 4u)));
+                      static_cast<std::uint16_t>(0x0100u + add_u8(gtforpntResult.x, kStepValueOffsetInForFrame)));
     LOAD_FAC_FROM_YA();
     WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, readStackByteAt(gtforpntResult.x, 9u)); // FAC_SIGN
     WriteZeroPageWord(kFORPNT, ReadZeroPageWord(kFORPNT));
@@ -739,7 +742,7 @@ void RETURN() {
 void STEP() {
     constexpr std::uint8_t kTOKEN_STEP = 0xc7u;
 
-    for (std::uint8_t i = 0; i < 5u; ++i) {
+    for (std::uint8_t i = 0; i < kPackedFloatByteCount; ++i) {
         WriteProgramByte(static_cast<std::uint16_t>(kConOneScratchAddress + i), kConOnePacked[i]);
     }
     WriteZeroPageWord(ApplesoftVariables::ZP_INDEX, kConOneScratchAddress);
