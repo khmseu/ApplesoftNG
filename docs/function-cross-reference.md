@@ -236,7 +236,7 @@
 | MKINT                             | src/core/asm_port_parser.cpp              | 372  | real   |
 | MON_BELL                          | src/core/asm_port_core.cpp                | 189  | real   |
 | MON_COUT                          | src/core/asm_port_core.cpp                | 212  | real   |
-| MON_COUT                          | src/platform/asm_port_outdo.cpp           | 17   | stub   |
+| MON_COUT                          | src/platform/asm_port_outdo.cpp           | 17   | real   |
 | MON_CROUT                         | src/core/asm_port_core.cpp                | 202  | real   |
 | MON_GETLN                         | src/platform/asm_port_getln.cpp           | 37   | stub   |
 | MON_HLINE                         | src/core/asm_port_graphics.cpp            | 193  | real   |
@@ -264,7 +264,7 @@
 | MON_SETVID                        | src/core/asm_port_core.cpp                | 171  | real   |
 | MON_TABV                          | src/core/asm_port_graphics.cpp            | 70   | real   |
 | MON_VLINE                         | src/core/asm_port_graphics.cpp            | 210  | real   |
-| MON_WAIT                          | src/platform/asm_port_outdo.cpp           | 25   | stub   |
+| MON_WAIT                          | src/platform/asm_port_outdo.cpp           | 52   | stub   |
 | MON_WRITE                         | src/core/asm_port_statements.cpp          | 933  | stub   |
 | MOVE_HIGHEST_STRING_TO_TOP        | src/core/asm_port_strlt2.cpp              | 398  | real   |
 | MOVINS                            | src/core/asm_port_strlt2.cpp              | 622  | real   |
@@ -297,9 +297,9 @@
 | ONGOTO                            | src/core/asm_port_control_flow.cpp        | 833  | real   |
 | OR                                | src/core/asm_port_core.cpp                | 711  | real   |
 | OR_op                             | src/core/asm_port_mathtbl.cpp             | 32   | real   |
-| OUTDO                             | src/platform/asm_port_outdo.cpp           | 34   | real   |
-| OUTQUES                           | src/platform/asm_port_outdo.cpp           | 70   | real   |
-| OUTSP                             | src/platform/asm_port_outdo.cpp           | 62   | real   |
+| OUTDO                             | src/platform/asm_port_outdo.cpp           | 61   | real   |
+| OUTQUES                           | src/platform/asm_port_outdo.cpp           | 97   | real   |
+| OUTSP                             | src/platform/asm_port_outdo.cpp           | 89   | real   |
 | PARCHK                            | src/core/asm_port_parser.cpp              | 93   | stub   |
 | parseNumericInputAndStore         | src/core/asm_port_input.cpp               | 48   | stub   |
 | parseStringInputAndStore          | src/core/asm_port_input.cpp               | 45   | stub   |
