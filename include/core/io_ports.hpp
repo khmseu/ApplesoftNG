@@ -17,9 +17,14 @@ public:
     static constexpr std::uint16_t ADDR_SW_HISCR = 0xc055u;
     static constexpr std::uint16_t ADDR_SW_LORES = 0xc056u;
     static constexpr std::uint16_t ADDR_SW_HIRES = 0xc057u;
+    static constexpr std::uint16_t ADDR_SW_AN0 = 0xc058u;
+    static constexpr std::uint16_t ADDR_SW_AN1 = 0xc05au;
+    static constexpr std::uint16_t ADDR_SW_AN2 = 0xc05du;
+    static constexpr std::uint16_t ADDR_SW_AN3 = 0xc05fu;
     static constexpr std::uint16_t ADDR_SW_TXTCLR = 0xc050u;
     static constexpr std::uint16_t ADDR_PADDLE_0 = 0xc064u;
     static constexpr std::uint16_t ADDR_PADDLE_TRIGGER = 0xc070u;
+    static constexpr std::uint16_t ADDR_ROM_SIGNATURE = 0xcfffu;
 
     std::uint8_t readByte(std::uint16_t address) const;
     void writeByte(std::uint16_t address, std::uint8_t value);

@@ -15,6 +15,8 @@ namespace applesoft::asm_port {
 
 void SYNERR();
 extern std::uint8_t gJerErrorCode;
+void MON_M6502VEC();
+void MON_RESET2();
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
     return static_cast<std::uint8_t>(lhs + rhs);
 }
@@ -136,6 +138,147 @@ void GENERIC_END() {
     COLD_START();
 }
 
+namespace {
+
+void MON_SETNORM() {
+    // TODO(asm-port): port SETNORM monitor label.
+}
+
+void MON_INIT() {
+    // TODO(asm-port): port INIT monitor label.
+}
+
+void MON_SETVID() {
+    // TODO(asm-port): port SETVID monitor label.
+}
+
+void MON_SETKBD() {
+    // TODO(asm-port): port SETKBD monitor label.
+}
+
+void MON_BELL() {
+    // TODO(asm-port): port BELL monitor label.
+}
+
+void MON_LFB60() {
+    // TODO(asm-port): port LFB60 monitor label.
+}
+
+bool MON_JumpByAddress(std::uint16_t target) {
+    // Keep reset-range control flow explicit while most monitor entrypoints
+    // remain unported.
+    if (target == 0xe000u) {
+        COLD_START();
+        return true;
+    }
+
+    // TODO(asm-port): dispatch remaining monitor jump targets.
+    (void)target;
+    return false;
+}
+
+} // namespace
+
+void MON_RESET2() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
+    // Labels: RESET2 (inclusive) .. REGDSP (exclusive)
+    // Name normalization: RESET2 -> MON_RESET2 (monitor label gets MON_ prefix).
+    //
+    // One-sentence behavior summary: initialize monitor I/O modes, validate
+    // bootstrap sentinel bytes, then either jump through warm vectors or scan
+    // ROM pages for a signature and jump to the matched page entrypoint.
+
+    constexpr std::uint16_t kWarmVector = ApplesoftVariables::ADDR_MON_DEBUG_WARM_VECTOR;
+    constexpr std::uint16_t kSentinel1 = ApplesoftVariables::ADDR_MON_DEBUG_SENTINEL_1;
+    constexpr std::uint16_t kSentinel2 = ApplesoftVariables::ADDR_MON_DEBUG_SENTINEL_2;
+    constexpr std::uint16_t kBootstrap = ApplesoftVariables::ADDR_MON_DEBUG_BOOTSTRAP;
+    constexpr std::uint16_t kScanPageMirror = ApplesoftVariables::ADDR_MON_DEBUG_SCAN_PAGE;
+
+    constexpr std::uint16_t kJumpToBasic = 0xe000u;
+    constexpr std::uint8_t kWarmEnable = 0x03u;
+    constexpr std::uint8_t kSentinelCheckMask = 0xa5u;
+    constexpr std::uint8_t kSentinelExpected = 0xe0u;
+
+    // Signature bytes used by LFAA6/LFABA/LFAC7 scan path.
+    constexpr std::array<std::uint8_t, 7> kLFB01 = {0x45u, 0x20u, 0xffu, 0x00u, 0xffu, 0x03u, 0xffu};
+    constexpr std::array<std::uint8_t, 6> kLFAFC = {0x00u, 0x00u, 0xfau, 0x59u, 0xe0u, 0x00u};
+
+    // RESET2 prologue.
+    MON_SETNORM();
+    MON_INIT();
+    MON_SETVID();
+    MON_SETKBD();
+
+    // Hardware-side effect reads routed through the I/O companion class.
+    (void)variables_const().readByte(IOPorts::ADDR_SW_AN0);
+    (void)variables_const().readByte(IOPorts::ADDR_SW_AN1);
+    (void)variables_const().readByte(IOPorts::ADDR_SW_AN2);
+    (void)variables_const().readByte(IOPorts::ADDR_SW_AN3);
+    (void)variables_const().readByte(IOPorts::ADDR_ROM_SIGNATURE);
+    (void)variables_const().readByte(IOPorts::ADDR_KEYBOARD_STROBE);
+
+    MON_BELL();
+
+    const std::uint8_t sentinel1 = variables_const().readByte(kSentinel1);
+    const std::uint8_t sentinel2 = variables_const().readByte(kSentinel2);
+    const std::uint8_t warmState = variables_const().readByte(kWarmVector);
+
+    if (static_cast<std::uint8_t>(sentinel1 ^ kSentinelCheckMask) == sentinel2 &&
+        warmState == 0u &&
+        sentinel1 == kSentinelExpected) {
+        variables().writeByte(kWarmVector, kWarmEnable);
+        (void)MON_JumpByAddress(kJumpToBasic);
+        return;
+    }
+
+    // LFAA3 path: jump through warm vector ($03F2/$03F3).
+    if (warmState != 0u) {
+        const std::uint16_t warmTarget = variables_const().readWord(kWarmVector);
+        (void)MON_JumpByAddress(warmTarget);
+        return;
+    }
+
+    // LFAA6 path: install bootstrap bytes, then scan descending pages.
+    MON_LFB60();
+
+    // LFAAB loop copies indices 5..1 from LFAFC to $03F4..$03F0.
+    for (std::uint8_t x = 5u; x != 0u; --x) {
+        variables().writeByte(static_cast<std::uint16_t>(kBootstrap + x), kLFAFC[x]);
+    }
+
+    // Unified pointer for $00/$01 pair used by LFABA/LFAC7 and jmp($00).
+    std::uint16_t scanPtr = 0xc800u;
+    while (true) {
+        scanPtr = static_cast<std::uint16_t>(scanPtr - 0x0100u);
+
+        const std::uint8_t page = ApplesoftVariables::highByte(scanPtr);
+        if (page == 0xc0u) {
+            variables().writeByte(kWarmVector, kWarmEnable);
+            (void)MON_JumpByAddress(kJumpToBasic);
+            return;
+        }
+
+        variables().writeByte(kScanPageMirror, page);
+
+        bool match = true;
+        for (std::int8_t y = 7; y >= 0; y -= 2) {
+            const std::uint8_t lhs = variables_const().readByte(static_cast<std::uint16_t>(scanPtr + static_cast<std::uint16_t>(y)));
+            const std::uint8_t rhs = kLFB01[static_cast<std::size_t>(y)];
+            if (lhs != rhs) {
+                match = false;
+                break;
+            }
+        }
+
+        if (!match) {
+            continue;
+        }
+
+        (void)MON_JumpByAddress(scanPtr);
+        return;
+    }
+}
+
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: COLD_START (inclusive) .. CALL (exclusive)
 // Name normalization: none (assembler label COLD_START kept verbatim).
@@ -172,6 +315,7 @@ void COLD_START() {
     WriteZeroPageByte(ApplesoftVariables::ZP_TRCFLG, 0u);
     WriteZeroPageByte(ApplesoftVariables::ZP_SHIFT_SIGN_EXT, 0u);
     WriteZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_LASTPT + 1u), 0u);
+    MON_M6502VEC();
     PushByteToStack(0u);
     WriteZeroPageByte(ApplesoftVariables::ZP_DSCLEN, 3u);
 
@@ -1253,6 +1397,29 @@ std::uint8_t MON_SCRN(std::uint8_t row, std::uint8_t column) {
         value = static_cast<std::uint8_t>(value >> 4u);
     }
     return static_cast<std::uint8_t>(value & 0x0fu);
+}
+
+void MON_M6502VEC() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/vectors.o65.lst
+    // Labels: M6502VEC (inclusive) .. end of listing (exclusive)
+    // Name normalization: M6502VEC -> MON_M6502VEC (monitor label gets MON_ prefix).
+    //
+    // Materialize monitor vectors table bytes in emulated memory:
+    //   $FFFA: .word $03FB  (NMI vector)
+    //   $FFFC: .word RESET2 (relocation placeholder in slim listing -> $0000)
+    //   $FFFE: .word IRQ    (relocation placeholder in slim listing -> $0000)
+
+    constexpr std::uint16_t kNmiVectorAddress = 0xfffau;
+    constexpr std::uint16_t kResetVectorAddress = 0xfffcu;
+    constexpr std::uint16_t kIrqVectorAddress = 0xfffeu;
+
+    constexpr std::uint16_t kNmiVectorTarget = 0x03fbu;
+    constexpr std::uint16_t kResetVectorTarget = 0x0000u;
+    constexpr std::uint16_t kIrqVectorTarget = 0x0000u;
+
+    variables().writeWord(kNmiVectorAddress, kNmiVectorTarget);
+    variables().writeWord(kResetVectorAddress, kResetVectorTarget);
+    variables().writeWord(kIrqVectorAddress, kIrqVectorTarget);
 }
 
 std::int8_t FCOMP(std::uint16_t /*argAddress*/) {

@@ -101,6 +101,12 @@ public:
     static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_3 = 0x01fdu;
     static constexpr std::uint16_t ADDR_INPUT_BUFFER_MINUS_4 = 0x01fcu;
     static constexpr std::uint16_t ADDR_INPUT_BUFFER = 0x0200u;
+    static constexpr std::uint16_t ADDR_MON_DEBUG_BRK_VECTOR = 0x03f0u;
+    static constexpr std::uint16_t ADDR_MON_DEBUG_WARM_VECTOR = 0x03f2u;
+    static constexpr std::uint16_t ADDR_MON_DEBUG_SENTINEL_1 = 0x03f3u;
+    static constexpr std::uint16_t ADDR_MON_DEBUG_SENTINEL_2 = 0x03f4u;
+    static constexpr std::uint16_t ADDR_MON_DEBUG_BOOTSTRAP = 0x03efu;
+    static constexpr std::uint16_t ADDR_MON_DEBUG_SCAN_PAGE = 0x07f8u;
 
     class ConstBytePointer {
     public:
