@@ -1,6 +1,7 @@
 #include "core/asm_port_error.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_token_name_table.hpp"
+#include "core/asm_port_clear.hpp"
 
 #include <cstdint>
 #include <optional>
@@ -100,39 +101,9 @@ void SCRTCH_impl() {
 }
 
 bool SETPTRS_impl() {
-    STXTPT_impl();
-    return CLEAR_impl();
-}
-
-bool CLEAR_impl() {
-    if (!IsStatementEndOfParsedInput()) {
-        return false;
-    }
-
-    CLEARC_impl();
+    STXTPT();
+    CLEAR();
     return true;
-}
-
-void CLEARC_impl() {
-    constexpr std::uint8_t kMEMSIZ = ApplesoftVariables::ZP_MEMSIZ;
-    constexpr std::uint8_t kFRETOP = ApplesoftVariables::ZP_FRETOP;
-    constexpr std::uint8_t kVARTAB = ApplesoftVariables::ZP_VARTAB;
-    constexpr std::uint8_t kARYTAB = ApplesoftVariables::ZP_ARYTAB;
-    constexpr std::uint8_t kSTREND = ApplesoftVariables::ZP_STREND;
-
-    WriteZeroPageWord(kFRETOP, ReadZeroPageWord(kMEMSIZ));
-    WriteZeroPageWord(kARYTAB, ReadZeroPageWord(kVARTAB));
-    WriteZeroPageWord(kSTREND, ReadZeroPageWord(kVARTAB));
-    RESTORE();
-    STKINI();
-}
-
-void STXTPT_impl() {
-    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-
-    const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
-    WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(textTable - 1u));
 }
 
 bool NEW() {
@@ -143,20 +114,8 @@ bool SETPTRS() {
     return SETPTRS_impl();
 }
 
-bool CLEAR() {
-    return CLEAR_impl();
-}
-
 void SCRTCH() {
     SCRTCH_impl();
-}
-
-void CLEARC() {
-    CLEARC_impl();
-}
-
-void STXTPT() {
-    STXTPT_impl();
 }
 
 void RUN() {

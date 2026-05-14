@@ -47,6 +47,7 @@ set(SOURCES
     src/core/asm_port_parser.cpp
     src/core/asm_port_print.cpp
     src/core/asm_port_stack.cpp
+    src/core/asm_port_clear.cpp
     src/core/asm_port_statements.cpp
 )
 

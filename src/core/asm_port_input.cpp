@@ -9,6 +9,7 @@
 #include "core/asm_port_input.hpp"
 #include "core/asm_port_inlin.hpp"
 #include "core/asm_port_inlin2.hpp"
+#include "core/asm_port_clear.hpp"
 
 #include <cstdint>
 #include <string_view>
@@ -20,7 +21,6 @@ void HANDLERR();
 void SYNERR();
 void ERRDIR();
 void SYNCHR(std::uint8_t expected);
-void SETDA(std::uint16_t data_ptr);
 void SetPendingErrorCode(std::uint8_t errorCode);
 std::uint8_t PopByteFromStack();
 

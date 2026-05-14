@@ -2,6 +2,8 @@
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_error_handling.hpp"
+#include "core/asm_port_chrget.hpp"
+#include "core/asm_port_clear.hpp"
 #include <cstdint>
 
 namespace applesoft::asm_port {
@@ -10,7 +12,6 @@ std::uint8_t ReadZeroPageByte(std::uint8_t address);
 std::uint16_t ReadZeroPageWord(std::uint8_t address);
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
-#include "core/asm_port_chrget.hpp"
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void SYNERR();
 void FRMEVL();
@@ -23,7 +24,6 @@ void PTRGET4();
 std::uint8_t COMBYTE();
 void GETADR();
 void IQERR();
-void SETDA(std::uint16_t dataPointer);
 
 void SYNCHR(std::uint8_t expected);
 void CHKCLS();
@@ -310,18 +310,6 @@ bool IsStatementEndOfParsedInput() {
     // STOP/END/CONT continue only when parser is at end-of-statement; model the
     // zero-flag check via the current parsed character at TXTPTR.
     return CHRGOT() == 0u;
-}
-
-void RESTORE() {
-    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
-    const std::uint16_t textTable = ReadZeroPageWord(kTXTTAB);
-    const std::uint16_t dataPointer = static_cast<std::uint16_t>(textTable - 1u);
-    SETDA(dataPointer);
-}
-
-void SETDA(std::uint16_t dataPointer) {
-    constexpr std::uint8_t kDATPTR = ApplesoftVariables::ZP_DATPTR;
-    WriteZeroPageWord(kDATPTR, dataPointer);
 }
 
 bool CHKVAL(std::uint8_t savedValTyp) {
