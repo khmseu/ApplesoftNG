@@ -85,6 +85,7 @@ void PARSE_INPUT_LINE();
 void HandleNumberedLine();
 void CRDO();
 void SETFOR();
+void ROUND_FAC();
 
 constexpr std::uint8_t kTokenBase = 0x80u;
 constexpr std::uint8_t RESTART_PROMPT = ']' | 0x80u;
@@ -200,7 +201,29 @@ bool isDigit(std::uint8_t ch) {
 }  // namespace
 
 void SETFOR() {
-    // TODO(asm-port): port SETFOR label.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: SETFOR (inclusive) .. COPY_ARG_TO_FAC (exclusive)
+    // Name normalization: none (assembler label SETFOR kept verbatim).
+    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+    constexpr std::uint8_t kFAC_EXTENSION = ApplesoftVariables::ZP_FAC_EXTENSION;
+
+    ROUND_FAC();
+
+    const ProgramPointer forValue{ReadZeroPageWord(kFORPNT)};
+    forValue.write(ReadZeroPageByte(kFAC), 0u);
+
+    const std::uint8_t facPlus1 = ReadZeroPageByte(add_u8(kFAC, 1u));
+    const std::uint8_t facSign = ReadZeroPageByte(kFAC_SIGN);
+    const std::uint8_t packedFacPlus1 = static_cast<std::uint8_t>(facPlus1 &
+                                                                   static_cast<std::uint8_t>(facSign | 0x7fu));
+    forValue.write(packedFacPlus1, 1u);
+    forValue.write(ReadZeroPageByte(add_u8(kFAC, 2u)), 2u);
+    forValue.write(ReadZeroPageByte(add_u8(kFAC, 3u)), 3u);
+    forValue.write(ReadZeroPageByte(add_u8(kFAC, 4u)), 4u);
+
+    WriteZeroPageByte(kFAC_EXTENSION, 0u);
 }
 
 std::uint8_t ReadProgramByte(std::uint16_t address);
