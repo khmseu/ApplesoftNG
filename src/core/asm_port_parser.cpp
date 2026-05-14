@@ -26,6 +26,10 @@ void GETADR();
 void IQERR();
 void SETDA(std::uint16_t dataPointer);
 
+void SYNCHR(std::uint8_t expected);
+void CHKCLS();
+void CHKOPN();
+
 void SYNCHR(std::uint8_t expected) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: SYNCHR (inclusive) .. CHKNUM (exclusive)
@@ -91,7 +95,18 @@ void FRMNUM() {
 }
 
 void PARCHK() {
-    // TODO(asm-port): parse "(expression)" - validate open paren, evaluate, validate close.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // Labels: PARCHK (inclusive) .. CHKCLS (exclusive)
+    // Name normalization: none (assembler label PARCHK kept verbatim).
+    //
+    // Validates and evaluates a parenthesized expression at TXTPTR:
+    //   jsr CHKOPN  — require '(' at current position
+    //   jsr FRMEVL  — evaluate the enclosed expression into FAC
+    //   fall-through into CHKCLS — require ')' at current position
+
+    CHKOPN();
+    FRMEVL();
+    CHKCLS();
 }
 
 void STORE_FACDB_YX_ROUNDED() {
