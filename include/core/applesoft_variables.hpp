@@ -26,6 +26,7 @@ public:
     static constexpr std::uint8_t ZP_MON_BASH = 0x29;
     static constexpr std::uint8_t ZP_MON_H2 = 0x2c;
     static constexpr std::uint8_t ZP_MON_V2 = 0x2d;
+    static constexpr std::uint8_t ZP_MON_COLOR = 0x30;
     static constexpr std::uint8_t ZP_MON_INVFLG = 0x32;
     static constexpr std::uint8_t ZP_MON_PROMPT = 0x33;
     static constexpr std::uint8_t ZP_MON_A1 = 0x3c;
@@ -162,6 +163,7 @@ public:
     std::uint8_t INPUTFLG = 0;    // $15  $00=INPUT, $40=GET, $98=READ
     std::uint8_t CPRMASK = 0;     // $16  relational comparison mask
     std::uint8_t MON_CH = 0;      // $24
+    std::uint8_t MON_COLOR = 0;   // $30
     std::uint8_t MON_PROMPT = 0;  // $33
 
     std::uint16_t MON_A1 = 0;     // $3c/$3d

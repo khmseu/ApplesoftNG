@@ -54,9 +54,16 @@ void FLASH() {
 }
 
 void MON_SETCOL(std::uint8_t color) {
-    // TODO(asm-port): port MON_SETCOL monitor handler.
-    // Placeholder to preserve COLOR statement call flow until monitor integration.
-    (void)color;
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/lores.o65.lst
+    // Labels: SETCOL (inclusive) .. SCRN (exclusive)
+    // Name normalization: SETCOL -> MON_SETCOL (monitor label gets MON_ prefix).
+
+    constexpr std::uint8_t kMON_COLOR = ApplesoftVariables::ZP_MON_COLOR;
+
+    // Monitor stores a 4-bit color and mirrors it into both nibbles (17*A mod 16).
+    const std::uint8_t nibble = static_cast<std::uint8_t>(color & 0x0fu);
+    const std::uint8_t packed = static_cast<std::uint8_t>((nibble << 4u) | nibble);
+    WriteZeroPageByte(kMON_COLOR, packed);
 }
 
 void MON_TABV(std::uint8_t row_zero_based) {

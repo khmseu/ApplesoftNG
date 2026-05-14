@@ -80,6 +80,7 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case ZP_INPUTFLG: return INPUTFLG;
     case ZP_CPRMASK: return CPRMASK;
     case ZP_MON_CH: return MON_CH;
+    case ZP_MON_COLOR: return MON_COLOR;
     case ZP_MON_PROMPT: return MON_PROMPT;
     case ZP_MON_A1: return lowByte(MON_A1);
     case ZP_MON_A1 + 1: return highByte(MON_A1);
@@ -224,6 +225,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     case ZP_INPUTFLG: INPUTFLG = value; return;
     case ZP_CPRMASK: CPRMASK = value; return;
     case ZP_MON_CH: MON_CH = value; return;
+    case ZP_MON_COLOR: MON_COLOR = value; return;
     case ZP_MON_PROMPT: MON_PROMPT = value; return;
     case ZP_MON_A1: setLowByte(MON_A1, value); return;
     case ZP_MON_A1 + 1: setHighByte(MON_A1, value); return;
