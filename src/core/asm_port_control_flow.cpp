@@ -214,11 +214,11 @@ void SETFOR() {
     const ProgramPointer forValue{ReadZeroPageWord(kFORPNT)};
     forValue.write(ReadZeroPageByte(kFAC), 0u);
 
-    const std::uint8_t facPlus1 = ReadZeroPageByte(add_u8(kFAC, 1u));
+    const std::uint8_t facMantissaHigh = ReadZeroPageByte(add_u8(kFAC, 1u));
     const std::uint8_t facSign = ReadZeroPageByte(kFAC_SIGN);
-    const std::uint8_t packedFacPlus1 = static_cast<std::uint8_t>(facPlus1 &
-                                                                   static_cast<std::uint8_t>(facSign | 0x7fu));
-    forValue.write(packedFacPlus1, 1u);
+    const std::uint8_t packedMantissaHigh = static_cast<std::uint8_t>(
+        facMantissaHigh & static_cast<std::uint8_t>(facSign | 0x7fu));
+    forValue.write(packedMantissaHigh, 1u);
     forValue.write(ReadZeroPageByte(add_u8(kFAC, 2u)), 2u);
     forValue.write(ReadZeroPageByte(add_u8(kFAC, 3u)), 3u);
     forValue.write(ReadZeroPageByte(add_u8(kFAC, 4u)), 4u);
