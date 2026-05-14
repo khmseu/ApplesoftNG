@@ -8,6 +8,7 @@
 #include "core/io_ports.hpp"
 
 #include <cstdint>
+#include <mutex>
 #include <string_view>
 
 namespace applesoft::asm_port {
@@ -98,7 +99,8 @@ namespace {
 
 constexpr std::uint16_t kStepLabelAddress = 0x07afu;
 constexpr std::uint16_t kConOneScratchAddress = 0x03fbu;
-// Applesoft packed float for 1.0: exponent, sign-packed high mantissa, mid mantissa, low mantissa, extension byte.
+// Applesoft packed float for 1.0:
+// exponent=0x81 (biased exponent for 2^0), then sign-packed high mantissa, mid mantissa, low mantissa, extension byte.
 constexpr std::uint8_t kConOnePacked[5] = {0x81u, 0x00u, 0x00u, 0x00u, 0x00u};
 
 std::uint8_t readStackByteAt(std::uint8_t x, std::uint8_t plus) {
@@ -736,14 +738,13 @@ void RETURN() {
 
 void STEP() {
     constexpr std::uint8_t kTOKEN_STEP = 0xc7u;
-    static bool conOneSeeded = false;
+    static std::once_flag conOneSeededFlag;
 
-    if (!conOneSeeded) {
+    std::call_once(conOneSeededFlag, []() {
         for (std::uint8_t i = 0; i < 5u; ++i) {
             WriteProgramByte(static_cast<std::uint16_t>(kConOneScratchAddress + i), kConOnePacked[i]);
         }
-        conOneSeeded = true;
-    }
+    });
     WriteZeroPageWord(ApplesoftVariables::ZP_INDEX, kConOneScratchAddress);
     LOAD_FAC_FROM_YA();
     if (CHRGOT() == kTOKEN_STEP) {
