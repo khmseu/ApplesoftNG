@@ -85,6 +85,8 @@ public:
     static constexpr std::uint8_t ZP_STRNG1 = 0xab;
     static constexpr std::uint8_t ZP_STRNG2 = 0xad;
     static constexpr std::uint8_t ZP_PRGEND = 0xaf;
+    static constexpr std::uint8_t ZP_CHRGET = 0xb1;
+    static constexpr std::uint8_t ZP_CHRGOT = 0xb7;
     static constexpr std::uint8_t ZP_TXTPTR = 0xb8;
     static constexpr std::uint8_t ZP_LOCK = 0xd6;
     static constexpr std::uint8_t ZP_ERRFLG = 0xd8;

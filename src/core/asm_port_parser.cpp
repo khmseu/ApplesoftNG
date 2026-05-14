@@ -10,8 +10,7 @@ std::uint8_t ReadZeroPageByte(std::uint8_t address);
 std::uint16_t ReadZeroPageWord(std::uint8_t address);
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
-std::uint8_t CHRGOT();
-std::uint8_t CHRGET();
+#include "core/asm_port_chrget.hpp"
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void SYNERR();
 void FRMEVL();
@@ -273,39 +272,6 @@ void QINT() {
     WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u), static_cast<std::uint8_t>(packedInteger & 0xffu));
 
     WriteZeroPageByte(ApplesoftVariables::ZP_SHIFT_SIGN_EXT, 0u);
-}
-
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: GENERIC_CHRGET (inclusive) .. GENERIC_END (exclusive)
-// Name normalization: none (assembler label GENERIC_CHRGET kept verbatim).
-std::uint8_t GENERIC_CHRGET() {
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-
-    // Generic CHRGET increments TXTPTR first, then examines the current character.
-    const std::uint16_t next = static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + 1u);
-    WriteZeroPageWord(kTXTPTR, next);
-
-    std::uint8_t current = variables_const().pointer(next).read();
-    if (current >= static_cast<std::uint8_t>(':')) {
-        return current;
-    }
-
-    if (current == static_cast<std::uint8_t>(' ')) {
-        return GENERIC_CHRGET();
-    }
-
-    // Preserve the ROM arithmetic side effect used by numeric parsing.
-    current = static_cast<std::uint8_t>(current - static_cast<std::uint8_t>('0'));
-    current = static_cast<std::uint8_t>(current - 0xd0u);
-    return current;
-}
-
-std::uint8_t CHRGET() {
-    return GENERIC_CHRGET();
-}
-
-std::uint8_t CHRGOT() {
-    return variables_const().pointer(ReadZeroPageWord(ApplesoftVariables::ZP_TXTPTR)).read();
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst

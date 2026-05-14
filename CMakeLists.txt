@@ -35,6 +35,7 @@ set(SOURCES
     src/core/asm_port_gtforpnt.cpp
     src/core/asm_port_bltu.cpp
     src/core/asm_port_chkmem.cpp
+    src/core/asm_port_chrget.cpp
     src/core/asm_port_reason.cpp
     src/core/asm_port_error_handling.cpp
     src/core/io_ports.cpp
