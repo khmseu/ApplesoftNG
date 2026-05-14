@@ -17,7 +17,7 @@
 | AdvanceToNextLine   | src/core/asm_port_statements.cpp          | 590  | real   |
 | AMPERSAND_VECTOR    | src/core/asm_port_token_address_table.cpp | 127  | stub   |
 | ANDOP               | src/core/asm_port_core.cpp                | 703  | real   |
-| ApplyFacSign        | src/core/asm_port_control_flow.cpp        | 103  | real   |
+| ApplyFacSign        | src/core/asm_port_control_flow.cpp        | 105  | real   |
 | ARRAY               | src/core/asm_port_core.cpp                | 807  | stub   |
 | ASC                 | src/core/asm_port_strlt2.cpp              | 603  | real   |
 | ASC_fn              | src/core/asm_port_unfnc.cpp               | 145  | real   |
@@ -108,7 +108,7 @@
 | FAE_1               | src/core/asm_port_core.cpp                | 530  | stub   |
 | FALSE               | src/core/asm_port_core.cpp                | 720  | real   |
 | FCOMP               | src/core/asm_port_core.cpp                | 1487 | stub   |
-| FCOMP2              | src/core/asm_port_control_flow.cpp        | 148  | stub   |
+| FCOMP2              | src/core/asm_port_control_flow.cpp        | 149  | stub   |
 | FDIVT               | src/core/asm_port_mathtbl.cpp             | 32   | stub   |
 | FIN                 | src/core/asm_port_math.cpp                | 407  | real   |
 | FINDATA             | src/core/asm_port_input.cpp               | 51   | stub   |
@@ -142,8 +142,8 @@
 | FRMEVL_2            | src/core/asm_port_strlt2.cpp              | 202  | stub   |
 | FRMNUM              | src/core/asm_port_parser.cpp              | 85   | real   |
 | FRM_ELEMENT         | src/core/asm_port_strlt2.cpp              | 199  | stub   |
-| FRM_STACK_2         | src/core/asm_port_control_flow.cpp        | 154  | stub   |
-| FRM_STACK_3         | src/core/asm_port_control_flow.cpp        | 158  | real   |
+| FRM_STACK_2         | src/core/asm_port_control_flow.cpp        | 155  | stub   |
+| FRM_STACK_3         | src/core/asm_port_control_flow.cpp        | 159  | real   |
 | FSUB                | src/core/asm_port_math.cpp                | 41   | real   |
 | FSUB                | src/core/asm_port_math.cpp                | 274  | real   |
 | FSUBT               | src/core/asm_port_math.cpp                | 51   | real   |
@@ -242,7 +242,7 @@
 | LOAD_ARG_FROM_YA    | src/core/asm_port_math.cpp                | 336  | real   |
 | LOAD_ARG_FROM_YA    | src/core/asm_port_math.cpp                | 341  | real   |
 | LOAD_ARG_FROM_YA    | src/core/asm_port_math.cpp                | 587  | real   |
-| LOAD_FAC_FROM_YA    | src/core/asm_port_control_flow.cpp        | 122  | stub   |
+| LOAD_FAC_FROM_YA    | src/core/asm_port_control_flow.cpp        | 123  | stub   |
 | LOG                 | src/core/asm_port_unfnc.cpp               | 130  | stub   |
 | LOMEM               | src/core/asm_port_graphics.cpp            | 547  | real   |
 | LOMEM_Handler       | src/core/asm_port_token_address_table.cpp | 121  | real   |
@@ -388,7 +388,7 @@
 | readLine            | src/platform/console.cpp                  | 8    | real   |
 | ReadLineNumberFromTextPointer | src/core/asm_port_control_flow.cpp        | 779  | real   |
 | ReadProgramByte     | src/core/asm_port_core.cpp                | 103  | real   |
-| readStackByteAt     | src/core/asm_port_control_flow.cpp        | 98   | real   |
+| readStackByteAt     | src/core/asm_port_control_flow.cpp        | 100  | real   |
 | ReadStackPointer    | src/core/asm_port_stack.cpp               | 20   | real   |
 | readStackWordAt     | src/core/asm_port_control_flow.cpp        | 184  | real   |
 | ReadZeroPageByte    | src/core/asm_port_core.cpp                | 87   | real   |
@@ -455,7 +455,7 @@
 | scrollWindowUp      | src/platform/asm_port_outdo.cpp           | 50   | real   |
 | SCRTCH              | src/core/asm_port_statements.cpp          | 117  | real   |
 | SCRTCH_impl         | src/core/asm_port_statements.cpp          | 78   | real   |
-| SetBranchTargetToSTEP | src/core/asm_port_control_flow.cpp        | 115  | real   |
+| SetBranchTargetToSTEP | src/core/asm_port_control_flow.cpp        | 117  | real   |
 | setCursorRow        | src/platform/asm_port_outdo.cpp           | 46   | real   |
 | SETDA               | src/core/asm_port_clear.cpp               | 69   | real   |
 | SETFOR              | src/core/asm_port_control_flow.cpp        | 232  | real   |
@@ -470,9 +470,9 @@
 | SHIFT_RIGHT         | src/core/asm_port_math.cpp                | 358  | stub   |
 | SHIFT_RIGHT_4       | src/core/asm_port_math.cpp                | 362  | stub   |
 | SHLOAD_Handler      | src/core/asm_port_token_address_table.cpp | 100  | real   |
-| SIGN                | src/core/asm_port_control_flow.cpp        | 140  | real   |
-| SIGN1               | src/core/asm_port_control_flow.cpp        | 135  | real   |
-| SIGN2               | src/core/asm_port_control_flow.cpp        | 126  | real   |
+| SIGN                | src/core/asm_port_control_flow.cpp        | 141  | real   |
+| SIGN1               | src/core/asm_port_control_flow.cpp        | 136  | real   |
+| SIGN2               | src/core/asm_port_control_flow.cpp        | 127  | real   |
 | SIN                 | src/core/asm_port_unfnc.cpp               | 133  | stub   |
 | SNGFLT              | src/core/asm_port_core.cpp                | 678  | real   |
 | SPEED               | src/core/asm_port_graphics.cpp            | 588  | real   |

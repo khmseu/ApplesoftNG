@@ -95,6 +95,8 @@ void ENDX_impl(bool shouldPrintBreak);
 
 namespace {
 
+constexpr std::uint16_t kStepAddress = 0x07afu;
+
 std::uint8_t readStackByteAt(std::uint8_t x, std::uint8_t plus) {
     const std::uint8_t offset = static_cast<std::uint8_t>(x + plus);
     return ReadProgramByte(static_cast<std::uint16_t>(0x0100u + offset));
@@ -114,7 +116,6 @@ void ApplyFacSign() {
 
 void SetBranchTargetToSTEP() {
     constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
-    constexpr std::uint16_t kStepAddress = 0x07afu;
 
     WriteZeroPageWord(kINDEX, kStepAddress);
 }
@@ -161,7 +162,6 @@ void FRM_STACK_3() {
     // Name normalization: none (assembler label FRM_STACK_3 kept verbatim).
     constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
     constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
-    constexpr std::uint16_t kStepAddress = 0x07afu;
 
     ROUND_FAC();
 
