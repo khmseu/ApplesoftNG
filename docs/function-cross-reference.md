@@ -53,7 +53,7 @@
 | ClearErrFlag        | src/core/asm_port_core.cpp                | 79   | real   |
 | clear_FNCNAM_hi     | src/core/asm_port_strlt2.cpp              | 123  | real   |
 | CLEAR_Handler       | src/core/asm_port_token_address_table.cpp | 132  | real   |
-| CLREOL              | src/platform/asm_port_getln.cpp           | 51   | real   |
+| CLREOL              | src/platform/asm_port_getln.cpp           | 56   | real   |
 | CMPDONE             | src/core/asm_port_core.cpp                | 912  | real   |
 | COLD_START          | src/core/asm_port_core.cpp                | 382  | real   |
 | COLON\_             | src/core/asm_port_control_flow.cpp        | 897  | real   |
@@ -72,9 +72,9 @@
 | COPY_FAC_TO_ARG_ROUNDED | src/core/asm_port_math.cpp                | 182  | real   |
 | copy_page_backward  | src/core/asm_port_bltu.cpp                | 7    | real   |
 | COS                 | src/core/asm_port_unfnc.cpp               | 132  | stub   |
-| COUT                | src/platform/asm_port_getln.cpp           | 30   | real   |
+| COUT                | src/platform/asm_port_getln.cpp           | 35   | real   |
 | CRDO                | src/core/asm_port_print.cpp               | 269  | real   |
-| CROUT               | src/platform/asm_port_getln.cpp           | 111  | real   |
+| CROUT               | src/platform/asm_port_getln.cpp           | 70   | real   |
 | CurrentStatementChar | src/core/asm_port_parser.cpp              | 297  | real   |
 | C_ZERO              | src/core/asm_port_core.cpp                | 562  | real   |
 | DATA                | src/core/asm_port_statements.cpp          | 300  | real   |
@@ -156,7 +156,7 @@
 | GETARY              | src/core/asm_port_core.cpp                | 543  | real   |
 | GETARY2             | src/core/asm_port_core.cpp                | 551  | real   |
 | GETBYT              | src/core/asm_port_parser.cpp              | 180  | real   |
-| GETLNZ              | src/platform/asm_port_getln.cpp           | 65   | real   |
+| GETLNZ              | src/platform/asm_port_getln.cpp           | 77   | real   |
 | GETSPA              | src/core/asm_port_strlt2.cpp              | 246  | real   |
 | GETSTR              | src/core/asm_port_strlt2.cpp              | 591  | real   |
 | GetTextTablePointer | src/core/asm_port_statements.cpp          | 581  | real   |
@@ -264,7 +264,7 @@
 | MON_COUT            | src/platform/asm_port_outdo.cpp           | 195  | real   |
 | MON_COUT1           | src/platform/asm_port_outdo.cpp           | 143  | real   |
 | MON_CROUT           | src/core/asm_port_core.cpp                | 202  | real   |
-| MON_GETLN           | src/platform/asm_port_getln.cpp           | 117  | real   |
+| MON_GETLN           | src/platform/asm_port_getln.cpp           | 124  | real   |
 | MON_HLINE           | src/core/asm_port_graphics.cpp            | 193  | real   |
 | MON_HOME            | src/core/asm_port_graphics.cpp            | 230  | real   |
 | MON_INIT            | src/core/asm_port_core.cpp                | 159  | real   |
@@ -318,7 +318,7 @@
 | NORMAL              | src/core/asm_port_graphics.cpp            | 21   | stub   |
 | NORMALIZE_FAC_1     | src/core/asm_port_unfnc.cpp               | 31   | stub   |
 | NORMAL_Handler      | src/core/asm_port_token_address_table.cpp | 115  | real   |
-| NOTCR               | src/platform/asm_port_getln.cpp           | 74   | real   |
+| NOTCR               | src/platform/asm_port_getln.cpp           | 88   | real   |
 | NOTRACE             | src/core/asm_port_token_address_table.cpp | 110  | real   |
 | NUMCMP              | src/core/asm_port_core.cpp                | 901  | real   |
 | NXDIM               | src/core/asm_port_core.cpp                | 836  | real   |
@@ -381,7 +381,7 @@
 | PUTNEW              | src/core/asm_port_strlt2.cpp              | 510  | real   |
 | PUTSTR              | src/core/asm_port_statements.cpp          | 362  | real   |
 | QINT                | src/core/asm_port_parser.cpp              | 225  | real   |
-| RDCHAR              | src/platform/asm_port_getln.cpp           | 37   | real   |
+| RDCHAR              | src/platform/asm_port_getln.cpp           | 42   | real   |
 | READ                | src/core/asm_port_input.cpp               | 91   | real   |
 | READERR             | src/core/asm_port_input.cpp               | 197  | real   |
 | readLine            | src/platform/console.cpp                  | 8    | real   |
@@ -410,12 +410,13 @@
 | READ_Handler        | src/core/asm_port_token_address_table.cpp | 81   | real   |
 | read_INDEX          | src/core/asm_port_strlt2.cpp              | 99   | real   |
 | read_INPUT_BUFFER   | src/core/asm_port_statements.cpp          | 197  | real   |
+| read_input_buffer   | src/platform/asm_port_getln.cpp           | 22   | real   |
 | read_INPUT_BUFFER_minus_1 | src/core/asm_port_inlin2.cpp              | 24   | real   |
 | read_LENGTH         | src/core/asm_port_strlt2.cpp              | 135  | real   |
 | read_LOWTR          | src/core/asm_port_strlt2.cpp              | 107  | real   |
 | read_MEMSIZ         | src/core/asm_port_strlt2.cpp              | 83   | real   |
-| read_prompt_char    | src/platform/asm_port_getln.cpp           | 13   | real   |
-| read_screen_char_via_28_y | src/platform/asm_port_getln.cpp           | 21   | real   |
+| read_prompt_char    | src/platform/asm_port_getln.cpp           | 14   | real   |
+| read_screen_char_via_28_y | src/platform/asm_port_getln.cpp           | 26   | real   |
 | read_STREND         | src/core/asm_port_strlt2.cpp              | 87   | real   |
 | read_STRNG1         | src/core/asm_port_strlt2.cpp              | 164  | real   |
 | read_TEMPPT         | src/core/asm_port_strlt2.cpp              | 51   | real   |
@@ -544,7 +545,7 @@
 | write_HIGHTR        | src/core/asm_port_strlt2.cpp              | 152  | real   |
 | write_INDEX         | src/core/asm_port_strlt2.cpp              | 103  | real   |
 | write_INPUT_BUFFER  | src/core/asm_port_inlin2.cpp              | 20   | real   |
-| write_input_buffer  | src/platform/asm_port_getln.cpp           | 17   | real   |
+| write_input_buffer  | src/platform/asm_port_getln.cpp           | 18   | real   |
 | write_INPUT_BUFFER_minus_1 | src/core/asm_port_inlin2.cpp              | 28   | real   |
 | write_INPUT_BUFFER_minus_5 | src/core/asm_port_statements.cpp          | 201  | real   |
 | write_LASTPT        | src/core/asm_port_strlt2.cpp              | 59   | real   |

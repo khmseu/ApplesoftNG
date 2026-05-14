@@ -7,6 +7,7 @@
 
 namespace applesoft::asm_port {
 void MON_COUT(std::uint8_t a);
+// Implemented in src/core/asm_port_core.cpp (monitor BELL routine).
 void MON_BELL();
 namespace {
 
@@ -18,13 +19,15 @@ void write_input_buffer(std::uint8_t index, std::uint8_t value) {
     variables().writeByte(static_cast<std::uint16_t>(ApplesoftVariables::ADDR_INPUT_BUFFER + index), value);
 }
 
+std::uint8_t read_input_buffer(std::uint8_t index) {
+    return variables_const().readByte(static_cast<std::uint16_t>(ApplesoftVariables::ADDR_INPUT_BUFFER + index));
+}
+
 std::uint8_t read_screen_char_via_28_y() {
     const std::uint8_t y = variables_const().readByte(ApplesoftVariables::ZP_MON_CH);
     const std::uint16_t base = variables_const().readWord(ApplesoftVariables::ZP_MON_BASL);
     return variables_const().readByte(static_cast<std::uint16_t>(base + y));
 }
-
-void CROUT();
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
 // Labels: COUT (inclusive) .. COUT1 (exclusive)
@@ -61,13 +64,22 @@ void CLREOL() {
     }
 }
 
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+// Labels: CROUT (inclusive) .. PRA1 (exclusive)
+// Name normalization: none (assembler label CROUT kept verbatim).
+void CROUT() {
+    COUT(0x8du);
+}
+
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/keyin.o65.lst
 // Labels: GETLNZ (inclusive) .. BCKSPC (exclusive)
 // Name normalization: none (assembler label GETLNZ kept verbatim).
 std::uint8_t GETLNZ() {
+    constexpr std::uint8_t kInitialBufferIndex = 1u;
     CROUT();
     COUT(read_prompt_char());
-    return 1u;
+    // GETLNZ falls through into GETLN, which immediately executes `ldx #$01`.
+    return kInitialBufferIndex;
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/keyin.o65.lst
@@ -81,11 +93,11 @@ void NOTCR(std::uint8_t& x) {
 
     const std::uint8_t savedInv = variables_const().readByte(ApplesoftVariables::ZP_MON_INVFLG);
     variables().writeByte(ApplesoftVariables::ZP_MON_INVFLG, 0xffu);
-    COUT(variables_const().readByte(static_cast<std::uint16_t>(ApplesoftVariables::ADDR_INPUT_BUFFER + x)));
+    // X is an 8-bit page-local index into $0200..$02FF; 0xff is the last valid slot.
+    // The subsequent ++x wrap to 0 intentionally triggers the cancel/restart path.
+    const std::uint8_t current = read_input_buffer(x);
+    COUT(current);
     variables().writeByte(ApplesoftVariables::ZP_MON_INVFLG, savedInv);
-
-    const std::uint8_t current = variables_const().readByte(
-        static_cast<std::uint16_t>(ApplesoftVariables::ADDR_INPUT_BUFFER + x));
 
     if (current == kBackspace || current == kCtrlX) {
         if (x == 0u) {
@@ -105,13 +117,6 @@ void NOTCR(std::uint8_t& x) {
         COUT(kCancelSlash);
         x = GETLNZ();
     }
-}
-
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
-// Labels: CROUT (inclusive) .. PRA1 (exclusive)
-// Name normalization: none (assembler label CROUT kept verbatim).
-void CROUT() {
-    COUT(0x8du);
 }
 
 } // namespace
