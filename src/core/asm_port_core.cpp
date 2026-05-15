@@ -70,6 +70,7 @@ void PRINT_ERROR_LINNUM();
 void MON_INPORT(std::uint8_t slot);
 void MON_OUTPORT(std::uint8_t slot);
 void MON_SETTXT();
+void MON_HOME();
 void CAT();
 void CHKSTR();
 void CHKCOM();
@@ -201,7 +202,35 @@ void MON_BELL_impl() {
 }
 
 void MON_LFB60() {
-    // TODO(asm-port): port LFB60 monitor label.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/math.o65.lst
+    // Labels: LFB60 (inclusive) .. LFB78 (exclusive)
+    // Name normalization: LFB60 -> MON_LFB60 (monitor label gets MON_ prefix).
+    //
+    // Clears the monitor text window, then writes the 9-byte "<APPLE ]["
+    // banner to screen memory at $040E..$0416.
+
+    static constexpr std::array<std::uint8_t, 9> kLFB08 = {
+        0x3cu,
+        static_cast<std::uint8_t>('A' | 0x80u),
+        static_cast<std::uint8_t>('P' | 0x80u),
+        static_cast<std::uint8_t>('P' | 0x80u),
+        static_cast<std::uint8_t>('L' | 0x80u),
+        static_cast<std::uint8_t>('E' | 0x80u),
+        static_cast<std::uint8_t>(' ' | 0x80u),
+        static_cast<std::uint8_t>(']' | 0x80u),
+        static_cast<std::uint8_t>('[' | 0x80u),
+    };
+    constexpr std::uint16_t kBannerAddress = 0x040eu;
+
+    MON_HOME();
+
+    for (std::uint8_t y = 8u;; --y) {
+        // LFB65 copies the banner bytes in descending index order.
+        variables().writeByte(static_cast<std::uint16_t>(kBannerAddress + y), kLFB08[y]);
+        if (y == 0u) {
+            break;
+        }
+    }
 }
 
 void MON_CROUT() {
