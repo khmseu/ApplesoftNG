@@ -1000,9 +1000,8 @@ void AS_MAKE_NEW_VARIABLE() {
     // AS_Labels: MAKE_NEW_VARIABLE (inclusive) .. GETARY (exclusive)
     // Name normalization: none (assembler label MAKE_NEW_VARIABLE prefixed with AS_ in C++).
     //
-    // Create a new simple variable entry.
-    // Moves array table up 7 bytes to make room; initializes variable name and value.
-    // Returns with VARPNT pointing to the value storage for the new variable.
+    // Create a new simple variable entry by shifting the array region up seven bytes,
+    // then writing the two-byte name and a zero-initialized five-byte value.
 
     constexpr std::uint8_t kAS_ARYTAB = ApplesoftVariables::ZP_AS_ARYTAB;
     constexpr std::uint8_t kAS_STREND = ApplesoftVariables::ZP_AS_STREND;
@@ -1012,48 +1011,50 @@ void AS_MAKE_NEW_VARIABLE() {
     constexpr std::uint8_t kAS_VARNAM = ApplesoftVariables::ZP_AS_VARNAM;
     constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
 
-    // Set up source and destination pointers for BLTU array move.
-    // LOWTR <- ARYTAB: points to start of array block
-    const std::uint8_t arytab_lo = ReadZeroPageByte(kAS_ARYTAB);
-    const std::uint8_t arytab_hi = ReadZeroPageByte(kAS_ARYTAB + 1u);
-    WriteZeroPageByte(kAS_LOWTR, arytab_lo);
-    WriteZeroPageByte(kAS_LOWTR + 1u, arytab_hi);
+    const std::uint16_t arytab = ReadZeroPageWord(kAS_ARYTAB);
+    const std::uint16_t strend = ReadZeroPageWord(kAS_STREND);
 
-    // HIGHTR <- STREND: points to string end
-    const std::uint8_t strend_lo = ReadZeroPageByte(kAS_STREND);
-    const std::uint8_t strend_hi = ReadZeroPageByte(kAS_STREND + 1u);
-    WriteZeroPageByte(kAS_HIGHTR, strend_lo);
-    WriteZeroPageByte(kAS_HIGHTR + 1u, strend_hi);
+    WriteZeroPageWord(kAS_LOWTR, arytab);
+    WriteZeroPageWord(kAS_HIGHTR, strend);
 
-    // Calculate new array position: ARYPNT = STREND + 7
-    // Using 16-bit addition with carry handling.
-    std::uint16_t new_arypnt = (static_cast<std::uint16_t>(strend_hi) << 8u) | strend_lo;
-    new_arypnt += 7u;
-    WriteZeroPageByte(kAS_ARYPNT, static_cast<std::uint8_t>(new_arypnt & 0xFFu));
-    WriteZeroPageByte(kAS_ARYPNT + 1u, static_cast<std::uint8_t>((new_arypnt >> 8u) & 0xFFu));
+    const std::uint16_t newStrend = static_cast<std::uint16_t>(strend + 7u);
+    WriteZeroPageWord(kAS_ARYPNT, newStrend);
 
-    // TODO(asm-port): Call AS_BLTU to move array block up 7 bytes.
-    // AS_BLTU requires AS_BLTUState with LOWTR=source, HIGHTR=end, ARYPNT=destination
+    {
+        const std::uint16_t fretop = ReadZeroPageWord(ApplesoftVariables::ZP_AS_FRETOP);
+        AS_REASONState rs{};
+        rs.a = static_cast<std::uint8_t>(newStrend & 0xffu);
+        rs.y = static_cast<std::uint8_t>(newStrend >> 8u);
+        rs.fretopAS_Lo = static_cast<std::uint8_t>(fretop & 0xffu);
+        rs.fretopHi = static_cast<std::uint8_t>(fretop >> 8u);
+        const AS_REASONResult rr = AS_REASON(rs);
+        if (!rr.ok) {
+            return;
+        }
+        WriteZeroPageWord(kAS_STREND,
+                          static_cast<std::uint16_t>(static_cast<std::uint16_t>(rr.y) << 8u |
+                                                     static_cast<std::uint16_t>(rr.a)));
+    }
 
-    // Store new array table start in ARYTAB.
-    const std::uint8_t new_arypnt_lo = ReadZeroPageByte(kAS_ARYPNT);
-    const std::uint8_t new_arypnt_hi = ReadZeroPageByte(kAS_ARYPNT + 1u);
-    WriteZeroPageByte(kAS_ARYTAB, new_arypnt_lo);
-    WriteZeroPageByte(kAS_ARYTAB + 1u, new_arypnt_hi);
+    const std::uint16_t newArytab = static_cast<std::uint16_t>(arytab + 7u);
+    if (strend > arytab) {
+        for (std::uint16_t source = strend; source != arytab;
+             source = static_cast<std::uint16_t>(source - 1u)) {
+            const std::uint16_t from = static_cast<std::uint16_t>(source - 1u);
+            WriteProgramByte(static_cast<std::uint16_t>(from + 7u), ReadProgramByte(from));
+        }
+    }
 
-    // Initialize new variable entry in the freed space.
-    // The variable record layout is: [name_0, name_1, value_0..4 (5 zero bytes)]
-    // LOWTR (original ARYTAB) points to first byte of variable.
-    std::uint16_t lowtr = (static_cast<std::uint16_t>(arytab_hi) << 8u) | arytab_lo;
+    WriteZeroPageWord(kAS_ARYTAB, newArytab);
 
-    // TODO(asm-port): Store 2-character variable name from VARNAM via indirect indexed addressing.
-    // In 6502: ldy #0; lda VARNAM; sta (LOWTR),Y; iny; lda VARNAM+1; sta (LOWTR),Y
-    // Store 5 zero bytes for value: lda #0; (sta (LOWTR),Y x5) with increment
+    auto variableRecord = variables().pointer(arytab);
+    variableRecord.write(ReadZeroPageByte(kAS_VARNAM), 0u);
+    variableRecord.write(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_VARNAM + 1u)), 1u);
+    for (std::uint16_t offset = 2u; offset < 7u; ++offset) {
+        variableRecord.write(0u, offset);
+    }
 
-    // Compute and store VARPNT = LOWTR + 2 (point to value bytes after the 2-char name).
-    std::uint16_t varpnt = lowtr + 2u;
-    WriteZeroPageByte(kAS_VARPNT, static_cast<std::uint8_t>(varpnt & 0xFFu));
-    WriteZeroPageByte(kAS_VARPNT + 1u, static_cast<std::uint8_t>((varpnt >> 8u) & 0xFFu));
+    WriteZeroPageWord(kAS_VARPNT, static_cast<std::uint16_t>(arytab + 2u));
 }
 
 
@@ -1487,18 +1488,27 @@ void AS_STRCMP() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // AS_Labels: AS_STRCMP (inclusive) .. AS_NUMCMP (exclusive)
     // Name normalization: none (assembler label AS_STRCMP kept verbatim).
+    // Pointer candidates lifted: FAC+1/+2 and ARG+3/+4 are unified string-data pointers.
 
     constexpr std::uint8_t kAS_VALTYP = ApplesoftVariables::ZP_AS_VALTYP;
     constexpr std::uint8_t kAS_CPRTYP = ApplesoftVariables::ZP_AS_CPRTYP;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
+    constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
 
     WriteZeroPageByte(kAS_VALTYP, 0u);
     WriteZeroPageByte(kAS_CPRTYP, static_cast<std::uint8_t>(ReadZeroPageByte(kAS_CPRTYP) - 1u));
 
-    AS_FREFAC();
-    (void)AS_FRETMP(ReadZeroPageWord(ApplesoftVariables::ZP_AS_DSCPTR));
+    const std::uint8_t facLength = AS_FREFAC();
+    WriteZeroPageByte(kAS_FAC, facLength);
+    WriteZeroPageWord(static_cast<std::uint8_t>(kAS_FAC + 1u), ReadZeroPageWord(kAS_INDEX));
+
+    const std::uint16_t argDescriptorAddress = ReadZeroPageWord(static_cast<std::uint8_t>(kAS_ARG + 3u));
+    const std::uint8_t argLength = AS_FRETMP(argDescriptorAddress);
+    WriteZeroPageByte(kAS_ARG, argLength);
+    WriteZeroPageWord(static_cast<std::uint8_t>(kAS_ARG + 3u), ReadZeroPageWord(kAS_INDEX));
 
     gNumericCompareResult = CompareArgAndFacStrings();
-    gNumericCompareCarry = gNumericCompareResult >= 0;
     AS_NUMCMP();
 }
 
@@ -1982,6 +1992,47 @@ std::int8_t AS_FCOMP(std::uint16_t argAddress) {
 }
 
 std::int8_t CompareArgAndFacStrings() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: STRCMP_1 (inclusive) .. PDL (exclusive)
+    // Name normalization: CompareArgAndFacStrings is the C++ helper name for the STRCMP_1/STRCMP_2 loop.
+    // Pointer candidates lifted: ARG+3/+4 and FAC+1/+2 are the two unified string-data pointers.
+
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
+    constexpr std::uint8_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
+
+    const std::uint8_t argLength = ReadZeroPageByte(kAS_ARG);
+    const std::uint8_t facLength = ReadZeroPageByte(kAS_FAC);
+
+    std::uint8_t shorterFlag = 0u;
+    std::uint8_t compareCount = argLength;
+    if (argLength < facLength) {
+        shorterFlag = 1u;
+    } else if (argLength > facLength) {
+        shorterFlag = 0xffu;
+        compareCount = facLength;
+    }
+    WriteZeroPageByte(kAS_FAC_SIGN, shorterFlag);
+
+    const auto argString = variables_const().pointer(ReadZeroPageWord(static_cast<std::uint8_t>(kAS_ARG + 3u)));
+    const auto facString = variables_const().pointer(ReadZeroPageWord(static_cast<std::uint8_t>(kAS_FAC + 1u)));
+    for (std::uint16_t offset = 0u; offset < compareCount; ++offset) {
+        const std::uint8_t argByte = argString.read(offset);
+        const std::uint8_t facByte = facString.read(offset);
+        if (argByte > facByte) {
+            return -1;
+        }
+        if (argByte < facByte) {
+            return 1;
+        }
+    }
+
+    if (shorterFlag == 0xffu) {
+        return -1;
+    }
+    if (shorterFlag == 1u) {
+        return 1;
+    }
     return 0;
 }
 
