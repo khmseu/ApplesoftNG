@@ -1,6 +1,7 @@
 #include "core/asm_port_reason.hpp"
 
 #include "core/asm_port_error_handling.hpp"
+#include "core/asm_port_strlt2.hpp"
 
 namespace applesoft::asm_port {
 namespace {
@@ -10,8 +11,9 @@ bool has_room(const REASONState& state) {
            (state.y == state.fretopHi && state.a < state.fretopLo);
 }
 
-// TODO(asm-port): port GARBAG label.
-void GARBAG(REASONState& state) {
+void invokeGarbageCollector(REASONState& state) {
+    // REASON calls into the global GARBAG routine before retrying the space check.
+    ::applesoft::asm_port::GARBAG();
     state.garbageCollected = true;
 }
 
@@ -30,7 +32,7 @@ REASONResult REASON(REASONState& state) {
     const std::uint8_t savedY = state.y;
     const auto savedScratch = state.temp1ToFacExclusive;
 
-    GARBAG(state);
+    invokeGarbageCollector(state);
 
     state.temp1ToFacExclusive = savedScratch;
     state.a = savedA;

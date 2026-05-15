@@ -559,7 +559,7 @@ void GME() {
     // Labels: GME (inclusive) .. MULTIPLY_SUBSCRIPT (exclusive)
     // Name normalization: none (assembler label GME kept verbatim).
 
-    (void)MEMERR();
+    MEMERR();
 }
 
 void SUBERR() {
@@ -1537,23 +1537,6 @@ void FNCDATA() {
         }
     }
 }
-
-
-#if 0
-void FLOAT_1(std::uint8_t exponent) {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FLOAT_1 (inclusive) .. FLOAT_2 (exclusive)
-    // Name normalization: none (assembler label FLOAT_1 kept verbatim).
-    WriteZeroPageByte(ApplesoftVariables::ZP_FAC, exponent);
-}
-
-
-void FLOAT() {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FLOAT (inclusive) .. QINT (exclusive)
-    // Name normalization: none (assembler label FLOAT kept verbatim).
-}
-#endif
 
 
 void FRMEVL() {

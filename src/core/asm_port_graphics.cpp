@@ -17,7 +17,6 @@ std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void SYNCHR(std::uint8_t expected);
 
-// TODO(asm-port): port NORMAL statement behavior (currently display-mode init stub).
 void NORMAL() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: NORMAL (inclusive) .. INVERSE (exclusive)

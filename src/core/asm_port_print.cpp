@@ -62,10 +62,6 @@ void STROUT(std::string_view text) {
 // TODO(asm-port): port FOUT.
 static void FOUT() {}
 
-// HANDLERR: dispatch to the ON ERR handler with error code in X-register.
-// TODO(asm-port): port HANDLERR.
-static void HANDLERR() {}
-
 // GTBYTC: advance TXTPTR (via CHRGET), evaluate a numeric expression, and
 // return the result clamped to a byte (0-255) in the X register equivalent.
 // After this call, CHRGOT() returns the character immediately following the
