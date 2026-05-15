@@ -79,6 +79,7 @@ void HandleNumberedAS_Line();
 void AS_CRDO();
 void AS_SETFOR();
 void AS_ROUND_FAC();
+extern std::int8_t gNumericCompareResult;
 
 constexpr std::uint8_t kTokenBase = 0x80u;
 constexpr std::uint8_t AS_RESTART_PROMPT = ']' | 0x80u;
@@ -162,12 +163,81 @@ std::int8_t AS_SIGN() {
     return AS_SIGN1();
 }
 
+std::int8_t AS_L_FCOMP2_1(bool compareCarrySet) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: AS_L_FCOMP2_1 (inclusive) .. AS_L_FCOMP2_2 (exclusive)
+    // Name normalization: none (assembler label AS_L_FCOMP2_1 kept verbatim).
+
+    std::uint8_t signByte = ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN);
+    if (compareCarrySet) {
+        signByte ^= 0xffu;
+    }
+    return AS_SIGN2(signByte);
+}
+
 } // namespace
 
 void AS_FCOMP2() {
-    // TODO(asm-port): move implementation to return int8 once caller is updated.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // AS_Labels: AS_FCOMP2 (inclusive) .. AS_L_FCOMP2_1 (exclusive)
-    // Target branches to AS_L_FCOMP2_1 or RTS depending on comparison.
+    // Name normalization: none (assembler label AS_FCOMP2 kept verbatim).
+    // Pointer candidate: DEST ($60/$61) is one unified pointer to the packed comparand.
+
+    constexpr std::uint8_t kAS_DEST = ApplesoftVariables::ZP_AS_DEST;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
+    constexpr std::uint8_t kAS_FAC_EXTENSION = ApplesoftVariables::ZP_AS_FAC_EXTENSION;
+
+    const auto comparand = variables_const().pointer(ReadZeroPageWord(kAS_DEST));
+    const std::uint8_t comparandExponent = comparand.read(0u);
+    if (comparandExponent == 0u) {
+        gNumericCompareResult = AS_SIGN();
+        return;
+    }
+
+    const std::uint8_t comparandMantissaHighWithSign = comparand.read(1u);
+    if (((comparandMantissaHighWithSign ^ ReadZeroPageByte(kAS_FAC_SIGN)) & 0x80u) != 0u) {
+        gNumericCompareResult = AS_SIGN1();
+        return;
+    }
+
+    const std::uint8_t facExponent = ReadZeroPageByte(kAS_FAC);
+    bool compareCarrySet = comparandExponent >= facExponent;
+    if (comparandExponent != facExponent) {
+        gNumericCompareResult = AS_L_FCOMP2_1(compareCarrySet);
+        return;
+    }
+
+    const std::uint8_t normalizedComparandMantissaHigh =
+        static_cast<std::uint8_t>(comparandMantissaHighWithSign | 0x80u);
+    const std::uint8_t facMantissaHigh = ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u));
+    compareCarrySet = normalizedComparandMantissaHigh >= facMantissaHigh;
+    if (normalizedComparandMantissaHigh != facMantissaHigh) {
+        gNumericCompareResult = AS_L_FCOMP2_1(compareCarrySet);
+        return;
+    }
+
+    for (std::uint16_t offset = 2u; offset <= 3u; ++offset) {
+        const std::uint8_t comparandMantissaByte = comparand.read(offset);
+        const std::uint8_t facMantissaByte =
+            ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + offset));
+        compareCarrySet = comparandMantissaByte >= facMantissaByte;
+        if (comparandMantissaByte != facMantissaByte) {
+            gNumericCompareResult = AS_L_FCOMP2_1(compareCarrySet);
+            return;
+        }
+    }
+
+    const std::uint8_t facExtension = ReadZeroPageByte(kAS_FAC_EXTENSION);
+    const std::uint8_t comparandExtension = comparand.read(4u);
+    const std::uint8_t facMantissaLow = ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u));
+    compareCarrySet = (0x7fu > facExtension) || ((0x7fu == facExtension) && (comparandExtension >= facMantissaLow));
+    if ((0x7fu == facExtension) && (comparandExtension == facMantissaLow)) {
+        gNumericCompareResult = 0;
+        return;
+    }
+
+    gNumericCompareResult = AS_L_FCOMP2_1(compareCarrySet);
 }
 
 namespace {
