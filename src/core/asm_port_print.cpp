@@ -154,6 +154,15 @@ void STROUT(std::uint16_t address) {
 // This function captures the control-flow merge of PR_STRING → PRINT → PRINT2
 // that exists in the 6502 source via fall-through and jmp.
 
+static void PrintNumericExpression() {
+    // jsr FOUT — convert the floating-point value to an ASCII buffer.
+    FOUT();
+    // jsr STRLIT — wrap the buffer as a temporary FAC string descriptor.
+    STRLIT(0x0000u);
+    // jmp PR_STRING — print the temporary string and re-enter the list loop.
+    STRPRT();
+}
+
 static void print_list_loop(std::uint8_t a, bool expr_cr) {
     while (true) {
         if (a == TOKEN_TAB) {
@@ -175,13 +184,7 @@ static void print_list_loop(std::uint8_t a, bool expr_cr) {
                 // bit VALTYP / bmi PR_STRING — string result
                 STRPRT();
             } else {
-                // jsr FOUT — convert float to ASCII buffer
-                FOUT();
-                // jsr STRLIT — wrap buffer as FAC string descriptor.
-                // TODO(asm-port): pass actual (a, y) from FOUT output buffer.
-                STRLIT(0x0000u);
-                // jmp PR_STRING (which calls STRPRT then re-enters PRINT)
-                STRPRT();
+                PrintNumericExpression();
             }
 
             // PR_STRING: jsr CHRGOT — get char after the printed expression
