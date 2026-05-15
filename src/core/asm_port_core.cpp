@@ -9,6 +9,7 @@
 #include "core/asm_port_unfnc.hpp"
 #include "core/asm_port_stack.hpp"
 #include "core/io_ports.hpp"
+#include "core/asm_port_jump_table.hpp"
 
 #include <array>
 #include <cstdint>
@@ -19,6 +20,8 @@ void AS_SYNERR();
 extern std::uint8_t gJerErrorCode;
 void MON_RESET2();
 void MON_REGDSP();
+void MON_COUT(std::uint8_t a); // Defined in asm_port_outdo.cpp
+
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
     return static_cast<std::uint8_t>(lhs + rhs);
 }
@@ -262,30 +265,7 @@ void MON_PRBYTE(std::uint8_t value) {
 }
 
 bool MON_JumpByAddress(std::uint16_t target) {
-    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
-    // AS_Labels: AS_LFAA3 (inclusive) .. AS_LFAA6 (exclusive), plus AS_LFAC7 tail-jump use
-    // Name normalization: none (helper name kept for C++ indirect-jump modeling).
-    //
-    // Emulates monitor reset-time indirect transfers used by `jmp ($03f2)` and
-    // `jmp ($00)` in RESET2's warm/slot scan flow.
-
-    // Standard RESET2 warm vector target: transfer to Applesoft cold start.
-    if (target == 0xe000u) {
-        AS_COLD_START();
-        return true;
-    }
-
-    // RESET2 slot scan (`jmp ($00)`) jumps to Cx00 for x in [1,7] after a ROM
-    // signature match. Slot-ROM runtime is not ported yet, so preserve
-    // non-returning transfer semantics by falling back to AS_BASIC cold start.
-    const bool isSlotRomJump = ((target & 0x00ffu) == 0x0000u) && (target >= 0xc100u) && (target <= 0xc700u);
-    if (isSlotRomJump) {
-        AS_COLD_START();
-        return true;
-    }
-
-    // Unknown monitor vector target: keep startup progress deterministic.
-    AS_COLD_START();
+    ApplesoftNG::ExternalJumpDispatcher::Jump(target);
     return true;
 }
 
