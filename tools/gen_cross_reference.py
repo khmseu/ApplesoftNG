@@ -140,17 +140,44 @@ def _is_stub(body: str, preceding_comments: str = "") -> bool:
     return False
 
 
+def _get_size(body: str) -> int:
+    """Return the number of lines in the function that are not purely comment."""
+    # Extract inner content between the outermost { }.
+    open_idx = body.index("{")
+    close_idx = body.rindex("}")
+    inner = body[open_idx + 1 : close_idx]
+
+    lines = inner.splitlines()
+    count = 0
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            continue
+        # Check if line is purely a comment
+        if (
+            stripped.startswith("//")
+            or stripped.startswith("/*")
+            and stripped.endswith("*/")
+        ):
+            # Note: very crude check for /* */, but mostly we use //
+            continue
+        # Also strip line-end comments and check if anything remains
+        if _strip_line_comments(stripped).strip():
+            count += 1
+    return count
+
+
 # ---------------------------------------------------------------------------
 # Main extraction
 # ---------------------------------------------------------------------------
 
 
-def extract_functions(src_root: Path) -> list[tuple[str, int, str, str, int]]:
+def extract_functions(src_root: Path) -> list[tuple[str, int, str, str, int, int]]:
     """
     Scan all .cpp files under *src_root* and return a list of
-    (rel_path, 1-based-line, func_name, status, caller_count) tuples.
+    (rel_path, 1-based-line, func_name, status, size, caller_count) tuples.
     """
-    results: list[tuple[str, int, str, str, int]] = []
+    results: list[tuple[str, int, str, str, int, int]] = []
     all_names: list[str] = []
 
     # First pass: collect all function names across all files.
@@ -195,12 +222,13 @@ def extract_functions(src_root: Path) -> list[tuple[str, int, str, str, int]]:
                     continue
 
                 status = "stub" if _is_stub(body, preceding) else "real"
+                size = _get_size(body)
 
                 # Crude count of occurrences of func_name in all source files.
                 # Subtract 1 because its own definition matches.
                 caller_count = max(0, all_names.count(func_name) - 1)
 
-                results.append((rel, i + 1, func_name, status, caller_count))
+                results.append((rel, i + 1, func_name, status, size, caller_count))
 
                 # Jump past the consumed body.
                 i = end_line + 1
@@ -227,16 +255,18 @@ _HEADER = """\
 """
 
 _TABLE_HEADER = (
-    "| {:<19} | {:<6} | {:<7} | {:<41} | {:<4} |\n"
-    "| {:<19} | {:<6} | {:<7} | {:<41} | {:<4} |\n"
+    "| {:<19} | {:<6} | {:<4} | {:<7} | {:<41} | {:<4} |\n"
+    "| {:<19} | {:<6} | {:<4} | {:<7} | {:<41} | {:<4} |\n"
 ).format(
     "Function",
     "Status",
+    "Size",
     "Callers",
     "File",
     "Line",
     "-" * 19,
     "-" * 6,
+    "-" * 4,
     "-" * 7,
     "-" * 41,
     "-" * 4,
@@ -248,15 +278,17 @@ def _escape_md(name: str) -> str:
     return name.replace("_", r"\_") if name.endswith("_") else name
 
 
-def write_table(entries: list[tuple[str, int, str, str, int]], output: Path) -> None:
+def write_table(
+    entries: list[tuple[str, int, str, str, int, int]], output: Path
+) -> None:
     """Sort entries by function name and write the Markdown table."""
     entries_sorted = sorted(entries, key=lambda e: e[2].upper())
 
     lines: list[str] = [_HEADER, _TABLE_HEADER]
-    for rel, lineno, name, status, callers in entries_sorted:
+    for rel, lineno, name, status, size, callers in entries_sorted:
         md_name = _escape_md(name)
         lines.append(
-            f"| {md_name:<19} | {status:<6} | {callers:<7} | {rel:<41} | {lineno:<4} |\n"
+            f"| {md_name:<19} | {status:<6} | {size:<4} | {callers:<7} | {rel:<41} | {lineno:<4} |\n"
         )
 
     output.write_text("".join(lines), encoding="utf-8")
