@@ -162,11 +162,15 @@ std::int8_t AS_SIGN() {
     return AS_SIGN1();
 }
 
+} // namespace
+
 void AS_FCOMP2() {
     // TODO(asm-port): move implementation to return int8 once caller is updated.
     // AS_Labels: AS_FCOMP2 (inclusive) .. AS_L_FCOMP2_1 (exclusive)
     // Target branches to AS_L_FCOMP2_1 or RTS depending on comparison.
 }
+
+namespace {
 
 void AS_FRM_STACK_2(std::uint8_t signByte) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst

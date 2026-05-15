@@ -55,6 +55,7 @@ void AS_PARCHK();
 void AS_STORE_FACDB_YX_ROUNDED();
 void AS_ERRDIR();
 std::int8_t AS_FCOMP(std::uint16_t argAddress);
+void AS_FCOMP2();
 void AS_FLOAT();
 void AS_FLOAT_1(std::uint8_t exponent);
 bool AS_CHKVAL(std::uint8_t savedValTyp);
@@ -1896,8 +1897,17 @@ void MON_IRQ() {
     // TODO(asm-port): port IRQ monitor label.
 }
 
-std::int8_t AS_FCOMP(std::uint16_t /*argAddress*/) {
-    return 0;
+std::int8_t AS_FCOMP(std::uint16_t argAddress) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: AS_FCOMP (inclusive) .. AS_FCOMP2 (exclusive)
+    // Name normalization: none (assembler label AS_FCOMP kept verbatim).
+    // Pointer candidate: DEST ($60/$61) is one unified pointer to the packed comparand.
+
+    WriteZeroPageWord(ApplesoftVariables::ZP_AS_DEST, argAddress);
+
+    // ROM falls through directly into AS_FCOMP2 after storing DEST.
+    AS_FCOMP2();
+    return gNumericCompareResult;
 }
 
 std::int8_t CompareArgAndFacStrings() {
