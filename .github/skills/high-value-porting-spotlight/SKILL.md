@@ -12,7 +12,7 @@ Automated identification of high-value assembly-to-C++ porting targets based on 
 2. Run `python3 ./tools/sort_stub_candidates.py --top 10` to produce the ordered candidate list.
 3. Use the script output ordering (already sorted by `Calls (Approx)` descending, then name ascending).
 4. Read the script's `Best candidate:` comment to choose the first target to evaluate.
-5. Select the top candidate that has not yet been started (check for matching `asm_port_*.cpp` files).
+5. Select the top candidate.
 
 ### Label Resolution
 
