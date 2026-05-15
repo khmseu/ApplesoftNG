@@ -21,6 +21,8 @@ public:
     static constexpr std::uint16_t ADDR_SW_AN1 = 0xc05au;
     static constexpr std::uint16_t ADDR_SW_AN2 = 0xc05du;
     static constexpr std::uint16_t ADDR_SW_AN3 = 0xc05fu;
+    static constexpr std::uint16_t ADDR_MON_TAPE_INPUT = 0xc060u;
+    static constexpr std::uint16_t ADDR_MON_TAPE_OUTPUT = 0xc020u;
     static constexpr std::uint16_t ADDR_AS_SW_TXTCLR = 0xc050u;
     static constexpr std::uint16_t ADDR_SW_TXTSET = 0xc051u;
     static constexpr std::uint16_t ADDR_PADDLE_0 = 0xc064u;

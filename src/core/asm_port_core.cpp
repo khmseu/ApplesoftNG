@@ -1062,7 +1062,10 @@ void AS_NAME_NOT_FOUND() {
     // AS_Labels: AS_NAME_NOT_FOUND (inclusive) .. AS_C_ZERO (exclusive)
     // Name normalization: none (assembler label AS_NAME_NOT_FOUND kept verbatim).
 
-    // TODO(asm-port): preserve AS_FRM_VARIABLE_CALL return-address special case.
+    // Current runtime model follows the normal branch to MAKE_NEW_VARIABLE.
+    // The ROM return-address stack probe for FRM_VARIABLE_CALL is not represented
+    // in this C++ call model yet, so callers that need C_ZERO routing should
+    // dispatch to AS_C_ZERO explicitly.
     AS_MAKE_NEW_VARIABLE();
 }
 

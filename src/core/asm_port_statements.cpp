@@ -2,6 +2,7 @@
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_token_name_table.hpp"
 #include "core/asm_port_clear.hpp"
+#include "core/io_ports.hpp"
 
 #include <cstdint>
 #include <optional>
@@ -57,6 +58,7 @@ bool IsStatementEndOfParsedInput();
 bool AS_ISCNTC();
 void AS_CRDO();
 void AS_LINPRT();
+void MON_COUT(std::uint8_t value);
 void AS_OUTDO(std::uint8_t value);
 bool AS_FL1(std::uint16_t startAddress);
 void AS_RESTORE();
@@ -921,17 +923,21 @@ void MON_WRITE() {
         const std::uint8_t dataByte = ReadProgramByte(a1Ptr);
         runningChecksum = static_cast<std::uint8_t>(runningChecksum ^ dataByte);
 
-        // Tape bit serialization lives in monitor cassette primitives.
-        // TODO(asm-port): Replace placeholders with WRBYTE/WRBIT-accurate cassette timing/bit output.
-        (void)dataByte;
+        // Placeholder cassette serialization through I/O companion storage.
+        for (std::uint8_t bit = 0u; bit < 8u; ++bit) {
+            const std::uint8_t state = static_cast<std::uint8_t>((dataByte >> (7u - bit)) & 0x01u);
+            variables().writeByte(IOPorts::ADDR_MON_TAPE_OUTPUT, state);
+        }
         a1Ptr = static_cast<std::uint16_t>(a1Ptr + 1u);
     }
 
     WriteZeroPageWord(kMON_A1L, a1Ptr);
 
     // Emit checksum byte before returning (ROM path branches to BELL next).
-    // TODO(asm-port): Serialize checksum byte before BELL once write primitives are complete.
-    (void)runningChecksum;
+    for (std::uint8_t bit = 0u; bit < 8u; ++bit) {
+        const std::uint8_t state = static_cast<std::uint8_t>((runningChecksum >> (7u - bit)) & 0x01u);
+        variables().writeByte(IOPorts::ADDR_MON_TAPE_OUTPUT, state);
+    }
     MON_BELL();
 }
 
@@ -1014,12 +1020,26 @@ void MON_RD2() {
 }
 
 void MON_RD2BIT() {
-    // TODO(asm-port): Find tape edge transition (part of cassette I/O synchronization).
+    // Find a tape input edge transition with a bounded poll loop.
+    const std::uint8_t initial =
+        static_cast<std::uint8_t>(variables_const().readByte(IOPorts::ADDR_MON_TAPE_INPUT) & 0x80u);
+    for (std::uint16_t spins = 0u; spins < 4096u; ++spins) {
+        const std::uint8_t current =
+            static_cast<std::uint8_t>(variables_const().readByte(IOPorts::ADDR_MON_TAPE_INPUT) & 0x80u);
+        if (current != initial) {
+            break;
+        }
+    }
 }
 
 void MON_HEADR(std::uint8_t delay_code) {
-    // TODO(asm-port): Delay routine (typically 3.5 seconds for tape read sync).
-    (void)delay_code;
+    // Delay loop used by monitor tape paths; bounded and deterministic.
+    const std::uint16_t outer = static_cast<std::uint16_t>(delay_code) * 64u;
+    volatile std::uint16_t sink = 0u;
+    for (std::uint16_t i = 0u; i < outer; ++i) {
+        sink = static_cast<std::uint16_t>(sink + (i ^ delay_code));
+    }
+    (void)sink;
 }
 
 void MON_RD3() {
@@ -1060,18 +1080,33 @@ void MON_RD3() {
 }
 
 bool MON_RDBIT() {
-    // TODO(asm-port): Read one bit from cassette tape (returns carry = bit value).
-    return false;
+    // Return carry-equivalent from monitor tape input bit 7.
+    return (variables_const().readByte(IOPorts::ADDR_MON_TAPE_INPUT) & 0x80u) != 0u;
 }
 
 std::uint8_t MON_RDBYTE() {
-    // TODO(asm-port): Read one byte from cassette tape (8 calls to RDBIT, bit rotation).
-    return 0x00u;  // Placeholder return value.
+    // Read 8 bits MSB-first from the monitor tape input helper.
+    std::uint8_t value = 0u;
+    for (std::uint8_t i = 0u; i < 8u; ++i) {
+        value = static_cast<std::uint8_t>(value << 1u);
+        if (MON_RDBIT()) {
+            value = static_cast<std::uint8_t>(value | 0x01u);
+        }
+    }
+    return value;
 }
 
 bool MON_NXTA1() {
-    // TODO(asm-port): Increment A1 pointer and compare to A2 limit (used in data read loop).
-    return true;
+    // Increment A1 and return carry-equivalent (A1 >= A2 after increment).
+    constexpr std::uint8_t kMON_A1L = ApplesoftVariables::ZP_MON_A1;
+    constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
+
+    std::uint16_t a1 = ReadZeroPageWord(kMON_A1L);
+    const std::uint16_t a2 = ReadZeroPageWord(kMON_A2L);
+
+    a1 = static_cast<std::uint16_t>(a1 + 1u);
+    WriteZeroPageWord(kMON_A1L, a1);
+    return a1 >= a2;
 }
 
 void MON_RESTORE() {
@@ -1107,7 +1142,17 @@ void MON_RESTORE() {
 }
 
 void MON_PRERR() {
-    // TODO(asm-port): Output error message "ERR" (tape read checksum failure).
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // MON_Labels: PRERR (inclusive) .. BELL (exclusive)
+    // Name normalization: none (assembler label PRERR is prefixed with MON_ in C++).
+    //
+    // PRINT "ERR", THEN BELL.
+    MON_COUT(0xc5u); // 'E' with high bit set
+    MON_COUT(0xd2u); // 'R' with high bit set
+    MON_COUT(0xd2u); // 'R' with high bit set
+
+    // PRERR does not terminate; it falls through directly into BELL.
+    MON_BELL();
 }
 
 }  // namespace applesoft::asm_port
