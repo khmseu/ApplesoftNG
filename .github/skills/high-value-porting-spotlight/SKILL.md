@@ -25,9 +25,10 @@ Automated identification of high-value assembly-to-C++ porting targets based on 
 
 1. Once the `start_label` and `end_label` are determined, invoke the `asm-incremental-port` skill.
 2. Provide the range and any discovered context about 16-bit pointers or fall-throughs.
+3. Continue immediately into the `asm-incremental-port` workflow in the same response.
 
 ## Definition Of Done
 
 - Top stub candidate from cross-reference is identified.
 - Valid label range (start_label, end_label) is resolved in assembly and symbols.
-- Task is handed over to `asm-incremental-port`.
+- Task is handed over to `asm-incremental-port` and the next phase starts immediately.
