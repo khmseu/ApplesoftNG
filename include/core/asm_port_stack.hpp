@@ -32,6 +32,14 @@ public:
     /// Read a byte at stack address (0x0100 + x + plus).
     [[nodiscard]] std::uint8_t readByteAt(std::uint8_t x, std::uint8_t plus) const;
 
+    /**
+     * @brief Specialized stack probe for 6502 NAME_NOT_FOUND behavior.
+     *
+     * In the original ROM, this probes for a specific return address on the 6502 stack.
+     * In the C++ model, this is a placeholder that documents the logic.
+     */
+    [[nodiscard]] bool probeIsCalledFrom(std::uint16_t address) const;
+
     // --- FN call stack ---
 
     void clearFnStack();

@@ -44,9 +44,9 @@ void AS_PLOTFNS();
 void AS_SYNCHR(std::uint8_t expected);
 void AS_CHKNUM();
 void AS_FRMNUM();
-void AS_CHKOPN();
 void AS_CHKCLS();
 void AS_MAKINT();
+void AS_CHKOPN();
 std::uint16_t AS_PTRGET();
 void AS_DATA();
 void AS_FRMEVL();
@@ -1061,11 +1061,30 @@ void AS_NAME_NOT_FOUND() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // AS_Labels: AS_NAME_NOT_FOUND (inclusive) .. AS_C_ZERO (exclusive)
     // Name normalization: none (assembler label AS_NAME_NOT_FOUND kept verbatim).
+    //
+    // Variable not found: check context via return address to decide between
+    // returning a zero constant or creating a new variable entry.
+    //
+    // Original ROM logic:
+    // 3443 T:1087  68        pla  ; pull return address low byte
+    // 3444 T:1088  48        pha  ; push it back
+    // 3445 T:1089  c9 d7     cmp #<FRM_VARIABLE_CALL
+    // 3446 T:108b  d0 0f     bne MAKE_NEW_VARIABLE
+    // 3447 T:108d  ba        tsx
+    // 3448 T:108e  bd 02 01  lda STACK+2,X ; peek return address high byte
+    // 3449 T:1091  c9 0e     cmp #>FRM_VARIABLE_CALL
+    // 3450 T:1093  d0 07     bne MAKE_NEW_VARIABLE
+    // 3451 T:1095  a9 9a     lda #<C_ZERO
+    // 3452 T:1097  a0 10     ldy #>C_ZERO
+    // 3453 T:1099  60        rts
 
-    // Current runtime model follows the normal branch to MAKE_NEW_VARIABLE.
-    // The ROM return-address stack probe for FRM_VARIABLE_CALL is not represented
-    // in this C++ call model yet, so callers that need C_ZERO routing should
-    // dispatch to AS_C_ZERO explicitly.
+    constexpr std::uint16_t kFRM_VARIABLE_CALL = 0x0ed7u; // Derived from .sym
+
+    if (theStack().probeIsCalledFrom(kFRM_VARIABLE_CALL)) {
+        AS_C_ZERO();
+        return;
+    }
+
     AS_MAKE_NEW_VARIABLE();
 }
 

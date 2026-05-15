@@ -72,6 +72,22 @@ std::uint8_t ApplesoftStack::readByteAt(std::uint8_t x, std::uint8_t plus) const
     return ReadProgramByte(static_cast<std::uint16_t>(0x0100u + offset));
 }
 
+bool ApplesoftStack::probeIsCalledFrom(std::uint16_t address) const {
+    // In original ROM:
+    // 3443 T:1087  68           pla (pop return low byte)
+    // 3444 T:1088  48           pha (push back)
+    // 3445 T:1089  c9 d7        cmp #<FRM_VARIABLE_CALL
+    // 3446 T:108b  d0 0f        bne MAKE_NEW_VARIABLE
+    // 3447 T:108d  ba           tsx
+    // 3448 T:108e  bd 02 01     lda STACK+2,X (look ahead in stack for high byte)
+    // 3449 T:1091  c9 0e        cmp #>FRM_VARIABLE_CALL
+    //
+    // The C++ call model does not populate the 6502 stack with return addresses.
+    // However, if we ever model call history in ApplesoftStack, we would check it here.
+    (void)address;
+    return false;
+}
+
 // --- FN call stack ---
 
 void ApplesoftStack::clearFnStack() {
