@@ -436,7 +436,7 @@ void MOVE_HIGHEST_STRING_TO_TOP() {
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // Labels: CAT (inclusive) .. MOVINS (exclusive)
 // Name normalization: none (assembler label CAT kept verbatim).
-void CAT() {
+static void CAT_impl() {
     const std::uint16_t firstDescriptor = read_FAC_descriptor_address();
     write_STRNG1(firstDescriptor);
 
@@ -558,6 +558,10 @@ void STRINI(std::uint8_t length) {
 
     // Original control flow falls through directly into STRSPA.
     STRSPA(length);
+}
+
+void CAT() {
+    CAT_impl();
 }
 
 // Labels: STRSPA (inclusive) .. L_STRSPA_1 (exclusive)

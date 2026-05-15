@@ -12,6 +12,7 @@ extern std::uint8_t ReadProgramByte(std::uint16_t address);
 extern void ERROR(std::uint8_t error_code);
 extern void LOAD_ARG_FROM_YA();
 extern void COPY_ARG_TO_FAC();
+extern std::uint8_t gFloatInput;
 
 // Forward declarations of subroutines used within FADD/FSUB
 void SHIFT_RIGHT();
@@ -32,6 +33,17 @@ void ADD_EXPONENTS_1();
 void NEGATE_FAC();
 void INCREMENT_FAC_MANTISSA();
 void INCREMENT_MANTISSA();
+
+void LOAD_ARG_FROM_YA() {
+    const std::uint16_t address = static_cast<std::uint16_t>(
+        (static_cast<std::uint16_t>(ReadZeroPageByte(ApplesoftVariables::ZP_MON_DEBUG_REG_Y)) << 8u) |
+        ReadZeroPageByte(ApplesoftVariables::ZP_MON_DEBUG_REG_A));
+    LOAD_ARG_FROM_YA(address);
+}
+
+void FLOAT() {
+    FLOAT(static_cast<std::int8_t>(gFloatInput));
+}
 
 /**
  * FSUB: FAC = (Y,A) - FAC
@@ -253,149 +265,6 @@ void FLOAT_2(std::uint8_t exponent, bool positive) {
     WriteZeroPageByte(ApplesoftVariables::ZP_FAC_EXTENSION, 0);
     WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, positive ? 0 : 0xFF);
     // jmp NORMALIZE_FAC_1
-}
-
-// Forward declarations for internal math routines
-static void SHIFT_RIGHT(std::uint8_t count);
-static void SHIFT_RIGHT_4(std::uint8_t count);
-static void COMPLEMENT_FAC();
-static void COMPLEMENT_FAC_MANTISSA();
-static void INCREMENT_FAC_MANTISSA();
-static void NORMALIZE_FAC_1();
-static void NORMALIZE_FAC_2();
-static void NORMALIZE_FAC_5();
-static void NORMALIZE_FAC_6();
-static void COPY_ARG_TO_FAC();
-static void ZERO_FAC();
-
-/**
- * FSUB: FAC = ARG - FAC
- */
-void FSUB() {
-    NEGATE_FAC();
-    FADD();
-}
-
-/**
- * FADD: FAC = (Y,A) + FAC
- */
-void FADD() {
-    // If we have (Y,A) address, LOAD_ARG_FROM_YA then FADDT
-    // For now, assume ARG is already loaded if called with no arguments
-    FADDT();
-}
-
-/**
- * FADDT: FAC = ARG + FAC
- * Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
- * Labels: FADDT (inclusive) .. RTS_12 (exclusive)
- */
-void FADDT() {
-    if (ReadZeroPageByte(ApplesoftVariables::ZP_FAC) == 0) {
-        COPY_ARG_TO_FAC();
-        return;
-    }
-
-    std::uint8_t fac_ext = ReadZeroPageByte(ApplesoftVariables::ZP_FAC_EXTENSION);
-    WriteZeroPageByte(ApplesoftVariables::ZP_ARG_EXTENSION, fac_ext);
-    
-    std::uint8_t arg_exp = ReadZeroPageByte(ApplesoftVariables::ZP_ARG);
-    if (arg_exp == 0) return; // RTS_10
-
-    int diff = static_cast<int>(arg_exp) - static_cast<int>(ReadZeroPageByte(ApplesoftVariables::ZP_FAC));
-    if (diff == 0) {
-        // FADD_3
-    } else if (diff < 0) {
-        // ARG has smaller exponent, shift ARG
-        if (diff < -8) {
-            // FADD_1
-            SHIFT_RIGHT(static_cast<std::uint8_t>(-diff));
-        } else {
-            // FADD_2_2
-            std::uint8_t shift = static_cast<std::uint8_t>(-diff);
-            std::uint8_t ext = ReadZeroPageByte(ApplesoftVariables::ZP_ARG_EXTENSION);
-            // ...
-        }
-    } else {
-        // FAC has smaller exponent, shift FAC
-        WriteZeroPageByte(ApplesoftVariables::ZP_FAC, arg_exp);
-        std::uint8_t arg_sign = ReadZeroPageByte(ApplesoftVariables::ZP_ARG_SIGN);
-        WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, arg_sign);
-        
-        // Complement diff because CARRY was set (SEC; SBC)
-        std::uint8_t count = static_cast<std::uint8_t>((~static_cast<std::uint8_t>(diff)) + 1);
-        // ...
-    }
-}
-
-/**
- * LOAD_ARG_FROM_YA: Unpack number at (Y,A) into ARG
- * Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
- * Labels: LOAD_ARG_FROM_YA (inclusive) .. RTS_REG (exclusive)
- */
-void LOAD_ARG_FROM_YA() {
-    std::uint16_t addr = (static_cast<std::uint16_t>(ReadZeroPageByte(ApplesoftVariables::ZP_MON_DEBUG_REG_Y)) << 8) | ReadZeroPageByte(ApplesoftVariables::ZP_MON_DEBUG_REG_A);
-    LOAD_ARG_FROM_YA(addr);
-}
-
-void LOAD_ARG_FROM_YA(std::uint16_t address) {
-    WriteZeroPageByte(ApplesoftVariables::ZP_ARG + 4, ReadProgramByte(address + 4));
-    WriteZeroPageByte(ApplesoftVariables::ZP_ARG + 3, ReadProgramByte(address + 3));
-    WriteZeroPageByte(ApplesoftVariables::ZP_ARG + 2, ReadProgramByte(address + 2));
-    
-    std::uint8_t arg_sign = ReadProgramByte(address + 1);
-    WriteZeroPageByte(ApplesoftVariables::ZP_ARG_SIGN, arg_sign);
-    WriteZeroPageByte(ApplesoftVariables::ZP_SGNCPR, arg_sign ^ ReadZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN));
-    
-    WriteZeroPageByte(ApplesoftVariables::ZP_ARG_MANTISSA, arg_sign | 0x80); // Implicit bit
-    
-    WriteZeroPageByte(ApplesoftVariables::ZP_ARG, ReadProgramByte(address + 0));
-}
-
-/**
- * SHIFT_RIGHT: Main entry to right shift
- */
-static void SHIFT_RIGHT(std::uint8_t count) {
-    // ...
-}
-
-static void SHIFT_RIGHT_4(std::uint8_t count) {
-    // ...
-}
-
-static void COMPLEMENT_FAC() {
-    std::uint8_t sign = ReadZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN);
-    WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, sign ^ 0xFF);
-}
-
-static void COMPLEMENT_FAC_MANTISSA() {
-    for (int i = 1; i <= 4; ++i) {
-        std::uint8_t addr = static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + i);
-        WriteZeroPageByte(addr, ReadZeroPageByte(addr) ^ 0xFF);
-    }
-    std::uint8_t ext = ReadZeroPageByte(ApplesoftVariables::ZP_FAC_EXTENSION);
-    WriteZeroPageByte(ApplesoftVariables::ZP_FAC_EXTENSION, ext ^ 0xFF);
-    
-    // inc ext
-    ext = ReadZeroPageByte(ApplesoftVariables::ZP_FAC_EXTENSION) + 1;
-    WriteZeroPageByte(ApplesoftVariables::ZP_FAC_EXTENSION, ext);
-    if (ext == 0) {
-        INCREMENT_FAC_MANTISSA();
-    }
-}
-
-static void COPY_ARG_TO_FAC() {
-    WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, ReadZeroPageByte(ApplesoftVariables::ZP_ARG_SIGN));
-    for (int i = 0; i < 5; ++i) {
-        WriteZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + i), 
-                         ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_ARG + i)));
-    }
-    WriteZeroPageByte(ApplesoftVariables::ZP_FAC_EXTENSION, 0);
-}
-
-static void ZERO_FAC() {
-    WriteZeroPageByte(ApplesoftVariables::ZP_FAC, 0);
-    WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, 0);
 }
 
 void ADDACC_WITH_DIGIT(std::uint8_t digit);

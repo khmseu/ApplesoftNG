@@ -67,6 +67,7 @@ void PRINT_ERROR_LINNUM();
 void MON_INPORT(std::uint8_t slot);
 void MON_OUTPORT(std::uint8_t slot);
 void MON_SETTXT();
+void CAT();
 extern std::int8_t gNumericCompareResult;
 extern bool gNumericCompareCarry;
 extern std::uint8_t gFloatInput;
@@ -186,7 +187,7 @@ void MON_SETKBD() {
     MON_INPORT(0u);
 }
 
-void MON_BELL() {
+void MON_BELL_impl() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
     // Labels: BELL (inclusive) .. RESTORE (exclusive)
     // Name normalization: BELL -> MON_BELL (monitor label gets MON_ prefix).
@@ -242,6 +243,10 @@ bool MON_JumpByAddress(std::uint16_t target) {
 
 } // namespace
 
+void MON_BELL() {
+    MON_BELL_impl();
+}
+
 void MON_RESET2() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
     // Labels: RESET2 (inclusive) .. REGDSP (exclusive)
@@ -280,7 +285,7 @@ void MON_RESET2() {
     (void)variables_const().readByte(IOPorts::ADDR_ROM_SIGNATURE);
     (void)variables_const().readByte(IOPorts::ADDR_KEYBOARD_STROBE);
 
-    MON_BELL();
+    MON_BELL_impl();
 
     const std::uint8_t sentinel1 = variables_const().readByte(kSentinel1);
     const std::uint8_t sentinel2 = variables_const().readByte(kSentinel2);
