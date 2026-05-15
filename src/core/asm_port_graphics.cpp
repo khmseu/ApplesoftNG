@@ -695,9 +695,26 @@ void AS_HPLOT() {
     }
 }
 
+namespace {
+
+void AS_DRWPNT() {
+    // TODO(asm-port): port AS_DRWPNT label range from Applesoft ROM.
+}
+
+void AS_DRAW1() {
+    // TODO(asm-port): port AS_DRAW1 label range from Applesoft ROM.
+}
+
+} // namespace
+
 void AS_DRAW() {
-    // TODO(asm-port): port AS_DRAW label range from Applesoft ROM.
-    // Draws a hi-res shape.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: AS_DRAW (inclusive) .. AS_XDRAW (exclusive)
+    // Name normalization: DRAW -> AS_DRAW (applesoft virtual prefix).
+    // DRAW statement: parse/prepare shape draw point, then dispatch to DRAW1.
+
+    AS_DRWPNT();
+    AS_DRAW1();
 }
 
 void AS_XDRAW() {
