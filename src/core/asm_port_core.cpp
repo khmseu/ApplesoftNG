@@ -9,11 +9,9 @@
 #include "core/asm_port_unfnc.hpp"
 #include "core/asm_port_stack.hpp"
 #include "core/io_ports.hpp"
-#include "platform/asm_port_outdo.hpp"
 
 #include <array>
 #include <cstdint>
-#include <vector>
 
 namespace applesoft::asm_port {
 
