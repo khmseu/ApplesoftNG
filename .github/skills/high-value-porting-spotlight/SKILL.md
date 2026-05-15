@@ -9,7 +9,7 @@ Automated identification of high-value assembly-to-C++ porting targets based on 
 ### Target Identification
 
 1. Scan [docs/function-cross-reference.md](../../../docs/function-cross-reference.md) for functions marked as `stub`.
-2. Sort identified stubs by `Calls (Approx)` in descending order.
+2. Sort identified stubs by `Calls (Approx)` in descending order, then by name ascending as a secondary sort.
 3. Select the top candidate that has not yet been started (check for matching `asm_port_*.cpp` files).
 
 ### Label Resolution

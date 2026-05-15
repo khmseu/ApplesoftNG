@@ -26,21 +26,20 @@ This skill covers:
 
 1. Select files:
    - If commit of staged files was requested, run `git diff --cached --stat` to see what is staged.
-   - If commit of just performed work was requested (for example with "commit that"), look at the files that were just modified.
+   - If commit of the most recent changes in the current working directory was requested (for example with "commit that"), look at the files that were just modified.
    - If a list of files to commit was given, look at those files.
    - Otherwise stop and ask for more direction of which files are supposed to be committed.
 2. If no changed files are detected, inform the user. Do not explore or modify files, except for understanding the changes to be committed.
 3. Write a commit message based only on the diff of the selected files.
 4. Run `git commit -m "..."`.
-
-- `-m` does not expand escape sequences. Do not separate lines with `\n`; use actual linefeeds (for example, multiple `-m` flags or a message file).
-- If a pre-commit hook prints messages, report those messages to the user.
+   - **IMPORTANT**: `-m` does not expand escape sequences. Do not separate lines with `\n`; use actual linefeeds (for example, multiple `-m` flags or a message file).
+   - If a pre-commit hook prints messages, report those messages to the user.
 
 ## Best Practices
 
 ### Message Structure
 
-- Apply rules in this priority order: 1) valid Conventional Commits header syntax, 2) correct breaking-change signaling, 3) body/footer detail for human and automation needs. Always prioritize 1 and 2; if adding detail would violate them, omit that detail.
+- Apply rules in this priority order: 1) valid Conventional Commits header syntax, 2) correct breaking-change signaling, 3) body/footer detail for human and automation needs. Include detailed bodies for non-trivial changes unless they would make the header invalid or obscure required breaking-change signals.
 - Use the canonical structure:
 
 ```text
