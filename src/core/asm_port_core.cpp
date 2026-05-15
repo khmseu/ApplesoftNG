@@ -46,6 +46,7 @@ void AS_CHKNUM();
 void AS_FRMNUM();
 void AS_CHKOPN();
 void AS_CHKCLS();
+void AS_MAKINT();
 std::uint16_t AS_PTRGET();
 void AS_DATA();
 void AS_FRMEVL();
@@ -994,16 +995,97 @@ std::uint16_t AS_PTRGET() {
 
 void AS_ARRAY() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // AS_Labels: AS_ARRAY (inclusive) .. AS_SUBERR (exclusive)
+    // AS_Labels: AS_ARRAY (inclusive) .. AS_MAKE_NEW_ARRAY (exclusive)
     // Name normalization: none (assembler label AS_ARRAY kept verbatim).
+    // Parse subscripts (if present), then search AS_ARYTAB for matching array name.
 
-    if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_SUBFLG) != 0u) {
-        AS_USE_OLD_ARRAY();
-        return;
+    constexpr std::uint8_t kAS_SUBFLG = ApplesoftVariables::ZP_AS_SUBFLG;
+    constexpr std::uint8_t kAS_DIMFLG = ApplesoftVariables::ZP_AS_DIMFLG;
+    constexpr std::uint8_t kAS_VALTYP = ApplesoftVariables::ZP_AS_VALTYP;
+    constexpr std::uint8_t kAS_VALTYP_PLUS_1 = ApplesoftVariables::ZP_AS_VALTYP_PLUS_1;
+    constexpr std::uint8_t kAS_NUMDIM = ApplesoftVariables::ZP_AS_NUMDIM;
+    constexpr std::uint8_t kAS_VARNAM = ApplesoftVariables::ZP_AS_VARNAM;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_ARYTAB = ApplesoftVariables::ZP_AS_ARYTAB;
+    constexpr std::uint8_t kAS_STREND = ApplesoftVariables::ZP_AS_STREND;
+    constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
+
+    if (ReadZeroPageByte(kAS_SUBFLG) == 0u) {
+        const std::uint8_t dimflgOrInteger = static_cast<std::uint8_t>(
+            ReadZeroPageByte(kAS_DIMFLG) | ReadZeroPageByte(kAS_VALTYP_PLUS_1));
+        theStack().pushByte(dimflgOrInteger);
+        theStack().pushByte(ReadZeroPageByte(kAS_VALTYP));
+
+        std::uint8_t dimensions = 0u;
+        for (;;) {
+            // Save loop state and variable name while AS_MAKINT evaluates next subscript.
+            theStack().pushByte(dimensions);
+            theStack().pushByte(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_VARNAM + 1u)));
+            theStack().pushByte(ReadZeroPageByte(kAS_VARNAM));
+
+            AS_MAKINT();
+
+            WriteZeroPageByte(kAS_VARNAM, theStack().popByte());
+            WriteZeroPageByte(static_cast<std::uint8_t>(kAS_VARNAM + 1u), theStack().popByte());
+            dimensions = theStack().popByte();
+
+            // Replace saved (AS_VALTYP, AS_DIMFLG|AS_VALTYP+1) with subscript value (AS_FAC+3/+4).
+            const std::uint8_t x = theStack().readStackPointer();
+            const std::uint16_t stackPlus2 = static_cast<std::uint16_t>(0x0100u + add_u8(x, 2u));
+            const std::uint16_t stackPlus1 = static_cast<std::uint16_t>(0x0100u + add_u8(x, 1u));
+            theStack().pushByte(ReadProgramByte(stackPlus2));
+            theStack().pushByte(ReadProgramByte(stackPlus1));
+            WriteProgramByte(stackPlus2, ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u)));
+            WriteProgramByte(stackPlus1, ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u)));
+
+            ++dimensions;
+            if (AS_CHRGOT() == static_cast<std::uint8_t>(',')) {
+                continue;
+            }
+
+            WriteZeroPageByte(kAS_NUMDIM, dimensions);
+            AS_CHKCLS();
+
+            const std::uint8_t restoredValTyp = theStack().popByte();
+            const std::uint8_t restoredValTypPlus1Dim = theStack().popByte();
+            WriteZeroPageByte(kAS_VALTYP, restoredValTyp);
+            WriteZeroPageByte(kAS_VALTYP_PLUS_1, restoredValTypPlus1Dim);
+            WriteZeroPageByte(kAS_DIMFLG, static_cast<std::uint8_t>(restoredValTypPlus1Dim & 0x7fu));
+            break;
+        }
     }
 
-    // TODO(asm-port): complete subscript-list parsing and array-table scan.
-    AS_MAKE_NEW_ARRAY();
+    std::uint16_t lowtr = ReadZeroPageWord(kAS_ARYTAB);
+    const std::uint16_t strend = ReadZeroPageWord(kAS_STREND);
+    const std::uint8_t varnamLo = ReadZeroPageByte(kAS_VARNAM);
+    const std::uint8_t varnamHi = ReadZeroPageByte(static_cast<std::uint8_t>(kAS_VARNAM + 1u));
+
+    for (;;) {
+        // AS_LOWTR is a 16-bit running pointer through array descriptors.
+        WriteZeroPageWord(kAS_LOWTR, lowtr);
+
+        if (lowtr == strend) {
+            AS_MAKE_NEW_ARRAY();
+            return;
+        }
+
+        const ProgramPointer descriptor{lowtr};
+        if (descriptor.read(0u) == varnamLo && descriptor.read(1u) == varnamHi) {
+            AS_USE_OLD_ARRAY();
+            return;
+        }
+
+        const std::uint16_t offsetToNext = ApplesoftVariables::makeWord(
+            descriptor.read(2u), descriptor.read(3u));
+        const std::uint32_t next = static_cast<std::uint32_t>(lowtr) +
+                                   static_cast<std::uint32_t>(offsetToNext);
+        if (next > 0xffffu) {
+            AS_SUBERR();
+            return;
+        }
+
+        lowtr = static_cast<std::uint16_t>(next);
+    }
 }
 
 
