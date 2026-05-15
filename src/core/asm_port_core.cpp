@@ -1984,8 +1984,7 @@ void MON_ADDR_03FB() {
     // Since we don't have a 6502 JMP instruction, we must trust the vector
     // is set or provide a sensible default if it's 0.
     if (target != 0) {
-        // In a real port, we'd look up the target in a jump table.
-        // For now, we stub the vector jump.
+        (void)MON_JumpByAddress(target);
     }
 }
 
@@ -2016,7 +2015,7 @@ void MON_IRQ() {
         const std::uint8_t hi = ReadProgramByte(static_cast<std::uint16_t>(kIRQVector + 1u));
         const std::uint16_t target = static_cast<std::uint16_t>(lo | (hi << 8u));
         if (target != 0) {
-            // Stub vector jump.
+            (void)MON_JumpByAddress(target);
         }
     }
 }
