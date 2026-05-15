@@ -13,6 +13,7 @@ std::uint8_t AS_MEMERR();
 void AS_CLEARC();
 std::uint8_t AS_GETBYT();
 void AS_IQERR();
+std::uint8_t AS_CHRGOT();
 std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void AS_SYNCHR(std::uint8_t expected);
@@ -472,9 +473,171 @@ void AS_SCALE() {
     WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_SCALE, val);
 }
 
+namespace {
+
+struct HiResCoordinates {
+    std::uint16_t x;
+    std::uint8_t y;
+    bool valid;
+};
+
+void SetHiResCursor(const HiResCoordinates& point) {
+    constexpr std::uint8_t kMON_GBASL = ApplesoftVariables::ZP_MON_GBASL;
+    constexpr std::uint8_t kMON_GBASH = ApplesoftVariables::ZP_MON_GBASH;
+    constexpr std::uint8_t kMON_HMASK = ApplesoftVariables::ZP_MON_HMASK;
+    constexpr std::uint8_t kAS_HGR_X = ApplesoftVariables::ZP_AS_HGR_X;
+    constexpr std::uint8_t kAS_HGR_Y = ApplesoftVariables::ZP_AS_HGR_Y;
+    constexpr std::uint8_t kAS_HGR_HORIZ = ApplesoftVariables::ZP_AS_HGR_HORIZ;
+    constexpr std::uint8_t kAS_HGR_PAGE = ApplesoftVariables::ZP_AS_HGR_PAGE;
+
+    static constexpr std::uint8_t kMaskTable[7] = {0x81u, 0x82u, 0x84u, 0x88u, 0x90u, 0xa0u, 0xc0u};
+
+    const std::uint16_t pageBase = static_cast<std::uint16_t>(ReadZeroPageByte(kAS_HGR_PAGE) << 8u);
+    const std::uint16_t rowOffset = static_cast<std::uint16_t>(
+        (static_cast<std::uint16_t>(point.y & 0x07u) << 10u) +
+        (static_cast<std::uint16_t>(point.y & 0x38u) << 4u) +
+        (static_cast<std::uint16_t>((point.y >> 6u) & 0x03u) * 0x28u));
+    const std::uint16_t rowBase = static_cast<std::uint16_t>(pageBase + rowOffset);
+
+    const std::uint8_t horiz = static_cast<std::uint8_t>(point.x / 7u);
+    const std::uint8_t mask = kMaskTable[point.x % 7u];
+
+    WriteZeroPageByte(kAS_HGR_X, static_cast<std::uint8_t>(point.x & 0xffu));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_HGR_X + 1u), static_cast<std::uint8_t>(point.x >> 8u));
+    WriteZeroPageByte(kAS_HGR_Y, point.y);
+
+    WriteZeroPageByte(kMON_GBASL, ApplesoftVariables::lowByte(rowBase));
+    WriteZeroPageByte(kMON_GBASH, ApplesoftVariables::highByte(rowBase));
+    WriteZeroPageByte(kAS_HGR_HORIZ, horiz);
+    WriteZeroPageByte(kMON_HMASK, mask);
+}
+
+} // namespace
+
+HiResCoordinates AS_HFNS() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: HFNS (inclusive) .. GGERR (exclusive)
+    // Parses hi-res coordinates from TXTPTR and validates range X<280, Y<192.
+
+    constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
+    constexpr std::uint16_t kMaxXExclusive = 280u;
+    constexpr std::uint8_t kMaxYExclusive = 192u;
+    constexpr std::uint8_t kComma = static_cast<std::uint8_t>(',' & 0x7fu);
+
+    AS_FRMNUM();
+    AS_GETADR();
+
+    const std::uint16_t x = ApplesoftVariables::makeWord(
+        ReadZeroPageByte(kAS_LINNUM),
+        ReadZeroPageByte(static_cast<std::uint8_t>(kAS_LINNUM + 1u)));
+    if (x >= kMaxXExclusive) {
+        AS_IQERR();
+        return {0u, 0u, false};
+    }
+
+    AS_SYNCHR(kComma);
+
+    const std::uint8_t y = AS_GETBYT();
+    if (y >= kMaxYExclusive) {
+        AS_IQERR();
+        return {0u, 0u, false};
+    }
+
+    return {x, y, true};
+}
+
+void AS_HPLOT0(const HiResCoordinates& point) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: HPLOT0 (inclusive) .. MOVE_LEFT_OR_RIGHT (exclusive)
+    // Plots one hi-res pixel using current HGR bit pattern.
+
+    constexpr std::uint8_t kAS_HGR_BITS = ApplesoftVariables::ZP_AS_HGR_BITS;
+    constexpr std::uint8_t kMON_GBASL = ApplesoftVariables::ZP_MON_GBASL;
+    constexpr std::uint8_t kMON_GBASH = ApplesoftVariables::ZP_MON_GBASH;
+    constexpr std::uint8_t kMON_HMASK = ApplesoftVariables::ZP_MON_HMASK;
+    constexpr std::uint8_t kAS_HGR_HORIZ = ApplesoftVariables::ZP_AS_HGR_HORIZ;
+
+    SetHiResCursor(point);
+
+    const std::uint16_t rowBase = ApplesoftVariables::makeWord(
+        ReadZeroPageByte(kMON_GBASL),
+        ReadZeroPageByte(kMON_GBASH));
+    const std::uint8_t horiz = ReadZeroPageByte(kAS_HGR_HORIZ);
+    const std::uint16_t pixelAddress = static_cast<std::uint16_t>(rowBase + horiz);
+
+    const std::uint8_t hgrBits = ReadZeroPageByte(kAS_HGR_BITS);
+    const std::uint8_t mask = ReadZeroPageByte(kMON_HMASK);
+    const std::uint8_t existing = variables_const().readByte(pixelAddress);
+    const std::uint8_t updated = static_cast<std::uint8_t>(((hgrBits ^ existing) & mask) ^ existing);
+    variables().writeByte(pixelAddress, updated);
+}
+
+void AS_HGLIN(const HiResCoordinates& start, const HiResCoordinates& target) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: HGLIN (inclusive) .. COSINE_TABLE (exclusive)
+    // Draws a line from current point to target point.
+
+    auto absInt = [](int v) -> int { return v < 0 ? -v : v; };
+
+    int x0 = static_cast<int>(start.x);
+    int y0 = static_cast<int>(start.y);
+    const int x1 = static_cast<int>(target.x);
+    const int y1 = static_cast<int>(target.y);
+
+    const int dx = absInt(x1 - x0);
+    const int sx = (x0 < x1) ? 1 : -1;
+    const int dy = -absInt(y1 - y0);
+    const int sy = (y0 < y1) ? 1 : -1;
+    int err = dx + dy;
+
+    while (x0 != x1 || y0 != y1) {
+        const int e2 = 2 * err;
+        if (e2 >= dy) {
+            err += dy;
+            x0 += sx;
+        }
+        if (e2 <= dx) {
+            err += dx;
+            y0 += sy;
+        }
+
+        AS_HPLOT0({static_cast<std::uint16_t>(x0), static_cast<std::uint8_t>(y0), true});
+    }
+}
+
 void AS_HPLOT() {
-    // TODO(asm-port): port AS_HPLOT label range from Applesoft ROM.
-    // Plots a hi-res graphics point.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: AS_HPLOT (inclusive) .. AS_HCOLOR (exclusive)
+    // Plots a hi-res point or line for HPLOT forms, including repeated TO clauses.
+
+    constexpr std::uint8_t kTOKEN_TO = 0xc1;
+
+    HiResCoordinates current {
+        ApplesoftVariables::makeWord(
+            ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X),
+            ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_HGR_X + 1u))),
+        ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_Y),
+        true
+    };
+
+    const std::uint8_t first_token = AS_CHRGOT();
+    if (first_token != kTOKEN_TO) {
+        current = AS_HFNS();
+        if (!current.valid) {
+            return;
+        }
+        AS_HPLOT0(current);
+    }
+
+    while (AS_CHRGOT() == kTOKEN_TO) {
+        AS_SYNCHR(kTOKEN_TO);
+        const HiResCoordinates target = AS_HFNS();
+        if (!target.valid) {
+            return;
+        }
+        AS_HGLIN(current, target);
+        current = target;
+    }
 }
 
 void AS_DRAW() {
@@ -722,5 +885,4 @@ void AS_VLIN() {
     const std::uint8_t top = ReadZeroPageByte(kAS_FIRST);
     MON_VLINE(xCoord, top);
 }
-
 }  // namespace applesoft::asm_port
