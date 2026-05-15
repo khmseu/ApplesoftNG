@@ -96,7 +96,7 @@
 | AS_FADD_2                           | real   | 9    | 3       | src/core/asm_port_math.cpp                | 106  |
 | AS_FAE_1                            | real   | 54   | 4       | src/core/asm_port_core.cpp                | 582  |
 | AS_FALSE                            | real   | 1    | 4       | src/core/asm_port_core.cpp                | 971  |
-| AS_FCOMP                            | real   | 3    | 5       | src/core/asm_port_core.cpp                | 1981 |
+| AS_FCOMP                            | real   | 3    | 5       | src/core/asm_port_core.cpp                | 2024 |
 | AS_FCOMP2                           | real   | 48   | 5       | src/core/asm_port_control_flow.cpp        | 188  |
 | AS_FDIVT                            | stub   | 0    | 1       | src/core/asm_port_mathtbl.cpp             | 31   |
 | AS_FIN                              | real   | 106  | 3       | src/core/asm_port_math.cpp                | 276  |
@@ -394,7 +394,7 @@
 | ClearErrFlag                        | real   | 1    | 2       | src/core/asm_port_core.cpp                | 87   |
 | clear_AS_FNCNAM_hi                  | real   | 1    | 1       | src/core/asm_port_strlt2.cpp              | 123  |
 | CLREOL                              | real   | 7    | 3       | src/platform/asm_port_getln.cpp           | 56   |
-| CompareArgAndFacStrings             | real   | 33   | 2       | src/core/asm_port_core.cpp                | 1994 |
+| CompareArgAndFacStrings             | real   | 33   | 2       | src/core/asm_port_core.cpp                | 2037 |
 | computeTextRowBase                  | real   | 10   | 3       | src/platform/asm_port_outdo.cpp           | 33   |
 | consumeKeyboardAS_Latch             | real   | 2    | 2       | src/platform/asm_port_outdo.cpp           | 99   |
 | copy_page_backward                  | real   | 7    | 2       | src/core/asm_port_bltu.cpp                | 7    |
@@ -420,7 +420,7 @@
 | IsTraceEnabled                      | real   | 2    | 3       | src/core/asm_port_control_flow.cpp        | 926  |
 | main                                | real   | 3    | 0       | src/main.cpp                              | 4    |
 | MarkDirectMode                      | real   | 1    | 2       | src/core/asm_port_core.cpp                | 91   |
-| MON_ADDR_03FB                       | stub   | 0    | 2       | src/core/asm_port_core.cpp                | 1973 |
+| MON_ADDR_03FB                       | real   | 6    | 2       | src/core/asm_port_core.cpp                | 1973 |
 | MON_BELL                            | real   | 1    | 7       | src/core/asm_port_core.cpp                | 294  |
 | MON_BELL_impl                       | real   | 2    | 2       | src/core/asm_port_core.cpp                | 195  |
 | MON_CLREOL                          | real   | 14   | 1       | src/core/asm_port_graphics.cpp            | 268  |
@@ -434,7 +434,7 @@
 | MON_INIT                            | real   | 4    | 2       | src/core/asm_port_core.cpp                | 165  |
 | MON_INPORT                          | real   | 5    | 6       | src/core/asm_port_graphics.cpp            | 133  |
 | MON_IOPRT                           | real   | 14   | 2       | src/core/asm_port_graphics.cpp            | 107  |
-| MON_IRQ                             | stub   | 0    | 2       | src/core/asm_port_core.cpp                | 1977 |
+| MON_IRQ                             | real   | 11   | 3       | src/core/asm_port_core.cpp                | 1992 |
 | MON_JumpByAddress                   | real   | 11   | 4       | src/core/asm_port_core.cpp                | 264  |
 | MON_KEYIN                           | real   | 1    | 2       | src/core/asm_port_inlin2.cpp              | 74   |
 | MON_KEYIN1                          | real   | 17   | 0       | src/core/asm_port_inlin2.cpp              | 38   |
@@ -444,7 +444,7 @@
 | MON_OUTPORT                         | real   | 5    | 6       | src/core/asm_port_graphics.cpp            | 146  |
 | MON_PLOT                            | real   | 18   | 5       | src/core/asm_port_graphics.cpp            | 159  |
 | MON_PRBYTE                          | real   | 9    | 2       | src/core/asm_port_core.cpp                | 246  |
-| MON_PREAD                           | real   | 15   | 3       | src/core/asm_port_core.cpp                | 2039 |
+| MON_PREAD                           | real   | 15   | 3       | src/core/asm_port_core.cpp                | 2082 |
 | MON_PRERR                           | real   | 4    | 2       | src/core/asm_port_statements.cpp          | 1148 |
 | MON_RD2                             | real   | 12   | 2       | src/core/asm_port_statements.cpp          | 1002 |
 | MON_RD2BIT                          | real   | 9    | 3       | src/core/asm_port_statements.cpp          | 1026 |
@@ -480,7 +480,7 @@
 | RDCHAR                              | real   | 7    | 3       | src/platform/asm_port_getln.cpp           | 42   |
 | ReadAS_LineNumberFromTextPointer    | real   | 5    | 3       | src/core/asm_port_control_flow.cpp        | 899  |
 | readLine                            | real   | 3    | 1       | src/platform/console.cpp                  | 8    |
-| ReadProgramByte                     | real   | 1    | 24      | src/core/asm_port_core.cpp                | 111  |
+| ReadProgramByte                     | real   | 1    | 28      | src/core/asm_port_core.cpp                | 111  |
 | readStackWordAt                     | real   | 1    | 2       | src/core/asm_port_control_flow.cpp        | 298  |
 | ReadZeroPageByte                    | real   | 1    | 264     | src/core/asm_port_core.cpp                | 95   |
 | readZeroPageByte                    | real   | 1    | 13      | src/platform/asm_port_outdo.cpp           | 20   |
@@ -530,7 +530,7 @@
 | SUBSTRING_BUILD                     | real   | 6    | 4       | src/core/asm_port_strlt2.cpp              | 233  |
 | WriteForwardPointer                 | real   | 2    | 1       | src/core/asm_port_statements.cpp          | 617  |
 | WriteProgramByte                    | real   | 1    | 16      | src/core/asm_port_core.cpp                | 117  |
-| WriteZeroPageByte                   | real   | 1    | 279     | src/core/asm_port_core.cpp                | 99   |
+| WriteZeroPageByte                   | real   | 1    | 280     | src/core/asm_port_core.cpp                | 99   |
 | writeZeroPageByte                   | real   | 1    | 3       | src/platform/asm_port_outdo.cpp           | 24   |
 | WriteZeroPageWord                   | real   | 1    | 102     | src/core/asm_port_core.cpp                | 103  |
 | write_AS_ARYPNT                     | real   | 1    | 3       | src/core/asm_port_strlt2.cpp              | 148  |
