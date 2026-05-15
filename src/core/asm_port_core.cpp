@@ -19,7 +19,6 @@ namespace applesoft::asm_port {
 
 void SYNERR();
 extern std::uint8_t gJerErrorCode;
-void MON_M6502VEC();
 void MON_RESET2();
 void MON_REGDSP();
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
@@ -437,7 +436,6 @@ void COLD_START() {
     WriteZeroPageByte(ApplesoftVariables::ZP_TRCFLG, 0u);
     WriteZeroPageByte(ApplesoftVariables::ZP_SHIFT_SIGN_EXT, 0u);
     WriteZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_LASTPT + 1u), 0u);
-    MON_M6502VEC();
     theStack().pushByte(0u);
     WriteZeroPageByte(ApplesoftVariables::ZP_DSCLEN, 3u);
 
@@ -1704,27 +1702,39 @@ std::uint8_t MON_SCRN(std::uint8_t row, std::uint8_t column) {
     return static_cast<std::uint8_t>(value & 0x0fu);
 }
 
-void MON_M6502VEC() {
+void MON_IRQ();
+void MON_ADDR_03FB();
+
+class MON_M6502VEC {
+public:
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/vectors.o65.lst
     // Labels: M6502VEC (inclusive) .. end of listing (exclusive)
     // Name normalization: M6502VEC -> MON_M6502VEC (monitor label gets MON_ prefix).
     //
-    // Materialize monitor vectors table bytes in emulated memory:
-    //   $FFFA: .word $03FB  (NMI vector)
-    //   $FFFC: .word RESET2 (relocation placeholder in slim listing -> $0000)
-    //   $FFFE: .word IRQ    (relocation placeholder in slim listing -> $0000)
+    // EOM vector helpers: each method directly transfers control to the target
+    // used by the original vector entry.
+    static void NMI_VECTOR() {
+        // FFFA points at $03FB.
+        MON_ADDR_03FB();
+    }
 
-    constexpr std::uint16_t kNmiVectorAddress = 0xfffau;
-    constexpr std::uint16_t kResetVectorAddress = 0xfffcu;
-    constexpr std::uint16_t kIrqVectorAddress = 0xfffeu;
+    static void RESET_VECTOR() {
+        // FFFC points to RESET2.
+        MON_RESET2();
+    }
 
-    constexpr std::uint16_t kNmiVectorTarget = 0x03fbu;
-    constexpr std::uint16_t kResetVectorTarget = 0x0000u;
-    constexpr std::uint16_t kIrqVectorTarget = 0x0000u;
+    static void IRQ_VECTOR() {
+        // FFFE points to IRQ.
+        MON_IRQ();
+    }
+};
 
-    variables().writeWord(kNmiVectorAddress, kNmiVectorTarget);
-    variables().writeWord(kResetVectorAddress, kResetVectorTarget);
-    variables().writeWord(kIrqVectorAddress, kIrqVectorTarget);
+void MON_ADDR_03FB() {
+    // TODO(asm-port): port monitor vector target at address $03FB.
+}
+
+void MON_IRQ() {
+    // TODO(asm-port): port IRQ monitor label.
 }
 
 std::int8_t FCOMP(std::uint16_t /*argAddress*/) {
