@@ -447,12 +447,20 @@ void AS_HCOLOR() {
     // AS_Labels: AS_HCOLOR (inclusive) .. AS_HPLOT (exclusive)
     // Name normalization: none (assembler label AS_HCOLOR kept verbatim).
 
+    constexpr std::uint8_t kAS_HGR_COLOR = ApplesoftVariables::ZP_AS_HGR_COLOR;
+    constexpr std::uint8_t kAS_HGR_BITS = ApplesoftVariables::ZP_AS_HGR_BITS;
+    static constexpr std::uint8_t kColorTable[8] = {
+        0x00u, 0x2au, 0x55u, 0x7fu, 0x80u, 0xaau, 0xd5u, 0xffu};
+
     const std::uint8_t color = AS_GETBYT();
     if (color > 7u) {
         AS_IQERR();
         return;
     }
-    WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_BITS, color);
+
+    const std::uint8_t pattern = kColorTable[color];
+    WriteZeroPageByte(kAS_HGR_COLOR, pattern);
+    WriteZeroPageByte(kAS_HGR_BITS, pattern);
 }
 
 void AS_ROT() {
@@ -481,7 +489,11 @@ struct HiResCoordinates {
     bool valid;
 };
 
-void SetHiResCursor(const HiResCoordinates& point) {
+void AS_HPOSN(const HiResCoordinates& point) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: HPOSN (inclusive) .. HPLOT0 (exclusive)
+    // Computes hi-res cursor address and bit state for the given coordinate.
+
     constexpr std::uint8_t kMON_GBASL = ApplesoftVariables::ZP_MON_GBASL;
     constexpr std::uint8_t kMON_GBASH = ApplesoftVariables::ZP_MON_GBASH;
     constexpr std::uint8_t kMON_HMASK = ApplesoftVariables::ZP_MON_HMASK;
@@ -489,6 +501,8 @@ void SetHiResCursor(const HiResCoordinates& point) {
     constexpr std::uint8_t kAS_HGR_Y = ApplesoftVariables::ZP_AS_HGR_Y;
     constexpr std::uint8_t kAS_HGR_HORIZ = ApplesoftVariables::ZP_AS_HGR_HORIZ;
     constexpr std::uint8_t kAS_HGR_PAGE = ApplesoftVariables::ZP_AS_HGR_PAGE;
+    constexpr std::uint8_t kAS_HGR_COLOR = ApplesoftVariables::ZP_AS_HGR_COLOR;
+    constexpr std::uint8_t kAS_HGR_BITS = ApplesoftVariables::ZP_AS_HGR_BITS;
 
     static constexpr std::uint8_t kMaskTable[7] = {0x81u, 0x82u, 0x84u, 0x88u, 0x90u, 0xa0u, 0xc0u};
 
@@ -510,6 +524,16 @@ void SetHiResCursor(const HiResCoordinates& point) {
     WriteZeroPageByte(kMON_GBASH, ApplesoftVariables::highByte(rowBase));
     WriteZeroPageByte(kAS_HGR_HORIZ, horiz);
     WriteZeroPageByte(kMON_HMASK, mask);
+
+    // HPOSN seeds HGR_BITS from HGR_COLOR and rotates pattern on odd byte columns.
+    std::uint8_t hgrBits = ReadZeroPageByte(kAS_HGR_COLOR);
+    if ((horiz & 0x01u) != 0u) {
+        hgrBits = static_cast<std::uint8_t>(hgrBits << 1u);
+        if (hgrBits < 0xc0u) {
+            hgrBits = static_cast<std::uint8_t>(ReadZeroPageByte(kAS_HGR_COLOR) ^ 0x7fu);
+        }
+    }
+    WriteZeroPageByte(kAS_HGR_BITS, hgrBits);
 }
 
 } // namespace
@@ -557,7 +581,7 @@ void AS_HPLOT0(const HiResCoordinates& point) {
     constexpr std::uint8_t kMON_HMASK = ApplesoftVariables::ZP_MON_HMASK;
     constexpr std::uint8_t kAS_HGR_HORIZ = ApplesoftVariables::ZP_AS_HGR_HORIZ;
 
-    SetHiResCursor(point);
+    AS_HPOSN(point);
 
     const std::uint16_t rowBase = ApplesoftVariables::makeWord(
         ReadZeroPageByte(kMON_GBASL),
