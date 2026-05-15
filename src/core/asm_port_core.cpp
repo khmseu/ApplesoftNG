@@ -1373,7 +1373,7 @@ void FRMEVL() {
 
                 // FRMEVL_2_3 special-case (+ with string FAC) is CAT in ROM.
                 if (token == kTOKEN_PLUS && (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u) {
-                    // TODO(asm-port): route string concatenation to CAT label implementation.
+                    CAT();
                     return;
                 }
 
