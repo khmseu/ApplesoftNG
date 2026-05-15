@@ -6,26 +6,26 @@
 namespace applesoft::asm_port {
 namespace {
 
-bool has_room(const REASONState& state) {
+bool has_room(const AS_REASONState& state) {
     return state.y < state.fretopHi ||
-           (state.y == state.fretopHi && state.a < state.fretopLo);
+           (state.y == state.fretopHi && state.a < state.fretopAS_Lo);
 }
 
-void invokeGarbageCollector(REASONState& state) {
-    // REASON calls into the global GARBAG routine before retrying the space check.
-    ::applesoft::asm_port::GARBAG();
+void invokeGarbageCollector(AS_REASONState& state) {
+    // AS_REASON calls into the global AS_GARBAG routine before retrying the space check.
+    ::applesoft::asm_port::AS_GARBAG();
     state.garbageCollected = true;
 }
 
 } // namespace
 
-REASONResult REASON(REASONState& state) {
+AS_REASONResult AS_REASON(AS_REASONState& state) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: REASON (inclusive) .. MEMERR (exclusive)
-    // Name normalization: none (assembler label REASON kept verbatim).
+    // AS_Labels: AS_REASON (inclusive) .. AS_MEMERR (exclusive)
+    // Name normalization: none (assembler label AS_REASON kept verbatim).
 
     if (has_room(state)) {
-        return REASONResult{true, state.a, state.y, state.x};
+        return AS_REASONResult{true, state.a, state.y, state.x};
     }
 
     const std::uint8_t savedA = state.a;
@@ -39,12 +39,12 @@ REASONResult REASON(REASONState& state) {
     state.y = savedY;
 
     if (has_room(state)) {
-        return REASONResult{true, state.a, state.y, state.x};
+        return AS_REASONResult{true, state.a, state.y, state.x};
     }
 
-    state.x = ::applesoft::asm_port::MEMERR();
+    state.x = ::applesoft::asm_port::AS_MEMERR();
     state.memerrCalled = true;
-    return REASONResult{false, state.a, state.y, state.x};
+    return AS_REASONResult{false, state.a, state.y, state.x};
 }
 
 } // namespace applesoft::asm_port

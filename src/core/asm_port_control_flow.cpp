@@ -20,75 +20,75 @@ void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
-void PRINT_ERROR_LINNUM(std::string_view prefix);
-std::uint8_t CHRGOT();
-std::uint8_t CHRGET();
-void LINGET();
-void SYNERR();
-void SYNCHR(std::uint8_t expected);
-void LET();
-void IF();
-void REM();
-void IF_TRUE();
-void ONGOTO();
-void CONTROL_C_TYPED();
-void STEP();
-void TRACE_();
-void FRMNUM();
-void FRMEVL();
-void CHKNUM();
-void FADD();
+void AS_PRINT_ERROR_LINNUM(std::string_view prefix);
+std::uint8_t AS_CHRGOT();
+std::uint8_t AS_CHRGET();
+void AS_LINGET();
+void AS_SYNERR();
+void AS_SYNCHR(std::uint8_t expected);
+void AS_LET();
+void AS_IF();
+void AS_REM();
+void AS_IF_TRUE();
+void AS_ONGOTO();
+void AS_CONTROL_C_TYPED();
+void AS_STEP();
+void AS_TRACE_();
+void AS_FRMNUM();
+void AS_FRMEVL();
+void AS_CHKNUM();
+void AS_FADD();
 void PushForPntFrame();
-std::uint8_t GETBYT();
-void ADDON(std::uint8_t offset);
-bool ISCNTC();
-void OUTSP();
-void LINPRT();
-void OUTDO(std::uint8_t value);
+std::uint8_t AS_GETBYT();
+void AS_ADDON(std::uint8_t offset);
+bool AS_ISCNTC();
+void AS_OUTSP();
+void AS_LINPRT();
+void AS_OUTDO(std::uint8_t value);
 std::uint8_t CurrentStatementChar();
 bool IsRunningMode();
 bool IsTraceEnabled();
-bool IsEndOfLineAtTextPointer();
+bool IsEndOfAS_LineAtTextPointer();
 bool IsEndOfProgramAtTextPointer();
-std::uint16_t ReadLineNumberFromTextPointer();
-void AdvanceTextPointerToNextLine();
-void GOEND();
-void EXECUTE_STATEMENT();
-void EXECUTE_STATEMENT_1();
-void NEWSTT();
-void RESTART();
-void RTS_5();
-void GOSUB();
-void GO_TO_LINE();
-void GOTO();
-void POP();
-void RETURN();
-std::uint16_t PTRGET();
-void PULL3();
-std::uint8_t REMN();
-std::uint8_t DATAN();
-bool FL1(std::uint16_t startAddress);
-void HANDLERR();
+std::uint16_t ReadAS_LineNumberFromTextPointer();
+void AdvanceTextPointerToNextAS_Line();
+void AS_GOEND();
+void AS_EXECUTE_STATEMENT();
+void AS_EXECUTE_STATEMENT_1();
+void AS_NEWSTT();
+void AS_RESTART();
+void AS_RTS_5();
+void AS_GOSUB();
+void AS_GO_TO_LINE();
+void AS_GOTO();
+void AS_POP();
+void AS_RETURN();
+std::uint16_t AS_PTRGET();
+void AS_PULL3();
+std::uint8_t AS_REMN();
+std::uint8_t AS_DATAN();
+bool AS_FL1(std::uint16_t startAddress);
+void AS_HANDLERR();
 void SetPendingErrorCode(std::uint8_t errorCode);
-std::uint8_t INCHR();
+std::uint8_t AS_INCHR();
 void SetTextPointer(std::uint16_t address);
 void ClearErrFlag();
 void MarkDirectMode();
-void PARSE_INPUT_LINE();
-void HandleNumberedLine();
-void CRDO();
-void SETFOR();
-void ROUND_FAC();
+void AS_PARSE_INPUT_LINE();
+void HandleNumberedAS_Line();
+void AS_CRDO();
+void AS_SETFOR();
+void AS_ROUND_FAC();
 
 constexpr std::uint8_t kTokenBase = 0x80u;
-constexpr std::uint8_t RESTART_PROMPT = ']' | 0x80u;
+constexpr std::uint8_t AS_RESTART_PROMPT = ']' | 0x80u;
 
-void STOP_impl(bool shouldPrintBreak);
-void ENDX_impl(bool shouldPrintBreak);
+void AS_STOP_impl(bool shouldPrintBreak);
+void AS_ENDX_impl(bool shouldPrintBreak);
 
 namespace {
 
-constexpr std::uint16_t kStepLabelAddress = 0x07afu;
+constexpr std::uint16_t kStepAS_LabelAddress = 0x07afu;
 constexpr std::uint16_t kConOneScratchAddress = 0x03fbu;
 constexpr std::uint8_t kPackedFloatByteCount = 5u;
 constexpr std::uint8_t kStepValueOffsetInForFrame = 4u;
@@ -97,51 +97,51 @@ constexpr std::uint8_t kStepValueOffsetInForFrame = 4u;
 constexpr std::uint8_t kConOnePacked[kPackedFloatByteCount] = {0x81u, 0x00u, 0x00u, 0x00u, 0x00u};
 
 void ApplyFacSign() {
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
 
-    const std::uint8_t facSign = ReadZeroPageByte(kFAC_SIGN);
-    const std::uint8_t facMantissaHigh = ReadZeroPageByte(kFAC + 1u);
-    // ROM sequence at $079C: LDA FAC_SIGN / ORA #$7F / AND FAC+1 / STA FAC+1.
-    // This clears bit 7 for positive values and preserves FAC+1 when FAC_SIGN is negative.
+    const std::uint8_t facSign = ReadZeroPageByte(kAS_FAC_SIGN);
+    const std::uint8_t facMantissaHigh = ReadZeroPageByte(kAS_FAC + 1u);
+    // ROM sequence at $079C: AS_LDA AS_FAC_SIGN / AS_ORA #$7F / AND AS_FAC+1 / STA AS_FAC+1.
+    // This clears bit 7 for positive values and preserves AS_FAC+1 when AS_FAC_SIGN is negative.
     const std::uint8_t signedMantissaHigh =
         static_cast<std::uint8_t>(facMantissaHigh & (facSign | 0x7fu));
-    WriteZeroPageByte(kFAC + 1u, signedMantissaHigh);
+    WriteZeroPageByte(kAS_FAC + 1u, signedMantissaHigh);
 }
 
-void SetBranchTargetToSTEP() {
-    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
+void SetBranchTargetToAS_STEP() {
+    constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
 
-    WriteZeroPageWord(kINDEX, kStepLabelAddress);
+    WriteZeroPageWord(kAS_INDEX, kStepAS_LabelAddress);
 }
 
-void LOAD_FAC_FROM_YA() {
+void AS_LOAD_FAC_FROM_YA() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: LOAD_FAC_FROM_YA (inclusive) .. STORE_FAC_IN_TEMP2_ROUNDED (exclusive)
-    // This function ports only LOAD_FAC_FROM_YA; STORE_FAC_IN_TEMP2_ROUNDED starts at the exclusive end label.
-    // Name normalization: none (assembler label LOAD_FAC_FROM_YA kept verbatim).
-    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
-    constexpr std::uint8_t kFAC_EXTENSION = ApplesoftVariables::ZP_FAC_EXTENSION;
+    // AS_Labels: AS_LOAD_FAC_FROM_YA (inclusive) .. AS_STORE_FAC_IN_TEMP2_ROUNDED (exclusive)
+    // This function ports only AS_LOAD_FAC_FROM_YA; AS_STORE_FAC_IN_TEMP2_ROUNDED starts at the exclusive end label.
+    // Name normalization: none (assembler label AS_LOAD_FAC_FROM_YA kept verbatim).
+    constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
+    constexpr std::uint8_t kAS_FAC_EXTENSION = ApplesoftVariables::ZP_AS_FAC_EXTENSION;
 
-    // Caller precondition: INDEX points to the packed 5-byte source value.
-    const ProgramPointer source{ReadZeroPageWord(kINDEX)};
-    WriteZeroPageByte(kFAC + 4u, source.read(4u));
-    WriteZeroPageByte(kFAC + 3u, source.read(3u));
-    WriteZeroPageByte(kFAC + 2u, source.read(2u));
+    // Caller precondition: AS_INDEX points to the packed 5-byte source value.
+    const ProgramPointer source{ReadZeroPageWord(kAS_INDEX)};
+    WriteZeroPageByte(kAS_FAC + 4u, source.read(4u));
+    WriteZeroPageByte(kAS_FAC + 3u, source.read(3u));
+    WriteZeroPageByte(kAS_FAC + 2u, source.read(2u));
 
     const std::uint8_t signPackedMantissa = source.read(1u);
-    // FAC_SIGN stores packed byte #1 (bit 7 is sign, remaining bits are high mantissa bits).
-    // FAC+1 then reuses mantissa bits with bit 7 forced set by OR #$80 to restore normalized form.
-    WriteZeroPageByte(kFAC_SIGN, signPackedMantissa);
-    WriteZeroPageByte(kFAC + 1u, static_cast<std::uint8_t>(signPackedMantissa | 0x80u));
-    WriteZeroPageByte(kFAC, source.read(0u));
-    WriteZeroPageByte(kFAC_EXTENSION, 0u);
+    // AS_FAC_SIGN stores packed byte #1 (bit 7 is sign, remaining bits are high mantissa bits).
+    // AS_FAC+1 then reuses mantissa bits with bit 7 forced set by AS_OR #$80 to restore normalized form.
+    WriteZeroPageByte(kAS_FAC_SIGN, signPackedMantissa);
+    WriteZeroPageByte(kAS_FAC + 1u, static_cast<std::uint8_t>(signPackedMantissa | 0x80u));
+    WriteZeroPageByte(kAS_FAC, source.read(0u));
+    WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
 }
 
-std::int8_t SIGN2(std::uint8_t sign) {
-    // Labels: SIGN2 (inclusive) .. SGN (exclusive)
+std::int8_t AS_SIGN2(std::uint8_t sign) {
+    // AS_Labels: AS_SIGN2 (inclusive) .. AS_SGN (exclusive)
     // MSBIT to carry, then return -1 if carry set, +1 if carry clear.
     if ((sign & 0x80u) != 0u) {
         return -1;
@@ -149,64 +149,64 @@ std::int8_t SIGN2(std::uint8_t sign) {
     return 1;
 }
 
-std::int8_t SIGN1() {
-    // Labels: SIGN1 (inclusive) .. SIGN2 (exclusive)
-    return SIGN2(ReadZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN));
+std::int8_t AS_SIGN1() {
+    // AS_Labels: AS_SIGN1 (inclusive) .. AS_SIGN2 (exclusive)
+    return AS_SIGN2(ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN));
 }
 
-std::int8_t SIGN() {
-    // Labels: SIGN (inclusive) .. SIGN2 (exclusive)
-    if (ReadZeroPageByte(ApplesoftVariables::ZP_FAC) == 0u) {
+std::int8_t AS_SIGN() {
+    // AS_Labels: AS_SIGN (inclusive) .. AS_SIGN2 (exclusive)
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC) == 0u) {
         return 0; // Numbers are effectively zero
     }
-    return SIGN1();
+    return AS_SIGN1();
 }
 
-void FCOMP2() {
+void AS_FCOMP2() {
     // TODO(asm-port): move implementation to return int8 once caller is updated.
-    // Labels: FCOMP2 (inclusive) .. L_FCOMP2_1 (exclusive)
-    // Target branches to L_FCOMP2_1 or RTS depending on comparison.
+    // AS_Labels: AS_FCOMP2 (inclusive) .. AS_L_FCOMP2_1 (exclusive)
+    // Target branches to AS_L_FCOMP2_1 or RTS depending on comparison.
 }
 
-void FRM_STACK_2(std::uint8_t signByte) {
+void AS_FRM_STACK_2(std::uint8_t signByte) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FRM_STACK_2 (inclusive) .. FRM_STACK_3 (exclusive)
-    // Name normalization: none (assembler label FRM_STACK_2 kept verbatim).
-    constexpr std::uint8_t kINDEXZeroPageAddress = ApplesoftVariables::ZP_INDEX;
-    constexpr std::uint8_t kINDEXHighByteAddress =
-        static_cast<std::uint8_t>(kINDEXZeroPageAddress + 1u);
+    // AS_Labels: AS_FRM_STACK_2 (inclusive) .. AS_FRM_STACK_3 (exclusive)
+    // Name normalization: none (assembler label AS_FRM_STACK_2 kept verbatim).
+    constexpr std::uint8_t kAS_INDEXZeroPageAddress = ApplesoftVariables::ZP_AS_INDEX;
+    constexpr std::uint8_t kAS_INDEXHighByteAddress =
+        static_cast<std::uint8_t>(kAS_INDEXZeroPageAddress + 1u);
 
-    const std::uint8_t returnAddressLow = theStack().popByte();
-    // Net effect of ROM sequence PLA / STA INDEX / INC INDEX:
-    // store the low return-address byte plus one as an 8-bit value so INDEX
+    const std::uint8_t returnAddressAS_Low = theStack().popByte();
+    // Net effect of ROM sequence PLA / STA AS_INDEX / INC AS_INDEX:
+    // store the low return-address byte plus one as an 8-bit value so AS_INDEX
     // points at the byte immediately after the JSR call-site return location.
-    // The uint8_t cast intentionally truncates carry; ROM assumes no page-boundary carry into INDEX+1.
-    WriteZeroPageByte(kINDEXZeroPageAddress, static_cast<std::uint8_t>(returnAddressLow + 1u));
-    WriteZeroPageByte(kINDEXHighByteAddress, theStack().popByte());
+    // The uint8_t cast intentionally truncates carry; ROM assumes no page-boundary carry into AS_INDEX+1.
+    WriteZeroPageByte(kAS_INDEXZeroPageAddress, static_cast<std::uint8_t>(returnAddressAS_Low + 1u));
+    WriteZeroPageByte(kAS_INDEXHighByteAddress, theStack().popByte());
 
     theStack().pushByte(signByte);
 }
 
-void FRM_STACK_3() {
+void AS_FRM_STACK_3() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FRM_STACK_3 (inclusive) .. NOTMATH (exclusive)
-    // Name normalization: none (assembler label FRM_STACK_3 kept verbatim).
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
+    // AS_Labels: AS_FRM_STACK_3 (inclusive) .. AS_NOTMATH (exclusive)
+    // Name normalization: none (assembler label AS_FRM_STACK_3 kept verbatim).
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
 
-    ROUND_FAC();
+    AS_ROUND_FAC();
 
-    theStack().pushByte(ReadZeroPageByte(kFAC + 4u));
-    theStack().pushByte(ReadZeroPageByte(kFAC + 3u));
-    theStack().pushByte(ReadZeroPageByte(kFAC + 2u));
-    theStack().pushByte(ReadZeroPageByte(kFAC + 1u));
-    theStack().pushByte(ReadZeroPageByte(kFAC));
+    theStack().pushByte(ReadZeroPageByte(kAS_FAC + 4u));
+    theStack().pushByte(ReadZeroPageByte(kAS_FAC + 3u));
+    theStack().pushByte(ReadZeroPageByte(kAS_FAC + 2u));
+    theStack().pushByte(ReadZeroPageByte(kAS_FAC + 1u));
+    theStack().pushByte(ReadZeroPageByte(kAS_FAC));
 
-    const std::uint16_t branchTarget = ReadZeroPageWord(kINDEX);
-    if (branchTarget == kStepLabelAddress) {
-        STEP();
+    const std::uint16_t branchTarget = ReadZeroPageWord(kAS_INDEX);
+    if (branchTarget == kStepAS_LabelAddress) {
+        AS_STEP();
     }
-    // Other indirect targets used by FRM_STACK_3 are not ported yet; return to caller.
+    // Other indirect targets used by AS_FRM_STACK_3 are not ported yet; return to caller.
 }
 
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
@@ -217,30 +217,30 @@ std::uint16_t readStackWordAt(std::uint8_t x, std::uint8_t lowOffset, std::uint8
     return ApplesoftVariables::makeWord(theStack().readByteAt(x, lowOffset), theStack().readByteAt(x, highOffset));
 }
 
-// TODO(asm-port): decide branch condition after comparing FOR value with end value.
-bool NEXT_shouldTerminateLoop() {
+// TODO(asm-port): decide branch condition after comparing AS_FOR value with end value.
+bool AS_NEXT_shouldTerminateLoop() {
     return false;
 }
 
 std::uint8_t ScanAheadOffset(std::uint8_t terminator) {
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    constexpr std::uint8_t kCHARAC = ApplesoftVariables::ZP_CHARAC;
-    constexpr std::uint8_t kENDCHR = ApplesoftVariables::ZP_ENDCHR;
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    constexpr std::uint8_t kAS_CHARAC = ApplesoftVariables::ZP_AS_CHARAC;
+    constexpr std::uint8_t kAS_ENDCHR = ApplesoftVariables::ZP_AS_ENDCHR;
 
-    WriteZeroPageByte(kCHARAC, terminator);
+    WriteZeroPageByte(kAS_CHARAC, terminator);
     std::uint8_t offset = 0;
-    WriteZeroPageByte(kENDCHR, 0);
+    WriteZeroPageByte(kAS_ENDCHR, 0);
 
     while (true) {
-        const std::uint8_t previousEnd = ReadZeroPageByte(kENDCHR);
-        const std::uint8_t previousCharac = ReadZeroPageByte(kCHARAC);
-        WriteZeroPageByte(kCHARAC, previousEnd);
-        WriteZeroPageByte(kENDCHR, previousCharac);
+        const std::uint8_t previousEnd = ReadZeroPageByte(kAS_ENDCHR);
+        const std::uint8_t previousCharac = ReadZeroPageByte(kAS_CHARAC);
+        WriteZeroPageByte(kAS_CHARAC, previousEnd);
+        WriteZeroPageByte(kAS_ENDCHR, previousCharac);
 
         while (true) {
-            const ProgramPointer textPtr{ReadZeroPageWord(kTXTPTR)};
+            const ProgramPointer textPtr{ReadZeroPageWord(kAS_TXTPTR)};
             const std::uint8_t ch = textPtr.read(offset);
-            if (ch == 0 || ch == ReadZeroPageByte(kENDCHR)) {
+            if (ch == 0 || ch == ReadZeroPageByte(kAS_ENDCHR)) {
                 return offset;
             }
 
@@ -258,32 +258,32 @@ bool isDigit(std::uint8_t ch) {
 
 }  // namespace
 
-void SETFOR() {
+void AS_SETFOR() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: SETFOR (inclusive) .. COPY_ARG_TO_FAC (exclusive)
-    // Name normalization: none (assembler label SETFOR kept verbatim).
-    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
-    constexpr std::uint8_t kFAC_EXTENSION = ApplesoftVariables::ZP_FAC_EXTENSION;
+    // AS_Labels: AS_SETFOR (inclusive) .. AS_COPY_ARG_TO_FAC (exclusive)
+    // Name normalization: none (assembler label AS_SETFOR kept verbatim).
+    constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
+    constexpr std::uint8_t kAS_FAC_EXTENSION = ApplesoftVariables::ZP_AS_FAC_EXTENSION;
 
-    ROUND_FAC();
+    AS_ROUND_FAC();
 
-    const ProgramPointer forVariablePtr{ReadZeroPageWord(kFORPNT)};
-    forVariablePtr.write(ReadZeroPageByte(kFAC), 0u);
+    const ProgramPointer forVariablePtr{ReadZeroPageWord(kAS_FORPNT)};
+    forVariablePtr.write(ReadZeroPageByte(kAS_FAC), 0u);
 
-    const std::uint8_t facMantissaHigh = ReadZeroPageByte(add_u8(kFAC, 1u));
-    const std::uint8_t facSign = ReadZeroPageByte(kFAC_SIGN);
-    // ROM sequence: (FAC+1) is masked by (FAC_SIGN | $7F), preserving mantissa
+    const std::uint8_t facMantissaHigh = ReadZeroPageByte(add_u8(kAS_FAC, 1u));
+    const std::uint8_t facSign = ReadZeroPageByte(kAS_FAC_SIGN);
+    // ROM sequence: (AS_FAC+1) is masked by (AS_FAC_SIGN | $7F), preserving mantissa
     // low 7 bits while applying sign-bit packing semantics.
     const std::uint8_t packedMantissaHigh = static_cast<std::uint8_t>(
         facMantissaHigh & static_cast<std::uint8_t>(facSign | 0x7fu));
     forVariablePtr.write(packedMantissaHigh, 1u);
-    forVariablePtr.write(ReadZeroPageByte(add_u8(kFAC, 2u)), 2u);
-    forVariablePtr.write(ReadZeroPageByte(add_u8(kFAC, 3u)), 3u);
-    forVariablePtr.write(ReadZeroPageByte(add_u8(kFAC, 4u)), 4u);
+    forVariablePtr.write(ReadZeroPageByte(add_u8(kAS_FAC, 2u)), 2u);
+    forVariablePtr.write(ReadZeroPageByte(add_u8(kAS_FAC, 3u)), 3u);
+    forVariablePtr.write(ReadZeroPageByte(add_u8(kAS_FAC, 4u)), 4u);
 
-    WriteZeroPageByte(kFAC_EXTENSION, 0u);
+    WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
 }
 
 std::uint8_t ReadProgramByte(std::uint16_t address);
@@ -291,7 +291,7 @@ void WriteProgramByte(std::uint16_t address, std::uint8_t value);
 
 bool gReturnFromPopContext = false;
 
-bool ReturnWasFromPOPContext() {
+bool ReturnWasFromAS_POPContext() {
     if (!gReturnFromPopContext) {
         return false;
     }
@@ -300,287 +300,287 @@ bool ReturnWasFromPOPContext() {
     return true;
 }
 
-std::uint8_t PeekTopControlTokenAfterGTFORPNT() {
+std::uint8_t PeekTopControlTokenAfterAS_GTFORPNT() {
     return theStack().readByteAt(theStack().readStackPointer(), 1u);
 }
 
-bool ISCNTC() {
+bool AS_ISCNTC() {
     constexpr std::uint8_t kCTRL_C_CODE = 0x83;
 
-    if (ioPorts_const().readByte(IOPorts::ADDR_KEYBOARD) != kCTRL_C_CODE) {
+    if (ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD) != kCTRL_C_CODE) {
         return false;
     }
 
-    INCHR();
-    CONTROL_C_TYPED();
+    AS_INCHR();
+    AS_CONTROL_C_TYPED();
     return true;
 }
 
-void STOP() {
-    STOP_impl(false);
+void AS_STOP() {
+    AS_STOP_impl(false);
 }
 
-void STOP_impl(bool shouldPrintBreak) {
+void AS_STOP_impl(bool shouldPrintBreak) {
     if (!IsStatementEndOfParsedInput()) {
         return;
     }
 
-    ENDX_impl(shouldPrintBreak);
+    AS_ENDX_impl(shouldPrintBreak);
 }
 
-void ENDX() {
-    ENDX_impl(false);
+void AS_ENDX() {
+    AS_ENDX_impl(false);
 }
 
-void ENDX_impl(bool shouldPrintBreak) {
+void AS_ENDX_impl(bool shouldPrintBreak) {
     if (!IsStatementEndOfParsedInput()) {
         return;
     }
 
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
-    constexpr std::uint8_t kOLDLIN = ApplesoftVariables::ZP_OLDLIN;
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
+    constexpr std::uint8_t kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
+    constexpr std::uint8_t kAS_OLDLIN = ApplesoftVariables::ZP_AS_OLDLIN;
 
-    const std::uint16_t textPointer = ReadZeroPageWord(kTXTPTR);
-    const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
-    const std::uint8_t currentPageHi = ApplesoftVariables::highByte(currentLine);
+    const std::uint16_t textPointer = ReadZeroPageWord(kAS_TXTPTR);
+    const std::uint16_t currentAS_Line = ReadZeroPageWord(kAS_CURLIN);
+    const std::uint8_t currentPageHi = ApplesoftVariables::highByte(currentAS_Line);
 
     if (static_cast<std::uint8_t>(currentPageHi + 1u) != 0u) {
-        WriteZeroPageWord(kOLDTEXT, textPointer);
-        WriteZeroPageWord(kOLDLIN, currentLine);
+        WriteZeroPageWord(kAS_OLDTEXT, textPointer);
+        WriteZeroPageWord(kAS_OLDLIN, currentAS_Line);
     }
 
     theStack().popReturnAddress();
     theStack().popReturnAddress();
 
     if (shouldPrintBreak) {
-        PRINT_ERROR_LINNUM(QT_ERROR(QT_BREAK_INDEX));
+        AS_PRINT_ERROR_LINNUM(AS_QT_ERROR(AS_QT_BREAK_INDEX));
         return;
     }
 
-    RESTART();
+    AS_RESTART();
 }
 
-void RESTART() {
+void AS_RESTART() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: RESTART (inclusive)
-    // Name normalization: none (assembler label RESTART kept verbatim).
+    // AS_Labels: AS_RESTART (inclusive)
+    // Name normalization: none (assembler label AS_RESTART kept verbatim).
 
-    CRDO();
-    const Inlin2Result inlin2 = INLIN2(RESTART_PROMPT);
+    AS_CRDO();
+    const Inlin2Result inlin2 = AS_INLIN2(AS_RESTART_PROMPT);
     SetTextPointer(inlin2.address());
     ClearErrFlag();
 
-    const std::uint8_t firstChar = CHRGET();
+    const std::uint8_t firstChar = AS_CHRGET();
     if (firstChar == 0) {
-        RESTART();
+        AS_RESTART();
         return;
     }
 
     MarkDirectMode();
 
     if (isDigit(firstChar)) {
-        HandleNumberedLine();
+        HandleNumberedAS_Line();
         return;
     }
 
-    PARSE_INPUT_LINE();
-    TRACE_();
+    AS_PARSE_INPUT_LINE();
+    AS_TRACE_();
 }
 
-void CONTROL_C_TYPED() {
+void AS_CONTROL_C_TYPED() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: CONTROL_C_TYPED (inclusive) .. STOP (exclusive)
-    // Name normalization: none (assembler label CONTROL_C_TYPED kept verbatim).
-    constexpr std::uint8_t kERRFLG = ApplesoftVariables::ZP_ERRFLG;
-    const std::uint8_t errFlags = ReadZeroPageByte(kERRFLG);
+    // AS_Labels: AS_CONTROL_C_TYPED (inclusive) .. AS_STOP (exclusive)
+    // Name normalization: none (assembler label AS_CONTROL_C_TYPED kept verbatim).
+    constexpr std::uint8_t kAS_ERRFLG = ApplesoftVariables::ZP_AS_ERRFLG;
+    const std::uint8_t errFlags = ReadZeroPageByte(kAS_ERRFLG);
 
-    // `bit ERRFLG` / `bpl` in ROM: when sign bit is set, ON ERR is active and
-    // CONTROL-C dispatches to HANDLERR with code $FF semantics.
+    // `bit AS_ERRFLG` / `bpl` in ROM: when sign bit is set, ON ERR is active and
+    // AS_CONTROL-C dispatches to AS_HANDLERR with code $FF semantics.
     if ((errFlags & 0x80u) != 0u) {
         SetPendingErrorCode(0xffu);
-        HANDLERR();
+        AS_HANDLERR();
         return;
     }
 
-    // Control-C attempts to fall through to the STOP/END handler with an
+    // Control-C attempts to fall through to the AS_STOP/END handler with an
     // implicit "break" condition.
-    STOP_impl(true);
+    AS_STOP_impl(true);
 }
 
-void CONT() {
+void AS_CONT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: CONT (inclusive) .. SAVE (exclusive)
-    // Name normalization: none (assembler label CONT kept verbatim).
-    // Internal label mapping: "bne RTS_4" is modeled as an early return.
+    // AS_Labels: AS_CONT (inclusive) .. AS_SAVE (exclusive)
+    // Name normalization: none (assembler label AS_CONT kept verbatim).
+    // Internal label mapping: "bne AS_RTS_4" is modeled as an early return.
 
     if (!IsStatementEndOfParsedInput()) {
         return;
     }
 
-    constexpr std::uint8_t kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
-    constexpr std::uint8_t kOLDTEXT_plus_1 = static_cast<std::uint8_t>(ApplesoftVariables::ZP_OLDTEXT + 1u);
-    constexpr std::uint8_t kOLDLIN = ApplesoftVariables::ZP_OLDLIN;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
+    constexpr std::uint8_t kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
+    constexpr std::uint8_t kAS_OLDTEXT_plus_1 = static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_OLDTEXT + 1u);
+    constexpr std::uint8_t kAS_OLDLIN = ApplesoftVariables::ZP_AS_OLDLIN;
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
 
-    if (ReadZeroPageByte(kOLDTEXT_plus_1) == 0) {
-        ERROR(ERR_CANTCONT);
+    if (ReadZeroPageByte(kAS_OLDTEXT_plus_1) == 0) {
+        AS_ERROR(AS_ERR_CANTCONT);
         return;
     }
 
-    WriteZeroPageWord(kTXTPTR, ReadZeroPageWord(kOLDTEXT));
-    WriteZeroPageWord(kCURLIN, ReadZeroPageWord(kOLDLIN));
+    WriteZeroPageWord(kAS_TXTPTR, ReadZeroPageWord(kAS_OLDTEXT));
+    WriteZeroPageWord(kAS_CURLIN, ReadZeroPageWord(kAS_OLDLIN));
 }
 
-void GOSUB() {
+void AS_GOSUB() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: GOSUB (inclusive) .. GO_TO_LINE (exclusive)
-    // Name normalization: none (assembler label GOSUB kept verbatim).
+    // AS_Labels: AS_GOSUB (inclusive) .. AS_GO_TO_LINE (exclusive)
+    // Name normalization: none (assembler label AS_GOSUB kept verbatim).
     //
-    // Executes the "GOSUB" command:
+    // Executes the "AS_GOSUB" command:
     // - Checks stack space for the return frame (7 bytes)
-    // - Pushes return frame containing: TXTPTR (2), CURLIN (2), TOKEN_GOSUB (1)
-    // - Falls through to shared GO_TO_LINE logic to find and execute the target line
-    // - On RETURN, restores execution state from the stack frame
+    // - Pushes return frame containing: AS_TXTPTR (2), AS_CURLIN (2), AS_TOKEN_GOSUB (1)
+    // - Falls through to shared AS_GO_TO_LINE logic to find and execute the target line
+    // - On AS_RETURN, restores execution state from the stack frame
 
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kTOKEN_GOSUB = 0xb0;
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
+    constexpr std::uint8_t kAS_TOKEN_GOSUB = 0xb0;
 
-    CHKMEMState chkmemState{};
+    AS_CHKMEMState chkmemState{};
     chkmemState.a = 3;
     chkmemState.stackPointer = theStack().readStackPointer();
-    const auto chkmemResult = CHKMEM(chkmemState);
+    const auto chkmemResult = AS_CHKMEM(chkmemState);
     if (!chkmemResult.ok) {
         return;
     }
 
-    const std::uint16_t textPointer = ReadZeroPageWord(kTXTPTR);
-    const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
+    const std::uint16_t textPointer = ReadZeroPageWord(kAS_TXTPTR);
+    const std::uint16_t currentAS_Line = ReadZeroPageWord(kAS_CURLIN);
 
     theStack().pushWord(textPointer);
-    theStack().pushWord(currentLine);
-    theStack().pushByte(kTOKEN_GOSUB);
+    theStack().pushWord(currentAS_Line);
+    theStack().pushByte(kAS_TOKEN_GOSUB);
 
-    GO_TO_LINE();
+    AS_GO_TO_LINE();
 }
 
-void GO_TO_LINE() {
-    (void)CHRGOT();
-    GOTO();
-    NEWSTT();
+void AS_GO_TO_LINE() {
+    (void)AS_CHRGOT();
+    AS_GOTO();
+    AS_NEWSTT();
 }
 
-void GOTO() {
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    constexpr std::uint8_t kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
-    constexpr std::uint8_t kLOWTR = ApplesoftVariables::ZP_LOWTR;
+void AS_GOTO() {
+    constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
+    constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    constexpr std::uint8_t kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
+    constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
 
-    LINGET();
-    const std::uint8_t remnOffset = REMN();
+    AS_LINGET();
+    const std::uint8_t remnOffset = AS_REMN();
 
-    const std::uint8_t currentPage = ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1u));
-    const std::uint8_t targetPage = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1u));
+    const std::uint8_t currentPage = ReadZeroPageByte(static_cast<std::uint8_t>(kAS_CURLIN + 1u));
+    const std::uint8_t targetPage = ReadZeroPageByte(static_cast<std::uint8_t>(kAS_LINNUM + 1u));
 
     ProgramPointer start{};
     if (currentPage >= targetPage) {
-        start = ProgramPointer{ReadZeroPageWord(kTXTTAB)};
+        start = ProgramPointer{ReadZeroPageWord(kAS_TXTTAB)};
     } else {
-        const ProgramPointer textPtr{ReadZeroPageWord(kTXTPTR)};
+        const ProgramPointer textPtr{ReadZeroPageWord(kAS_TXTPTR)};
         start = textPtr.advanced(static_cast<std::uint16_t>(remnOffset) + 1u);
     }
 
-    if (!FL1(start.address)) {
-        ERROR(ERR_UNDEFSTAT);
+    if (!AS_FL1(start.address)) {
+        AS_ERROR(AS_ERR_UNDEFSTAT);
         return;
     }
 
-    const std::uint16_t destination = static_cast<std::uint16_t>(ReadZeroPageWord(kLOWTR) - 1u);
-    WriteZeroPageWord(kTXTPTR, destination);
+    const std::uint16_t destination = static_cast<std::uint16_t>(ReadZeroPageWord(kAS_LOWTR) - 1u);
+    WriteZeroPageWord(kAS_TXTPTR, destination);
 }
 
-void RESUME() {
+void AS_RESUME() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: RESUME (inclusive) .. JSYN (exclusive)
-    // Name normalization: none (assembler label RESUME kept verbatim).
-    constexpr std::uint8_t kERRLIN = ApplesoftVariables::ZP_ERRLIN;
-    constexpr std::uint8_t kERRPOS = ApplesoftVariables::ZP_ERRPOS;
-    constexpr std::uint8_t kERRSTK = ApplesoftVariables::ZP_ERRSTK;
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    // AS_Labels: AS_RESUME (inclusive) .. AS_JSYN (exclusive)
+    // Name normalization: none (assembler label AS_RESUME kept verbatim).
+    constexpr std::uint8_t kAS_ERRLIN = ApplesoftVariables::ZP_AS_ERRLIN;
+    constexpr std::uint8_t kAS_ERRPOS = ApplesoftVariables::ZP_AS_ERRPOS;
+    constexpr std::uint8_t kAS_ERRSTK = ApplesoftVariables::ZP_AS_ERRSTK;
+    constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
 
-    WriteZeroPageWord(kCURLIN, ReadZeroPageWord(kERRLIN));
-    WriteZeroPageWord(kTXTPTR, ReadZeroPageWord(kERRPOS));
-    theStack().setStackPointer(ReadZeroPageByte(kERRSTK));
-    NEWSTT();
+    WriteZeroPageWord(kAS_CURLIN, ReadZeroPageWord(kAS_ERRLIN));
+    WriteZeroPageWord(kAS_TXTPTR, ReadZeroPageWord(kAS_ERRPOS));
+    theStack().setStackPointer(ReadZeroPageByte(kAS_ERRSTK));
+    AS_NEWSTT();
 }
 
-void ONERR() {
+void AS_ONERR() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ONERR (inclusive) .. HANDLERR (exclusive)
-    // Name normalization: none (assembler label ONERR kept verbatim).
-    constexpr std::uint8_t kTOKEN_GOTO = 0xabu;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    constexpr std::uint8_t kTXTPSV = ApplesoftVariables::ZP_TXTPSV;
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kCURLSV = ApplesoftVariables::ZP_CURLSV;
-    constexpr std::uint8_t kERRFLG = ApplesoftVariables::ZP_ERRFLG;
+    // AS_Labels: AS_ONERR (inclusive) .. AS_HANDLERR (exclusive)
+    // Name normalization: none (assembler label AS_ONERR kept verbatim).
+    constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    constexpr std::uint8_t kAS_TXTPSV = ApplesoftVariables::ZP_AS_TXTPSV;
+    constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
+    constexpr std::uint8_t kAS_CURLSV = ApplesoftVariables::ZP_AS_CURLSV;
+    constexpr std::uint8_t kAS_ERRFLG = ApplesoftVariables::ZP_AS_ERRFLG;
 
-    SYNCHR(kTOKEN_GOTO);
-    WriteZeroPageWord(kTXTPSV, ReadZeroPageWord(kTXTPTR));
+    AS_SYNCHR(kAS_TOKEN_GOTO);
+    WriteZeroPageWord(kAS_TXTPSV, ReadZeroPageWord(kAS_TXTPTR));
 
-    const std::uint8_t errflg = ReadZeroPageByte(kERRFLG);
-    WriteZeroPageByte(kERRFLG, static_cast<std::uint8_t>((errflg >> 1u) | 0x80u));
+    const std::uint8_t errflg = ReadZeroPageByte(kAS_ERRFLG);
+    WriteZeroPageByte(kAS_ERRFLG, static_cast<std::uint8_t>((errflg >> 1u) | 0x80u));
 
-    WriteZeroPageWord(kCURLSV, ReadZeroPageWord(kCURLIN));
-    ADDON(REMN());
+    WriteZeroPageWord(kAS_CURLSV, ReadZeroPageWord(kAS_CURLIN));
+    AS_ADDON(AS_REMN());
 }
 
-void RTS_5() {
-    // Shared RTS target for GOTO/POP in ROM.
+void AS_RTS_5() {
+    // Shared RTS target for AS_GOTO/AS_POP in ROM.
 }
 
-void PULL3() {
+void AS_PULL3() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PULL3 (inclusive) .. IF (exclusive)
-    // Name normalization: none (assembler label PULL3 kept verbatim).
+    // AS_Labels: AS_PULL3 (inclusive) .. AS_IF (exclusive)
+    // Name normalization: none (assembler label AS_PULL3 kept verbatim).
     (void)theStack().popByte();
     (void)theStack().popByte();
     (void)theStack().popByte();
 }
 
-std::uint8_t REMN() {
+std::uint8_t AS_REMN() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: REMN (inclusive) .. PULL3 (exclusive)
-    // Name normalization: none (assembler label REMN kept verbatim).
+    // AS_Labels: AS_REMN (inclusive) .. AS_PULL3 (exclusive)
+    // Name normalization: none (assembler label AS_REMN kept verbatim).
 
     return ScanAheadOffset(0);
 }
 
 void PushForPntFrame() {
-    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
-    theStack().pushByte(ReadZeroPageByte(add_u8(kFORPNT, 1u)));
-    theStack().pushByte(ReadZeroPageByte(kFORPNT));
-    theStack().pushToken(TOKEN_FOR);
+    constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
+    theStack().pushByte(ReadZeroPageByte(add_u8(kAS_FORPNT, 1u)));
+    theStack().pushByte(ReadZeroPageByte(kAS_FORPNT));
+    theStack().pushToken(AS_TOKEN_FOR);
 }
 
-void FOR() {
-    constexpr std::uint8_t kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
-    constexpr std::uint8_t kTOKEN_TO = 0xc1u;
+void AS_FOR() {
+    constexpr std::uint8_t kAS_SUBFLG = ApplesoftVariables::ZP_AS_SUBFLG;
+    constexpr std::uint8_t kAS_TOKEN_TO = 0xc1u;
 
-    WriteZeroPageByte(kSUBFLG, 0x80);
-    LET();
+    WriteZeroPageByte(kAS_SUBFLG, 0x80);
+    AS_LET();
 
-    GTFORPNTState gtforpntState{};
+    AS_GTFORPNTState gtforpntState{};
     for (std::size_t i = 0; i < gtforpntState.stackPage.size(); ++i) {
         gtforpntState.stackPage[i] =
             ReadProgramByte(static_cast<std::uint16_t>(0x0100u + i));
     }
-    const auto gtforpntResult = GTFORPNT(theStack().readStackPointer(), gtforpntState);
+    const auto gtforpntResult = AS_GTFORPNT(theStack().readStackPointer(), gtforpntState);
     if (gtforpntResult.found) {
         theStack().setStackPointer(add_u8(gtforpntResult.x, 15u));
     }
@@ -588,384 +588,384 @@ void FOR() {
     theStack().popReturnAddress();
     theStack().popReturnAddress();
 
-    CHKMEMState chkmemState{};
+    AS_CHKMEMState chkmemState{};
     chkmemState.a = 9;
     chkmemState.stackPointer = theStack().readStackPointer();
-    const auto chkmemResult = CHKMEM(chkmemState);
+    const auto chkmemResult = AS_CHKMEM(chkmemState);
     if (!chkmemResult.ok) {
         return;
     }
 
-    DATAN();
+    AS_DATAN();
     theStack().pushTextPointerAddress();
-    theStack().pushCurrentLineNumber();
-    theStack().pushToken(kTOKEN_TO);
-    SYNCHR(kTOKEN_TO);
-    CHKNUM();
-    FRMNUM();
+    theStack().pushCurrentAS_LineNumber();
+    theStack().pushToken(kAS_TOKEN_TO);
+    AS_SYNCHR(kAS_TOKEN_TO);
+    AS_CHKNUM();
+    AS_FRMNUM();
     ApplyFacSign();
-    SetBranchTargetToSTEP();
-    FRM_STACK_3();
+    SetBranchTargetToAS_STEP();
+    AS_FRM_STACK_3();
 }
 
-void NEXT() {
+void AS_NEXT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: NEXT (inclusive) .. FRMNUM (exclusive)
-    // Name normalization: none (assembler label NEXT kept verbatim).
+    // AS_Labels: AS_NEXT (inclusive) .. AS_FRMNUM (exclusive)
+    // Name normalization: none (assembler label AS_NEXT kept verbatim).
 
-    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
+    constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
 
-    // d0 04 / NEXT_1 jsr PTRGET / NEXT_2 sta FORPNT, sty FORPNT+1
-    // No-variable NEXT case is represented by FORPNT+1 = 0.
-    if (CHRGOT() == 0u) {
-        WriteZeroPageByte(add_u8(kFORPNT, 1u), 0u);
+    // d0 04 / AS_NEXT_1 jsr AS_PTRGET / AS_NEXT_2 sta AS_FORPNT, sty AS_FORPNT+1
+    // No-variable AS_NEXT case is represented by AS_FORPNT+1 = 0.
+    if (AS_CHRGOT() == 0u) {
+        WriteZeroPageByte(add_u8(kAS_FORPNT, 1u), 0u);
     } else {
-        const std::uint16_t varPtr = PTRGET();
-        WriteZeroPageWord(kFORPNT, varPtr);
+        const std::uint16_t varPtr = AS_PTRGET();
+        WriteZeroPageWord(kAS_FORPNT, varPtr);
     }
 
-    // jsr GTFORPNT
-    GTFORPNTState gtforpntState{};
-    gtforpntState.forpntLo = ReadZeroPageByte(kFORPNT);
-    gtforpntState.forpntHi = ReadZeroPageByte(add_u8(kFORPNT, 1u));
+    // jsr AS_GTFORPNT
+    AS_GTFORPNTState gtforpntState{};
+    gtforpntState.forpntAS_Lo = ReadZeroPageByte(kAS_FORPNT);
+    gtforpntState.forpntHi = ReadZeroPageByte(add_u8(kAS_FORPNT, 1u));
     for (std::size_t i = 0; i < gtforpntState.stackPage.size(); ++i) {
         gtforpntState.stackPage[i] =
             ReadProgramByte(static_cast<std::uint16_t>(0x0100u + i));
     }
 
-    const auto gtforpntResult = GTFORPNT(theStack().readStackPointer(), gtforpntState);
+    const auto gtforpntResult = AS_GTFORPNT(theStack().readStackPointer(), gtforpntState);
     if (!gtforpntResult.found) {
-        // Ldx #ERR_NOFOR / jmp ERROR via GERR/JERROR path.
-        ERROR(ERR_NOFOR);
+        // AS_Ldx #AS_ERR_NOFOR / jmp AS_ERROR via AS_GERR/AS_JERROR path.
+        AS_ERROR(AS_ERR_NOFOR);
         return;
     }
 
-    // NEXT_3: txs
+    // AS_NEXT_3: txs
     theStack().setStackPointer(gtforpntResult.x);
 
-    // STEP arithmetic path (LOAD_FAC_FROM_YA / FADD / SETFOR / FCOMP2).
+    // AS_STEP arithmetic path (AS_LOAD_FAC_FROM_YA / AS_FADD / AS_SETFOR / AS_FCOMP2).
     // Stack offsets follow ROM comments; helpers are placeholders until stack
-    // memory and FAC math ports are fully wired.
-    WriteZeroPageWord(ApplesoftVariables::ZP_INDEX,
+    // memory and AS_FAC math ports are fully wired.
+    WriteZeroPageWord(ApplesoftVariables::ZP_AS_INDEX,
                       static_cast<std::uint16_t>(0x0100u + add_u8(gtforpntResult.x, kStepValueOffsetInForFrame)));
-    LOAD_FAC_FROM_YA();
-    WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, theStack().readByteAt(gtforpntResult.x, 9u)); // FAC_SIGN
-    WriteZeroPageWord(kFORPNT, ReadZeroPageWord(kFORPNT));
-    FADD();
-    SETFOR();
-    FCOMP2();
+    AS_LOAD_FAC_FROM_YA();
+    WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN, theStack().readByteAt(gtforpntResult.x, 9u)); // AS_FAC_SIGN
+    WriteZeroPageWord(kAS_FORPNT, ReadZeroPageWord(kAS_FORPNT));
+    AS_FADD();
+    AS_SETFOR();
+    AS_FCOMP2();
 
-    if (!NEXT_shouldTerminateLoop()) {
-        // Restore line/TXTPTR from FOR frame and jump NEWSTT.
-        const std::uint16_t restoredLine = readStackWordAt(gtforpntResult.x, 15u, 16u);
+    if (!AS_NEXT_shouldTerminateLoop()) {
+        // Restore line/AS_TXTPTR from AS_FOR frame and jump AS_NEWSTT.
+        const std::uint16_t restoredAS_Line = readStackWordAt(gtforpntResult.x, 15u, 16u);
         const std::uint16_t restoredTextPointer = readStackWordAt(gtforpntResult.x, 18u, 17u);
-        WriteZeroPageWord(kCURLIN, restoredLine);
-        WriteZeroPageWord(kTXTPTR, restoredTextPointer);
-        NEWSTT();
+        WriteZeroPageWord(kAS_CURLIN, restoredAS_Line);
+        WriteZeroPageWord(kAS_TXTPTR, restoredTextPointer);
+        AS_NEWSTT();
         return;
     }
 
-    // L_NEXT_3_2: pop FOR frame, then continue NEWSTT unless another variable
-    // follows in NEXT var-list (NEXT I,J,...).
+    // AS_L_NEXT_3_2: pop AS_FOR frame, then continue AS_NEWSTT unless another variable
+    // follows in AS_NEXT var-list (AS_NEXT I,J,...).
     theStack().setStackPointer(add_u8(gtforpntResult.x, 18u));
 
-    if (CHRGOT() != static_cast<std::uint8_t>(',')) {
-        NEWSTT();
+    if (AS_CHRGOT() != static_cast<std::uint8_t>(',')) {
+        AS_NEWSTT();
         return;
     }
 
-    CHRGET();
-    // jsr NEXT_1 (does not return in ROM when comma-separated variables remain).
-    NEXT();
+    AS_CHRGET();
+    // jsr AS_NEXT_1 (does not return in ROM when comma-separated variables remain).
+    AS_NEXT();
 }
 
-void POP() {
-    constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
-    constexpr std::uint8_t kTOKEN_GOSUB = 0xb0;
+void AS_POP() {
+    constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
+    constexpr std::uint8_t kAS_TOKEN_GOSUB = 0xb0;
 
     if (!IsStatementEndOfParsedInput()) {
-        RTS_5();
+        AS_RTS_5();
         return;
     }
 
-    WriteZeroPageByte(kFORPNT, 0xffu);
+    WriteZeroPageByte(kAS_FORPNT, 0xffu);
 
-    GTFORPNTState gtforpntState{};
-    const auto gtforpntResult = GTFORPNT(theStack().readStackPointer(), gtforpntState);
+    AS_GTFORPNTState gtforpntState{};
+    const auto gtforpntResult = AS_GTFORPNT(theStack().readStackPointer(), gtforpntState);
     theStack().setStackPointer(gtforpntResult.x);
 
-    if (PeekTopControlTokenAfterGTFORPNT() == kTOKEN_GOSUB) {
+    if (PeekTopControlTokenAfterAS_GTFORPNT() == kAS_TOKEN_GOSUB) {
         gReturnFromPopContext = true;
-        RETURN();
+        AS_RETURN();
         return;
     }
 
-    ERROR(ERR_NOGOSUB);
+    AS_ERROR(AS_ERR_NOGOSUB);
 }
 
-void RETURN() {
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+void AS_RETURN() {
+    constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
 
     (void)theStack().popByte();
-    const std::uint8_t currentLineLo = theStack().popByte();
+    const std::uint8_t currentAS_LineLo = theStack().popByte();
 
-    if (ReturnWasFromPOPContext()) {
-        PULL3();
+    if (ReturnWasFromAS_POPContext()) {
+        AS_PULL3();
         return;
     }
 
-    const std::uint8_t currentLineHi = theStack().popByte();
-    const std::uint8_t textPointerLo = theStack().popByte();
+    const std::uint8_t currentAS_LineHi = theStack().popByte();
+    const std::uint8_t textPointerAS_Lo = theStack().popByte();
     const std::uint8_t textPointerHi = theStack().popByte();
 
-    WriteZeroPageWord(kCURLIN, ApplesoftVariables::makeWord(currentLineLo, currentLineHi));
-    WriteZeroPageWord(kTXTPTR, ApplesoftVariables::makeWord(textPointerLo, textPointerHi));
+    WriteZeroPageWord(kAS_CURLIN, ApplesoftVariables::makeWord(currentAS_LineLo, currentAS_LineHi));
+    WriteZeroPageWord(kAS_TXTPTR, ApplesoftVariables::makeWord(textPointerAS_Lo, textPointerHi));
 }
 
-void STEP() {
-    constexpr std::uint8_t kTOKEN_STEP = 0xc7u;
+void AS_STEP() {
+    constexpr std::uint8_t kAS_TOKEN_STEP = 0xc7u;
 
     for (std::uint8_t i = 0; i < kPackedFloatByteCount; ++i) {
         WriteProgramByte(static_cast<std::uint16_t>(kConOneScratchAddress + i), kConOnePacked[i]);
     }
-    WriteZeroPageWord(ApplesoftVariables::ZP_INDEX, kConOneScratchAddress);
-    LOAD_FAC_FROM_YA();
-    if (CHRGOT() == kTOKEN_STEP) {
-        CHRGET();
-        FRMNUM();
+    WriteZeroPageWord(ApplesoftVariables::ZP_AS_INDEX, kConOneScratchAddress);
+    AS_LOAD_FAC_FROM_YA();
+    if (AS_CHRGOT() == kAS_TOKEN_STEP) {
+        AS_CHRGET();
+        AS_FRMNUM();
     }
 
-    const std::int8_t stepSign = SIGN();
-    FRM_STACK_2(static_cast<std::uint8_t>(stepSign));
+    const std::int8_t stepSign = AS_SIGN();
+    AS_FRM_STACK_2(static_cast<std::uint8_t>(stepSign));
     PushForPntFrame();
-    NEWSTT();
+    AS_NEWSTT();
 }
 
-void NEWSTT() {
-    constexpr std::uint8_t kREMSTK = ApplesoftVariables::ZP_REMSTK;
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    constexpr std::uint8_t kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
+void AS_NEWSTT() {
+    constexpr std::uint8_t kAS_REMSTK = ApplesoftVariables::ZP_AS_REMSTK;
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
+    constexpr std::uint8_t kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
 
-    WriteZeroPageByte(kREMSTK, theStack().readStackPointer());
+    WriteZeroPageByte(kAS_REMSTK, theStack().readStackPointer());
 
-    if (ISCNTC()) {
+    if (AS_ISCNTC()) {
         return;
     }
 
-    if (ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1u)) != 0xffu) {
-        WriteZeroPageWord(kOLDTEXT, ReadZeroPageWord(kTXTPTR));
+    if (ReadZeroPageByte(static_cast<std::uint8_t>(kAS_CURLIN + 1u)) != 0xffu) {
+        WriteZeroPageWord(kAS_OLDTEXT, ReadZeroPageWord(kAS_TXTPTR));
     } else {
-        WriteZeroPageWord(kOLDTEXT, 0);
+        WriteZeroPageWord(kAS_OLDTEXT, 0);
     }
 
-    if (IsEndOfLineAtTextPointer()) {
+    if (IsEndOfAS_LineAtTextPointer()) {
         if (IsEndOfProgramAtTextPointer()) {
-            GOEND();
+            AS_GOEND();
             return;
         }
     }
 
-    WriteZeroPageWord(kCURLIN, ReadLineNumberFromTextPointer());
-    AdvanceTextPointerToNextLine();
-    TRACE_();
+    WriteZeroPageWord(kAS_CURLIN, ReadAS_LineNumberFromTextPointer());
+    AdvanceTextPointerToNextAS_Line();
+    AS_TRACE_();
 }
 
-void TRACE_() {
+void AS_TRACE_() {
     if (IsTraceEnabled()) {
         if (IsRunningMode()) {
-            OUTDO('#'&0x7fu);
-            LINPRT();
-            OUTSP();
+            AS_OUTDO('#'&0x7fu);
+            AS_LINPRT();
+            AS_OUTSP();
         }
     }
 
-    CHRGET();
-    EXECUTE_STATEMENT();
-    NEWSTT();
+    AS_CHRGET();
+    AS_EXECUTE_STATEMENT();
+    AS_NEWSTT();
 }
 
-void GOEND() {
+void AS_GOEND() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: GOEND (inclusive) .. EXECUTE_STATEMENT (exclusive)
-    // Name normalization: none (assembler label GOEND kept verbatim).
-    // End-of-program path in NEWSTT jumps into END4 with carry clear, which
+    // AS_Labels: AS_GOEND (inclusive) .. AS_EXECUTE_STATEMENT (exclusive)
+    // Name normalization: none (assembler label AS_GOEND kept verbatim).
+    // End-of-program path in AS_NEWSTT jumps into AS_END4 with carry clear, which
     // restarts without printing BREAK. Model that directly here.
-    RESTART();
+    AS_RESTART();
 }
 
-bool IsEndOfLineAtTextPointer() {
-    // Source: NEWSTT inline — ldy #0 / lda (TXTPTR),Y: end-of-statement when byte is 0.
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    return ReadProgramByte(ReadZeroPageWord(kTXTPTR)) == 0u;
+bool IsEndOfAS_LineAtTextPointer() {
+    // Source: AS_NEWSTT inline — ldy #0 / lda (AS_TXTPTR),Y: end-of-statement when byte is 0.
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    return ReadProgramByte(ReadZeroPageWord(kAS_TXTPTR)) == 0u;
 }
 
 bool IsEndOfProgramAtTextPointer() {
-    // Source: NEWSTT inline — ldy #2 / lda (TXTPTR),Y: next-line link high byte;
+    // Source: AS_NEWSTT inline — ldy #2 / lda (AS_TXTPTR),Y: next-line link high byte;
     // if zero the program has ended (null forward pointer).
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    return ReadProgramByte(static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + 2u)) == 0u;
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    return ReadProgramByte(static_cast<std::uint16_t>(ReadZeroPageWord(kAS_TXTPTR) + 2u)) == 0u;
 }
 
-std::uint16_t ReadLineNumberFromTextPointer() {
-    // Source: NEWSTT inline — reads CURLIN from (TXTPTR)+3 and (TXTPTR)+4.
-    // Memory layout at TXTPTR when it sits on an EOL 0x00:
+std::uint16_t ReadAS_LineNumberFromTextPointer() {
+    // Source: AS_NEWSTT inline — reads AS_CURLIN from (AS_TXTPTR)+3 and (AS_TXTPTR)+4.
+    // Memory layout at AS_TXTPTR when it sits on an EOL 0x00:
     //   [0] = 0x00 (EOL), [1] = link.lo, [2] = link.hi, [3] = lineno.lo, [4] = lineno.hi.
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    const std::uint16_t txtptr = ReadZeroPageWord(kTXTPTR);
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    const std::uint16_t txtptr = ReadZeroPageWord(kAS_TXTPTR);
     const std::uint8_t lo = ReadProgramByte(static_cast<std::uint16_t>(txtptr + 3u));
     const std::uint8_t hi = ReadProgramByte(static_cast<std::uint16_t>(txtptr + 4u));
     return ApplesoftVariables::makeWord(lo, hi);
 }
 
-void AdvanceTextPointerToNextLine() {
-    // Source: NEWSTT inline — tya (A=4) + adc TXTPTR → TXTPTR += 4.
-    // CHRGET called next by TRACE_ adds 1 more, landing on the first content byte.
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(ReadZeroPageWord(kTXTPTR) + 4u));
+void AdvanceTextPointerToNextAS_Line() {
+    // Source: AS_NEWSTT inline — tya (A=4) + adc AS_TXTPTR → AS_TXTPTR += 4.
+    // AS_CHRGET called next by AS_TRACE_ adds 1 more, landing on the first content byte.
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    WriteZeroPageWord(kAS_TXTPTR, static_cast<std::uint16_t>(ReadZeroPageWord(kAS_TXTPTR) + 4u));
 }
 
 bool IsRunningMode() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: TRACE_ (inclusive) .. EXECUTE_STATEMENT (exclusive)
-    // Name normalization: helper name chosen for the inline TRACE_ predicate.
-    // TRACE_ checks CURLIN+1 and only traces when non-zero (running mode).
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    return ReadZeroPageByte(static_cast<std::uint8_t>(kCURLIN + 1u)) != 0u;
+    // AS_Labels: AS_TRACE_ (inclusive) .. AS_EXECUTE_STATEMENT (exclusive)
+    // Name normalization: helper name chosen for the inline AS_TRACE_ predicate.
+    // AS_TRACE_ checks AS_CURLIN+1 and only traces when non-zero (running mode).
+    constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
+    return ReadZeroPageByte(static_cast<std::uint8_t>(kAS_CURLIN + 1u)) != 0u;
 }
 
 bool IsTraceEnabled() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: TRACE_ (inclusive) .. EXECUTE_STATEMENT (exclusive)
-    // Name normalization: helper name chosen for the inline TRACE_ predicate.
-    // `bit TRCFLG` + `bpl` means tracing is enabled when TRCFLG bit 7 is set.
-    constexpr std::uint8_t kTRCFLG = ApplesoftVariables::ZP_TRCFLG;
-    return (ReadZeroPageByte(kTRCFLG) & 0x80u) != 0u;
+    // AS_Labels: AS_TRACE_ (inclusive) .. AS_EXECUTE_STATEMENT (exclusive)
+    // Name normalization: helper name chosen for the inline AS_TRACE_ predicate.
+    // `bit AS_TRCFLG` + `bpl` means tracing is enabled when AS_TRCFLG bit 7 is set.
+    constexpr std::uint8_t kAS_TRCFLG = ApplesoftVariables::ZP_AS_TRCFLG;
+    return (ReadZeroPageByte(kAS_TRCFLG) & 0x80u) != 0u;
 }
 
-void EXECUTE_STATEMENT() {
+void AS_EXECUTE_STATEMENT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: EXECUTE_STATEMENT (inclusive) .. EXECUTE_STATEMENT_1 (exclusive)
-    // Name normalization: none (assembler label EXECUTE_STATEMENT kept verbatim).
+    // AS_Labels: AS_EXECUTE_STATEMENT (inclusive) .. AS_EXECUTE_STATEMENT_1 (exclusive)
+    // Name normalization: none (assembler label AS_EXECUTE_STATEMENT kept verbatim).
 
     if (CurrentStatementChar() == 0) {
         // EMPTY STATEMENT: fall through to caller behavior.
         return;
     }
 
-    EXECUTE_STATEMENT_1();
+    AS_EXECUTE_STATEMENT_1();
 }
 
-void EXECUTE_STATEMENT_1() {
+void AS_EXECUTE_STATEMENT_1() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: EXECUTE_STATEMENT_1 (inclusive) .. COLON_ (exclusive)
-    // Name normalization: none (assembler label EXECUTE_STATEMENT_1 kept verbatim).
+    // AS_Labels: AS_EXECUTE_STATEMENT_1 (inclusive) .. AS_COLON_ (exclusive)
+    // Name normalization: none (assembler label AS_EXECUTE_STATEMENT_1 kept verbatim).
 
     const std::uint8_t ch = CurrentStatementChar();
     if ((ch & 0x80u) == 0u) {
-        LET();
+        AS_LET();
         return;
     }
 
     const std::uint8_t tokenIndex = static_cast<std::uint8_t>(ch - kTokenBase);
     if (tokenIndex >= 0x40u) {
-        SYNERR();
+        AS_SYNERR();
         return;
     }
 
-    CHRGET();
-    const TOKEN_ADDRESS_TABLE_fn handler = TOKEN_ADDRESS_TABLE(static_cast<std::size_t>(tokenIndex));
+    AS_CHRGET();
+    const AS_TOKEN_ADDRESS_TABLE_fn handler = AS_TOKEN_ADDRESS_TABLE(static_cast<std::size_t>(tokenIndex));
     handler();
 }
 
-void COLON_() {
+void AS_COLON_() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: COLON_ (inclusive) .. RESTORE (exclusive)
-    // Name normalization: none (assembler label COLON_ kept verbatim).
+    // AS_Labels: AS_COLON_ (inclusive) .. AS_RESTORE (exclusive)
+    // Name normalization: none (assembler label AS_COLON_ kept verbatim).
 
     if (CurrentStatementChar() == static_cast<std::uint8_t>(':' )) {
-        TRACE_();
+        AS_TRACE_();
         return;
     }
 
-    SYNERR();
+    AS_SYNERR();
 }
 
-void IF() {
+void AS_IF() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: IF (inclusive) .. REM (exclusive)
-    // Name normalization: none (assembler label IF kept verbatim).
+    // AS_Labels: AS_IF (inclusive) .. AS_REM (exclusive)
+    // Name normalization: none (assembler label AS_IF kept verbatim).
 
-    constexpr std::uint8_t kTOKEN_GOTO = 0xabu;
-    constexpr std::uint8_t kTOKEN_THEN = 0xc4u;
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
+    constexpr std::uint8_t kAS_TOKEN_THEN = 0xc4u;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
 
-    FRMEVL();
-    if (CHRGOT() != kTOKEN_GOTO) {
-        SYNCHR(kTOKEN_THEN);
+    AS_FRMEVL();
+    if (AS_CHRGOT() != kAS_TOKEN_GOTO) {
+        AS_SYNCHR(kAS_TOKEN_THEN);
     }
 
-    if (ReadZeroPageByte(kFAC) != 0u) {
-        IF_TRUE();
+    if (ReadZeroPageByte(kAS_FAC) != 0u) {
+        AS_IF_TRUE();
         return;
     }
 
-    // False IF falls through to REM in ROM.
-    REM();
+    // False AS_IF falls through to AS_REM in ROM.
+    AS_REM();
 }
 
-void REM() {
+void AS_REM() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: REM (inclusive) .. IF_TRUE (exclusive)
-    // Name normalization: none (assembler label REM kept verbatim).
+    // AS_Labels: AS_REM (inclusive) .. AS_IF_TRUE (exclusive)
+    // Name normalization: none (assembler label AS_REM kept verbatim).
 
-    const std::uint8_t offset = REMN();
-    ADDON(offset);
+    const std::uint8_t offset = AS_REMN();
+    AS_ADDON(offset);
 }
 
-void IF_TRUE() {
+void AS_IF_TRUE() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: IF_TRUE (inclusive) .. ONGOTO (exclusive)
-    // Name normalization: none (assembler label IF_TRUE kept verbatim).
+    // AS_Labels: AS_IF_TRUE (inclusive) .. AS_ONGOTO (exclusive)
+    // Name normalization: none (assembler label AS_IF_TRUE kept verbatim).
 
-    if (CHRGOT() >= kTokenBase) {
-        EXECUTE_STATEMENT();
+    if (AS_CHRGOT() >= kTokenBase) {
+        AS_EXECUTE_STATEMENT();
         return;
     }
 
-    GOTO();
+    AS_GOTO();
 }
 
-void ONGOTO() {
+void AS_ONGOTO() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ONGOTO (inclusive) .. LINGET (exclusive)
-    // Name normalization: none (assembler label ONGOTO kept verbatim).
+    // AS_Labels: AS_ONGOTO (inclusive) .. AS_LINGET (exclusive)
+    // Name normalization: none (assembler label AS_ONGOTO kept verbatim).
 
-    constexpr std::uint8_t kTOKEN_GOSUB = 0xb0u;
-    constexpr std::uint8_t kTOKEN_GOTO = 0xabu;
-    constexpr std::uint8_t kFAC_PLUS_4 = static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 4u);
+    constexpr std::uint8_t kAS_TOKEN_GOSUB = 0xb0u;
+    constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
+    constexpr std::uint8_t kAS_FAC_PLUS_4 = static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 4u);
 
-    const std::uint8_t token = GETBYT();
-    if (token != kTOKEN_GOSUB && token != kTOKEN_GOTO) {
-        SYNERR();
+    const std::uint8_t token = AS_GETBYT();
+    if (token != kAS_TOKEN_GOSUB && token != kAS_TOKEN_GOTO) {
+        AS_SYNERR();
         return;
     }
 
     while (true) {
-        const std::uint8_t selector = ReadZeroPageByte(kFAC_PLUS_4);
-        WriteZeroPageByte(kFAC_PLUS_4, static_cast<std::uint8_t>(selector - 1u));
+        const std::uint8_t selector = ReadZeroPageByte(kAS_FAC_PLUS_4);
+        WriteZeroPageByte(kAS_FAC_PLUS_4, static_cast<std::uint8_t>(selector - 1u));
 
         if (selector == 1u) {
-            EXECUTE_STATEMENT_1();
+            AS_EXECUTE_STATEMENT_1();
             return;
         }
 
-        CHRGET();
-        LINGET();
-        if (CHRGOT() == static_cast<std::uint8_t>(',')) {
+        AS_CHRGET();
+        AS_LINGET();
+        if (AS_CHRGOT() == static_cast<std::uint8_t>(',')) {
             continue;
         }
 

@@ -5,47 +5,47 @@
 namespace applesoft::asm_port {
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: STRLT2 (inclusive) .. PUTNEW (exclusive)
-// Name normalization: none (assembler label STRLT2 kept verbatim).
-void STRLT2(std::uint16_t address);
+// AS_Labels: AS_STRLT2 (inclusive) .. AS_PUTNEW (exclusive)
+// Name normalization: none (assembler label AS_STRLT2 kept verbatim).
+void AS_STRLT2(std::uint16_t address);
 
-// Labels: GARBAG (inclusive) .. FIND_HIGHEST_STRING (exclusive)
-void GARBAG();
+// AS_Labels: AS_GARBAG (inclusive) .. AS_FIND_HIGHEST_STRING (exclusive)
+void AS_GARBAG();
 
-// Labels: STRINI (inclusive) .. STRSPA (exclusive)
-void STRINI(std::uint8_t length);
+// AS_Labels: AS_STRINI (inclusive) .. AS_STRSPA (exclusive)
+void AS_STRINI(std::uint8_t length);
 
-// Labels: STRSPA (inclusive) .. L_STRSPA_1 (exclusive)
-void STRSPA(std::uint8_t length);
+// AS_Labels: AS_STRSPA (inclusive) .. AS_L_STRSPA_1 (exclusive)
+void AS_STRSPA(std::uint8_t length);
 
-// Labels: MOVINS (inclusive) .. MOVSTR (exclusive)
-void MOVINS();
+// AS_Labels: AS_MOVINS (inclusive) .. AS_MOVSTR (exclusive)
+void AS_MOVINS();
 
-// Labels: FRETMP (inclusive) .. FRETMS (exclusive)
-std::uint8_t FRETMP(std::uint16_t descriptorAddress);
+// AS_Labels: AS_FRETMP (inclusive) .. AS_FRETMS (exclusive)
+std::uint8_t AS_FRETMP(std::uint16_t descriptorAddress);
 
-// Labels: FRETMS (inclusive) .. CHRSTR (exclusive)
-bool FRETMS(std::uint16_t descriptorAddress);
+// AS_Labels: AS_FRETMS (inclusive) .. AS_CHRSTR (exclusive)
+bool AS_FRETMS(std::uint16_t descriptorAddress);
 
-// Labels: CHRSTR (inclusive) .. LEFTSTR (exclusive)
-void CHRSTR();
+// AS_Labels: AS_CHRSTR (inclusive) .. AS_LEFTSTR (exclusive)
+void AS_CHRSTR();
 
-// Labels: LEFTSTR (inclusive) .. RIGHTSTR (exclusive)
-void LEFTSTR();
+// AS_Labels: AS_LEFTSTR (inclusive) .. AS_RIGHTSTR (exclusive)
+void AS_LEFTSTR();
 
-// Labels: RIGHTSTR (inclusive) .. MIDSTR (exclusive)
-void RIGHTSTR();
+// AS_Labels: AS_RIGHTSTR (inclusive) .. AS_MIDSTR (exclusive)
+void AS_RIGHTSTR();
 
-// Labels: MIDSTR (inclusive) .. SUBSTRING_SETUP (exclusive)
-void MIDSTR();
+// AS_Labels: AS_MIDSTR (inclusive) .. AS_SUBSTRING_SETUP (exclusive)
+void AS_MIDSTR();
 
-// Labels: LEN (inclusive) .. GETSTR (exclusive)
-void LEN();
+// AS_Labels: AS_LEN (inclusive) .. AS_GETSTR (exclusive)
+void AS_LEN();
 
-// Labels: GETSTR (inclusive) .. ASC (exclusive)
-std::uint8_t GETSTR();
+// AS_Labels: AS_GETSTR (inclusive) .. AS_ASC (exclusive)
+std::uint8_t AS_GETSTR();
 
-// Labels: ASC (inclusive) .. GOIQ (exclusive)
-void ASC();
+// AS_Labels: AS_ASC (inclusive) .. AS_GOIQ (exclusive)
+void AS_ASC();
 
 } // namespace applesoft::asm_port

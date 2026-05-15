@@ -50,17 +50,17 @@ void ApplesoftStack::popReturnAddress() {
 }
 
 void ApplesoftStack::pushTextPointerAddress() {
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    const std::uint16_t textPointer = ReadZeroPageWord(kTXTPTR);
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    const std::uint16_t textPointer = ReadZeroPageWord(kAS_TXTPTR);
     pushByte(ApplesoftVariables::highByte(textPointer));
     pushByte(ApplesoftVariables::lowByte(textPointer));
 }
 
-void ApplesoftStack::pushCurrentLineNumber() {
-    constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
-    const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
-    pushByte(ApplesoftVariables::highByte(currentLine));
-    pushByte(ApplesoftVariables::lowByte(currentLine));
+void ApplesoftStack::pushCurrentAS_LineNumber() {
+    constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
+    const std::uint16_t currentAS_Line = ReadZeroPageWord(kAS_CURLIN);
+    pushByte(ApplesoftVariables::highByte(currentAS_Line));
+    pushByte(ApplesoftVariables::lowByte(currentAS_Line));
 }
 
 void ApplesoftStack::pushToken(std::uint8_t token) {

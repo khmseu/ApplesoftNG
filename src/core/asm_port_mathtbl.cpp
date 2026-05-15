@@ -1,11 +1,11 @@
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: MATHTBL (inclusive) .. TOKEN_NAME_TABLE (exclusive)
-// Name normalization: OR -> OR_op (OR is a C++ keyword).
+// AS_Labels: AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)
+// Name normalization: AS_OR -> AS_OR_op (AS_OR is a C++ keyword).
 //
-// MATHTBL is a 10-entry table mixing a one-byte precedence code with a
+// AS_MATHTBL is a 10-entry table mixing a one-byte precedence code with a
 // two-byte RTS-dispatch handler address for each math operator token $C8-$D1.
-// Sub-labels M_NEG (index 7), MEQUU (index 8), M_REL (index 9) mark entries
-// that the interpreter jumps to directly; exposed as M_NEG_IDX etc. in the header.
+// Sub-labels AS_M_NEG (index 7), AS_MEQUU (index 8), AS_M_REL (index 9) mark entries
+// that the interpreter jumps to directly; exposed as AS_M_NEG_IDX etc. in the header.
 // The -1 RTS-dispatch offset is dropped; callers invoke entry.handler directly.
 
 #include "core/asm_port_mathtbl.hpp"
@@ -15,63 +15,63 @@
 
 namespace applesoft::asm_port {
 
-void OR();
-void RELOPS();
-void SNGFLT(std::uint8_t value);
-void ANDOP();
+void AS_OR();
+void AS_RELOPS();
+void AS_SNGFLT(std::uint8_t value);
+void AS_ANDOP();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for math operator handlers not yet ported.
 // ---------------------------------------------------------------------------
 
 namespace {
-// static void FADDT()  {} // Removed to avoid conflict with asm_port_math.cpp
+// static void AS_FADDT()  {} // Removed to avoid conflict with asm_port_math.cpp
 } // namespace
-static void FSUBT()  {} // TODO(asm-port): FSUBT  $C9...201...-
-static void FMULTT() {} // TODO(asm-port): FMULTT $CA...202...*
-static void FDIVT()  {} // TODO(asm-port): FDIVT  $CB...203.../
-static void FPWRT()  {} // TODO(asm-port): FPWRT  $CC...204...^
+static void AS_FSUBT()  {} // TODO(asm-port): AS_FSUBT  $C9...201...-
+static void AS_FMULTT() {} // TODO(asm-port): AS_FMULTT $CA...202...*
+static void AS_FDIVT()  {} // TODO(asm-port): AS_FDIVT  $CB...203.../
+static void AS_FPWRT()  {} // TODO(asm-port): AS_FPWRT  $CC...204...^
 
-void OR_op() {
+void AS_OR_op() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: OR (inclusive) .. ANDOP (exclusive)
-    // Name normalization: OR -> OR_op in MATHTBL dispatch (OR is table label).
+    // AS_Labels: AS_OR (inclusive) .. AS_ANDOP (exclusive)
+    // Name normalization: AS_OR -> AS_OR_op in AS_MATHTBL dispatch (AS_OR is table label).
 
-    OR();
+    AS_OR();
 }
 
-void NEGOP() {
+void AS_NEGOP() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: NEGOP (inclusive) .. CON_LOG_E (exclusive)
-    // Name normalization: none (assembler label NEGOP kept verbatim).
+    // AS_Labels: AS_NEGOP (inclusive) .. AS_CON_LOG_E (exclusive)
+    // Name normalization: none (assembler label AS_NEGOP kept verbatim).
 
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
 
-    // ROM: if FAC exponent is zero, value is 0 so sign toggle is skipped.
-    if (variables_const().readByte(kFAC) == 0u) {
+    // ROM: if AS_FAC exponent is zero, value is 0 so sign toggle is skipped.
+    if (variables_const().readByte(kAS_FAC) == 0u) {
         return;
     }
 
-    const std::uint8_t sign = variables_const().readByte(kFAC_SIGN);
-    variables().writeByte(kFAC_SIGN, static_cast<std::uint8_t>(sign ^ 0xffu));
+    const std::uint8_t sign = variables_const().readByte(kAS_FAC_SIGN);
+    variables().writeByte(kAS_FAC_SIGN, static_cast<std::uint8_t>(sign ^ 0xffu));
 }
 
-void EQUOP() {
+void AS_EQUOP() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: EQUOP (inclusive) .. FN_ (exclusive)
-    // Name normalization: none (assembler label EQUOP kept verbatim).
+    // AS_Labels: AS_EQUOP (inclusive) .. AS_FN_ (exclusive)
+    // Name normalization: none (assembler label AS_EQUOP kept verbatim).
     //
-    // Tests whether FAC == 0.  In the Applesoft float format the exponent byte
-    // is stored at ZP_FAC ($9D); a zero exponent means the value is exactly 0.0.
-    // Returns FAC = 1.0 (true) when the operand is zero, 0.0 (false) otherwise.
-    // Used both as the "=" operator handler (via MEQUU table entry) and as the
-    // implementation of the NOT pseudo-function (via NOT_ -> EQUL -> EQUOP).
+    // Tests whether AS_FAC == 0.  In the Applesoft float format the exponent byte
+    // is stored at ZP_AS_FAC ($9D); a zero exponent means the value is exactly 0.0.
+    // Returns AS_FAC = 1.0 (true) when the operand is zero, 0.0 (false) otherwise.
+    // Used both as the "=" operator handler (via AS_MEQUU table entry) and as the
+    // implementation of the NOT pseudo-function (via AS_NOT_ -> AS_EQUL -> AS_EQUOP).
 
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
 
-    const std::uint8_t facExponent = variables_const().readByte(kFAC);
-    SNGFLT(facExponent == 0u ? static_cast<std::uint8_t>(1u)
+    const std::uint8_t facExponent = variables_const().readByte(kAS_FAC);
+    AS_SNGFLT(facExponent == 0u ? static_cast<std::uint8_t>(1u)
                              : static_cast<std::uint8_t>(0u));
 }
 
@@ -79,18 +79,18 @@ void EQUOP() {
 // Math operator table: precedence + handler for tokens $C8-$D1.
 // Index = token - $C8.
 // ---------------------------------------------------------------------------
-MathTblEntry MATHTBL(std::size_t index) {
+MathTblEntry AS_MATHTBL(std::size_t index) {
     static constexpr MathTblEntry table[] = {
-        { P_ADD, FADDT  }, // [0] M_ADD  $C8...200...+
-        { P_ADD, FSUBT  }, // [1]        $C9...201...-
-        { P_MUL, FMULTT }, // [2]        $CA...202...*
-        { P_MUL, FDIVT  }, // [3]        $CB...203.../
-        { P_PWR, FPWRT  }, // [4]        $CC...204...^
-        { P_AND, ANDOP  }, // [5]        $CD...205...AND
-        { P_OR,  OR_op  }, // [6]        $CE...206...OR
-        { P_NEQ, NEGOP  }, // [7] M_NEG  $CF...207...>
-        { P_NEQ, EQUOP  }, // [8] MEQUU  $D0...208...=
-        { P_REL, RELOPS }, // [9] M_REL  $D1...209...< (dispatches to core RELOPS)
+        { AS_P_ADD, AS_FADDT  }, // [0] M_ADD  $C8...200...+
+        { AS_P_ADD, AS_FSUBT  }, // [1]        $C9...201...-
+        { AS_P_MUL, AS_FMULTT }, // [2]        $CA...202...*
+        { AS_P_MUL, AS_FDIVT  }, // [3]        $CB...203.../
+        { AS_P_PWR, AS_FPWRT  }, // [4]        $CC...204...^
+        { AS_P_AND, AS_ANDOP  }, // [5]        $CD...205...AND
+        { AS_P_OR,  AS_OR_op  }, // [6]        $CE...206...AS_OR
+        { AS_P_NEQ, AS_NEGOP  }, // [7] AS_M_NEG  $CF...207...>
+        { AS_P_NEQ, AS_EQUOP  }, // [8] AS_MEQUU  $D0...208...=
+        { AS_P_REL, AS_RELOPS }, // [9] AS_M_REL  $D1...209...< (dispatches to core AS_RELOPS)
     };
     return table[index];
 }

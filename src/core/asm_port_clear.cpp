@@ -12,63 +12,63 @@ void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 std::uint16_t ReadZeroPageWord(std::uint8_t address);
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 
-void CLEAR() {
-    if (CHRGOT() != 0) {
+void AS_CLEAR() {
+    if (AS_CHRGOT() != 0) {
         return;
     }
-    CLEARC();
+    AS_CLEARC();
 }
 
-void CLEARC() {
-    constexpr auto kMEMSIZ = ApplesoftVariables::ZP_MEMSIZ;
-    constexpr auto kFRETOP = ApplesoftVariables::ZP_FRETOP;
-    constexpr auto kVARTAB = ApplesoftVariables::ZP_VARTAB;
-    constexpr auto kARYTAB = ApplesoftVariables::ZP_ARYTAB;
-    constexpr auto kSTREND = ApplesoftVariables::ZP_STREND;
+void AS_CLEARC() {
+    constexpr auto kAS_MEMSIZ = ApplesoftVariables::ZP_AS_MEMSIZ;
+    constexpr auto kAS_FRETOP = ApplesoftVariables::ZP_AS_FRETOP;
+    constexpr auto kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
+    constexpr auto kAS_ARYTAB = ApplesoftVariables::ZP_AS_ARYTAB;
+    constexpr auto kAS_STREND = ApplesoftVariables::ZP_AS_STREND;
 
-    WriteZeroPageWord(kFRETOP, ReadZeroPageWord(kMEMSIZ));
+    WriteZeroPageWord(kAS_FRETOP, ReadZeroPageWord(kAS_MEMSIZ));
     
-    std::uint16_t vartab = ReadZeroPageWord(kVARTAB);
-    WriteZeroPageWord(kARYTAB, vartab);
-    WriteZeroPageWord(kSTREND, vartab);
+    std::uint16_t vartab = ReadZeroPageWord(kAS_VARTAB);
+    WriteZeroPageWord(kAS_ARYTAB, vartab);
+    WriteZeroPageWord(kAS_STREND, vartab);
 
-    RESTORE();
-    STKINI();
+    AS_RESTORE();
+    AS_STKINI();
 }
 
-void STKINI() {
-    constexpr auto kTEMPPT = ApplesoftVariables::ZP_TEMPPT;
-    constexpr auto kTEMPST = ApplesoftVariables::ZP_TEMPST;
-    constexpr auto kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
-    constexpr auto kSUBFLG = ApplesoftVariables::ZP_SUBFLG;
+void AS_STKINI() {
+    constexpr auto kAS_TEMPPT = ApplesoftVariables::ZP_AS_TEMPPT;
+    constexpr auto kAS_TEMPST = ApplesoftVariables::ZP_AS_TEMPST;
+    constexpr auto kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
+    constexpr auto kAS_SUBFLG = ApplesoftVariables::ZP_AS_SUBFLG;
 
-    WriteZeroPageByte(kTEMPPT, kTEMPST);
+    WriteZeroPageByte(kAS_TEMPPT, kAS_TEMPST);
 
     // 1727-1734: Stack management
     // Applesoft preserves the return address across the stack reset (TXS $F8).
     // In our C++ interpreter, theStack().setStackPointer() mimics TXS.
     theStack().setStackPointer(0xf8u);
 
-    // Resetting OLDTEXT (high byte) and SUBFLG
-    WriteZeroPageByte(kOLDTEXT + 1, 0); 
-    WriteZeroPageByte(kSUBFLG, 0);
+    // Resetting AS_OLDTEXT (high byte) and AS_SUBFLG
+    WriteZeroPageByte(kAS_OLDTEXT + 1, 0); 
+    WriteZeroPageByte(kAS_SUBFLG, 0);
 }
 
-void STXTPT() {
-    constexpr auto kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
-    constexpr auto kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+void AS_STXTPT() {
+    constexpr auto kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
+    constexpr auto kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
 
-    WriteZeroPageWord(kTXTPTR, ReadZeroPageWord(kTXTTAB) - 1);
+    WriteZeroPageWord(kAS_TXTPTR, ReadZeroPageWord(kAS_TXTTAB) - 1);
 }
 
-void RESTORE() {
-    constexpr auto kTXTTAB = ApplesoftVariables::ZP_TXTTAB;
-    SETDA(ReadZeroPageWord(kTXTTAB) - 1);
+void AS_RESTORE() {
+    constexpr auto kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
+    AS_SETDA(ReadZeroPageWord(kAS_TXTTAB) - 1);
 }
 
-void SETDA(std::uint16_t addr) {
-    constexpr auto kDATPTR = ApplesoftVariables::ZP_DATPTR;
-    WriteZeroPageWord(kDATPTR, addr);
+void AS_SETDA(std::uint16_t addr) {
+    constexpr auto kAS_DATPTR = ApplesoftVariables::ZP_AS_DATPTR;
+    WriteZeroPageWord(kAS_DATPTR, addr);
 }
 
 } // namespace applesoft::asm_port

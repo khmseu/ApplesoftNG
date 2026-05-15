@@ -8,8 +8,8 @@ namespace applesoft::asm_port {
 /**
  * @brief 6502 hardware stack and FN-call stack, unified.
  *
- * Hardware stack: LIFO at $0100–$01FF, SP grows downward (6502 convention).
- * FN call stack:  auxiliary LIFO used by FUNCT/FNCDATA for user-defined
+ * Hardware stack: AS_LIFO at $0100–$01FF, SP grows downward (6502 convention).
+ * FN call stack:  auxiliary AS_LIFO used by AS_FUNCT/AS_FNCDATA for user-defined
  *                 function call/return context.
  */
 class ApplesoftStack {
@@ -26,7 +26,7 @@ public:
     void popReturnAddress();
 
     void pushTextPointerAddress();
-    void pushCurrentLineNumber();
+    void pushCurrentAS_LineNumber();
     void pushToken(std::uint8_t token);
 
     /// Read a byte at stack address (0x0100 + x + plus).

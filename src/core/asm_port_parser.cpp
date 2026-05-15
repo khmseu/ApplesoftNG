@@ -13,248 +13,248 @@ std::uint16_t ReadZeroPageWord(std::uint8_t address);
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 std::uint8_t ReadProgramByte(std::uint16_t address);
-void SYNERR();
-void FRMEVL();
-void FRMNUM();
-void CONINT();
-void MKINT();
-bool ISLETC();
-void AYINT();
-void PTRGET4();
-std::uint8_t COMBYTE();
-void GETADR();
-void IQERR();
+void AS_SYNERR();
+void AS_FRMEVL();
+void AS_FRMNUM();
+void AS_CONINT();
+void AS_MKINT();
+bool AS_ISLETC();
+void AS_AYINT();
+void AS_PTRGET4();
+std::uint8_t AS_COMBYTE();
+void AS_GETADR();
+void AS_IQERR();
 
-void SYNCHR(std::uint8_t expected);
-void CHKCLS();
-void CHKOPN();
+void AS_SYNCHR(std::uint8_t expected);
+void AS_CHKCLS();
+void AS_CHKOPN();
 
-void SYNCHR(std::uint8_t expected) {
+void AS_SYNCHR(std::uint8_t expected) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: SYNCHR (inclusive) .. CHKNUM (exclusive)
-    // Name normalization: none (assembler label SYNCHR kept verbatim).
+    // AS_Labels: AS_SYNCHR (inclusive) .. AS_CHKNUM (exclusive)
+    // Name normalization: none (assembler label AS_SYNCHR kept verbatim).
     //
     // Require a specific statement token from the parsed input.
-    // Read current character from TXTPTR, compare with expected, advance if match, error if not.
+    // Read current character from AS_TXTPTR, compare with expected, advance if match, error if not.
 
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
 
-    const std::uint16_t txtPtr = ReadZeroPageWord(kTXTPTR);
+    const std::uint16_t txtPtr = ReadZeroPageWord(kAS_TXTPTR);
     const std::uint8_t current = variables_const().pointer(txtPtr).read(0u);
 
     if (current != expected) {
-        ERROR(ERR_SYNTAX);
+        AS_ERROR(AS_ERR_SYNTAX);
     }
 
-    // Advance TXTPTR by 1.
-    WriteZeroPageWord(kTXTPTR, static_cast<std::uint16_t>(txtPtr + 1u));
+    // Advance AS_TXTPTR by 1.
+    WriteZeroPageWord(kAS_TXTPTR, static_cast<std::uint16_t>(txtPtr + 1u));
 }
 
-void CHKNUM() {
+void AS_CHKNUM() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: CHKNUM (inclusive) .. CHKSTR (exclusive)
-    // Name normalization: none (assembler label CHKNUM kept verbatim).
+    // AS_Labels: AS_CHKNUM (inclusive) .. AS_CHKSTR (exclusive)
+    // Name normalization: none (assembler label AS_CHKNUM kept verbatim).
 
-    constexpr std::uint8_t kVALTYP = ApplesoftVariables::ZP_VALTYP;
-    const bool facIsString = (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u;
+    constexpr std::uint8_t kAS_VALTYP = ApplesoftVariables::ZP_AS_VALTYP;
+    const bool facIsString = (ReadZeroPageByte(kAS_VALTYP) & 0x80u) != 0u;
     if (facIsString) {
-        ERROR(ERR_BADTYPE);
+        AS_ERROR(AS_ERR_BADTYPE);
     }
 }
 
-void CHKSTR() {
+void AS_CHKSTR() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: CHKSTR (inclusive) .. CHKVAL (exclusive)
-    // Name normalization: none (assembler label CHKSTR kept verbatim).
+    // AS_Labels: AS_CHKSTR (inclusive) .. AS_CHKVAL (exclusive)
+    // Name normalization: none (assembler label AS_CHKSTR kept verbatim).
 
-    constexpr std::uint8_t kVALTYP = ApplesoftVariables::ZP_VALTYP;
-    const bool facIsString = (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u;
+    constexpr std::uint8_t kAS_VALTYP = ApplesoftVariables::ZP_AS_VALTYP;
+    const bool facIsString = (ReadZeroPageByte(kAS_VALTYP) & 0x80u) != 0u;
     if (!facIsString) {
-        ERROR(ERR_BADTYPE);
+        AS_ERROR(AS_ERR_BADTYPE);
     }
 }
 
-void CHKCOM() {
+void AS_CHKCOM() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: CHKCOM (inclusive) .. SYNCHR (exclusive)
-    // Name normalization: none (assembler label CHKCOM kept verbatim).
+    // AS_Labels: AS_CHKCOM (inclusive) .. AS_SYNCHR (exclusive)
+    // Name normalization: none (assembler label AS_CHKCOM kept verbatim).
 
-    SYNCHR(static_cast<std::uint8_t>(','));
+    AS_SYNCHR(static_cast<std::uint8_t>(','));
 }
 
-void FRMNUM() {
+void AS_FRMNUM() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FRMNUM (inclusive) .. FRMEVL (exclusive)
-    // Name normalization: none (assembler label FRMNUM kept verbatim).
+    // AS_Labels: AS_FRMNUM (inclusive) .. AS_FRMEVL (exclusive)
+    // Name normalization: none (assembler label AS_FRMNUM kept verbatim).
     //
-    // FRMNUM does JSR FRMEVL and falls through into CHKNUM in ROM.
+    // AS_FRMNUM does JSR AS_FRMEVL and falls through into AS_CHKNUM in ROM.
 
-    FRMEVL();
-    CHKNUM();
+    AS_FRMEVL();
+    AS_CHKNUM();
 }
 
-void PARCHK() {
+void AS_PARCHK() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PARCHK (inclusive) .. CHKCLS (exclusive)
-    // Name normalization: none (assembler label PARCHK kept verbatim).
+    // AS_Labels: AS_PARCHK (inclusive) .. AS_CHKCLS (exclusive)
+    // Name normalization: none (assembler label AS_PARCHK kept verbatim).
     //
-    // Validates and evaluates a parenthesized expression at TXTPTR:
-    //   jsr CHKOPN  — require '(' at current position
-    //   jsr FRMEVL  — evaluate the enclosed expression into FAC
-    //   fall-through into CHKCLS — require ')' at current position
+    // Validates and evaluates a parenthesized expression at AS_TXTPTR:
+    //   jsr AS_CHKOPN  — require '(' at current position
+    //   jsr AS_FRMEVL  — evaluate the enclosed expression into AS_FAC
+    //   fall-through into AS_CHKCLS — require ')' at current position
 
-    CHKOPN();
-    FRMEVL();
-    CHKCLS();
+    AS_CHKOPN();
+    AS_FRMEVL();
+    AS_CHKCLS();
 }
 
-void STORE_FACDB_YX_ROUNDED() {
-    // TODO(asm-port): store 5-byte FAC to address in Y,X with rounding.
+void AS_STORE_FACDB_YX_ROUNDED() {
+    // TODO(asm-port): store 5-byte AS_FAC to address in Y,X with rounding.
 }
 
-void CHKCLS() {
+void AS_CHKCLS() {
     // Check for ')' at current position.
-    SYNCHR(static_cast<std::uint8_t>(')'));
+    AS_SYNCHR(static_cast<std::uint8_t>(')'));
 }
 
-void CHKOPN() {
+void AS_CHKOPN() {
     // Check for '(' at current position.
-    SYNCHR(static_cast<std::uint8_t>('('));
+    AS_SYNCHR(static_cast<std::uint8_t>('('));
 }
 
-void LINGET() {
+void AS_LINGET() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: LINGET (inclusive) .. LET (exclusive)
-    // Name normalization: none (assembler label LINGET kept verbatim).
+    // AS_Labels: AS_LINGET (inclusive) .. AS_LET (exclusive)
+    // Name normalization: none (assembler label AS_LINGET kept verbatim).
 
-    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
-    constexpr std::uint8_t kINDEX = ApplesoftVariables::ZP_INDEX;
-    constexpr std::uint8_t kCHARAC = ApplesoftVariables::ZP_CHARAC;
+    constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
+    constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
+    constexpr std::uint8_t kAS_CHARAC = ApplesoftVariables::ZP_AS_CHARAC;
 
     auto is_digit = [](std::uint8_t ch) {
         return ch >= static_cast<std::uint8_t>('0') && ch <= static_cast<std::uint8_t>('9');
     };
 
-    WriteZeroPageWord(kLINNUM, 0);
+    WriteZeroPageWord(kAS_LINNUM, 0);
 
-    std::uint8_t current = CHRGOT();
+    std::uint8_t current = AS_CHRGOT();
     while (is_digit(current)) {
         const std::uint8_t digit = static_cast<std::uint8_t>(current - static_cast<std::uint8_t>('0'));
-        WriteZeroPageByte(kCHARAC, digit);
+        WriteZeroPageByte(kAS_CHARAC, digit);
 
-        const std::uint8_t lineHigh = ReadZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1u));
-        WriteZeroPageByte(kINDEX, lineHigh);
+        const std::uint8_t lineHigh = ReadZeroPageByte(static_cast<std::uint8_t>(kAS_LINNUM + 1u));
+        WriteZeroPageByte(kAS_INDEX, lineHigh);
 
         // Preserve ROM overflow guard (line number exceeds 63999).
         if (lineHigh >= 0x19u) {
-            SYNERR();
+            AS_SYNERR();
             return;
         }
 
-        const std::uint16_t value = ReadZeroPageWord(kLINNUM);
-        WriteZeroPageWord(kLINNUM, static_cast<std::uint16_t>(value * 10u + digit));
+        const std::uint16_t value = ReadZeroPageWord(kAS_LINNUM);
+        WriteZeroPageWord(kAS_LINNUM, static_cast<std::uint16_t>(value * 10u + digit));
 
-        current = CHRGET();
+        current = AS_CHRGET();
     }
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: GTBYTC (inclusive) .. GETBYT (exclusive)
-// Name normalization: none (assembler label GTBYTC kept verbatim).
+// AS_Labels: AS_GTBYTC (inclusive) .. AS_GETBYT (exclusive)
+// Name normalization: none (assembler label AS_GTBYTC kept verbatim).
 //
-// Advance text pointer one character, then evaluate as byte (0-255) in FAC+4.
-//   jsr CHRGET     -- advance TXTPTR
-//   fall-through to GETBYT
-void GTBYTC() {
-    CHRGET();
-    (void)GETBYT();
+// Advance text pointer one character, then evaluate as byte (0-255) in AS_FAC+4.
+//   jsr AS_CHRGET     -- advance AS_TXTPTR
+//   fall-through to AS_GETBYT
+void AS_GTBYTC() {
+    AS_CHRGET();
+    (void)AS_GETBYT();
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: GETBYT (inclusive) .. CONINT (exclusive)
-// Name normalization: none (assembler label GETBYT kept verbatim).
+// AS_Labels: AS_GETBYT (inclusive) .. AS_CONINT (exclusive)
+// Name normalization: none (assembler label AS_GETBYT kept verbatim).
 //
-// Evaluate numeric expression at TXTPTR into FAC, convert to byte (0-255) in FAC+4.
-//   jsr FRMNUM     -- evaluate numeric expression
-//   fall-through to CONINT
-std::uint8_t GETBYT() {
-    FRMNUM();
-    CONINT();
-    return ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 4u));
+// Evaluate numeric expression at AS_TXTPTR into AS_FAC, convert to byte (0-255) in AS_FAC+4.
+//   jsr AS_FRMNUM     -- evaluate numeric expression
+//   fall-through to AS_CONINT
+std::uint8_t AS_GETBYT() {
+    AS_FRMNUM();
+    AS_CONINT();
+    return ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 4u));
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: CONINT (inclusive) .. VAL (exclusive)
-// Name normalization: none (assembler label CONINT kept verbatim).
+// AS_Labels: AS_CONINT (inclusive) .. AS_VAL (exclusive)
+// Name normalization: none (assembler label AS_CONINT kept verbatim).
 //
-// Convert FAC to a single-byte integer (0-255) in FAC+4.
-//   jsr MKINT      -- truncate FAC to integer
-//   ldx FAC+3      -- high byte must be zero (else >255)
-//   bne GOIQ       -- illegal quantity
-//   ldx FAC+4      -- result byte in X (FAC+4 = low byte)
-//   jmp CHRGOT     -- refresh A with current input char and return
-void CONINT() {
-    MKINT();
+// Convert AS_FAC to a single-byte integer (0-255) in AS_FAC+4.
+//   jsr AS_MKINT      -- truncate AS_FAC to integer
+//   ldx AS_FAC+3      -- high byte must be zero (else >255)
+//   bne AS_GOIQ       -- illegal quantity
+//   ldx AS_FAC+4      -- result byte in X (AS_FAC+4 = low byte)
+//   jmp AS_CHRGOT     -- refresh A with current input char and return
+void AS_CONINT() {
+    AS_MKINT();
     const std::uint8_t facHi = ReadZeroPageByte(
-        static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 3u));
+        static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 3u));
     if (facHi != 0u) {
-        IQERR();  // GOIQ: jmp IQERR -- value > 255
+        AS_IQERR();  // AS_GOIQ: jmp AS_IQERR -- value > 255
         return;
     }
-    // FAC+4 already holds the result byte after MKINT.
-    (void)CHRGOT();
+    // AS_FAC+4 already holds the result byte after AS_MKINT.
+    (void)AS_CHRGOT();
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: GTNUM (inclusive) .. COMBYTE (exclusive)
-// Name normalization: none (assembler label GTNUM kept verbatim).
-std::uint8_t GTNUM() {
-    FRMNUM();
-    GETADR();
-    return COMBYTE();
+// AS_Labels: AS_GTNUM (inclusive) .. AS_COMBYTE (exclusive)
+// Name normalization: none (assembler label AS_GTNUM kept verbatim).
+std::uint8_t AS_GTNUM() {
+    AS_FRMNUM();
+    AS_GETADR();
+    return AS_COMBYTE();
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: COMBYTE (inclusive) .. GETADR (exclusive)
-// Name normalization: none (assembler label COMBYTE kept verbatim).
-std::uint8_t COMBYTE() {
-    CHKCOM();
-    return GETBYT();
+// AS_Labels: AS_COMBYTE (inclusive) .. AS_GETADR (exclusive)
+// Name normalization: none (assembler label AS_COMBYTE kept verbatim).
+std::uint8_t AS_COMBYTE() {
+    AS_CHKCOM();
+    return AS_GETBYT();
 }
 
-void QINT() {
+void AS_QINT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: QINT (inclusive) .. INT (exclusive)
-    // Name normalization: none (assembler label QINT kept verbatim).
+    // AS_Labels: AS_QINT (inclusive) .. AS_INT (exclusive)
+    // Name normalization: none (assembler label AS_QINT kept verbatim).
     //
-    // QINT converts the unpacked FAC mantissa into a signed 32-bit integer
-    // in FAC+1..FAC+4 by arithmetic right-shifting according to the exponent.
-    // The five-byte FAC is treated as one logical fixed-point value here rather
+    // AS_QINT converts the unpacked AS_FAC mantissa into a signed 32-bit integer
+    // in AS_FAC+1..AS_FAC+4 by arithmetic right-shifting according to the exponent.
+    // The five-byte AS_FAC is treated as one logical fixed-point value here rather
     // than re-porting the ROM's bytewise shifter helpers separately.
 
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
 
-    const std::uint8_t exponent = ReadZeroPageByte(kFAC);
+    const std::uint8_t exponent = ReadZeroPageByte(kAS_FAC);
     if (exponent == 0u) {
-        WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u), 0u);
-        WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u), 0u);
-        WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u), 0u);
-        WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u), 0u);
+        WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u), 0u);
+        WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u), 0u);
+        WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u), 0u);
+        WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u), 0u);
         return;
     }
 
     const std::uint32_t mantissa =
-        (static_cast<std::uint32_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u))) << 24u) |
-        (static_cast<std::uint32_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u))) << 16u) |
-        (static_cast<std::uint32_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u))) << 8u) |
-        static_cast<std::uint32_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u)));
+        (static_cast<std::uint32_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u))) << 24u) |
+        (static_cast<std::uint32_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u))) << 16u) |
+        (static_cast<std::uint32_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u))) << 8u) |
+        static_cast<std::uint32_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u)));
 
-    const bool isNegative = (ReadZeroPageByte(kFAC_SIGN) & 0x80u) != 0u;
+    const bool isNegative = (ReadZeroPageByte(kAS_FAC_SIGN) & 0x80u) != 0u;
     std::int64_t signedMantissa = static_cast<std::int64_t>(mantissa);
     if (isNegative) {
         signedMantissa = -signedMantissa;
-        WriteZeroPageByte(ApplesoftVariables::ZP_SHIFT_SIGN_EXT, 0xffu);
+        WriteZeroPageByte(ApplesoftVariables::ZP_AS_SHIFT_SIGN_EXT, 0xffu);
     }
 
     const std::uint8_t shiftCount = static_cast<std::uint8_t>(0xa0u - exponent);
@@ -266,187 +266,187 @@ void QINT() {
     }
 
     const std::uint32_t packedInteger = static_cast<std::uint32_t>(integerValue);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u), static_cast<std::uint8_t>(packedInteger >> 24u));
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u), static_cast<std::uint8_t>(packedInteger >> 16u));
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u), static_cast<std::uint8_t>(packedInteger >> 8u));
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u), static_cast<std::uint8_t>(packedInteger & 0xffu));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u), static_cast<std::uint8_t>(packedInteger >> 24u));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u), static_cast<std::uint8_t>(packedInteger >> 16u));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u), static_cast<std::uint8_t>(packedInteger >> 8u));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u), static_cast<std::uint8_t>(packedInteger & 0xffu));
 
-    WriteZeroPageByte(ApplesoftVariables::ZP_SHIFT_SIGN_EXT, 0u);
+    WriteZeroPageByte(ApplesoftVariables::ZP_AS_SHIFT_SIGN_EXT, 0u);
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: GETADR (inclusive) .. PEEK (exclusive)
-// Name normalization: none (assembler label GETADR kept verbatim).
-void GETADR() {
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-    constexpr std::uint8_t kLINNUM = ApplesoftVariables::ZP_LINNUM;
+// AS_Labels: AS_GETADR (inclusive) .. AS_PEEK (exclusive)
+// Name normalization: none (assembler label AS_GETADR kept verbatim).
+void AS_GETADR() {
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
 
-    if (ReadZeroPageByte(kFAC) >= 0x91u) {
-        IQERR();
+    if (ReadZeroPageByte(kAS_FAC) >= 0x91u) {
+        AS_IQERR();
         return;
     }
 
-    QINT();
+    AS_QINT();
 
-    const std::uint8_t lo = ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u));
-    const std::uint8_t hi = ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u));
-    WriteZeroPageByte(kLINNUM, lo);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kLINNUM + 1u), hi);
+    const std::uint8_t lo = ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u));
+    const std::uint8_t hi = ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u));
+    WriteZeroPageByte(kAS_LINNUM, lo);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_LINNUM + 1u), hi);
 }
 
 std::uint8_t CurrentStatementChar() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: EXECUTE_STATEMENT (inclusive) .. EXECUTE_STATEMENT_1 (exclusive)
-    // Name normalization: helper name chosen for the inline EXECUTE_STATEMENT load.
-    // EXECUTE_STATEMENT uses `ldy #0` then `lda (TXTPTR),Y`.
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
-    return ReadProgramByte(ReadZeroPageWord(kTXTPTR));
+    // AS_Labels: AS_EXECUTE_STATEMENT (inclusive) .. AS_EXECUTE_STATEMENT_1 (exclusive)
+    // Name normalization: helper name chosen for the inline AS_EXECUTE_STATEMENT load.
+    // AS_EXECUTE_STATEMENT uses `ldy #0` then `lda (AS_TXTPTR),Y`.
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
+    return ReadProgramByte(ReadZeroPageWord(kAS_TXTPTR));
 }
 
 bool IsStatementEndOfParsedInput() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: END2 (inclusive) .. SAVE (exclusive)
-    // Name normalization: helper name chosen for the inline `bne RTS_4` guard.
-    // STOP/END/CONT continue only when parser is at end-of-statement; model the
-    // zero-flag check via the current parsed character at TXTPTR.
-    return CHRGOT() == 0u;
+    // AS_Labels: AS_END2 (inclusive) .. AS_SAVE (exclusive)
+    // Name normalization: helper name chosen for the inline `bne AS_RTS_4` guard.
+    // AS_STOP/END/AS_CONT continue only when parser is at end-of-statement; model the
+    // zero-flag check via the current parsed character at AS_TXTPTR.
+    return AS_CHRGOT() == 0u;
 }
 
-bool CHKVAL(std::uint8_t savedValTyp) {
+bool AS_CHKVAL(std::uint8_t savedValTyp) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: CHKVAL (inclusive) .. FRMEVL (exclusive)
-    // Name normalization: none (assembler label CHKVAL kept verbatim).
+    // AS_Labels: AS_CHKVAL (inclusive) .. AS_FRMEVL (exclusive)
+    // Name normalization: none (assembler label AS_CHKVAL kept verbatim).
 
-    constexpr std::uint8_t kVALTYP = ApplesoftVariables::ZP_VALTYP;
+    constexpr std::uint8_t kAS_VALTYP = ApplesoftVariables::ZP_AS_VALTYP;
 
-    const bool facIsString = (ReadZeroPageByte(kVALTYP) & 0x80u) != 0u;
+    const bool facIsString = (ReadZeroPageByte(kAS_VALTYP) & 0x80u) != 0u;
     const bool expectedString = (savedValTyp & 0x80u) != 0u;
 
     if (facIsString != expectedString) {
-        ERROR(ERR_BADTYPE);
+        AS_ERROR(AS_ERR_BADTYPE);
         return false;
     }
 
     return facIsString;
 }
 
-void NEG32768() {
+void AS_NEG32768() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: NEG32768 (inclusive) .. MAKINT (exclusive)
-    // Name normalization: none (assembler label NEG32768 kept verbatim).
+    // AS_Labels: AS_NEG32768 (inclusive) .. AS_MAKINT (exclusive)
+    // Name normalization: none (assembler label AS_NEG32768 kept verbatim).
 
-    constexpr std::uint8_t kResult = ApplesoftVariables::ZP_RESULT;
+    constexpr std::uint8_t kResult = ApplesoftVariables::ZP_AS_RESULT;
 
-    WriteZeroPageByte(kResult, kNEG32768Data[0]);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kResult + 1u), kNEG32768Data[1]);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kResult + 2u), kNEG32768Data[2]);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kResult + 3u), kNEG32768Data[3]);
+    WriteZeroPageByte(kResult, kAS_NEG32768Data[0]);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kResult + 1u), kAS_NEG32768Data[1]);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kResult + 2u), kAS_NEG32768Data[2]);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kResult + 3u), kAS_NEG32768Data[3]);
 }
 
-void MAKINT() {
+void AS_MAKINT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: MAKINT (inclusive) .. MKINT (exclusive)
-    // Name normalization: none (assembler label MAKINT kept verbatim).
+    // AS_Labels: AS_MAKINT (inclusive) .. AS_MKINT (exclusive)
+    // Name normalization: none (assembler label AS_MAKINT kept verbatim).
 
-    CHRGET();
-    FRMNUM();
-    MKINT();
+    AS_CHRGET();
+    AS_FRMNUM();
+    AS_MKINT();
 }
 
-void MI1() {
+void AS_MI1() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: MI1 (inclusive) .. MI2 (exclusive)
-    // Name normalization: none (assembler label MI1 kept verbatim).
+    // AS_Labels: AS_MI1 (inclusive) .. AS_MI2 (exclusive)
+    // Name normalization: none (assembler label AS_MI1 kept verbatim).
 
-    IQERR();
+    AS_IQERR();
 }
 
-void MI2() {
+void AS_MI2() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: MI2 (inclusive) .. ARRAY (exclusive)
-    // Name normalization: none (assembler label MI2 kept verbatim).
+    // AS_Labels: AS_MI2 (inclusive) .. AS_ARRAY (exclusive)
+    // Name normalization: none (assembler label AS_MI2 kept verbatim).
 
-    QINT();
+    AS_QINT();
 }
 
-bool ISLETC() {
+bool AS_ISLETC() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ISLETC (inclusive) .. NAME_NOT_FOUND (exclusive)
-    // Name normalization: none (assembler label ISLETC kept verbatim).
+    // AS_Labels: AS_ISLETC (inclusive) .. AS_NAME_NOT_FOUND (exclusive)
+    // Name normalization: none (assembler label AS_ISLETC kept verbatim).
 
-    const std::uint8_t ch = CHRGOT();
+    const std::uint8_t ch = AS_CHRGOT();
     return ch >= static_cast<std::uint8_t>('A') && ch <= static_cast<std::uint8_t>('Z');
 }
 
-void MKINT() {
+void AS_MKINT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: MKINT (inclusive) .. AYINT (exclusive)
-    // Name normalization: none (assembler label MKINT kept verbatim).
+    // AS_Labels: AS_MKINT (inclusive) .. AS_AYINT (exclusive)
+    // Name normalization: none (assembler label AS_MKINT kept verbatim).
 
-    if ((ReadZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN) & 0x80u) != 0u) {
-        MI1();
+    if ((ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN) & 0x80u) != 0u) {
+        AS_MI1();
         return;
     }
 
-    AYINT();
+    AS_AYINT();
 }
 
 #if 0
-void ROUND_FAC() {
+void AS_ROUND_FAC() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ROUND_FAC (inclusive) .. SIGN (exclusive)
-    // Name normalization: none (assembler label ROUND_FAC kept verbatim).
+    // AS_Labels: AS_ROUND_FAC (inclusive) .. AS_SIGN (exclusive)
+    // Name normalization: none (assembler label AS_ROUND_FAC kept verbatim).
     //
-    // ROUND_FAC rounds FAC using FAC_EXTENSION. If extension bit 7 is set,
+    // AS_ROUND_FAC rounds AS_FAC using AS_FAC_EXTENSION. If extension bit 7 is set,
     // increment mantissa; if that overflows the top mantissa byte, perform the
-    // NORMALIZE_FAC_6 path (increment exponent and rotate mantissa/extension right).
+    // AS_NORMALIZE_FAC_6 path (increment exponent and rotate mantissa/extension right).
 
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-    constexpr std::uint8_t kFAC_EXTENSION = static_cast<std::uint8_t>(ApplesoftVariables::ZP_STRNG1 + 1u);
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_FAC_EXTENSION = static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_STRNG1 + 1u);
 
-    // lda FAC / beq RTS_14
-    if (ReadZeroPageByte(kFAC) == 0u) {
+    // lda AS_FAC / beq AS_RTS_14
+    if (ReadZeroPageByte(kAS_FAC) == 0u) {
         return;
     }
 
-    // asl FAC_EXTENSION / bcc RTS_14
-    const std::uint8_t extension = ReadZeroPageByte(kFAC_EXTENSION);
+    // asl AS_FAC_EXTENSION / bcc AS_RTS_14
+    const std::uint8_t extension = ReadZeroPageByte(kAS_FAC_EXTENSION);
     const bool roundUp = (extension & 0x80u) != 0u;
-    WriteZeroPageByte(kFAC_EXTENSION, static_cast<std::uint8_t>(extension << 1u));
+    WriteZeroPageByte(kAS_FAC_EXTENSION, static_cast<std::uint8_t>(extension << 1u));
     if (!roundUp) {
         return;
     }
 
-    // INCREMENT_FAC_MANTISSA: increment FAC+4..FAC+1 with carry chain.
-    std::uint8_t fac4 = static_cast<std::uint8_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u)) + 1u);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u), fac4);
+    // AS_INCREMENT_FAC_MANTISSA: increment AS_FAC+4..AS_FAC+1 with carry chain.
+    std::uint8_t fac4 = static_cast<std::uint8_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u)) + 1u);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u), fac4);
     if (fac4 != 0u) {
         return;
     }
 
-    std::uint8_t fac3 = static_cast<std::uint8_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u)) + 1u);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u), fac3);
+    std::uint8_t fac3 = static_cast<std::uint8_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u)) + 1u);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u), fac3);
     if (fac3 != 0u) {
         return;
     }
 
-    std::uint8_t fac2 = static_cast<std::uint8_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u)) + 1u);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u), fac2);
+    std::uint8_t fac2 = static_cast<std::uint8_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u)) + 1u);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u), fac2);
     if (fac2 != 0u) {
         return;
     }
 
-    std::uint8_t fac1 = static_cast<std::uint8_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u)) + 1u);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u), fac1);
+    std::uint8_t fac1 = static_cast<std::uint8_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u)) + 1u);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u), fac1);
     if (fac1 != 0u) {
         return;
     }
 
-    // NORMALIZE_FAC_6: exponent++ then rotate FAC+1..FAC+4/FAC_EXTENSION right with carry set.
-    const std::uint8_t nextExponent = static_cast<std::uint8_t>(ReadZeroPageByte(kFAC) + 1u);
-    WriteZeroPageByte(kFAC, nextExponent);
+    // AS_NORMALIZE_FAC_6: exponent++ then rotate AS_FAC+1..AS_FAC+4/AS_FAC_EXTENSION right with carry set.
+    const std::uint8_t nextExponent = static_cast<std::uint8_t>(ReadZeroPageByte(kAS_FAC) + 1u);
+    WriteZeroPageByte(kAS_FAC, nextExponent);
     if (nextExponent == 0u) {
-        ERROR(ERR_OVERFLOW);
+        AS_ERROR(AS_ERR_OVERFLOW);
         return;
     }
 
@@ -458,22 +458,22 @@ void ROUND_FAC() {
         WriteZeroPageByte(address, rotated);
         carry = newCarry;
     };
-    rorByte(static_cast<std::uint8_t>(kFAC + 1u));
-    rorByte(static_cast<std::uint8_t>(kFAC + 2u));
-    rorByte(static_cast<std::uint8_t>(kFAC + 3u));
-    rorByte(static_cast<std::uint8_t>(kFAC + 4u));
-    rorByte(kFAC_EXTENSION);
+    rorByte(static_cast<std::uint8_t>(kAS_FAC + 1u));
+    rorByte(static_cast<std::uint8_t>(kAS_FAC + 2u));
+    rorByte(static_cast<std::uint8_t>(kAS_FAC + 3u));
+    rorByte(static_cast<std::uint8_t>(kAS_FAC + 4u));
+    rorByte(kAS_FAC_EXTENSION);
 }
 #endif
 
-void NAMOK() {
+void AS_NAMOK() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: NAMOK (inclusive) .. BASIC (exclusive)
-    // Name normalization: none (assembler label NAMOK kept verbatim).
+    // AS_Labels: AS_NAMOK (inclusive) .. AS_BASIC (exclusive)
+    // Name normalization: none (assembler label AS_NAMOK kept verbatim).
 
-    WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP, 0u); // VALTYP
-    WriteZeroPageByte(ApplesoftVariables::ZP_VALTYP_PLUS_1, 0u); // VALTYP+1
-    PTRGET4();
+    WriteZeroPageByte(ApplesoftVariables::ZP_AS_VALTYP, 0u); // AS_VALTYP
+    WriteZeroPageByte(ApplesoftVariables::ZP_AS_VALTYP_PLUS_1, 0u); // AS_VALTYP+1
+    AS_PTRGET4();
 }
 
 }  // namespace applesoft::asm_port

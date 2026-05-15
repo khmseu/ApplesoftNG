@@ -10,11 +10,11 @@ std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
     return static_cast<std::uint8_t>(lhs + rhs);
 }
 
-std::uint8_t stack_at(const GTFORPNTState& state, std::uint8_t x, std::uint8_t plus) {
+std::uint8_t stack_at(const AS_GTFORPNTState& state, std::uint8_t x, std::uint8_t plus) {
     return state.stackPage[add_u8(x, plus)];
 }
 
-std::uint16_t stack_word_at(const GTFORPNTState& state, std::uint8_t x, std::uint8_t plus) {
+std::uint16_t stack_word_at(const AS_GTFORPNTState& state, std::uint8_t x, std::uint8_t plus) {
     return ApplesoftVariables::makeWord(
         stack_at(state, x, plus),
         stack_at(state, x, add_u8(plus, 1u)));
@@ -22,23 +22,23 @@ std::uint16_t stack_word_at(const GTFORPNTState& state, std::uint8_t x, std::uin
 
 } // namespace
 
-GTFORPNTResult GTFORPNT(std::uint8_t stackPointer, GTFORPNTState& state) {
+AS_GTFORPNTResult AS_GTFORPNT(std::uint8_t stackPointer, AS_GTFORPNTState& state) {
     // TSX + 4: skip return address and caller context to first candidate frame.
     std::uint8_t x = add_u8(stackPointer, 4u);
 
     while (x != 0) {
-        // FRAME MARKER at STACK+1,X must be TOKEN_FOR ($81).
-        if (stack_at(state, x, 1) == TOKEN_FOR) {
+        // FRAME MARKER at AS_STACK+1,X must be AS_TOKEN_FOR ($81).
+        if (stack_at(state, x, 1) == AS_TOKEN_FOR) {
             const std::uint16_t frameVariablePointer = stack_word_at(state, x, 2);
 
-            // NEXT with no variable: bind FORPNT from current frame first.
+            // AS_NEXT with no variable: bind AS_FORPNT from current frame first.
             if (state.forpntHi == 0) {
                 state.setVariablePointer(frameVariablePointer);
             }
 
-            // Compare FORPNT against frame variable pointer (hi then lo, as ROM).
+            // Compare AS_FORPNT against frame variable pointer (hi then lo, as ROM).
             if (state.variablePointer() == frameVariablePointer) {
-                return GTFORPNTResult{true, x};
+                return AS_GTFORPNTResult{true, x};
             }
         }
 
@@ -46,7 +46,7 @@ GTFORPNTResult GTFORPNT(std::uint8_t stackPointer, GTFORPNTState& state) {
         x = add_u8(x, kFrameSize);
     }
 
-    return GTFORPNTResult{false, x};
+    return AS_GTFORPNTResult{false, x};
 }
 
 } // namespace applesoft::asm_port

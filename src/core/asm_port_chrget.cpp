@@ -13,32 +13,32 @@ void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 std::uint8_t ReadProgramByte(std::uint16_t address);
 
 /**
- * @brief Logic for CHRGOT and CHRGET.
+ * @brief AS_Logic for AS_CHRGOT and AS_CHRGET.
  * 
- * Historical implementation (GENERIC_CHRGET):
- * 210b: e6 b8     inc TXTPTR
+ * Historical implementation (AS_GENERIC_CHRGET):
+ * 210b: e6 b8     inc AS_TXTPTR
  * 210d: d0 02     bne +2
- * 210f: e6 b9     inc TXTPTR+1
- * 2111: ad .. ..  lda TXTPTR_VALUE
+ * 210f: e6 b9     inc AS_TXTPTR+1
+ * 2111: ad .. ..  lda AS_TXTPTR_VALUE
  * 2114: c9 3a     cmp #':'        ; End of statement
  * 2116: b0 0a     bcs RTS         ; >= ':' (incl. lowercase/tokens) -> Not a digit
  * 2118: c9 20     cmp #' '        ; Space
- * 211a: f0 ef     beq CHRGET      ; Skip spaces
+ * 211a: f0 ef     beq AS_CHRGET      ; Skip spaces
  * 211c: 38        sec
  * 211d: e9 30     sbc #'0'        ; Digit check
  * 211f: 38        sec
  * 2120: e9 d0     sbc #$d0        ; Final range check / flag setting
  * 2122: 60        rts
  */
-static std::uint8_t CHRGET_INTERNAL(bool increment) {
-    constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
+static std::uint8_t AS_CHRGET_INTERNAL(bool increment) {
+    constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
     
-    std::uint16_t txtptr = ReadZeroPageWord(kTXTPTR);
+    std::uint16_t txtptr = ReadZeroPageWord(kAS_TXTPTR);
 
     while (true) {
         if (increment) {
             txtptr++;
-            WriteZeroPageWord(kTXTPTR, txtptr);
+            WriteZeroPageWord(kAS_TXTPTR, txtptr);
         }
         
         std::uint8_t c = ReadProgramByte(txtptr);
@@ -56,7 +56,7 @@ static std::uint8_t CHRGET_INTERNAL(bool increment) {
         // BCS RTS (Carry set if >= ':', which includes ':', ';', '<', '=', '>', '?', '@', 'A'...)
         // But ':' is the only one that needs the Zero flag set.
         
-        // Let's re-simulate the flags.
+        // AS_Let's re-simulate the flags.
         // C-reg (Carry) logic in 6502:
         // SBC #$30 (sbc '0')
         // SBC #$D0 (sbc -0x30)
@@ -72,12 +72,12 @@ static std::uint8_t CHRGET_INTERNAL(bool increment) {
     }
 }
 
-std::uint8_t CHRGET() {
-    return CHRGET_INTERNAL(true);
+std::uint8_t AS_CHRGET() {
+    return AS_CHRGET_INTERNAL(true);
 }
 
-std::uint8_t CHRGOT() {
-    return CHRGET_INTERNAL(false);
+std::uint8_t AS_CHRGOT() {
+    return AS_CHRGET_INTERNAL(false);
 }
 
 } // namespace applesoft::asm_port

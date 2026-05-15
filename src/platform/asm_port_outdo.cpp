@@ -31,11 +31,11 @@ std::uint16_t readZeroPageWord(std::uint8_t address) {
 }
 
 std::uint16_t computeTextRowBase(std::uint8_t row_zero_based) {
-    const bool carryFromLsr = (row_zero_based & 0x01u) != 0u;
+    const bool carryFromAS_Lsr = (row_zero_based & 0x01u) != 0u;
     const std::uint8_t bash = static_cast<std::uint8_t>(((row_zero_based >> 1u) & 0x03u) | 0x04u);
 
     std::uint8_t basl = static_cast<std::uint8_t>(row_zero_based & 0x18u);
-    if (carryFromLsr) {
+    if (carryFromAS_Lsr) {
         basl = static_cast<std::uint8_t>(basl + 0x80u);
     }
 
@@ -72,7 +72,7 @@ void scrollWindowUp() {
     }
 }
 
-void advanceCursorToNextLine(bool resetColumn) {
+void advanceCursorToNextAS_Line(bool resetColumn) {
     const std::uint8_t top = readZeroPageByte(ApplesoftVariables::ZP_MON_WNDTOP);
     const std::uint8_t bottom = readZeroPageByte(ApplesoftVariables::ZP_MON_WNDBTM);
     std::uint8_t row = readZeroPageByte(ApplesoftVariables::ZP_MON_CV);
@@ -96,15 +96,15 @@ void advanceCursorToNextLine(bool resetColumn) {
     setCursorRow(row);
 }
 
-void consumeKeyboardLatch(std::uint8_t keycode) {
-    (void)ioPorts_const().readByte(IOPorts::ADDR_KEYBOARD_STROBE);
-    ioPorts().writeByte(IOPorts::ADDR_KEYBOARD, static_cast<std::uint8_t>(keycode & 0x7fu));
+void consumeKeyboardAS_Latch(std::uint8_t keycode) {
+    (void)ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD_STROBE);
+    ioPorts().writeByte(IOPorts::ADDR_AS_KEYBOARD, static_cast<std::uint8_t>(keycode & 0x7fu));
 }
 
 void MON_LFB78(std::uint8_t a) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/math.o65.lst
-    // Labels: LFB78 (inclusive) .. LFB94 (exclusive)
-    // Name normalization: LFB78 -> MON_LFB78 (monitor label gets MON_ prefix).
+    // AS_Labels: AS_LFB78 (inclusive) .. AS_LFB94 (exclusive)
+    // Name normalization: AS_LFB78 -> MON_LFB78 (monitor label gets MON_ prefix).
     //
     // On carriage return, Ctrl-S pauses monitor output until another key is
     // pressed. A resumed Ctrl-C is left latched so the interpreter can still
@@ -116,30 +116,30 @@ void MON_LFB78(std::uint8_t a) {
     constexpr std::uint8_t kCtrlC = 0x83u;
 
     if (a == kCarriageReturn) {
-        std::uint8_t keycode = ioPorts_const().readByte(IOPorts::ADDR_KEYBOARD);
+        std::uint8_t keycode = ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD);
         if ((keycode & 0x80u) != 0u && keycode == kCtrlS) {
-            consumeKeyboardLatch(keycode);
+            consumeKeyboardAS_Latch(keycode);
 
             do {
-                keycode = ioPorts_const().readByte(IOPorts::ADDR_KEYBOARD);
+                keycode = ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD);
             } while ((keycode & 0x80u) == 0u);
 
             if (keycode != kCtrlC) {
-                // LFB88 consumes the resume key unless it is Ctrl-C.
-                consumeKeyboardLatch(keycode);
+                // AS_LFB88 consumes the resume key unless it is Ctrl-C.
+                consumeKeyboardAS_Latch(keycode);
             }
         }
     }
 
-    // LFB94 tail-jumps to VIDOUT.
+    // AS_LFB94 tail-jumps to VIDOUT.
     MON_VIDOUT(a);
 }
 
 // MON_VIDOUT -- the ROM's VIDOUT ($fb3c in display2.o65): the character
-// renderer that updates monitor screen state. Called from MON_COUT1 via LFB78.
+// renderer that updates monitor screen state. Called from MON_COUT1 via AS_LFB78.
 void MON_VIDOUT(std::uint8_t a) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst
-    // Labels: VIDOUT (inclusive) .. ESC1 (exclusive)
+    // AS_Labels: VIDOUT (inclusive) .. ESC1 (exclusive)
     // Name normalization: VIDOUT -> MON_VIDOUT (monitor label gets MON_ prefix).
     //
     // VIDOUT  cmp #$a0 / bcs STOADV -- printable high-bit chars fall through to output.
@@ -157,11 +157,11 @@ void MON_VIDOUT(std::uint8_t a) {
         }
         break;
     }
-    case 0x0au: // LF ($8a)
-        advanceCursorToNextLine(false);
+    case 0x0au: // AS_LF ($8a)
+        advanceCursorToNextAS_Line(false);
         break;
     case 0x0du: // CR ($8d)
-        advanceCursorToNextLine(true);
+        advanceCursorToNextAS_Line(true);
         break;
     default:
         if (a >= 0xa0u) {
@@ -173,7 +173,7 @@ void MON_VIDOUT(std::uint8_t a) {
 
             const std::uint8_t nextColumn = static_cast<std::uint8_t>(column + 1u);
             if (nextColumn >= width) {
-                advanceCursorToNextLine(true);
+                advanceCursorToNextAS_Line(true);
             } else {
                 writeZeroPageByte(ApplesoftVariables::ZP_MON_CH, nextColumn);
             }
@@ -184,7 +184,7 @@ void MON_VIDOUT(std::uint8_t a) {
 
 void MON_COUT1(std::uint8_t a) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
-    // Labels: COUT1 (inclusive) .. LFB78 call site tail (exclusive)
+    // AS_Labels: COUT1 (inclusive) .. AS_LFB78 call site tail (exclusive)
     // Name normalization: COUT1 -> MON_COUT1 (monitor label gets MON_ prefix).
 
     if (a >= 0xa0u) {
@@ -205,17 +205,17 @@ MonitorOutputRoutine resolveMonitorOutputVector(std::uint16_t vector) {
 }
 
 // MON_WAIT = $fca8  (Apple II monitor busy-wait routine)
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst label WAIT.
-// All monitor labels carry a virtual MON_ prefix in C++; WAIT -> MON_WAIT.
+// Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst label AS_WAIT.
+// All monitor labels carry a virtual MON_ prefix in C++; AS_WAIT -> MON_WAIT.
 void MON_WAIT(std::uint8_t a) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst
-    // Labels: WAIT (inclusive) .. NXTA4 (exclusive)
-    // Name normalization: WAIT -> MON_WAIT (monitor label gets MON_ prefix).
+    // AS_Labels: AS_WAIT (inclusive) .. NXTA4 (exclusive)
+    // Name normalization: AS_WAIT -> MON_WAIT (monitor label gets MON_ prefix).
     //
-    // WAIT  sec                     ; C=1 for first inner SBC (no borrow penalty)
-    // WAIT2 pha                     ; save outer counter
-    // WAIT3 sbc #1 / bne WAIT3      ; inner loop: outer..0
-    //       pla / sbc #1 / bne WAIT2; outer loop: a..0
+    // AS_WAIT  sec                     ; C=1 for first inner SBC (no borrow penalty)
+    // AS_WAIT2 pha                     ; save outer counter
+    // AS_WAIT3 sbc #1 / bne AS_WAIT3      ; inner loop: outer..0
+    //       pla / sbc #1 / bne AS_WAIT2; outer loop: a..0
     // Total inner iterations ~a*(a+1)/2  (~(13+27/2*a+5/2*a^2) cycles on real hw)
     // On a modern host the spin produces no meaningful delay; volatile prevents
     // the compiler from eliding the loop.
@@ -223,10 +223,10 @@ void MON_WAIT(std::uint8_t a) {
     do {
         volatile std::uint8_t inner = outer;
         do {
-            inner = static_cast<std::uint8_t>(inner - 1u); // WAIT3: sbc #1
-        } while (inner != 0u);                              //        bne WAIT3
+            inner = static_cast<std::uint8_t>(inner - 1u); // AS_WAIT3: sbc #1
+        } while (inner != 0u);                              //        bne AS_WAIT3
         outer = static_cast<std::uint8_t>(outer - 1u);     // pla; sbc #1
-    } while (outer != 0u);                                  // bne WAIT2
+    } while (outer != 0u);                                  // bne AS_WAIT2
 }
 
 } // namespace
@@ -236,7 +236,7 @@ void MON_WAIT(std::uint8_t a) {
 // All monitor labels carry a virtual MON_ prefix in C++; COUT -> MON_COUT.
 void MON_COUT(std::uint8_t a) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
-    // Labels: COUT (inclusive) .. COUT1 (exclusive)
+    // AS_Labels: COUT (inclusive) .. COUT1 (exclusive)
     // Name normalization: COUT -> MON_COUT (monitor label gets MON_ prefix).
     //
     // COUT      jmp ($36)             ; dispatch through CSW output vector ($36/$37)
@@ -247,16 +247,16 @@ void MON_COUT(std::uint8_t a) {
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: OUTDO (inclusive) .. INPUTERR (exclusive)
-// Name normalization: none (assembler label OUTDO kept verbatim).
-std::uint8_t OUTDO(std::uint8_t a) {
+// AS_Labels: AS_OUTDO (inclusive) .. AS_INPUTERR (exclusive)
+// Name normalization: none (assembler label AS_OUTDO kept verbatim).
+std::uint8_t AS_OUTDO(std::uint8_t a) {
     // ora #$80 -- set Apple II high-bit display flag
     a |= 0x80u;
 
-    // cmp #$a0 / bcc L_OUTDO_1 -- control characters (A < $a0) skip flash
+    // cmp #$a0 / bcc AS_L_OUTDO_1 -- control characters (A < $a0) skip flash
     if (a >= 0xa0u) {
-        // ora FLASH_BIT ($f3): apply flash/inverse mode if active
-        a |= variables_const().FLASH_BIT;
+        // ora AS_FLASH_BIT ($f3): apply flash/inverse mode if active
+        a |= variables_const().AS_FLASH_BIT;
     }
 
     // jsr MON_COUT ($fded) -- output character
@@ -265,28 +265,28 @@ std::uint8_t OUTDO(std::uint8_t a) {
     // and #$7f -- strip high bit for return value (used by caller comparisons)
     a &= 0x7fu;
 
-    // lda SPEEDZ ($f1) / jsr MON_WAIT ($fca8) -- speed delay
-    MON_WAIT(variables_const().SPEEDZ);
+    // lda AS_SPEEDZ ($f1) / jsr MON_WAIT ($fca8) -- speed delay
+    MON_WAIT(variables_const().AS_SPEEDZ);
 
     // pla / rts -- return A = char with high bit cleared
     return a;
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: OUTSP (inclusive) .. OUTQUES (exclusive)
-// Name normalization: none (assembler label OUTSP kept verbatim).
-// Original uses .byt $2c (BIT abs opcode) to skip OUTQUES's lda and fall
-// directly to OUTDO with A=$20.  In C++, OUTDO is called directly.
-void OUTSP() {
-    OUTDO(static_cast<std::uint8_t>(' ' & 0x7fu)); // $20
+// AS_Labels: AS_OUTSP (inclusive) .. AS_OUTQUES (exclusive)
+// Name normalization: none (assembler label AS_OUTSP kept verbatim).
+// Original uses .byt $2c (BIT abs opcode) to skip AS_OUTQUES's lda and fall
+// directly to AS_OUTDO with A=$20.  In C++, AS_OUTDO is called directly.
+void AS_OUTSP() {
+    AS_OUTDO(static_cast<std::uint8_t>(' ' & 0x7fu)); // $20
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: OUTQUES (inclusive) .. OUTDO (exclusive)
-// Name normalization: none (assembler label OUTQUES kept verbatim).
-// Falls through to OUTDO in the original; modeled as a direct call in C++.
-void OUTQUES() {
-    OUTDO(static_cast<std::uint8_t>('?' & 0x7fu)); // $3f
+// AS_Labels: AS_OUTQUES (inclusive) .. AS_OUTDO (exclusive)
+// Name normalization: none (assembler label AS_OUTQUES kept verbatim).
+// Falls through to AS_OUTDO in the original; modeled as a direct call in C++.
+void AS_OUTQUES() {
+    AS_OUTDO(static_cast<std::uint8_t>('?' & 0x7fu)); // $3f
 }
 
 } // namespace applesoft::asm_port

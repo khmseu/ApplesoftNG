@@ -3,8 +3,8 @@
 namespace applesoft::asm_port {
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: NXIN (inclusive) .. READ (exclusive)
-// Name normalization: none (assembler label NXIN kept verbatim).
-void NXIN();
+// AS_Labels: AS_NXIN (inclusive) .. AS_READ (exclusive)
+// Name normalization: none (assembler label AS_NXIN kept verbatim).
+void AS_NXIN();
 
 } // namespace applesoft::asm_port

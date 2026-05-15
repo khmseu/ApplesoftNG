@@ -1,9 +1,9 @@
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: QT_ERROR (inclusive) .. GTFORPNT (exclusive)
+// AS_Labels: AS_QT_ERROR (inclusive) .. AS_GTFORPNT (exclusive)
 // Name normalization: none
 //
 // This ROM region stores three short, null-terminated status strings used by
-// the error-print path: " ERROR"+bell, " IN ", and CR+"BREAK"+bell.
+// the error-print path: " AS_ERROR"+bell, " IN ", and CR+"BREAK"+bell.
 // The original stream includes explicit terminator bytes; this conversion
 // exposes decoded payload strings by index.
 
@@ -13,11 +13,11 @@
 
 namespace applesoft::asm_port {
 
-std::string_view QT_ERROR(std::size_t index) {
+std::string_view AS_QT_ERROR(std::size_t index) {
     static constexpr std::array<std::string_view, 3> table = {
-        " ERROR\a",   // QT_ERROR: leading space + ERROR + bell ($07)
-        " IN ",       // QT_IN: surrounding spaces
-        "\rBREAK\a", // QT_BREAK: CR prefix + BREAK + bell ($07)
+        " AS_ERROR\a",   // AS_QT_ERROR: leading space + AS_ERROR + bell ($07)
+        " IN ",       // AS_QT_IN: surrounding spaces
+        "\rBREAK\a", // AS_QT_BREAK: CR prefix + BREAK + bell ($07)
     };
     return table[index];
 }

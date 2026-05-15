@@ -30,7 +30,7 @@ std::uint16_t ApplesoftVariables::makeWord(std::uint8_t low, std::uint8_t high) 
     return static_cast<std::uint16_t>(static_cast<std::uint16_t>(high) << 8 | low);
 }
 
-void ApplesoftVariables::setLowByte(std::uint16_t& target, std::uint8_t value) {
+void ApplesoftVariables::setAS_LowByte(std::uint16_t& target, std::uint8_t value) {
     target = static_cast<std::uint16_t>((target & 0xff00u) | value);
 }
 
@@ -39,20 +39,20 @@ void ApplesoftVariables::setHighByte(std::uint16_t& target, std::uint8_t value) 
 }
 
 std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
-    if (address == ADDR_INPUT_BUFFER_MINUS_4) {
-        return INPUT_BUFFER_MINUS_4;
+    if (address == ADDR_AS_INPUT_BUFFER_MINUS_4) {
+        return AS_INPUT_BUFFER_MINUS_4;
     }
 
-    if (address == ADDR_INPUT_BUFFER_MINUS_3) {
-        return INPUT_BUFFER_MINUS_3;
+    if (address == ADDR_AS_INPUT_BUFFER_MINUS_3) {
+        return AS_INPUT_BUFFER_MINUS_3;
     }
 
-    if (address == ADDR_INPUT_BUFFER_MINUS_1) {
-        return INPUT_BUFFER_MINUS_1;
+    if (address == ADDR_AS_INPUT_BUFFER_MINUS_1) {
+        return AS_INPUT_BUFFER_MINUS_1;
     }
 
-    if (address >= ADDR_INPUT_BUFFER && address <= ADDR_INPUT_BUFFER + 0xffu) {
-        return INPUT_BUFFER_PAGE[address - ADDR_INPUT_BUFFER];
+    if (address >= ADDR_AS_INPUT_BUFFER && address <= ADDR_AS_INPUT_BUFFER + 0xffu) {
+        return AS_INPUT_BUFFER_PAGE[address - ADDR_AS_INPUT_BUFFER];
     }
 
     if (address >= IOPorts::ADDR_BASE && address < IOPorts::ADDR_END) {
@@ -60,25 +60,25 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     }
 
     switch (address) {
-    case ZP_GOWARM: return GOWARM;
-    case ZP_GOWARM + 1: return lowByte(GOWARM_TARGET);
-    case ZP_GOWARM + 2: return highByte(GOWARM_TARGET);
-    case ZP_GOSTROUT: return GOSTROUT;
-    case ZP_GOSTROUT + 1: return lowByte(GOSTROUT_TARGET);
-    case ZP_GOSTROUT + 2: return highByte(GOSTROUT_TARGET);
-    case ZP_USR: return USR;
-    case ZP_USR + 1: return lowByte(USR_TARGET);
-    case ZP_USR + 2: return highByte(USR_TARGET);
-    case ZP_CHARAC: return CHARAC;
-    case ZP_ENDCHR: return ENDCHR;
-    case ZP_NUMDIM: return NUMDIM;
-    case ZP_DIMFLG: return DIMFLG;
-    case ZP_VALTYP: return VALTYP;
-    case ZP_VALTYP_PLUS_1: return VALTYP_PLUS_1;
-    case ZP_GARFLG: return GARFLG;
-    case ZP_SUBFLG: return SUBFLG;
-    case ZP_INPUTFLG: return INPUTFLG;
-    case ZP_CPRMASK: return CPRMASK;
+    case ZP_AS_GOWARM: return AS_GOWARM;
+    case ZP_AS_GOWARM + 1: return lowByte(AS_GOWARM_TARGET);
+    case ZP_AS_GOWARM + 2: return highByte(AS_GOWARM_TARGET);
+    case ZP_AS_GOSTROUT: return AS_GOSTROUT;
+    case ZP_AS_GOSTROUT + 1: return lowByte(AS_GOSTROUT_TARGET);
+    case ZP_AS_GOSTROUT + 2: return highByte(AS_GOSTROUT_TARGET);
+    case ZP_AS_USR: return AS_USR;
+    case ZP_AS_USR + 1: return lowByte(AS_USR_TARGET);
+    case ZP_AS_USR + 2: return highByte(AS_USR_TARGET);
+    case ZP_AS_CHARAC: return AS_CHARAC;
+    case ZP_AS_ENDCHR: return AS_ENDCHR;
+    case ZP_AS_NUMDIM: return AS_NUMDIM;
+    case ZP_AS_DIMFLG: return AS_DIMFLG;
+    case ZP_AS_VALTYP: return AS_VALTYP;
+    case ZP_AS_VALTYP_PLUS_1: return AS_VALTYP_PLUS_1;
+    case ZP_AS_GARFLG: return AS_GARFLG;
+    case ZP_AS_SUBFLG: return AS_SUBFLG;
+    case ZP_AS_INPUTFLG: return AS_INPUTFLG;
+    case ZP_AS_CPRMASK: return AS_CPRMASK;
     case ZP_MON_CH: return MON_CH;
     case ZP_MON_COLOR: return MON_COLOR;
     case ZP_MON_PROMPT: return MON_PROMPT;
@@ -86,116 +86,116 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     case ZP_MON_A1 + 1: return highByte(MON_A1);
     case ZP_MON_A2: return lowByte(MON_A2);
     case ZP_MON_A2 + 1: return highByte(MON_A2);
-    case ZP_LINNUM: return lowByte(LINNUM);
-    case ZP_LINNUM + 1: return highByte(LINNUM);
-    case ZP_TEMPPT: return TEMPPT;
-    case ZP_LASTPT: return LASTPT;
-    case ZP_INDEX: return lowByte(INDEX);
-    case ZP_INDEX + 1: return highByte(INDEX);
-    case ZP_RESULT: return RESULT[0];
-    case ZP_RESULT + 1: return RESULT[1];
-    case ZP_RESULT + 2: return RESULT[2];
-    case ZP_RESULT + 3: return RESULT[3];
-    case ZP_TXTTAB: return lowByte(TXTTAB);
-    case ZP_TXTTAB + 1: return highByte(TXTTAB);
-    case ZP_VARTAB: return lowByte(VARTAB);
-    case ZP_VARTAB + 1: return highByte(VARTAB);
-    case ZP_ARYTAB: return lowByte(ARYTAB);
-    case ZP_ARYTAB + 1: return highByte(ARYTAB);
-    case ZP_STREND: return lowByte(STREND);
-    case ZP_STREND + 1: return highByte(STREND);
-    case ZP_FRETOP: return lowByte(FRETOP);
-    case ZP_FRETOP + 1: return highByte(FRETOP);
-    case ZP_FRESPC: return lowByte(FRESPC);
-    case ZP_FRESPC + 1: return highByte(FRESPC);
-    case ZP_MEMSIZ: return lowByte(MEMSIZ);
-    case ZP_MEMSIZ + 1: return highByte(MEMSIZ);
-    case ZP_CURLIN: return lowByte(CURLIN);
-    case ZP_CURLIN + 1: return highByte(CURLIN);
-    case ZP_OLDLIN: return lowByte(OLDLIN);
-    case ZP_OLDLIN + 1: return highByte(OLDLIN);
-    case ZP_OLDTEXT: return lowByte(OLDTEXT);
-    case ZP_OLDTEXT + 1: return highByte(OLDTEXT);
-    case ZP_DATLIN: return lowByte(DATLIN);
-    case ZP_DATLIN + 1: return highByte(DATLIN);
-    case ZP_DATPTR: return lowByte(DATPTR);
-    case ZP_DATPTR + 1: return highByte(DATPTR);
-    case ZP_INPTR: return lowByte(INPTR);
-    case ZP_INPTR + 1: return highByte(INPTR);
-    case ZP_VARNAM: return lowByte(VARNAM);
-    case ZP_VARNAM + 1: return highByte(VARNAM);
-    case ZP_VARPNT: return lowByte(VARPNT);
-    case ZP_VARPNT + 1: return highByte(VARPNT);
-    case ZP_FORPNT: return lowByte(FORPNT);
-    case ZP_FORPNT + 1: return highByte(FORPNT);
-    case ZP_TXPSV: return lowByte(TXPSV);
-    case ZP_TXPSV + 1: return highByte(TXPSV);
-    case ZP_CPRTYP: return CPRTYP;
-    case ZP_FNCNAM: return lowByte(FNCNAM);
-    case ZP_FNCNAM + 1: return highByte(FNCNAM);
-    case ZP_DSCPTR: return lowByte(DSCPTR);
-    case ZP_DSCPTR + 1: return highByte(DSCPTR);
-    case ZP_DSCLEN: return DSCLEN;
-    case ZP_JMPADRS: return JMPADRS_OPCODE;
-    case ZP_JMPADRS + 1: return lowByte(JMPADRS);
-    case ZP_JMPADRS + 2: return highByte(JMPADRS);
-    case ZP_ARYPNT: return lowByte(ARYPNT);
-    case ZP_ARYPNT + 1: return highByte(ARYPNT);
-    case ZP_HIGHTR: return lowByte(HIGHTR);
-    case ZP_HIGHTR + 1: return highByte(HIGHTR);
-    case ZP_INDX: return INDX;
-    case ZP_LOWTR: return lowByte(LOWTR);
-    case ZP_LOWTR + 1: return highByte(LOWTR);
-    case ZP_FAC: return FAC[0];
-    case ZP_FAC + 1: return FAC[1];
-    case ZP_FAC + 2: return FAC[2];
-    case ZP_FAC + 3: return FAC[3];
-    case ZP_FAC + 4: return FAC[4];
-    case ZP_FAC_SIGN: return FAC_SIGN;
-    case ZP_SHIFT_SIGN_EXT: return SHIFT_SIGN_EXT;
-    case ZP_ARG: return ARG[0];
-    case ZP_ARG + 1: return ARG[1];
-    case ZP_ARG + 2: return ARG[2];
-    case ZP_ARG + 3: return ARG[3];
-    case ZP_ARG + 4: return ARG[4];
-    case ZP_ARG + 5: return ARG[5];
-    case ZP_STRNG1: return lowByte(STRNG1);
-    case ZP_STRNG1 + 1: return highByte(STRNG1);
-    case ZP_STRNG2: return lowByte(STRNG2);
-    case ZP_STRNG2 + 1: return highByte(STRNG2);
-    case ZP_PRGEND: return lowByte(PRGEND);
-    case ZP_PRGEND + 1: return highByte(PRGEND);
-    case ZP_TXTPTR: return lowByte(TXTPTR);
-    case ZP_TXTPTR + 1: return highByte(TXTPTR);
-    case ZP_LOCK: return LOCK;
-    case ZP_ERRFLG: return ERRFLG;
-    case ZP_FIRST: return FIRST;
-    case ZP_SPEEDZ: return SPEEDZ;
-    case ZP_TRCFLG: return TRCFLG;
-    case ZP_FLASH_BIT: return FLASH_BIT;
-    case ZP_REMSTK: return REMSTK;
+    case ZP_AS_LINNUM: return lowByte(AS_LINNUM);
+    case ZP_AS_LINNUM + 1: return highByte(AS_LINNUM);
+    case ZP_AS_TEMPPT: return AS_TEMPPT;
+    case ZP_AS_LASTPT: return AS_LASTPT;
+    case ZP_AS_INDEX: return lowByte(AS_INDEX);
+    case ZP_AS_INDEX + 1: return highByte(AS_INDEX);
+    case ZP_AS_RESULT: return AS_RESULT[0];
+    case ZP_AS_RESULT + 1: return AS_RESULT[1];
+    case ZP_AS_RESULT + 2: return AS_RESULT[2];
+    case ZP_AS_RESULT + 3: return AS_RESULT[3];
+    case ZP_AS_TXTTAB: return lowByte(AS_TXTTAB);
+    case ZP_AS_TXTTAB + 1: return highByte(AS_TXTTAB);
+    case ZP_AS_VARTAB: return lowByte(AS_VARTAB);
+    case ZP_AS_VARTAB + 1: return highByte(AS_VARTAB);
+    case ZP_AS_ARYTAB: return lowByte(AS_ARYTAB);
+    case ZP_AS_ARYTAB + 1: return highByte(AS_ARYTAB);
+    case ZP_AS_STREND: return lowByte(AS_STREND);
+    case ZP_AS_STREND + 1: return highByte(AS_STREND);
+    case ZP_AS_FRETOP: return lowByte(AS_FRETOP);
+    case ZP_AS_FRETOP + 1: return highByte(AS_FRETOP);
+    case ZP_AS_FRESPC: return lowByte(AS_FRESPC);
+    case ZP_AS_FRESPC + 1: return highByte(AS_FRESPC);
+    case ZP_AS_MEMSIZ: return lowByte(AS_MEMSIZ);
+    case ZP_AS_MEMSIZ + 1: return highByte(AS_MEMSIZ);
+    case ZP_AS_CURLIN: return lowByte(AS_CURLIN);
+    case ZP_AS_CURLIN + 1: return highByte(AS_CURLIN);
+    case ZP_AS_OLDLIN: return lowByte(AS_OLDLIN);
+    case ZP_AS_OLDLIN + 1: return highByte(AS_OLDLIN);
+    case ZP_AS_OLDTEXT: return lowByte(AS_OLDTEXT);
+    case ZP_AS_OLDTEXT + 1: return highByte(AS_OLDTEXT);
+    case ZP_AS_DATLIN: return lowByte(AS_DATLIN);
+    case ZP_AS_DATLIN + 1: return highByte(AS_DATLIN);
+    case ZP_AS_DATPTR: return lowByte(AS_DATPTR);
+    case ZP_AS_DATPTR + 1: return highByte(AS_DATPTR);
+    case ZP_AS_INPTR: return lowByte(AS_INPTR);
+    case ZP_AS_INPTR + 1: return highByte(AS_INPTR);
+    case ZP_AS_VARNAM: return lowByte(AS_VARNAM);
+    case ZP_AS_VARNAM + 1: return highByte(AS_VARNAM);
+    case ZP_AS_VARPNT: return lowByte(AS_VARPNT);
+    case ZP_AS_VARPNT + 1: return highByte(AS_VARPNT);
+    case ZP_AS_FORPNT: return lowByte(AS_FORPNT);
+    case ZP_AS_FORPNT + 1: return highByte(AS_FORPNT);
+    case ZP_AS_TXPSV: return lowByte(AS_TXPSV);
+    case ZP_AS_TXPSV + 1: return highByte(AS_TXPSV);
+    case ZP_AS_CPRTYP: return AS_CPRTYP;
+    case ZP_AS_FNCNAM: return lowByte(AS_FNCNAM);
+    case ZP_AS_FNCNAM + 1: return highByte(AS_FNCNAM);
+    case ZP_AS_DSCPTR: return lowByte(AS_DSCPTR);
+    case ZP_AS_DSCPTR + 1: return highByte(AS_DSCPTR);
+    case ZP_AS_DSCLEN: return AS_DSCLEN;
+    case ZP_AS_JMPADRS: return AS_JMPADRS_OPCODE;
+    case ZP_AS_JMPADRS + 1: return lowByte(AS_JMPADRS);
+    case ZP_AS_JMPADRS + 2: return highByte(AS_JMPADRS);
+    case ZP_AS_ARYPNT: return lowByte(AS_ARYPNT);
+    case ZP_AS_ARYPNT + 1: return highByte(AS_ARYPNT);
+    case ZP_AS_HIGHTR: return lowByte(AS_HIGHTR);
+    case ZP_AS_HIGHTR + 1: return highByte(AS_HIGHTR);
+    case ZP_AS_INDX: return AS_INDX;
+    case ZP_AS_LOWTR: return lowByte(AS_LOWTR);
+    case ZP_AS_LOWTR + 1: return highByte(AS_LOWTR);
+    case ZP_AS_FAC: return AS_FAC[0];
+    case ZP_AS_FAC + 1: return AS_FAC[1];
+    case ZP_AS_FAC + 2: return AS_FAC[2];
+    case ZP_AS_FAC + 3: return AS_FAC[3];
+    case ZP_AS_FAC + 4: return AS_FAC[4];
+    case ZP_AS_FAC_SIGN: return AS_FAC_SIGN;
+    case ZP_AS_SHIFT_SIGN_EXT: return AS_SHIFT_SIGN_EXT;
+    case ZP_AS_ARG: return AS_ARG[0];
+    case ZP_AS_ARG + 1: return AS_ARG[1];
+    case ZP_AS_ARG + 2: return AS_ARG[2];
+    case ZP_AS_ARG + 3: return AS_ARG[3];
+    case ZP_AS_ARG + 4: return AS_ARG[4];
+    case ZP_AS_ARG + 5: return AS_ARG[5];
+    case ZP_AS_STRNG1: return lowByte(AS_STRNG1);
+    case ZP_AS_STRNG1 + 1: return highByte(AS_STRNG1);
+    case ZP_AS_STRNG2: return lowByte(AS_STRNG2);
+    case ZP_AS_STRNG2 + 1: return highByte(AS_STRNG2);
+    case ZP_AS_PRGEND: return lowByte(AS_PRGEND);
+    case ZP_AS_PRGEND + 1: return highByte(AS_PRGEND);
+    case ZP_AS_TXTPTR: return lowByte(AS_TXTPTR);
+    case ZP_AS_TXTPTR + 1: return highByte(AS_TXTPTR);
+    case ZP_AS_LOCK: return AS_LOCK;
+    case ZP_AS_ERRFLG: return AS_ERRFLG;
+    case ZP_AS_FIRST: return AS_FIRST;
+    case ZP_AS_SPEEDZ: return AS_SPEEDZ;
+    case ZP_AS_TRCFLG: return AS_TRCFLG;
+    case ZP_AS_FLASH_BIT: return AS_FLASH_BIT;
+    case ZP_AS_REMSTK: return AS_REMSTK;
     default: return general_memory_[address];
     }
 }
 
 void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
-    if (address == ADDR_INPUT_BUFFER_MINUS_4) {
-        INPUT_BUFFER_MINUS_4 = value;
+    if (address == ADDR_AS_INPUT_BUFFER_MINUS_4) {
+        AS_INPUT_BUFFER_MINUS_4 = value;
         return;
     }
 
-    if (address == ADDR_INPUT_BUFFER_MINUS_3) {
-        INPUT_BUFFER_MINUS_3 = value;
+    if (address == ADDR_AS_INPUT_BUFFER_MINUS_3) {
+        AS_INPUT_BUFFER_MINUS_3 = value;
         return;
     }
 
-    if (address == ADDR_INPUT_BUFFER_MINUS_1) {
-        INPUT_BUFFER_MINUS_1 = value;
+    if (address == ADDR_AS_INPUT_BUFFER_MINUS_1) {
+        AS_INPUT_BUFFER_MINUS_1 = value;
         return;
     }
 
-    if (address >= ADDR_INPUT_BUFFER && address <= ADDR_INPUT_BUFFER + 0xffu) {
-        INPUT_BUFFER_PAGE[address - ADDR_INPUT_BUFFER] = value;
+    if (address >= ADDR_AS_INPUT_BUFFER && address <= ADDR_AS_INPUT_BUFFER + 0xffu) {
+        AS_INPUT_BUFFER_PAGE[address - ADDR_AS_INPUT_BUFFER] = value;
         return;
     }
 
@@ -205,120 +205,120 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     }
 
     switch (address) {
-    case ZP_GOWARM: GOWARM = value; return;
-    case ZP_GOWARM + 1: setLowByte(GOWARM_TARGET, value); return;
-    case ZP_GOWARM + 2: setHighByte(GOWARM_TARGET, value); return;
-    case ZP_GOSTROUT: GOSTROUT = value; return;
-    case ZP_GOSTROUT + 1: setLowByte(GOSTROUT_TARGET, value); return;
-    case ZP_GOSTROUT + 2: setHighByte(GOSTROUT_TARGET, value); return;
-    case ZP_USR: USR = value; return;
-    case ZP_USR + 1: setLowByte(USR_TARGET, value); return;
-    case ZP_USR + 2: setHighByte(USR_TARGET, value); return;
-    case ZP_CHARAC: CHARAC = value; return;
-    case ZP_ENDCHR: ENDCHR = value; return;
-    case ZP_NUMDIM: NUMDIM = value; return;
-    case ZP_DIMFLG: DIMFLG = value; return;
-    case ZP_VALTYP: VALTYP = value; return;
-    case ZP_VALTYP_PLUS_1: VALTYP_PLUS_1 = value; return;
-    case ZP_GARFLG: GARFLG = value; return;
-    case ZP_SUBFLG: SUBFLG = value; return;
-    case ZP_INPUTFLG: INPUTFLG = value; return;
-    case ZP_CPRMASK: CPRMASK = value; return;
+    case ZP_AS_GOWARM: AS_GOWARM = value; return;
+    case ZP_AS_GOWARM + 1: setAS_LowByte(AS_GOWARM_TARGET, value); return;
+    case ZP_AS_GOWARM + 2: setHighByte(AS_GOWARM_TARGET, value); return;
+    case ZP_AS_GOSTROUT: AS_GOSTROUT = value; return;
+    case ZP_AS_GOSTROUT + 1: setAS_LowByte(AS_GOSTROUT_TARGET, value); return;
+    case ZP_AS_GOSTROUT + 2: setHighByte(AS_GOSTROUT_TARGET, value); return;
+    case ZP_AS_USR: AS_USR = value; return;
+    case ZP_AS_USR + 1: setAS_LowByte(AS_USR_TARGET, value); return;
+    case ZP_AS_USR + 2: setHighByte(AS_USR_TARGET, value); return;
+    case ZP_AS_CHARAC: AS_CHARAC = value; return;
+    case ZP_AS_ENDCHR: AS_ENDCHR = value; return;
+    case ZP_AS_NUMDIM: AS_NUMDIM = value; return;
+    case ZP_AS_DIMFLG: AS_DIMFLG = value; return;
+    case ZP_AS_VALTYP: AS_VALTYP = value; return;
+    case ZP_AS_VALTYP_PLUS_1: AS_VALTYP_PLUS_1 = value; return;
+    case ZP_AS_GARFLG: AS_GARFLG = value; return;
+    case ZP_AS_SUBFLG: AS_SUBFLG = value; return;
+    case ZP_AS_INPUTFLG: AS_INPUTFLG = value; return;
+    case ZP_AS_CPRMASK: AS_CPRMASK = value; return;
     case ZP_MON_CH: MON_CH = value; return;
     case ZP_MON_COLOR: MON_COLOR = value; return;
     case ZP_MON_PROMPT: MON_PROMPT = value; return;
-    case ZP_MON_A1: setLowByte(MON_A1, value); return;
+    case ZP_MON_A1: setAS_LowByte(MON_A1, value); return;
     case ZP_MON_A1 + 1: setHighByte(MON_A1, value); return;
-    case ZP_MON_A2: setLowByte(MON_A2, value); return;
+    case ZP_MON_A2: setAS_LowByte(MON_A2, value); return;
     case ZP_MON_A2 + 1: setHighByte(MON_A2, value); return;
-    case ZP_LINNUM: setLowByte(LINNUM, value); return;
-    case ZP_LINNUM + 1: setHighByte(LINNUM, value); return;
-    case ZP_TEMPPT: TEMPPT = value; return;
-    case ZP_LASTPT: LASTPT = value; return;
-    case ZP_INDEX: setLowByte(INDEX, value); return;
-    case ZP_INDEX + 1: setHighByte(INDEX, value); return;
-    case ZP_RESULT: RESULT[0] = value; return;
-    case ZP_RESULT + 1: RESULT[1] = value; return;
-    case ZP_RESULT + 2: RESULT[2] = value; return;
-    case ZP_RESULT + 3: RESULT[3] = value; return;
-    case ZP_TXTTAB: setLowByte(TXTTAB, value); return;
-    case ZP_TXTTAB + 1: setHighByte(TXTTAB, value); return;
-    case ZP_VARTAB: setLowByte(VARTAB, value); return;
-    case ZP_VARTAB + 1: setHighByte(VARTAB, value); return;
-    case ZP_ARYTAB: setLowByte(ARYTAB, value); return;
-    case ZP_ARYTAB + 1: setHighByte(ARYTAB, value); return;
-    case ZP_STREND: setLowByte(STREND, value); return;
-    case ZP_STREND + 1: setHighByte(STREND, value); return;
-    case ZP_FRETOP: setLowByte(FRETOP, value); return;
-    case ZP_FRETOP + 1: setHighByte(FRETOP, value); return;
-    case ZP_FRESPC: setLowByte(FRESPC, value); return;
-    case ZP_FRESPC + 1: setHighByte(FRESPC, value); return;
-    case ZP_MEMSIZ: setLowByte(MEMSIZ, value); return;
-    case ZP_MEMSIZ + 1: setHighByte(MEMSIZ, value); return;
-    case ZP_CURLIN: setLowByte(CURLIN, value); return;
-    case ZP_CURLIN + 1: setHighByte(CURLIN, value); return;
-    case ZP_OLDLIN: setLowByte(OLDLIN, value); return;
-    case ZP_OLDLIN + 1: setHighByte(OLDLIN, value); return;
-    case ZP_OLDTEXT: setLowByte(OLDTEXT, value); return;
-    case ZP_OLDTEXT + 1: setHighByte(OLDTEXT, value); return;
-    case ZP_DATLIN: setLowByte(DATLIN, value); return;
-    case ZP_DATLIN + 1: setHighByte(DATLIN, value); return;
-    case ZP_DATPTR: setLowByte(DATPTR, value); return;
-    case ZP_DATPTR + 1: setHighByte(DATPTR, value); return;
-    case ZP_INPTR: setLowByte(INPTR, value); return;
-    case ZP_INPTR + 1: setHighByte(INPTR, value); return;
-    case ZP_VARNAM: setLowByte(VARNAM, value); return;
-    case ZP_VARNAM + 1: setHighByte(VARNAM, value); return;
-    case ZP_VARPNT: setLowByte(VARPNT, value); return;
-    case ZP_VARPNT + 1: setHighByte(VARPNT, value); return;
-    case ZP_FORPNT: setLowByte(FORPNT, value); return;
-    case ZP_FORPNT + 1: setHighByte(FORPNT, value); return;
-    case ZP_TXPSV: setLowByte(TXPSV, value); return;
-    case ZP_TXPSV + 1: setHighByte(TXPSV, value); return;
-    case ZP_CPRTYP: CPRTYP = value; return;
-    case ZP_FNCNAM: setLowByte(FNCNAM, value); return;
-    case ZP_FNCNAM + 1: setHighByte(FNCNAM, value); return;
-    case ZP_DSCPTR: setLowByte(DSCPTR, value); return;
-    case ZP_DSCPTR + 1: setHighByte(DSCPTR, value); return;
-    case ZP_DSCLEN: DSCLEN = value; return;
-    case ZP_JMPADRS: JMPADRS_OPCODE = value; return;
-    case ZP_JMPADRS + 1: setLowByte(JMPADRS, value); return;
-    case ZP_JMPADRS + 2: setHighByte(JMPADRS, value); return;
-    case ZP_ARYPNT: setLowByte(ARYPNT, value); return;
-    case ZP_ARYPNT + 1: setHighByte(ARYPNT, value); return;
-    case ZP_HIGHTR: setLowByte(HIGHTR, value); return;
-    case ZP_HIGHTR + 1: setHighByte(HIGHTR, value); return;
-    case ZP_INDX: INDX = value; return;
-    case ZP_LOWTR: setLowByte(LOWTR, value); return;
-    case ZP_LOWTR + 1: setHighByte(LOWTR, value); return;
-    case ZP_FAC: FAC[0] = value; return;
-    case ZP_FAC + 1: FAC[1] = value; return;
-    case ZP_FAC + 2: FAC[2] = value; return;
-    case ZP_FAC + 3: FAC[3] = value; return;
-    case ZP_FAC + 4: FAC[4] = value; return;
-    case ZP_FAC_SIGN: FAC_SIGN = value; return;
-    case ZP_SHIFT_SIGN_EXT: SHIFT_SIGN_EXT = value; return;
-    case ZP_ARG: ARG[0] = value; return;
-    case ZP_ARG + 1: ARG[1] = value; return;
-    case ZP_ARG + 2: ARG[2] = value; return;
-    case ZP_ARG + 3: ARG[3] = value; return;
-    case ZP_ARG + 4: ARG[4] = value; return;
-    case ZP_ARG + 5: ARG[5] = value; return;
-    case ZP_STRNG1: setLowByte(STRNG1, value); return;
-    case ZP_STRNG1 + 1: setHighByte(STRNG1, value); return;
-    case ZP_STRNG2: setLowByte(STRNG2, value); return;
-    case ZP_STRNG2 + 1: setHighByte(STRNG2, value); return;
-    case ZP_PRGEND: setLowByte(PRGEND, value); return;
-    case ZP_PRGEND + 1: setHighByte(PRGEND, value); return;
-    case ZP_TXTPTR: setLowByte(TXTPTR, value); return;
-    case ZP_TXTPTR + 1: setHighByte(TXTPTR, value); return;
-    case ZP_LOCK: LOCK = value; return;
-    case ZP_ERRFLG: ERRFLG = value; return;
-    case ZP_FIRST: FIRST = value; return;
-    case ZP_SPEEDZ: SPEEDZ = value; return;
-    case ZP_TRCFLG: TRCFLG = value; return;
-    case ZP_FLASH_BIT: FLASH_BIT = value; return;
-    case ZP_REMSTK: REMSTK = value; return;
+    case ZP_AS_LINNUM: setAS_LowByte(AS_LINNUM, value); return;
+    case ZP_AS_LINNUM + 1: setHighByte(AS_LINNUM, value); return;
+    case ZP_AS_TEMPPT: AS_TEMPPT = value; return;
+    case ZP_AS_LASTPT: AS_LASTPT = value; return;
+    case ZP_AS_INDEX: setAS_LowByte(AS_INDEX, value); return;
+    case ZP_AS_INDEX + 1: setHighByte(AS_INDEX, value); return;
+    case ZP_AS_RESULT: AS_RESULT[0] = value; return;
+    case ZP_AS_RESULT + 1: AS_RESULT[1] = value; return;
+    case ZP_AS_RESULT + 2: AS_RESULT[2] = value; return;
+    case ZP_AS_RESULT + 3: AS_RESULT[3] = value; return;
+    case ZP_AS_TXTTAB: setAS_LowByte(AS_TXTTAB, value); return;
+    case ZP_AS_TXTTAB + 1: setHighByte(AS_TXTTAB, value); return;
+    case ZP_AS_VARTAB: setAS_LowByte(AS_VARTAB, value); return;
+    case ZP_AS_VARTAB + 1: setHighByte(AS_VARTAB, value); return;
+    case ZP_AS_ARYTAB: setAS_LowByte(AS_ARYTAB, value); return;
+    case ZP_AS_ARYTAB + 1: setHighByte(AS_ARYTAB, value); return;
+    case ZP_AS_STREND: setAS_LowByte(AS_STREND, value); return;
+    case ZP_AS_STREND + 1: setHighByte(AS_STREND, value); return;
+    case ZP_AS_FRETOP: setAS_LowByte(AS_FRETOP, value); return;
+    case ZP_AS_FRETOP + 1: setHighByte(AS_FRETOP, value); return;
+    case ZP_AS_FRESPC: setAS_LowByte(AS_FRESPC, value); return;
+    case ZP_AS_FRESPC + 1: setHighByte(AS_FRESPC, value); return;
+    case ZP_AS_MEMSIZ: setAS_LowByte(AS_MEMSIZ, value); return;
+    case ZP_AS_MEMSIZ + 1: setHighByte(AS_MEMSIZ, value); return;
+    case ZP_AS_CURLIN: setAS_LowByte(AS_CURLIN, value); return;
+    case ZP_AS_CURLIN + 1: setHighByte(AS_CURLIN, value); return;
+    case ZP_AS_OLDLIN: setAS_LowByte(AS_OLDLIN, value); return;
+    case ZP_AS_OLDLIN + 1: setHighByte(AS_OLDLIN, value); return;
+    case ZP_AS_OLDTEXT: setAS_LowByte(AS_OLDTEXT, value); return;
+    case ZP_AS_OLDTEXT + 1: setHighByte(AS_OLDTEXT, value); return;
+    case ZP_AS_DATLIN: setAS_LowByte(AS_DATLIN, value); return;
+    case ZP_AS_DATLIN + 1: setHighByte(AS_DATLIN, value); return;
+    case ZP_AS_DATPTR: setAS_LowByte(AS_DATPTR, value); return;
+    case ZP_AS_DATPTR + 1: setHighByte(AS_DATPTR, value); return;
+    case ZP_AS_INPTR: setAS_LowByte(AS_INPTR, value); return;
+    case ZP_AS_INPTR + 1: setHighByte(AS_INPTR, value); return;
+    case ZP_AS_VARNAM: setAS_LowByte(AS_VARNAM, value); return;
+    case ZP_AS_VARNAM + 1: setHighByte(AS_VARNAM, value); return;
+    case ZP_AS_VARPNT: setAS_LowByte(AS_VARPNT, value); return;
+    case ZP_AS_VARPNT + 1: setHighByte(AS_VARPNT, value); return;
+    case ZP_AS_FORPNT: setAS_LowByte(AS_FORPNT, value); return;
+    case ZP_AS_FORPNT + 1: setHighByte(AS_FORPNT, value); return;
+    case ZP_AS_TXPSV: setAS_LowByte(AS_TXPSV, value); return;
+    case ZP_AS_TXPSV + 1: setHighByte(AS_TXPSV, value); return;
+    case ZP_AS_CPRTYP: AS_CPRTYP = value; return;
+    case ZP_AS_FNCNAM: setAS_LowByte(AS_FNCNAM, value); return;
+    case ZP_AS_FNCNAM + 1: setHighByte(AS_FNCNAM, value); return;
+    case ZP_AS_DSCPTR: setAS_LowByte(AS_DSCPTR, value); return;
+    case ZP_AS_DSCPTR + 1: setHighByte(AS_DSCPTR, value); return;
+    case ZP_AS_DSCLEN: AS_DSCLEN = value; return;
+    case ZP_AS_JMPADRS: AS_JMPADRS_OPCODE = value; return;
+    case ZP_AS_JMPADRS + 1: setAS_LowByte(AS_JMPADRS, value); return;
+    case ZP_AS_JMPADRS + 2: setHighByte(AS_JMPADRS, value); return;
+    case ZP_AS_ARYPNT: setAS_LowByte(AS_ARYPNT, value); return;
+    case ZP_AS_ARYPNT + 1: setHighByte(AS_ARYPNT, value); return;
+    case ZP_AS_HIGHTR: setAS_LowByte(AS_HIGHTR, value); return;
+    case ZP_AS_HIGHTR + 1: setHighByte(AS_HIGHTR, value); return;
+    case ZP_AS_INDX: AS_INDX = value; return;
+    case ZP_AS_LOWTR: setAS_LowByte(AS_LOWTR, value); return;
+    case ZP_AS_LOWTR + 1: setHighByte(AS_LOWTR, value); return;
+    case ZP_AS_FAC: AS_FAC[0] = value; return;
+    case ZP_AS_FAC + 1: AS_FAC[1] = value; return;
+    case ZP_AS_FAC + 2: AS_FAC[2] = value; return;
+    case ZP_AS_FAC + 3: AS_FAC[3] = value; return;
+    case ZP_AS_FAC + 4: AS_FAC[4] = value; return;
+    case ZP_AS_FAC_SIGN: AS_FAC_SIGN = value; return;
+    case ZP_AS_SHIFT_SIGN_EXT: AS_SHIFT_SIGN_EXT = value; return;
+    case ZP_AS_ARG: AS_ARG[0] = value; return;
+    case ZP_AS_ARG + 1: AS_ARG[1] = value; return;
+    case ZP_AS_ARG + 2: AS_ARG[2] = value; return;
+    case ZP_AS_ARG + 3: AS_ARG[3] = value; return;
+    case ZP_AS_ARG + 4: AS_ARG[4] = value; return;
+    case ZP_AS_ARG + 5: AS_ARG[5] = value; return;
+    case ZP_AS_STRNG1: setAS_LowByte(AS_STRNG1, value); return;
+    case ZP_AS_STRNG1 + 1: setHighByte(AS_STRNG1, value); return;
+    case ZP_AS_STRNG2: setAS_LowByte(AS_STRNG2, value); return;
+    case ZP_AS_STRNG2 + 1: setHighByte(AS_STRNG2, value); return;
+    case ZP_AS_PRGEND: setAS_LowByte(AS_PRGEND, value); return;
+    case ZP_AS_PRGEND + 1: setHighByte(AS_PRGEND, value); return;
+    case ZP_AS_TXTPTR: setAS_LowByte(AS_TXTPTR, value); return;
+    case ZP_AS_TXTPTR + 1: setHighByte(AS_TXTPTR, value); return;
+    case ZP_AS_LOCK: AS_LOCK = value; return;
+    case ZP_AS_ERRFLG: AS_ERRFLG = value; return;
+    case ZP_AS_FIRST: AS_FIRST = value; return;
+    case ZP_AS_SPEEDZ: AS_SPEEDZ = value; return;
+    case ZP_AS_TRCFLG: AS_TRCFLG = value; return;
+    case ZP_AS_FLASH_BIT: AS_FLASH_BIT = value; return;
+    case ZP_AS_REMSTK: AS_REMSTK = value; return;
     default: general_memory_[address] = value; return;
     }
 }

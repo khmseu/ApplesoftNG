@@ -1,5 +1,5 @@
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: TOKEN_ADDRESS_TABLE (inclusive) .. UNFNC (exclusive)
+// AS_Labels: AS_TOKEN_ADDRESS_TABLE (inclusive) .. AS_UNFNC (exclusive)
 // Name normalization: none
 
 #include "core/asm_port_token_address_table.hpp"
@@ -9,129 +9,129 @@ namespace applesoft::asm_port {
 
 std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
-std::uint8_t CHRGET();
+std::uint8_t AS_CHRGET();
 
-bool CLEAR();
-bool NEW();
-void LIST();
-void RESTORE();
-void STOP();
-void ENDX();
-void NEXT();
-void CONT();
-void LOAD();
-void SAVE();
-void RUN();
-void GOSUB();
-void GOTO();
-void POP();
-void DATA();
-void GET();
-void INPUT();
-void READ();
-void DIM();
-void DEL();
-void LET();
-void PR_NUMBER();
-void IN_NUMBER();
-void PLOT();
-void HLIN();
-void VLIN();
-void HCOLOR();
-void HPLOT();
-void DRAW();
-void XDRAW();
+bool AS_CLEAR();
+bool AS_NEW();
+void AS_LIST();
+void AS_RESTORE();
+void AS_STOP();
+void AS_ENDX();
+void AS_NEXT();
+void AS_CONT();
+void AS_LOAD();
+void AS_SAVE();
+void AS_RUN();
+void AS_GOSUB();
+void AS_GOTO();
+void AS_POP();
+void AS_DATA();
+void AS_GET();
+void AS_INPUT();
+void AS_READ();
+void AS_DIM();
+void AS_DEL();
+void AS_LET();
+void AS_PR_NUMBER();
+void AS_IN_NUMBER();
+void AS_PLOT();
+void AS_HLIN();
+void AS_VLIN();
+void AS_HCOLOR();
+void AS_HPLOT();
+void AS_DRAW();
+void AS_XDRAW();
 void HOME();
-void ROT();
-void SCALE();
-void HGR2();
-void HGR();
-void IF();
-void REM();
-void ONGOTO();
-void ONERR();
-void RESUME();
-void DEF();
-void POKE();
-void WAIT();
-void PRINT(std::uint8_t a);
-void CALL();
-void NORMAL();
-void INVERSE();
-void FLASH();
-void COLOR();
-void VTAB();
-void HIMEM();
-void LOMEM();
-void SPEED();
-void GR();
-void TEXT();
-void HTAB();
+void AS_ROT();
+void AS_SCALE();
+void AS_HGR2();
+void AS_HGR();
+void AS_IF();
+void AS_REM();
+void AS_ONGOTO();
+void AS_ONERR();
+void AS_RESUME();
+void AS_DEF();
+void AS_POKE();
+void AS_WAIT();
+void AS_PRINT(std::uint8_t a);
+void AS_CALL();
+void AS_NORMAL();
+void AS_INVERSE();
+void AS_FLASH();
+void AS_COLOR();
+void AS_VTAB();
+void AS_HIMEM();
+void AS_LOMEM();
+void AS_SPEED();
+void AS_GR();
+void AS_TEXT();
+void AS_HTAB();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
 // Each will be replaced when its label range is converted.
 // ---------------------------------------------------------------------------
 
-void FOR();
-static void NEXT_Handler()     { NEXT(); }
-static void INPUT_Handler()    { INPUT(); }
-static void DEL_Handler()      { DEL(); }
-static void DIM_Handler()      { DIM(); }
-static void READ_Handler()     { READ(); }
-static void GR_Handler()   { GR(); }
-static void TEXT_Handler() { TEXT(); }
-static void PR_NUMBER_Handler(){ PR_NUMBER(); }
-static void IN_NUMBER_Handler(){ IN_NUMBER(); }
-static void CALL_Handler()     { CALL(); }
-static void PLOT_Handler()     { PLOT(); }
-static void HLIN_Handler()     { HLIN(); }
-static void VLIN_Handler()     { VLIN(); }
-static void HGR2_Handler()     { HGR2(); }
-static void HGR_Handler()      { HGR(); }
-static void HCOLOR_Handler()   { HCOLOR(); }
-static void HPLOT_Handler()    { HPLOT(); }
-static void DRAW_Handler()     { DRAW(); }
-static void XDRAW_Handler()    { XDRAW(); }
-static void HTAB_Handler()     { HTAB(); }
+void AS_FOR();
+static void AS_NEXT_Handler()     { AS_NEXT(); }
+static void AS_INPUT_Handler()    { AS_INPUT(); }
+static void AS_DEL_Handler()      { AS_DEL(); }
+static void AS_DIM_Handler()      { AS_DIM(); }
+static void AS_READ_Handler()     { AS_READ(); }
+static void AS_GR_Handler()   { AS_GR(); }
+static void AS_TEXT_Handler() { AS_TEXT(); }
+static void AS_PR_NUMBER_Handler(){ AS_PR_NUMBER(); }
+static void AS_IN_NUMBER_Handler(){ AS_IN_NUMBER(); }
+static void AS_CALL_Handler()     { AS_CALL(); }
+static void AS_PLOT_Handler()     { AS_PLOT(); }
+static void AS_HLIN_Handler()     { AS_HLIN(); }
+static void AS_VLIN_Handler()     { AS_VLIN(); }
+static void AS_HGR2_Handler()     { AS_HGR2(); }
+static void AS_HGR_Handler()      { AS_HGR(); }
+static void AS_HCOLOR_Handler()   { AS_HCOLOR(); }
+static void AS_HPLOT_Handler()    { AS_HPLOT(); }
+static void AS_DRAW_Handler()     { AS_DRAW(); }
+static void AS_XDRAW_Handler()    { AS_XDRAW(); }
+static void AS_HTAB_Handler()     { AS_HTAB(); }
 static void HOME_Handler()     { HOME(); }
-static void ROT_Handler()      { ROT(); }
-static void SCALE_Handler()    { SCALE(); }
-static void SHLOAD_Handler()   { /* SHLOAD stub */ }
+static void AS_ROT_Handler()      { AS_ROT(); }
+static void AS_SCALE_Handler()    { AS_SCALE(); }
+static void AS_SHLOAD_Handler()   { /* AS_SHLOAD stub */ }
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: TRACE (inclusive) .. NORMAL (exclusive)
-// Name normalization: none. TRACE: sec; ror TRCFLG → bit 7 set (trace on).
-//                           NOTRACE: clc; ror TRCFLG → bit 7 clear (trace off).
-static void TRACE() {
-    const std::uint8_t trcflg = ReadZeroPageByte(ApplesoftVariables::ZP_TRCFLG);
-    WriteZeroPageByte(ApplesoftVariables::ZP_TRCFLG,
+// AS_Labels: AS_TRACE (inclusive) .. AS_NORMAL (exclusive)
+// Name normalization: none. AS_TRACE: sec; ror AS_TRCFLG → bit 7 set (trace on).
+//                           AS_NOTRACE: clc; ror AS_TRCFLG → bit 7 clear (trace off).
+static void AS_TRACE() {
+    const std::uint8_t trcflg = ReadZeroPageByte(ApplesoftVariables::ZP_AS_TRCFLG);
+    WriteZeroPageByte(ApplesoftVariables::ZP_AS_TRCFLG,
                       static_cast<std::uint8_t>((trcflg >> 1u) | 0x80u));
 }
-static void NOTRACE() {
-    const std::uint8_t trcflg = ReadZeroPageByte(ApplesoftVariables::ZP_TRCFLG);
-    WriteZeroPageByte(ApplesoftVariables::ZP_TRCFLG,
+static void AS_NOTRACE() {
+    const std::uint8_t trcflg = ReadZeroPageByte(ApplesoftVariables::ZP_AS_TRCFLG);
+    WriteZeroPageByte(ApplesoftVariables::ZP_AS_TRCFLG,
                       static_cast<std::uint8_t>(trcflg >> 1u));
 }
-static void NORMAL_Handler()   { NORMAL(); }
-static void INVERSE_Handler()  { INVERSE(); }
-static void FLASH_Handler()    { FLASH(); }
-static void COLOR_Handler()    { COLOR(); }
-static void VTAB_Handler()     { VTAB(); }
-static void HIMEM_Handler()    { HIMEM(); }
-static void LOMEM_Handler()    { LOMEM(); }
-static void ONERR_Handler()    { ONERR(); }
-static void RESUME_Handler()   { RESUME(); }
-static void RECALL()           {} // TODO(asm-port): RECALL
-static void STORE()            {} // TODO(asm-port): STORE
-static void SPEED_Handler()    { SPEED(); }
-static void AMPERSAND_VECTOR() {} // TODO(asm-port): & dispatch (JMP vector at $03F5)
-static void WAIT_Handler()     { WAIT(); }
-static void DEF_Handler()      { DEF(); }
-static void POKE_Handler()     { POKE(); }
-static void PRINT_Handler()    { PRINT(CHRGET()); }
-static void CLEAR_Handler()    { CLEAR(); }
-static void GET_Handler()      { GET(); }
-static void NEW_Handler()      { NEW(); }
+static void AS_NORMAL_Handler()   { AS_NORMAL(); }
+static void AS_INVERSE_Handler()  { AS_INVERSE(); }
+static void AS_FLASH_Handler()    { AS_FLASH(); }
+static void AS_COLOR_Handler()    { AS_COLOR(); }
+static void AS_VTAB_Handler()     { AS_VTAB(); }
+static void AS_HIMEM_Handler()    { AS_HIMEM(); }
+static void AS_LOMEM_Handler()    { AS_LOMEM(); }
+static void AS_ONERR_Handler()    { AS_ONERR(); }
+static void AS_RESUME_Handler()   { AS_RESUME(); }
+static void AS_RECALL()           {} // TODO(asm-port): AS_RECALL
+static void AS_STORE()            {} // TODO(asm-port): AS_STORE
+static void AS_SPEED_Handler()    { AS_SPEED(); }
+static void AS_AMPERSAND_VECTOR() {} // TODO(asm-port): & dispatch (JMP vector at $03F5)
+static void AS_WAIT_Handler()     { AS_WAIT(); }
+static void AS_DEF_Handler()      { AS_DEF(); }
+static void AS_POKE_Handler()     { AS_POKE(); }
+static void AS_PRINT_Handler()    { AS_PRINT(AS_CHRGET()); }
+static void AS_CLEAR_Handler()    { AS_CLEAR(); }
+static void AS_GET_Handler()      { AS_GET(); }
+static void AS_NEW_Handler()      { AS_NEW(); }
 
 // ---------------------------------------------------------------------------
 // Branch table for Applesoft statement tokens $80–$BF.
@@ -139,72 +139,72 @@ static void NEW_Handler()      { NEW(); }
 // The -1 RTS-dispatch artifact from the 6502 source is dropped; plain
 // function pointers are used and the caller is responsible for invoking them.
 // ---------------------------------------------------------------------------
-TOKEN_ADDRESS_TABLE_fn TOKEN_ADDRESS_TABLE(std::size_t index) {
-    static constexpr TOKEN_ADDRESS_TABLE_fn table[] = {
-        ENDX,             // [0]  $80...128...END
-        FOR,              // [1]  $81...129...FOR
-        NEXT_Handler,     // [2]  $82...130...NEXT
-        DATA,             // [3]  $83...131...DWTA
-        INPUT_Handler,    // [4]  $84...132...INPUT
-        DEL_Handler,      // [5]  $85...133...DEL
-        DIM_Handler,      // [6]  $86...134...DIM
-        READ_Handler,     // [7]  $87...135...READ
-        GR_Handler,       // [8]  $88...136...GR
-        TEXT_Handler,     // [9]  $89...137...TEXT
-        PR_NUMBER_Handler,// [10] $8A...138...PR#
-        IN_NUMBER_Handler,// [11] $8B...139...IN#
-        CALL_Handler,     // [12] $8C...140...CALL
-        PLOT_Handler,     // [13] $8D...141...PLOT
-        HLIN_Handler,     // [14] $8E...142...HLIN
-        VLIN_Handler,     // [15] $8F...143...VLIN
-        HGR2_Handler,     // [16] $90...144...HGR2
-        HGR_Handler,      // [17] $91...145...HGR
-        HCOLOR_Handler,   // [18] $92...146...HCOLOR=
-        HPLOT_Handler,    // [19] $93...147...HPLOT
-        DRAW_Handler,     // [20] $94...148...DRAW
-        XDRAW_Handler,    // [21] $95...149...XDRAW
-        HTAB_Handler,     // [22] $96...150...HTAB
+AS_TOKEN_ADDRESS_TABLE_fn AS_TOKEN_ADDRESS_TABLE(std::size_t index) {
+    static constexpr AS_TOKEN_ADDRESS_TABLE_fn table[] = {
+        AS_ENDX,             // [0]  $80...128...END
+        AS_FOR,              // [1]  $81...129...AS_FOR
+        AS_NEXT_Handler,     // [2]  $82...130...AS_NEXT
+        AS_DATA,             // [3]  $83...131...DWTA
+        AS_INPUT_Handler,    // [4]  $84...132...AS_INPUT
+        AS_DEL_Handler,      // [5]  $85...133...AS_DEL
+        AS_DIM_Handler,      // [6]  $86...134...AS_DIM
+        AS_READ_Handler,     // [7]  $87...135...AS_READ
+        AS_GR_Handler,       // [8]  $88...136...AS_GR
+        AS_TEXT_Handler,     // [9]  $89...137...AS_TEXT
+        AS_PR_NUMBER_Handler,// [10] $8A...138...PR#
+        AS_IN_NUMBER_Handler,// [11] $8B...139...IN#
+        AS_CALL_Handler,     // [12] $8C...140...AS_CALL
+        AS_PLOT_Handler,     // [13] $8D...141...AS_PLOT
+        AS_HLIN_Handler,     // [14] $8E...142...AS_HLIN
+        AS_VLIN_Handler,     // [15] $8F...143...AS_VLIN
+        AS_HGR2_Handler,     // [16] $90...144...AS_HGR2
+        AS_HGR_Handler,      // [17] $91...145...AS_HGR
+        AS_HCOLOR_Handler,   // [18] $92...146...AS_HCOLOR=
+        AS_HPLOT_Handler,    // [19] $93...147...AS_HPLOT
+        AS_DRAW_Handler,     // [20] $94...148...AS_DRAW
+        AS_XDRAW_Handler,    // [21] $95...149...AS_XDRAW
+        AS_HTAB_Handler,     // [22] $96...150...AS_HTAB
         HOME_Handler,     // [23] $97...151...HOME
-        ROT_Handler,      // [24] $98...152...ROT=
-        SCALE_Handler,    // [25] $99...153...SCALE=
-        SHLOAD_Handler,   // [26] $9A...154...SHLOAD
-        TRACE,            // [27] $9B...155...TRACE
-        NOTRACE,          // [28] $9C...156...NOTRACE
-        NORMAL_Handler,   // [29] $9D...157...NORMAL
-        INVERSE_Handler,  // [30] $9E...158...INVERSE
-        FLASH_Handler,    // [31] $9F...159...FLASH
-        COLOR_Handler,    // [32] $A0...160...COLOR=
-        POP,              // [33] $A1...161...POP
-        VTAB_Handler,     // [34] $A2...162...VTAB
-        HIMEM_Handler,    // [35] $A3...163...HIMEM:
-        LOMEM_Handler,    // [36] $A4...164...LOMEM:
-        ONERR_Handler,    // [37] $A5...165...ONERR
-        RESUME_Handler,   // [38] $A6...166...RESUME
-        RECALL,           // [39] $A7...167...RECALL
-        STORE,            // [40] $A8...168...STORE
-        SPEED_Handler,    // [41] $A9...169...SPEED=
-        LET,              // [42] $AA...170...LET
-        GOTO,             // [43] $AB...171...GOTO
-        RUN,              // [44] $AC...172...RUN
-        IF,               // [45] $AD...173...IF
-        RESTORE,          // [46] $AE...174...RESTORE
-        AMPERSAND_VECTOR, // [47] $AF...175...&
-        GOSUB,            // [48] $B0...176...GOSUB
-        POP,              // [49] $B1...177...RETURN (same handler as POP)
-        REM,              // [50] $B2...178...REM
-        STOP,             // [51] $B3...179...STOP
-        ONGOTO,           // [52] $B4...180...ON
-        WAIT_Handler,     // [53] $B5...181...WAIT
-        LOAD,             // [54] $B6...182...LOAD
-        SAVE,             // [55] $B7...183...SAVE
-        DEF_Handler,      // [56] $B8...184...DEF
-        POKE_Handler,     // [57] $B9...185...POKE
-        PRINT_Handler,    // [58] $BA...186...PRINT
-        CONT,             // [59] $BB...187...CONT
-        LIST,             // [60] $BC...188...LIST
-        CLEAR_Handler,    // [61] $BD...189...CLEAR
-        GET_Handler,      // [62] $BE...190...GET
-        NEW_Handler,      // [63] $BF...191...NEW
+        AS_ROT_Handler,      // [24] $98...152...AS_ROT=
+        AS_SCALE_Handler,    // [25] $99...153...AS_SCALE=
+        AS_SHLOAD_Handler,   // [26] $9A...154...AS_SHLOAD
+        AS_TRACE,            // [27] $9B...155...AS_TRACE
+        AS_NOTRACE,          // [28] $9C...156...AS_NOTRACE
+        AS_NORMAL_Handler,   // [29] $9D...157...AS_NORMAL
+        AS_INVERSE_Handler,  // [30] $9E...158...AS_INVERSE
+        AS_FLASH_Handler,    // [31] $9F...159...AS_FLASH
+        AS_COLOR_Handler,    // [32] $A0...160...AS_COLOR=
+        AS_POP,              // [33] $A1...161...AS_POP
+        AS_VTAB_Handler,     // [34] $A2...162...AS_VTAB
+        AS_HIMEM_Handler,    // [35] $A3...163...AS_HIMEM:
+        AS_LOMEM_Handler,    // [36] $A4...164...AS_LOMEM:
+        AS_ONERR_Handler,    // [37] $A5...165...AS_ONERR
+        AS_RESUME_Handler,   // [38] $A6...166...AS_RESUME
+        AS_RECALL,           // [39] $A7...167...AS_RECALL
+        AS_STORE,            // [40] $A8...168...AS_STORE
+        AS_SPEED_Handler,    // [41] $A9...169...AS_SPEED=
+        AS_LET,              // [42] $AA...170...AS_LET
+        AS_GOTO,             // [43] $AB...171...AS_GOTO
+        AS_RUN,              // [44] $AC...172...AS_RUN
+        AS_IF,               // [45] $AD...173...AS_IF
+        AS_RESTORE,          // [46] $AE...174...AS_RESTORE
+        AS_AMPERSAND_VECTOR, // [47] $AF...175...&
+        AS_GOSUB,            // [48] $B0...176...AS_GOSUB
+        AS_POP,              // [49] $B1...177...AS_RETURN (same handler as AS_POP)
+        AS_REM,              // [50] $B2...178...AS_REM
+        AS_STOP,             // [51] $B3...179...AS_STOP
+        AS_ONGOTO,           // [52] $B4...180...ON
+        AS_WAIT_Handler,     // [53] $B5...181...AS_WAIT
+        AS_LOAD,             // [54] $B6...182...AS_LOAD
+        AS_SAVE,             // [55] $B7...183...AS_SAVE
+        AS_DEF_Handler,      // [56] $B8...184...AS_DEF
+        AS_POKE_Handler,     // [57] $B9...185...AS_POKE
+        AS_PRINT_Handler,    // [58] $BA...186...AS_PRINT
+        AS_CONT,             // [59] $BB...187...AS_CONT
+        AS_LIST,             // [60] $BC...188...AS_LIST
+        AS_CLEAR_Handler,    // [61] $BD...189...AS_CLEAR
+        AS_GET_Handler,      // [62] $BE...190...AS_GET
+        AS_NEW_Handler,      // [63] $BF...191...AS_NEW
     };
     return table[index];
 }

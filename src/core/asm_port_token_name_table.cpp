@@ -1,5 +1,5 @@
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: TOKEN_NAME_TABLE (inclusive) .. ERROR_MESSAGES (exclusive)
+// AS_Labels: AS_TOKEN_NAME_TABLE (inclusive) .. AS_ERROR_MESSAGES (exclusive)
 // Name normalization: none
 //
 // The original ROM stores token names as a packed character stream with bit 7
@@ -12,21 +12,21 @@
 
 namespace applesoft::asm_port {
 
-std::string_view TOKEN_NAME_TABLE(std::size_t index) {
+std::string_view AS_TOKEN_NAME_TABLE(std::size_t index) {
     static constexpr std::array<std::string_view, 107> table = {
-        "END", "FOR", "NEXT", "DATA", "INPUT", "DEL", "DIM", "READ",
-        "GR", "TEXT", "PR#", "IN#", "CALL", "PLOT", "HLIN", "VLIN",
-        "HGR2", "HGR", "HCOLOR=", "HPLOT", "DRAW", "XDRAW", "HTAB", "HOME",
-        "ROT=", "SCALE=", "SHLOAD", "TRACE", "NOTRACE", "NORMAL", "INVERSE", "FLASH",
-        "COLOR=", "POP", "VTAB", "HIMEM:", "LOMEM:", "ONERR", "RESUME", "RECALL",
-        "STORE", "SPEED=", "LET", "GOTO", "RUN", "IF", "RESTORE", "&",
-        "GOSUB", "RETURN", "REM", "STOP", "ON", "WAIT", "LOAD", "SAVE",
-        "DEF", "POKE", "PRINT", "CONT", "LIST", "CLEAR", "GET", "NEW",
-        "TAB(", "TO", "FN", "SPC(", "THEN", "AT", "NOT", "STEP",
-        "+", "-", "*", "/", "^", "AND", "OR", ">", "=", "<",
-        "SGN", "INT", "ABS", "USR", "FRE", "SCRN(", "PDL", "POS",
-        "SQR", "RND", "LOG", "EXP", "COS", "SIN", "TAN", "ATN",
-        "PEEK", "LEN", "STR$", "VAL", "ASC", "CHR$", "LEFT$", "RIGHT$", "MID$"
+        "END", "AS_FOR", "AS_NEXT", "AS_DATA", "AS_INPUT", "AS_DEL", "AS_DIM", "AS_READ",
+        "AS_GR", "AS_TEXT", "PR#", "IN#", "AS_CALL", "AS_PLOT", "AS_HLIN", "AS_VLIN",
+        "AS_HGR2", "AS_HGR", "AS_HCOLOR=", "AS_HPLOT", "AS_DRAW", "AS_XDRAW", "AS_HTAB", "HOME",
+        "AS_ROT=", "AS_SCALE=", "AS_SHLOAD", "AS_TRACE", "AS_NOTRACE", "AS_NORMAL", "AS_INVERSE", "AS_FLASH",
+        "AS_COLOR=", "AS_POP", "AS_VTAB", "AS_HIMEM:", "AS_LOMEM:", "AS_ONERR", "AS_RESUME", "AS_RECALL",
+        "AS_STORE", "AS_SPEED=", "AS_LET", "AS_GOTO", "AS_RUN", "AS_IF", "AS_RESTORE", "&",
+        "AS_GOSUB", "AS_RETURN", "AS_REM", "AS_STOP", "ON", "AS_WAIT", "AS_LOAD", "AS_SAVE",
+        "AS_DEF", "AS_POKE", "AS_PRINT", "AS_CONT", "AS_LIST", "AS_CLEAR", "AS_GET", "AS_NEW",
+        "TAB(", "TO", "FN", "SPC(", "THEN", "AT", "NOT", "AS_STEP",
+        "+", "-", "*", "/", "^", "AND", "AS_OR", ">", "=", "<",
+        "AS_SGN", "AS_INT", "AS_ABS", "AS_USR", "AS_FRE", "SCRN(", "AS_PDL", "AS_POS",
+        "AS_SQR", "AS_RND", "AS_LOG", "AS_EXP", "AS_COS", "AS_SIN", "AS_TAN", "AS_ATN",
+        "AS_PEEK", "AS_LEN", "AS_STR$", "AS_VAL", "AS_ASC", "CHR$", "AS_LEFT$", "RIGHT$", "MID$"
     };
 
     return table[index];

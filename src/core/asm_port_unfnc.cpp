@@ -1,8 +1,8 @@
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: UNFNC (inclusive) .. MATHTBL (exclusive)
+// AS_Labels: AS_UNFNC (inclusive) .. AS_MATHTBL (exclusive)
 // Name normalization: none
 //
-// UNFNC is a direct-address table (no RTS-dispatch -1 offset) for Applesoft
+// AS_UNFNC is a direct-address table (no RTS-dispatch -1 offset) for Applesoft
 // unary and built-in function tokens $D2-$EA. The caller dispatches by
 // computing (token - 0xD2) as the index and invoking the returned pointer.
 
@@ -16,210 +16,210 @@
 namespace applesoft::asm_port {
 
 std::uint8_t MON_PREAD();
-void CONINT();
+void AS_CONINT();
 std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
-void SNGFLT(std::uint8_t value);
-void GIVAYF(std::int16_t value);
-void FIN();
-std::uint8_t GETSTR();
-void FRE();
-void PEEK();
-void QINT();
-void ERROR(std::uint8_t error_code_offset);
+void AS_SNGFLT(std::uint8_t value);
+void AS_GIVAYF(std::int16_t value);
+void AS_FIN();
+std::uint8_t AS_GETSTR();
+void AS_FRE();
+void AS_PEEK();
+void AS_QINT();
+void AS_ERROR(std::uint8_t error_code_offset);
 
-static void NORMALIZE_FAC_1(std::uint8_t facSign) {
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-    constexpr std::uint8_t kFAC_EXTENSION = static_cast<std::uint8_t>(ApplesoftVariables::ZP_STRNG1 + 1u);
-    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+static void AS_NORMALIZE_FAC_1(std::uint8_t facSign) {
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_FAC_EXTENSION = static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_STRNG1 + 1u);
+    constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
 
     std::uint64_t integerValue =
-        (static_cast<std::uint64_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u))) << 24u) |
-        (static_cast<std::uint64_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u))) << 16u) |
-        (static_cast<std::uint64_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u))) << 8u) |
-        static_cast<std::uint64_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u)));
+        (static_cast<std::uint64_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u))) << 24u) |
+        (static_cast<std::uint64_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u))) << 16u) |
+        (static_cast<std::uint64_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u))) << 8u) |
+        static_cast<std::uint64_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u)));
 
     if ((facSign & 0x80u) != 0u) {
         integerValue = (~integerValue + 1u) & 0xffff'ffffu;
-        WriteZeroPageByte(kFAC_SIGN, 0xffu);
+        WriteZeroPageByte(kAS_FAC_SIGN, 0xffu);
     } else {
-        WriteZeroPageByte(kFAC_SIGN, 0u);
+        WriteZeroPageByte(kAS_FAC_SIGN, 0u);
     }
 
     if (integerValue == 0u) {
-        WriteZeroPageByte(kFAC, 0u);
-        WriteZeroPageByte(kFAC_EXTENSION, 0u);
+        WriteZeroPageByte(kAS_FAC, 0u);
+        WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
         return;
     }
 
-    std::uint8_t exponent = ReadZeroPageByte(kFAC);
+    std::uint8_t exponent = ReadZeroPageByte(kAS_FAC);
     while ((integerValue & 0x8000'0000u) == 0u) {
         integerValue <<= 1u;
         if (exponent == 0u) {
-            WriteZeroPageByte(kFAC, 0u);
-            WriteZeroPageByte(kFAC_SIGN, 0u);
-            WriteZeroPageByte(kFAC_EXTENSION, 0u);
-            WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u), 0u);
-            WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u), 0u);
-            WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u), 0u);
-            WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u), 0u);
+            WriteZeroPageByte(kAS_FAC, 0u);
+            WriteZeroPageByte(kAS_FAC_SIGN, 0u);
+            WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
+            WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u), 0u);
+            WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u), 0u);
+            WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u), 0u);
+            WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u), 0u);
             return;
         }
 
         --exponent;
     }
 
-    WriteZeroPageByte(kFAC, exponent);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u), static_cast<std::uint8_t>((integerValue >> 24u) & 0xffu));
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u), static_cast<std::uint8_t>((integerValue >> 16u) & 0xffu));
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u), static_cast<std::uint8_t>((integerValue >> 8u) & 0xffu));
-    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u), static_cast<std::uint8_t>(integerValue & 0xffu));
-    WriteZeroPageByte(kFAC_EXTENSION, 0u);
+    WriteZeroPageByte(kAS_FAC, exponent);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u), static_cast<std::uint8_t>((integerValue >> 24u) & 0xffu));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u), static_cast<std::uint8_t>((integerValue >> 16u) & 0xffu));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u), static_cast<std::uint8_t>((integerValue >> 8u) & 0xffu));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u), static_cast<std::uint8_t>(integerValue & 0xffu));
+    WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
 }
 
-void PDL() {
+void AS_PDL() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: PDL (inclusive) .. NXDIM (exclusive)
-    // Name normalization: none (assembler label PDL kept verbatim).
+    // AS_Labels: AS_PDL (inclusive) .. AS_NXDIM (exclusive)
+    // Name normalization: none (assembler label AS_PDL kept verbatim).
 
-    CONINT();
-    SNGFLT(MON_PREAD());
+    AS_CONINT();
+    AS_SNGFLT(MON_PREAD());
 }
 
 // ---------------------------------------------------------------------------
 // Stub implementations for function handlers not yet ported.
 // ---------------------------------------------------------------------------
 
-void SGN() {
+void AS_SGN() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: SGN (inclusive) .. ABS (exclusive)
-    // Name normalization: none (assembler label SGN kept verbatim).
+    // AS_Labels: AS_SGN (inclusive) .. AS_ABS (exclusive)
+    // Name normalization: none (assembler label AS_SGN kept verbatim).
 
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
 
-    // ROM path: jsr SIGN then fall through to FLOAT to convert A=-1/0/+1 to FAC.
+    // ROM path: jsr AS_SIGN then fall through to AS_FLOAT to convert A=-1/0/+1 to AS_FAC.
     std::int16_t signValue = 0;
-    if (ReadZeroPageByte(kFAC) != 0u) {
-        signValue = ((ReadZeroPageByte(kFAC_SIGN) & 0x80u) != 0u) ? -1 : 1;
+    if (ReadZeroPageByte(kAS_FAC) != 0u) {
+        signValue = ((ReadZeroPageByte(kAS_FAC_SIGN) & 0x80u) != 0u) ? -1 : 1;
     }
 
-    GIVAYF(signValue);
+    AS_GIVAYF(signValue);
 }
-void INT_fn() {
+void AS_INT_fn() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: INT (inclusive) .. QINT_3 (exclusive)
-    // Name normalization: INT -> INT_fn (INT is a C++ keyword).
+    // AS_Labels: AS_INT (inclusive) .. AS_QINT_3 (exclusive)
+    // Name normalization: AS_INT -> AS_INT_fn (AS_INT is a C++ keyword).
 
-    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
-    constexpr std::uint8_t kFAC_EXTENSION = static_cast<std::uint8_t>(ApplesoftVariables::ZP_STRNG1 + 1u);
-    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
-    constexpr std::uint8_t kFAC_LAST = static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 4u);
-    constexpr std::uint8_t kCHARAC = ApplesoftVariables::ZP_CHARAC;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_FAC_EXTENSION = static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_STRNG1 + 1u);
+    constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
+    constexpr std::uint8_t kAS_FAC_LAST = static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 4u);
+    constexpr std::uint8_t kAS_CHARAC = ApplesoftVariables::ZP_AS_CHARAC;
 
-    // If exponent >= 0xA0, FAC has no fractional bits and INT is already done.
-    if (ReadZeroPageByte(kFAC) >= 0xa0u) {
+    // If exponent >= 0xA0, AS_FAC has no fractional bits and AS_INT is already done.
+    if (ReadZeroPageByte(kAS_FAC) >= 0xa0u) {
         return;
     }
 
-    // Convert FAC to integer form in FAC+1..FAC+4 (QINT contract).
-    QINT();
+    // Convert AS_FAC to integer form in AS_FAC+1..AS_FAC+4 (AS_QINT contract).
+    AS_QINT();
 
     // The ROM uses carry to decide whether the integer needs complementing
-    // before re-normalization. Model that explicitly with the saved FAC sign.
-    const std::uint8_t facSign = ReadZeroPageByte(kFAC_SIGN);
-    WriteZeroPageByte(kFAC_EXTENSION, 0u);
-    WriteZeroPageByte(kFAC, 0xa0u);
-    WriteZeroPageByte(kCHARAC, ReadZeroPageByte(kFAC_LAST));
+    // before re-normalization. Model that explicitly with the saved AS_FAC sign.
+    const std::uint8_t facSign = ReadZeroPageByte(kAS_FAC_SIGN);
+    WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
+    WriteZeroPageByte(kAS_FAC, 0xa0u);
+    WriteZeroPageByte(kAS_CHARAC, ReadZeroPageByte(kAS_FAC_LAST));
 
-    NORMALIZE_FAC_1(facSign);
+    AS_NORMALIZE_FAC_1(facSign);
 }
-void ABS() {
+void AS_ABS() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: ABS (inclusive) .. FCOMP (exclusive)
-    // Name normalization: none (assembler label ABS kept verbatim).
+    // AS_Labels: AS_ABS (inclusive) .. AS_FCOMP (exclusive)
+    // Name normalization: none (assembler label AS_ABS kept verbatim).
 
-    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
-    WriteZeroPageByte(kFAC_SIGN, static_cast<std::uint8_t>(ReadZeroPageByte(kFAC_SIGN) >> 1u));
+    constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
+    WriteZeroPageByte(kAS_FAC_SIGN, static_cast<std::uint8_t>(ReadZeroPageByte(kAS_FAC_SIGN) >> 1u));
 }
-static void USR()      {} // TODO(asm-port): USR        $D5...213  (user-defined function via zero-page JMP at $0A)
-void FRE_fn() {
+static void AS_USR()      {} // TODO(asm-port): AS_USR        $D5...213  (user-defined function via zero-page JMP at $0A)
+void AS_FRE_fn() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: FRE (inclusive) .. ERROR (exclusive)
-    // Name normalization: wrapper name FRE_fn used to avoid clashing with the
-    // existing FRE implementation in core.
+    // AS_Labels: AS_FRE (inclusive) .. AS_ERROR (exclusive)
+    // Name normalization: wrapper name AS_FRE_fn used to avoid clashing with the
+    // existing AS_FRE implementation in core.
 
-    FRE();
+    AS_FRE();
 }
-void ERROR_fn() {
+void AS_ERROR_fn() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: UNDFNC (inclusive) .. DEF (exclusive)
-    // Name normalization: ERROR_fn used for UNFNC table entry $D7 (SCRN().
+    // AS_Labels: AS_UNDFNC (inclusive) .. AS_DEF (exclusive)
+    // Name normalization: AS_ERROR_fn used for AS_UNFNC table entry $D7 (SCRN().
 
-    ERROR(ERR_UNDEFFUNC);
+    AS_ERROR(AS_ERR_UNDEFFUNC);
 }
-static void PDL_fn()   { PDL(); }
-void POS() {
+static void AS_PDL_fn()   { AS_PDL(); }
+void AS_POS() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: POS (inclusive) .. SNGFLT (exclusive)
-    // Name normalization: none (assembler label POS kept verbatim).
+    // AS_Labels: AS_POS (inclusive) .. AS_SNGFLT (exclusive)
+    // Name normalization: none (assembler label AS_POS kept verbatim).
 
-    SNGFLT(ReadZeroPageByte(ApplesoftVariables::ZP_MON_CH));
+    AS_SNGFLT(ReadZeroPageByte(ApplesoftVariables::ZP_MON_CH));
 }
-static void SQR()      {} // TODO(asm-port): SQR        $DA...218
-static void RND()      {} // TODO(asm-port): RND        $DB...219
-static void LOG()      {} // TODO(asm-port): LOG        $DC...220
-static void EXP()      {} // TODO(asm-port): EXP        $DD...221
-static void COS()      {} // TODO(asm-port): COS        $DE...222
-static void SIN()      {} // TODO(asm-port): SIN        $DF...223
-static void TAN()      {} // TODO(asm-port): TAN        $E0...224
-static void ATN()      {} // TODO(asm-port): ATN        $E1...225
-static void PEEK_fn()  { PEEK(); }
-static void LEN_fn()   { LEN(); }
-static void STR_fn()   { STR(); }
-// Labels: VAL (inclusive) .. L_VAL_1 (exclusive)
-// Name normalization: none (assembler label VAL kept verbatim).
-void VAL() {
-    (void)GETSTR();
-    FIN();
+static void AS_SQR()      {} // TODO(asm-port): AS_SQR        $DA...218
+static void AS_RND()      {} // TODO(asm-port): AS_RND        $DB...219
+static void AS_LOG()      {} // TODO(asm-port): AS_LOG        $DC...220
+static void AS_EXP()      {} // TODO(asm-port): AS_EXP        $DD...221
+static void AS_COS()      {} // TODO(asm-port): AS_COS        $DE...222
+static void AS_SIN()      {} // TODO(asm-port): AS_SIN        $DF...223
+static void AS_TAN()      {} // TODO(asm-port): AS_TAN        $E0...224
+static void AS_ATN()      {} // TODO(asm-port): AS_ATN        $E1...225
+static void AS_PEEK_fn()  { AS_PEEK(); }
+static void AS_LEN_fn()   { AS_LEN(); }
+static void AS_STR_fn()   { AS_STR(); }
+// AS_Labels: AS_VAL (inclusive) .. AS_L_VAL_1 (exclusive)
+// Name normalization: none (assembler label AS_VAL kept verbatim).
+void AS_VAL() {
+    (void)AS_GETSTR();
+    AS_FIN();
 }
-static void ASC_fn()     { ASC(); }
-static void CHRSTR_fn()  { CHRSTR(); }
-static void LEFTSTR_fn() { LEFTSTR(); }
-static void RIGHTSTR_fn(){ RIGHTSTR(); }
-static void MIDSTR_fn()  { MIDSTR(); }
+static void AS_ASC_fn()     { AS_ASC(); }
+static void AS_CHRSTR_fn()  { AS_CHRSTR(); }
+static void AS_LEFTSTR_fn() { AS_LEFTSTR(); }
+static void AS_RIGHTSTR_fn(){ AS_RIGHTSTR(); }
+static void AS_MIDSTR_fn()  { AS_MIDSTR(); }
 
 // ---------------------------------------------------------------------------
 // Dispatch table for Applesoft unary/built-in function tokens $D2-$EA.
 // Index = token - $D2. Direct addresses — no RTS-dispatch -1 adjustment.
 // ---------------------------------------------------------------------------
-UNFNC_fn UNFNC(std::size_t index) {
-    static constexpr UNFNC_fn table[] = {
-        SGN,      // [0]  $D2...210...SGN
-        INT_fn,   // [1]  $D3...211...INT   (INT_fn: INT is a reserved C++ keyword)
-        ABS,      // [2]  $D4...212...ABS
-        USR,      // [3]  $D5...213...USR
-        FRE_fn,   // [4]  $D6...214...FRE
-        ERROR_fn, // [5]  $D7...215...SCRN(
-        PDL_fn,   // [6]  $D8...216...PDL
-        POS,      // [7]  $D9...217...POS
-        SQR,      // [8]  $DA...218...SQR
-        RND,      // [9]  $DB...219...RND
-        LOG,      // [10] $DC...220...LOG
-        EXP,      // [11] $DD...221...EXP
-        COS,      // [12] $DE...222...COS
-        SIN,      // [13] $DF...223...SIN
-        TAN,      // [14] $E0...224...TAN
-        ATN,      // [15] $E1...225...ATN
-        PEEK_fn,  // [16] $E2...226...PEEK
-        LEN_fn,   // [17] $E3...227...LEN
-        STR_fn,   // [18] $E4...228...STR$
-        VAL,        // [19] $E5...229...VAL
-        ASC_fn,     // [20] $E6...230...ASC
-        CHRSTR_fn,  // [21] $E7...231...CHR$
-        LEFTSTR_fn, // [22] $E8...232...LEFT$
-        RIGHTSTR_fn,// [23] $E9...233...RIGHT$
-        MIDSTR_fn,  // [24] $EA...234...MID$
+AS_UNFNC_fn AS_UNFNC(std::size_t index) {
+    static constexpr AS_UNFNC_fn table[] = {
+        AS_SGN,      // [0]  $D2...210...AS_SGN
+        AS_INT_fn,   // [1]  $D3...211...AS_INT   (AS_INT_fn: AS_INT is a reserved C++ keyword)
+        AS_ABS,      // [2]  $D4...212...AS_ABS
+        AS_USR,      // [3]  $D5...213...AS_USR
+        AS_FRE_fn,   // [4]  $D6...214...AS_FRE
+        AS_ERROR_fn, // [5]  $D7...215...SCRN(
+        AS_PDL_fn,   // [6]  $D8...216...AS_PDL
+        AS_POS,      // [7]  $D9...217...AS_POS
+        AS_SQR,      // [8]  $DA...218...AS_SQR
+        AS_RND,      // [9]  $DB...219...AS_RND
+        AS_LOG,      // [10] $DC...220...AS_LOG
+        AS_EXP,      // [11] $DD...221...AS_EXP
+        AS_COS,      // [12] $DE...222...AS_COS
+        AS_SIN,      // [13] $DF...223...AS_SIN
+        AS_TAN,      // [14] $E0...224...AS_TAN
+        AS_ATN,      // [15] $E1...225...AS_ATN
+        AS_PEEK_fn,  // [16] $E2...226...AS_PEEK
+        AS_LEN_fn,   // [17] $E3...227...AS_LEN
+        AS_STR_fn,   // [18] $E4...228...AS_STR$
+        AS_VAL,        // [19] $E5...229...AS_VAL
+        AS_ASC_fn,     // [20] $E6...230...AS_ASC
+        AS_CHRSTR_fn,  // [21] $E7...231...CHR$
+        AS_LEFTSTR_fn, // [22] $E8...232...AS_LEFT$
+        AS_RIGHTSTR_fn,// [23] $E9...233...RIGHT$
+        AS_MIDSTR_fn,  // [24] $EA...234...MID$
     };
     return table[index];
 }

@@ -5,58 +5,58 @@
 namespace applesoft::asm_port {
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: INPUT (inclusive) .. NXIN (exclusive)
-// Name normalization: none (assembler label INPUT kept verbatim).
-void INPUT();
+// AS_Labels: AS_INPUT (inclusive) .. AS_NXIN (exclusive)
+// Name normalization: none (assembler label AS_INPUT kept verbatim).
+void AS_INPUT();
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: NXIN (inclusive) .. READ (exclusive)
-// Name normalization: none (assembler label NXIN kept verbatim).
-void NXIN();
+// AS_Labels: AS_NXIN (inclusive) .. AS_READ (exclusive)
+// Name normalization: none (assembler label AS_NXIN kept verbatim).
+void AS_NXIN();
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: READ (inclusive) .. INPUT_FLAG_ZERO (exclusive)
-// Name normalization: none (assembler label READ kept verbatim).
-void READ();
+// AS_Labels: AS_READ (inclusive) .. AS_INPUT_FLAG_ZERO (exclusive)
+// Name normalization: none (assembler label AS_READ kept verbatim).
+void AS_READ();
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: INPUT_FLAG_ZERO (inclusive) .. PROCESS_INPUT_LIST (exclusive)
-// Name normalization: none (assembler label INPUT_FLAG_ZERO kept verbatim).
-void INPUT_FLAG_ZERO(std::uint16_t input_ptr);
+// AS_Labels: AS_INPUT_FLAG_ZERO (inclusive) .. AS_PROCESS_INPUT_LIST (exclusive)
+// Name normalization: none (assembler label AS_INPUT_FLAG_ZERO kept verbatim).
+void AS_INPUT_FLAG_ZERO(std::uint16_t input_ptr);
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: PROCESS_INPUT_LIST (inclusive) .. NEXT (exclusive)
-// Name normalization: none (assembler label PROCESS_INPUT_LIST kept verbatim).
-void PROCESS_INPUT_LIST(std::uint16_t input_ptr, std::uint8_t input_flag);
+// AS_Labels: AS_PROCESS_INPUT_LIST (inclusive) .. AS_NEXT (exclusive)
+// Name normalization: none (assembler label AS_PROCESS_INPUT_LIST kept verbatim).
+void AS_PROCESS_INPUT_LIST(std::uint16_t input_ptr, std::uint8_t input_flag);
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: INPUTERR (inclusive) .. READERR (exclusive)
-// Name normalization: none (assembler label INPUTERR kept verbatim).
-void INPUTERR();
+// AS_Labels: AS_INPUTERR (inclusive) .. AS_READERR (exclusive)
+// Name normalization: none (assembler label AS_INPUTERR kept verbatim).
+void AS_INPUTERR();
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: READERR (inclusive) .. ERLIN (exclusive)
-// Name normalization: none (assembler label READERR kept verbatim).
-void READERR();
+// AS_Labels: AS_READERR (inclusive) .. AS_ERLIN (exclusive)
+// Name normalization: none (assembler label AS_READERR kept verbatim).
+void AS_READERR();
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: ERLIN (inclusive) .. INPERR (exclusive)
-// Name normalization: none (assembler label ERLIN kept verbatim).
-void ERLIN(std::uint16_t lineNumber);
+// AS_Labels: AS_ERLIN (inclusive) .. AS_INPERR (exclusive)
+// Name normalization: none (assembler label AS_ERLIN kept verbatim).
+void AS_ERLIN(std::uint16_t lineNumber);
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: INPERR (inclusive) .. RESPERR (exclusive)
-// Name normalization: none (assembler label INPERR kept verbatim).
-void INPERR();
+// AS_Labels: AS_INPERR (inclusive) .. AS_RESPERR (exclusive)
+// Name normalization: none (assembler label AS_INPERR kept verbatim).
+void AS_INPERR();
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: RESPERR (inclusive) .. GET (exclusive)
-// Name normalization: none (assembler label RESPERR kept verbatim).
-void RESPERR();
+// AS_Labels: AS_RESPERR (inclusive) .. AS_GET (exclusive)
+// Name normalization: none (assembler label AS_RESPERR kept verbatim).
+void AS_RESPERR();
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// Labels: GET (inclusive) .. INPUT (exclusive)
-// Name normalization: none (assembler label GET kept verbatim).
-void GET();
+// AS_Labels: AS_GET (inclusive) .. AS_INPUT (exclusive)
+// Name normalization: none (assembler label AS_GET kept verbatim).
+void AS_GET();
 
 } // namespace applesoft::asm_port

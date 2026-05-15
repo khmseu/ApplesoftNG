@@ -1,5 +1,5 @@
-#ifndef INTERPRETER_HPP
-#define INTERPRETER_HPP
+#ifndef AS_INTERPRETER_HPP
+#define AS_INTERPRETER_HPP
 
 class Memory;
 
@@ -17,4 +17,4 @@ private:
     Memory* memory;
 };
 
-#endif // INTERPRETER_HPP
+#endif // AS_INTERPRETER_HPP

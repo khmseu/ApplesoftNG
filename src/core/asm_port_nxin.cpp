@@ -5,12 +5,12 @@
 
 namespace applesoft::asm_port {
 
-void NXIN() {
-    // PRINT "?"
-    OUTQUES();
+void AS_NXIN() {
+    // AS_PRINT "?"
+    AS_OUTQUES();
 
-    // Original code tail-jumps to INLIN.
-    (void)INLIN();
+    // Original code tail-jumps to AS_INLIN.
+    (void)AS_INLIN();
 }
 
 } // namespace applesoft::asm_port

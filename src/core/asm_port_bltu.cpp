@@ -4,7 +4,7 @@
 namespace applesoft::asm_port {
 namespace {
 
-void copy_page_backward(BLTU2State& state) {
+void copy_page_backward(AS_BLTU2State& state) {
     const std::uint16_t source = state.sourcePointer();
     const std::uint16_t destination = state.destinationPointer();
 
@@ -18,25 +18,25 @@ void copy_page_backward(BLTU2State& state) {
 
 } // namespace
 
-BLTUResult BLTU(BLTUState& state) {
-    // BLTU starts by validating/grooming destination via REASON.
+AS_BLTUResult AS_BLTU(AS_BLTUState& state) {
+    // AS_BLTU starts by validating/grooming destination via AS_REASON.
     state.reason.a = state.a;
     state.reason.y = state.y;
-    const REASONResult reasonResult = REASON(state.reason);
+    const AS_REASONResult reasonResult = AS_REASON(state.reason);
     state.a = reasonResult.a;
     state.y = reasonResult.y;
 
-    // New top of array storage (STREND) is loaded from adjusted A/Y.
+    // New top of array storage (AS_STREND) is loaded from adjusted A/Y.
     state.setStrend(ApplesoftVariables::makeWord(state.a, state.y));
 
-    // Execution falls through to BLTU2 in the original ROM.
-    return BLTUResult{state.a, state.y};
+    // Execution falls through to AS_BLTU2 in the original ROM.
+    return AS_BLTUResult{state.a, state.y};
 }
 
-BLTU2Result BLTU2(BLTU2State& state) {
+AS_BLTU2Result AS_BLTU2(AS_BLTU2State& state) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: BLTU2 (inclusive) .. CHKMEM (exclusive)
-    // Name normalization: none (assembler label BLTU2 kept verbatim).
+    // AS_Labels: AS_BLTU2 (inclusive) .. AS_CHKMEM (exclusive)
+    // Name normalization: none (assembler label AS_BLTU2 kept verbatim).
 
     if (state.y != 0) {
         state.setSourcePointer(static_cast<std::uint16_t>(state.sourcePointer() - state.y));
@@ -57,7 +57,7 @@ BLTU2Result BLTU2(BLTU2State& state) {
         copy_page_backward(state);
     } while (true);
 
-    return BLTU2Result{state.x, state.y};
+    return AS_BLTU2Result{state.x, state.y};
 }
 
 } // namespace applesoft::asm_port

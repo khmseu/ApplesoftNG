@@ -6,37 +6,37 @@
 namespace applesoft::asm_port {
 
 /**
- * @brief "CLEAR" statement logic ($066A).
- * Resets string area, variable area, array area, DATA pointer, and stack.
+ * @brief "AS_CLEAR" statement logic ($066A).
+ * Resets string area, variable area, array area, AS_DATA pointer, and stack.
  */
-void CLEAR();
+void AS_CLEAR();
 
 /**
  * @brief Internal clearance routine ($066C).
- * Like CLEAR but doesn't check for end-of-statement.
+ * AS_Like AS_CLEAR but doesn't check for end-of-statement.
  */
-void CLEARC();
+void AS_CLEARC();
 
 /**
  * @brief Initialize stack and temp pointers ($0683).
  */
-void STKINI();
+void AS_STKINI();
 
 /**
- * @brief Set TXTPTR to beginning of program (TXTTAB - 1) ($0697).
+ * @brief Set AS_TXTPTR to beginning of program (AS_TXTTAB - 1) ($0697).
  */
-void STXTPT();
+void AS_STXTPT();
 
 /**
- * @brief "RESTORE" statement logic ($0849).
- * Sets DATPTR to TXTTAB - 1.
+ * @brief "AS_RESTORE" statement logic ($0849).
+ * Sets AS_DATPTR to AS_TXTTAB - 1.
  */
-void RESTORE();
+void AS_RESTORE();
 
 /**
- * @brief Helper to set DATPTR ($0853).
+ * @brief Helper to set AS_DATPTR ($0853).
  */
-void SETDA(std::uint16_t addr);
+void AS_SETDA(std::uint16_t addr);
 
 } // namespace applesoft::asm_port
 
