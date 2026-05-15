@@ -1018,19 +1018,30 @@ void MON_RESTORE() {
     // Name normalization: none (assembler label RESTORE is prefixed with MON_ in C++).
     //
     // Restore 6502 register state from zero-page storage (used by debug software).
-    // Restores A, X, Y, status register (P) from fixed locations.
+    // Restores accumulator, X, Y registers and processor status flags from fixed locations.
+    // Original sequence: Load A from $48 (status), push; Load A from $45; Load X from $46;
+    // Load Y from $47; Restore processor flags via PLP; RTS.
 
-    // TODO(asm-port): Implement processor state restoration for debug/trace features.
+    constexpr std::uint8_t kMON_STATUS = ApplesoftVariables::ZP_MON_STATUS;
     constexpr std::uint8_t kMON_DEBUG_REG_A = ApplesoftVariables::ZP_MON_DEBUG_REG_A;
     constexpr std::uint8_t kMON_DEBUG_REG_X = ApplesoftVariables::ZP_MON_DEBUG_REG_X;
     constexpr std::uint8_t kMON_DEBUG_REG_Y = ApplesoftVariables::ZP_MON_DEBUG_REG_Y;
-    constexpr std::uint8_t kMON_STATUS = ApplesoftVariables::ZP_MON_STATUS;
 
-    // Suppress unused warnings for now.
-    (void)kMON_DEBUG_REG_A;
-    (void)kMON_DEBUG_REG_X;
-    (void)kMON_DEBUG_REG_Y;
-    (void)kMON_STATUS;
+    // Read saved processor status (this will be re-pushed via PLP emulation).
+    const std::uint8_t saved_status = ReadZeroPageByte(kMON_STATUS);
+
+    // Read saved register values from zero-page storage.
+    const std::uint8_t saved_reg_a = ReadZeroPageByte(kMON_DEBUG_REG_A);
+    const std::uint8_t saved_reg_x = ReadZeroPageByte(kMON_DEBUG_REG_X);
+    const std::uint8_t saved_reg_y = ReadZeroPageByte(kMON_DEBUG_REG_Y);
+
+    // In 6502 emulation, these values would restore the virtual CPU state.
+    // TODO(asm-port): Restore processor flags (status register) to emulated CPU state.
+    // TODO(asm-port): Wire accumulator restoration into instruction execution pipeline.
+    (void)saved_status;
+    (void)saved_reg_a;
+    (void)saved_reg_x;
+    (void)saved_reg_y;
 }
 
 void MON_PRERR() {

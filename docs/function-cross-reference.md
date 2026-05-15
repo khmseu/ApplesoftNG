@@ -446,7 +446,7 @@
 | MON_PLOT                            | real   | 18   | 5       | src/core/asm_port_graphics.cpp            | 159  |
 | MON_PRBYTE                          | real   | 9    | 2       | src/core/asm_port_core.cpp                | 246  |
 | MON_PREAD                           | real   | 15   | 3       | src/core/asm_port_core.cpp                | 1966 |
-| MON_PRERR                           | stub   | 0    | 1       | src/core/asm_port_statements.cpp          | 1036 |
+| MON_PRERR                           | stub   | 0    | 1       | src/core/asm_port_statements.cpp          | 1047 |
 | MON_RD2BIT                          | stub   | 0    | 3       | src/core/asm_port_statements.cpp          | 993  |
 | MON_RDBIT                           | stub   | 0    | 2       | src/core/asm_port_statements.cpp          | 1002 |
 | MON_RDBYTE                          | stub   | 1    | 1       | src/core/asm_port_statements.cpp          | 1006 |
@@ -454,7 +454,7 @@
 | MON_READ                            | stub   | 16   | 4       | src/core/asm_port_statements.cpp          | 904  |
 | MON_REGDSP                          | real   | 21   | 2       | src/core/asm_port_core.cpp                | 398  |
 | MON_RESET2                          | real   | 66   | 3       | src/core/asm_port_core.cpp                | 298  |
-| MON_RESTORE                         | stub   | 8    | 2       | src/core/asm_port_statements.cpp          | 1015 |
+| MON_RESTORE                         | stub   | 12   | 2       | src/core/asm_port_statements.cpp          | 1015 |
 | MON_SCRN                            | real   | 16   | 3       | src/core/asm_port_core.cpp                | 1883 |
 | MON_SETCOL                          | real   | 4    | 3       | src/core/asm_port_graphics.cpp            | 57   |
 | MON_SETGR                           | real   | 11   | 3       | src/core/asm_port_graphics.cpp            | 317  |
@@ -481,7 +481,7 @@
 | readLine                            | real   | 3    | 1       | src/platform/console.cpp                  | 8    |
 | ReadProgramByte                     | real   | 1    | 22      | src/core/asm_port_core.cpp                | 111  |
 | readStackWordAt                     | real   | 1    | 2       | src/core/asm_port_control_flow.cpp        | 298  |
-| ReadZeroPageByte                    | real   | 1    | 254     | src/core/asm_port_core.cpp                | 95   |
+| ReadZeroPageByte                    | real   | 1    | 258     | src/core/asm_port_core.cpp                | 95   |
 | readZeroPageByte                    | real   | 1    | 13      | src/platform/asm_port_outdo.cpp           | 20   |
 | ReadZeroPageWord                    | real   | 1    | 117     | src/core/asm_port_core.cpp                | 107  |
 | readZeroPageWord                    | real   | 3    | 4       | src/core/asm_port_inlin2.cpp              | 32   |
