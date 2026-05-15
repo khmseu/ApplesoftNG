@@ -32,6 +32,8 @@ Treat only labels declared as assembler labels in the historical listings within
 
    - All symbols defined in monitor source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/monitor`](../../SourceMaterial/Apple-II-Source-slim/src/system/monitor)) carry a virtual `MON_` prefix. A label `xyz` in a monitor listing is always named `MON_xyz` in C++. When the conversion window references `MON_xyz`, look up label `xyz` in the monitor listings and implement or forward to a C++ function named `MON_xyz`.
 
+   - All symbols defined in applesoft source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/applesoft`](../../SourceMaterial/Apple-II-Source-slim/src/system/applesoft)) carry a virtual `AS_` prefix. A label `xyz` in an applesoft listing is always named `AS_xyz` in C++. When the conversion window references `AS_xyz`, look up label `xyz` in the applesoft listings and implement the C++ function as `AS_xyz`.
+
 8. Implement one primary C++ function that preserves the original assembler name as much as possible.
 9. Place the function in the appropriate runtime area:
    - interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
@@ -63,6 +65,7 @@ Treat only labels declared as assembler labels in the historical listings within
 - If a symbol is not a valid C++ identifier, minimally normalize it (for example `.` to `_`) and document original symbol in a comment.
 - Prefer keeping capitalization consistent with source labels.
 - All symbols defined in monitor source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/monitor`](../../SourceMaterial/Apple-II-Source-slim/src/system/monitor)) carry a virtual `MON_` prefix. A label `xyz` in a monitor listing is always named `MON_xyz` in C++. When porting any code that calls `MON_xyz`, look up label `xyz` in the monitor listings and name the C++ function `MON_xyz`.
+- All symbols defined in applesoft source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/applesoft`](../../SourceMaterial/Apple-II-Source-slim/src/system/applesoft)) carry a virtual `AS_` prefix. A label `xyz` in an applesoft listing is always named `AS_xyz` in C++. When porting any code that calls `AS_xyz`, look up label `xyz` in the applesoft listings and name the C++ function `AS_xyz`.
 
 ### Fixed-Address Variables
 
