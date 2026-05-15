@@ -24,6 +24,7 @@ void AS_PTRGET4();
 std::uint8_t AS_COMBYTE();
 void AS_GETADR();
 void AS_IQERR();
+void AS_ROUND_FAC();
 
 void AS_SYNCHR(std::uint8_t expected);
 void AS_CHKCLS();
@@ -109,7 +110,31 @@ void AS_PARCHK() {
 }
 
 void AS_STORE_FACDB_YX_ROUNDED() {
-    // TODO(asm-port): store 5-byte AS_FAC to address in Y,X with rounding.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: AS_STORE_FACDB_YX_ROUNDED (inclusive) .. AS_COPY_ARG_TO_FAC (exclusive)
+    // Name normalization: STORE_FACDB_YX_ROUNDED -> AS_STORE_FACDB_YX_ROUNDED virtual Applesoft prefix only.
+    // Pointer candidate lifted: the ROM passes the destination in Y:X; the current
+    // C++ path materializes that destination in AS_VARPNT before calling this helper.
+    constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
+    constexpr std::uint8_t kAS_FAC_EXTENSION = ApplesoftVariables::ZP_AS_FAC_EXTENSION;
+
+    AS_ROUND_FAC();
+
+    const std::uint16_t destinationAddress = ReadZeroPageWord(kAS_VARPNT);
+    auto destination = variables().pointer(destinationAddress);
+
+    destination.write(ReadZeroPageByte(kAS_FAC), 0u);
+    destination.write(
+        static_cast<std::uint8_t>((ReadZeroPageByte(kAS_FAC_SIGN) | 0x7fu) &
+                                  ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u))),
+        1u);
+    destination.write(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u)), 2u);
+    destination.write(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u)), 3u);
+    destination.write(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u)), 4u);
+
+    WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
 }
 
 void AS_CHKCLS() {

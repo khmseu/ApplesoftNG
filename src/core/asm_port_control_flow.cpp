@@ -623,7 +623,11 @@ void AS_ONERR() {
 }
 
 void AS_RTS_5() {
-    // Shared RTS target for AS_GOTO/AS_POP in ROM.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: AS_RTS_5 (inclusive) .. AS_RETURN (exclusive)
+    // Name normalization: RTS_5 -> AS_RTS_5 virtual Applesoft prefix only.
+    // ROM label RTS_5 is a shared return target for AS_GOTO and AS_POP.
+    return;
 }
 
 void AS_PULL3() {
