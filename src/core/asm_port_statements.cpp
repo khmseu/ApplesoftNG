@@ -22,6 +22,7 @@ void MON_WRITE();
 void MON_READ();
 void MON_INPORT(std::uint8_t slot);
 void MON_OUTPORT(std::uint8_t slot);
+void MON_RD2();
 void MON_RD2BIT();
 void MON_HEADR(std::uint8_t delay_code);
 void MON_RDBIT();
@@ -935,52 +936,17 @@ void MON_WRITE() {
 
 void MON_READ() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
-    // MON_Labels: READ (inclusive) .. RESTORE (exclusive)
+    // MON_Labels: READ (inclusive) .. RD2 (exclusive)
     // Name normalization: none (assembler label READ is prefixed with MON_ in C++).
-    //
-    // Monitor tape read handler: reads cassette data stream into memory.
-    // Synchronizes with tape by finding sync bits, reads bytes into buffer,
-    // verifies checksum, outputs error or bell depending on checksum validation.
-    //
-    // Control flow:
-    //   - Find tape edge and delay 3.5 seconds
-    //   - Search for sync bit ($24 attempts, loop until carry clear)
-    //   - Read data bytes into buffer [A1, A2), accumulate checksum (XOR)
-    //   - Compare final checksum byte: if match -> BELL, else -> PRERR -> BELL
-    //   - Fall through to RESTORE
 
-    // TODO(asm-port): Implement tape I/O primitives (RD2BIT, RDBIT, RDBYTE, NXTA1).
-    // For now, provide stub structure documenting the intended data flow.
-    
-    constexpr std::uint8_t kMON_A1L = ApplesoftVariables::ZP_MON_A1;
-    constexpr std::uint8_t kMON_A1H = static_cast<std::uint8_t>(ApplesoftVariables::ZP_MON_A1 + 1u);
-    constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
-    constexpr std::uint8_t kMON_A2H = static_cast<std::uint8_t>(ApplesoftVariables::ZP_MON_A2 + 1u);
+    // FIND TAPEIN EDGE, DELAY 3.5 SECONDS, INIT CHKSUM=$FF, FIND EDGE AGAIN.
+    MON_RD2BIT();
+    MON_HEADR(0x16u);
+    WriteZeroPageByte(ApplesoftVariables::ZP_MON_CHKSUM, 0xffu);
+    MON_RD2BIT();
 
-    // Suppress unused warnings for now.
-    (void)kMON_A1L;
-    (void)kMON_A1H;
-    (void)kMON_A2L;
-    (void)kMON_A2H;
-
-    // Synchronize with tape and read data.
-    MON_RD2BIT();  // Find tape edge
-    MON_HEADR(0x16u);  // Delay 3.5 seconds
-    MON_RD2BIT();  // Find second tape edge
-
-    // Search for sync bit.
-    for (std::uint8_t attempts = 0x24u; attempts > 0u; --attempts) {
-        MON_RDBIT();  // Read bit (returns with carry = bit value)
-        // If carry clear, sync found; loop continues while carry set.
-        // TODO(asm-port): Condition check requires carry flag access.
-    }
-
-    // Read data bytes and accumulate checksum.
-    // TODO(asm-port): Implement data read loop with checksum accumulation.
-    
-    // Verify checksum and output result.
-    MON_BELL();  // Output bell character
-    MON_RESTORE();  // Fall through to next function (RESTORE).
+    // READ does not terminate; it falls through directly into RD2.
+    MON_RD2();
 }
 
 void AS_CALL() {
@@ -1021,6 +987,10 @@ void AS_PR_NUMBER() {
 }
 
 // Monitor tape I/O and debug helpers (stubs for incremental porting).
+
+void MON_RD2() {
+    // TODO(asm-port): Source label RD2 in cmd.o65.lst (LOOK FOR SYNC BIT loop).
+}
 
 void MON_RD2BIT() {
     // TODO(asm-port): Find tape edge transition (part of cassette I/O synchronization).

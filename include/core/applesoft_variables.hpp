@@ -33,6 +33,7 @@ public:
     static constexpr std::uint8_t ZP_MON_GBASH = 0x27;
     static constexpr std::uint8_t ZP_MON_H2 = 0x2c;
     static constexpr std::uint8_t ZP_MON_V2 = 0x2d;
+    static constexpr std::uint8_t ZP_MON_CHKSUM = 0x2e;
     static constexpr std::uint8_t ZP_MON_HMASK = 0x30;
     static constexpr std::uint8_t ZP_MON_COLOR = 0x30;
     static constexpr std::uint8_t ZP_MON_INVFLG = 0x32;
@@ -212,6 +213,7 @@ std::uint8_t AS_GOWARM = 0;      // $00 opcode byte
     std::uint8_t MON_COLOR = 0;   // $30
         std::uint8_t MON_INVFLG = 0xffu; // $32  $ff=normal, $3f=inverse
     std::uint8_t MON_PROMPT = 0;  // $33
+    std::uint8_t MON_CHKSUM = 0;  // $2e
     std::uint16_t MON_A1 = 0;     // $3c/$3d
     std::uint16_t MON_A2 = 0;     // $3e/$3f
     std::uint16_t AS_LINNUM = 0;     // $50/$51
