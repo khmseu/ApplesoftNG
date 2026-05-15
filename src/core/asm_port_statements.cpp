@@ -22,6 +22,14 @@ void MON_WRITE();
 void MON_READ();
 void MON_INPORT(std::uint8_t slot);
 void MON_OUTPORT(std::uint8_t slot);
+void MON_RD2BIT();
+void MON_HEADR(std::uint8_t delay_code);
+void MON_RDBIT();
+std::uint8_t MON_RDBYTE();
+void MON_NXTA1();
+void MON_BELL();
+void MON_PRERR();
+void MON_RESTORE();
 bool AS_SETPTRS();
 void AS_FIX_LINKS();
 void AS_VARTIO();
@@ -894,7 +902,53 @@ void MON_WRITE() {
 }
 
 void MON_READ() {
-    // TODO(asm-port): port monitor tape read handler used by AS_LOAD.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // MON_Labels: READ (inclusive) .. RESTORE (exclusive)
+    // Name normalization: none (assembler label READ is prefixed with MON_ in C++).
+    //
+    // Monitor tape read handler: reads cassette data stream into memory.
+    // Synchronizes with tape by finding sync bits, reads bytes into buffer,
+    // verifies checksum, outputs error or bell depending on checksum validation.
+    //
+    // Control flow:
+    //   - Find tape edge and delay 3.5 seconds
+    //   - Search for sync bit ($24 attempts, loop until carry clear)
+    //   - Read data bytes into buffer [A1, A2), accumulate checksum (XOR)
+    //   - Compare final checksum byte: if match -> BELL, else -> PRERR -> BELL
+    //   - Fall through to RESTORE
+
+    // TODO(asm-port): Implement tape I/O primitives (RD2BIT, RDBIT, RDBYTE, NXTA1).
+    // For now, provide stub structure documenting the intended data flow.
+    
+    constexpr std::uint8_t kMON_A1L = ApplesoftVariables::ZP_MON_A1;
+    constexpr std::uint8_t kMON_A1H = static_cast<std::uint8_t>(ApplesoftVariables::ZP_MON_A1 + 1u);
+    constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
+    constexpr std::uint8_t kMON_A2H = static_cast<std::uint8_t>(ApplesoftVariables::ZP_MON_A2 + 1u);
+
+    // Suppress unused warnings for now.
+    (void)kMON_A1L;
+    (void)kMON_A1H;
+    (void)kMON_A2L;
+    (void)kMON_A2H;
+
+    // Synchronize with tape and read data.
+    MON_RD2BIT();  // Find tape edge
+    MON_HEADR(0x16u);  // Delay 3.5 seconds
+    MON_RD2BIT();  // Find second tape edge
+
+    // Search for sync bit.
+    for (std::uint8_t attempts = 0x24u; attempts > 0u; --attempts) {
+        MON_RDBIT();  // Read bit (returns with carry = bit value)
+        // If carry clear, sync found; loop continues while carry set.
+        // TODO(asm-port): Condition check requires carry flag access.
+    }
+
+    // Read data bytes and accumulate checksum.
+    // TODO(asm-port): Implement data read loop with checksum accumulation.
+    
+    // Verify checksum and output result.
+    MON_BELL();  // Output bell character
+    MON_RESTORE();  // Fall through to next function (RESTORE).
 }
 
 void AS_CALL() {
@@ -932,6 +986,55 @@ void AS_PR_NUMBER() {
 
     const std::uint8_t slot = AS_GETBYT();
     MON_OUTPORT(slot);
+}
+
+// Monitor tape I/O and debug helpers (stubs for incremental porting).
+
+void MON_RD2BIT() {
+    // TODO(asm-port): Find tape edge transition (part of cassette I/O synchronization).
+}
+
+void MON_HEADR(std::uint8_t delay_code) {
+    // TODO(asm-port): Delay routine (typically 3.5 seconds for tape read sync).
+    (void)delay_code;
+}
+
+void MON_RDBIT() {
+    // TODO(asm-port): Read one bit from cassette tape (returns carry = bit value).
+}
+
+std::uint8_t MON_RDBYTE() {
+    // TODO(asm-port): Read one byte from cassette tape (8 calls to RDBIT, bit rotation).
+    return 0x00u;  // Placeholder return value.
+}
+
+void MON_NXTA1() {
+    // TODO(asm-port): Increment A1 pointer and compare to A2 limit (used in data read loop).
+}
+
+void MON_RESTORE() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // MON_Labels: RESTORE (inclusive) .. SAVE (exclusive)
+    // Name normalization: none (assembler label RESTORE is prefixed with MON_ in C++).
+    //
+    // Restore 6502 register state from zero-page storage (used by debug software).
+    // Restores A, X, Y, status register (P) from fixed locations.
+
+    // TODO(asm-port): Implement processor state restoration for debug/trace features.
+    constexpr std::uint8_t kMON_DEBUG_REG_A = ApplesoftVariables::ZP_MON_DEBUG_REG_A;
+    constexpr std::uint8_t kMON_DEBUG_REG_X = ApplesoftVariables::ZP_MON_DEBUG_REG_X;
+    constexpr std::uint8_t kMON_DEBUG_REG_Y = ApplesoftVariables::ZP_MON_DEBUG_REG_Y;
+    constexpr std::uint8_t kMON_STATUS = ApplesoftVariables::ZP_MON_STATUS;
+
+    // Suppress unused warnings for now.
+    (void)kMON_DEBUG_REG_A;
+    (void)kMON_DEBUG_REG_X;
+    (void)kMON_DEBUG_REG_Y;
+    (void)kMON_STATUS;
+}
+
+void MON_PRERR() {
+    // TODO(asm-port): Output error message "ERR" (tape read checksum failure).
 }
 
 }  // namespace applesoft::asm_port
