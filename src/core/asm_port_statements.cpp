@@ -23,11 +23,12 @@ void MON_READ();
 void MON_INPORT(std::uint8_t slot);
 void MON_OUTPORT(std::uint8_t slot);
 void MON_RD2();
+void MON_RD3();
 void MON_RD2BIT();
 void MON_HEADR(std::uint8_t delay_code);
-void MON_RDBIT();
+bool MON_RDBIT();
 std::uint8_t MON_RDBYTE();
-void MON_NXTA1();
+bool MON_NXTA1();
 void MON_BELL();
 void MON_PRERR();
 void MON_RESTORE();
@@ -989,7 +990,27 @@ void AS_PR_NUMBER() {
 // Monitor tape I/O and debug helpers (stubs for incremental porting).
 
 void MON_RD2() {
-    // TODO(asm-port): Source label RD2 in cmd.o65.lst (LOOK FOR SYNC BIT loop).
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // MON_Labels: RD2 (inclusive) .. RD3 (exclusive)
+    // Name normalization: none (assembler label RD2 is prefixed with MON_ in C++).
+
+    // LOOK FOR SYNC BIT (SHORT 0): loop while carry remains set.
+    std::uint8_t attempts = 0x24u;
+    while (attempts != 0u) {
+        const bool carry_set = MON_RDBIT();
+        if (!carry_set) {
+            break;
+        }
+        --attempts;
+    }
+
+    // SKIP SECOND SYNC H-CYCLE, then prime the next-bit index for RD3.
+    (void)MON_RDBIT();
+    constexpr std::uint8_t kIndexForZeroOneTest = 0x3bu;
+    (void)kIndexForZeroOneTest;
+
+    // RD2 does not terminate; it falls through directly into RD3.
+    MON_RD3();
 }
 
 void MON_RD2BIT() {
@@ -1001,8 +1022,46 @@ void MON_HEADR(std::uint8_t delay_code) {
     (void)delay_code;
 }
 
-void MON_RDBIT() {
+void MON_RD3() {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // MON_Labels: RD3 (inclusive) .. PRERR (exclusive)
+    // Name normalization: none (assembler label RD3 is prefixed with MON_ in C++).
+
+    constexpr std::uint8_t kMON_A1L = ApplesoftVariables::ZP_MON_A1;
+    constexpr std::uint8_t kMON_CHKSUM = ApplesoftVariables::ZP_MON_CHKSUM;
+    constexpr std::uint8_t kReadLoopIndex = 0x3bu;
+    constexpr std::uint8_t kCompensatedIndex = 0x35u;
+
+    std::uint8_t bitTimingIndex = kReadLoopIndex;
+    bool carry_set = false;
+    do {
+        const std::uint8_t value = MON_RDBYTE();
+        const std::uint16_t a1Ptr = ReadZeroPageWord(kMON_A1L);
+        WriteProgramByte(a1Ptr, value);
+
+        const std::uint8_t runningChecksum =
+            static_cast<std::uint8_t>(value ^ ReadZeroPageByte(kMON_CHKSUM));
+        WriteZeroPageByte(kMON_CHKSUM, runningChecksum);
+
+        carry_set = MON_NXTA1();
+        bitTimingIndex = kCompensatedIndex;
+    } while (!carry_set);
+
+    const std::uint8_t checksumByte = MON_RDBYTE();
+    const std::uint8_t runningChecksum = ReadZeroPageByte(kMON_CHKSUM);
+    if (checksumByte == runningChecksum) {
+        MON_BELL();
+        return;
+    }
+
+    // No terminating jump: ROM falls through directly into PRERR.
+    (void)bitTimingIndex;
+    MON_PRERR();
+}
+
+bool MON_RDBIT() {
     // TODO(asm-port): Read one bit from cassette tape (returns carry = bit value).
+    return false;
 }
 
 std::uint8_t MON_RDBYTE() {
@@ -1010,8 +1069,9 @@ std::uint8_t MON_RDBYTE() {
     return 0x00u;  // Placeholder return value.
 }
 
-void MON_NXTA1() {
+bool MON_NXTA1() {
     // TODO(asm-port): Increment A1 pointer and compare to A2 limit (used in data read loop).
+    return true;
 }
 
 void MON_RESTORE() {
