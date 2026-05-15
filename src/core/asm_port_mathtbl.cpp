@@ -27,7 +27,6 @@ void AS_ANDOP();
 namespace {
 // static void AS_FADDT()  {} // Removed to avoid conflict with asm_port_math.cpp
 } // namespace
-static void AS_FSUBT()  {} // TODO(asm-port): AS_FSUBT  $C9...201...-
 static void AS_FMULTT() {} // TODO(asm-port): AS_FMULTT $CA...202...*
 static void AS_FDIVT()  {} // TODO(asm-port): AS_FDIVT  $CB...203.../
 static void AS_FPWRT()  {} // TODO(asm-port): AS_FPWRT  $CC...204...^

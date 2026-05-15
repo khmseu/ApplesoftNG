@@ -19,6 +19,7 @@ void AS_FLOAT();
 void AS_FLOAT_1(std::uint8_t exponent);
 void AS_FLOAT_2(std::uint8_t exponent, bool positive);
 void AS_FADDT();
+void AS_FSUBT();
 void AS_FADD();
 void AS_FSUB();
 void AS_FIN();
