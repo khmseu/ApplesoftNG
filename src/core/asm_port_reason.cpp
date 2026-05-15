@@ -1,6 +1,6 @@
 #include "core/asm_port_reason.hpp"
 
-#include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_error_handling.hpp"
 
 namespace applesoft::asm_port {
 namespace {
@@ -13,12 +13,6 @@ bool has_room(const REASONState& state) {
 // TODO(asm-port): port GARBAG label.
 void GARBAG(REASONState& state) {
     state.garbageCollected = true;
-}
-
-// TODO(asm-port): port MEMERR label.
-void MEMERR(REASONState& state) {
-    state.x = ERR_MEMFULL;
-    state.memerrCalled = true;
 }
 
 } // namespace
@@ -46,7 +40,8 @@ REASONResult REASON(REASONState& state) {
         return REASONResult{true, state.a, state.y, state.x};
     }
 
-    MEMERR(state);
+    state.x = ::applesoft::asm_port::MEMERR();
+    state.memerrCalled = true;
     return REASONResult{false, state.a, state.y, state.x};
 }
 

@@ -1,18 +1,8 @@
 #include "core/asm_port_chkmem.hpp"
 
-#include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_error_handling.hpp"
 
 namespace applesoft::asm_port {
-namespace {
-
-// TODO(asm-port): port MEMERR label.
-void MEMERR(CHKMEMState& state) {
-    state.x = ERR_MEMFULL;
-    state.memerrCalled = true;
-}
-
-} // namespace
-
 CHKMEMResult CHKMEM(CHKMEMState& state) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: CHKMEM (inclusive) .. REASON (exclusive)
@@ -20,7 +10,8 @@ CHKMEMResult CHKMEM(CHKMEMState& state) {
 
     const std::uint16_t required = static_cast<std::uint16_t>(state.a) * 2u + 54u;
     if (required > 0xffu) {
-        MEMERR(state);
+        state.x = ::applesoft::asm_port::MEMERR();
+        state.memerrCalled = true;
         return CHKMEMResult{false, static_cast<std::uint8_t>(required), state.x};
     }
 
@@ -29,7 +20,8 @@ CHKMEMResult CHKMEM(CHKMEMState& state) {
     state.x = state.stackPointer;
 
     if (state.x < state.index) {
-        MEMERR(state);
+        state.x = ::applesoft::asm_port::MEMERR();
+        state.memerrCalled = true;
         return CHKMEMResult{false, state.a, state.x};
     }
 

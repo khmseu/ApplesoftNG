@@ -40,7 +40,7 @@
 | CHECK_VARIABLE                    | real   | 22   | 6       | src/core/asm_port_strlt2.cpp              | 349  |
 | CHKCLS                            | real   | 1    | 8       | src/core/asm_port_parser.cpp              | 115  |
 | CHKCOM                            | real   | 1    | 9       | src/core/asm_port_parser.cpp              | 77   |
-| CHKMEM                            | real   | 13   | 6       | src/core/asm_port_chkmem.cpp              | 16   |
+| CHKMEM                            | real   | 15   | 6       | src/core/asm_port_chkmem.cpp              | 6    |
 | CHKNUM                            | real   | 5    | 13      | src/core/asm_port_parser.cpp              | 53   |
 | CHKOPN                            | real   | 1    | 6       | src/core/asm_port_parser.cpp              | 120  |
 | CHKSTR                            | real   | 5    | 8       | src/core/asm_port_parser.cpp              | 65   |
@@ -249,9 +249,7 @@
 | MAKINT                            | real   | 3    | 3       | src/core/asm_port_parser.cpp              | 346  |
 | MarkDirectMode                    | real   | 1    | 2       | src/core/asm_port_core.cpp                | 91   |
 | MATHTBL                           | real   | 13   | 4       | src/core/asm_port_mathtbl.cpp             | 82   |
-| MEMERR                            | stub   | 2    | 13      | src/core/asm_port_chkmem.cpp              | 9    |
-| MEMERR                            | real   | 2    | 13      | src/core/asm_port_error_handling.cpp      | 42   |
-| MEMERR                            | stub   | 2    | 13      | src/core/asm_port_reason.cpp              | 19   |
+| MEMERR                            | real   | 2    | 11      | src/core/asm_port_error_handling.cpp      | 42   |
 | MI1                               | real   | 1    | 6       | src/core/asm_port_parser.cpp              | 356  |
 | MI2                               | real   | 1    | 6       | src/core/asm_port_parser.cpp              | 364  |
 | MIDSTR                            | real   | 17   | 3       | src/core/asm_port_strlt2.cpp              | 739  |
@@ -414,7 +412,7 @@
 | read_TEMPPT                       | real   | 1    | 2       | src/core/asm_port_strlt2.cpp              | 51   |
 | read_TXTPTR                       | real   | 1    | 1       | src/core/asm_port_strtxt.cpp              | 11   |
 | read_VARTAB                       | real   | 1    | 1       | src/core/asm_port_strlt2.cpp              | 91   |
-| REASON                            | real   | 15   | 6       | src/core/asm_port_reason.cpp              | 26   |
+| REASON                            | real   | 16   | 6       | src/core/asm_port_reason.cpp              | 20   |
 | RECALL                            | stub   | 0    | 0       | src/core/asm_port_token_address_table.cpp | 124  |
 | RELOPS                            | real   | 10   | 4       | src/core/asm_port_core.cpp                | 1246 |
 | REM                               | real   | 2    | 6       | src/core/asm_port_control_flow.cpp        | 920  |
