@@ -698,7 +698,66 @@ void AS_HPLOT() {
 namespace {
 
 void AS_DRWPNT() {
-    // TODO(asm-port): port AS_DRWPNT label range from Applesoft ROM.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: DRWPNT (inclusive) .. DRAW (exclusive)
+    // Name normalization: none (assembler label DRWPNT is prefixed with AS_ in C++).
+    //
+    // Set up shape pointer for DRAW or XDRAW statement.
+    // Looks up shape table to find requested shape data location.
+    // If "AT" phrase present, gets XY coordinates and sets cursor position.
+    // Returns with HGR_SHAPE pointing to shape data, HGR_ROTATION containing rotation value.
+
+    constexpr std::uint8_t kAS_HGR_SHAPE_PNTR = ApplesoftVariables::ZP_AS_HGR_SHAPE_PNTR;
+    constexpr std::uint8_t kAS_HGR_SHAPE = ApplesoftVariables::ZP_AS_HGR_SHAPE;
+    constexpr std::uint8_t kAS_HGR_ROTATION = ApplesoftVariables::ZP_AS_HGR_ROTATION;
+    constexpr std::uint8_t kAT_TOKEN = 0xc5u;  // TOKENDB for "AT"
+
+    // Get shape number in X register.
+    const std::uint8_t shape_num = AS_GETBYT();
+
+    // Copy shape table pointer from HGR_SHAPE_PNTR to working HGR_SHAPE (16-bit copy).
+    const std::uint8_t shape_tbl_lo = ReadZeroPageByte(kAS_HGR_SHAPE_PNTR);
+    const std::uint8_t shape_tbl_hi = ReadZeroPageByte(kAS_HGR_SHAPE_PNTR + 1u);
+    WriteZeroPageByte(kAS_HGR_SHAPE, shape_tbl_lo);
+    WriteZeroPageByte(kAS_HGR_SHAPE + 1u, shape_tbl_hi);
+
+    const std::uint16_t shape_tbl_ptr = (static_cast<std::uint16_t>(shape_tbl_hi) << 8u) | shape_tbl_lo;
+
+    // Compare requested shape number with count of shapes in table (first byte).
+    const std::uint8_t num_shapes = ReadZeroPageByte(static_cast<std::uint8_t>(shape_tbl_ptr & 0xFFu));
+    if (shape_num > num_shapes) {
+        // Shape number too large; signal error.
+        AS_IQERR();
+        return;  // AS_IQERR does not return, but provide explicit return for safety.
+    }
+
+    // Compute shape offset: double shape number to create 2-byte table index.
+    const std::uint16_t shape_index = static_cast<std::uint16_t>(shape_num) * 2u;
+
+    // Look up shape offset in table using the doubled index.
+    // Shape offset table starts after the count byte.
+    const std::uint16_t table_entry_addr = shape_tbl_ptr + 1u + shape_index;
+
+    // Read 2-byte offset from table.
+    // Low byte: (HGR_SHAPE),Y where Y = shape_index
+    // High byte: next byte
+    const std::uint8_t offset_lo = ReadZeroPageByte(static_cast<std::uint8_t>(table_entry_addr & 0xFFu));
+    const std::uint8_t offset_hi = ReadZeroPageByte(static_cast<std::uint8_t>((table_entry_addr + 1u) & 0xFFu));
+    const std::uint16_t shape_offset = (static_cast<std::uint16_t>(offset_hi) << 8u) | offset_lo;
+
+    // Add offset to shape table pointer to get actual shape data address (16-bit write).
+    const std::uint16_t shape_data_addr = shape_tbl_ptr + shape_offset;
+    WriteZeroPageByte(kAS_HGR_SHAPE, static_cast<std::uint8_t>(shape_data_addr & 0xFFu));
+    WriteZeroPageByte(kAS_HGR_SHAPE + 1u, static_cast<std::uint8_t>((shape_data_addr >> 8u) & 0xFFu));
+
+    // Check for optional "AT" phrase.
+    const std::uint8_t ch = AS_CHRGOT();
+    if (ch == kAT_TOKEN) {
+        // "AT" phrase found; scan over it, get coordinates, and position cursor.
+        AS_SYNCHR(kAT_TOKEN);              // Scan over "AT"
+        const auto point = AS_HFNS();      // Get X- and Y-coordinates to start drawing at
+        AS_HPOSN(point);                   // Set up cursor position
+    }
 }
 
 void AS_DRAW1() {
