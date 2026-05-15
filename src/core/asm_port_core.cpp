@@ -580,15 +580,76 @@ void AS_GSE() {
 
 void AS_FAE_1() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // AS_Labels: AS_FAE_1 (inclusive) .. AS_GSE (exclusive)
+    // AS_Labels: AS_FAE_1 (inclusive) .. AS_MULTIPLY_SUBSCRIPT (exclusive)
     // Name normalization: none (assembler label AS_FAE_1 kept verbatim).
 
-    if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_NUMDIM) == 0u) {
-        return;
+    constexpr std::uint8_t kAS_NUMDIM = ApplesoftVariables::ZP_AS_NUMDIM;
+    constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
+    constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
+    constexpr std::uint8_t kAS_STRNG2 = ApplesoftVariables::ZP_AS_STRNG2;
+    constexpr std::uint8_t kAS_RESULT = ApplesoftVariables::ZP_AS_RESULT;
+    constexpr std::uint8_t kAS_VARNAM = ApplesoftVariables::ZP_AS_VARNAM;
+    constexpr std::uint8_t kAS_ARYPNT = ApplesoftVariables::ZP_AS_ARYPNT;
+    constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
+
+    ProgramPointer descriptor{ReadZeroPageWord(kAS_LOWTR)};
+    std::uint8_t descriptorY = 4u; // FIND_ARRAY_ELEMENT leaves descriptor[4] (#dims) as the current slot.
+    std::uint8_t remainingDims = ReadZeroPageByte(kAS_NUMDIM);
+
+    while (remainingDims != 0u) {
+        ++descriptorY; // Advance to current dimension high byte.
+
+        // Subscripts are stacked as integer low/high pairs.
+        const std::uint8_t subscriptLow = theStack().popByte();
+        const std::uint8_t subscriptHigh = theStack().popByte();
+
+        WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u), subscriptLow);
+        WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u), subscriptHigh);
+
+        // Bounds check: subscript must be strictly less than descriptor extent.
+        const std::uint8_t dimHigh = descriptor.read(descriptorY);
+        if (subscriptHigh > dimHigh) {
+            AS_GSE();
+            return;
+        }
+
+        if (subscriptHigh == dimHigh) {
+            ++descriptorY; // Compare low bytes only when high bytes are equal.
+            const std::uint8_t dimLow = descriptor.read(descriptorY);
+            if (subscriptLow >= dimLow) {
+                AS_GSE();
+                return;
+            }
+        } else {
+            ++descriptorY; // Match FAE_2 path: step to the dimension low-byte slot.
+        }
+
+        std::uint16_t runningOffset = ReadZeroPageWord(kAS_STRNG2);
+        if (runningOffset != 0u) {
+            runningOffset = AS_MULTIPLY_SUBSCRIPT(descriptorY);
+        }
+
+        runningOffset = static_cast<std::uint16_t>(runningOffset +
+                                                   ApplesoftVariables::makeWord(subscriptLow, subscriptHigh));
+        WriteZeroPageWord(kAS_STRNG2, runningOffset);
+
+        --remainingDims;
+        WriteZeroPageByte(kAS_NUMDIM, remainingDims);
     }
 
-    // TODO(asm-port): complete per-dimension bounds and offset accumulation.
-    AS_GSE();
+    std::uint8_t elementSize = 5u;
+    if ((ReadZeroPageByte(kAS_VARNAM) & 0x80u) != 0u) {
+        --elementSize;
+    }
+    if ((ReadZeroPageByte(static_cast<std::uint8_t>(kAS_VARNAM + 1u)) & 0x80u) != 0u) {
+        elementSize = static_cast<std::uint8_t>(elementSize - 2u);
+    }
+
+    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_RESULT + 2u), elementSize);
+    const std::uint16_t elementOffset = AS_MULTIPLY_SUBS_1(0u);
+    const std::uint16_t varpnt = static_cast<std::uint16_t>(
+        ReadZeroPageWord(kAS_ARYPNT) + elementOffset);
+    WriteZeroPageWord(kAS_VARPNT, varpnt);
 }
 
 void AS_GETARY() {
