@@ -1,6 +1,7 @@
 #include "platform/asm_port_outdo.hpp"
 
 #include "core/applesoft_variables.hpp"
+#include "core/io_ports.hpp"
 
 #include <cstdint>
 
@@ -13,6 +14,8 @@ namespace {
 using MonitorOutputRoutine = void (*)(std::uint8_t);
 
 constexpr std::uint16_t kMonitorCout1Vector = 0xfd62u;
+
+void MON_VIDOUT(std::uint8_t a);
 
 std::uint8_t readZeroPageByte(std::uint8_t address) {
     return variables_const().readByte(address);
@@ -93,6 +96,45 @@ void advanceCursorToNextLine(bool resetColumn) {
     setCursorRow(row);
 }
 
+void consumeKeyboardLatch(std::uint8_t keycode) {
+    (void)ioPorts_const().readByte(IOPorts::ADDR_KEYBOARD_STROBE);
+    ioPorts().writeByte(IOPorts::ADDR_KEYBOARD, static_cast<std::uint8_t>(keycode & 0x7fu));
+}
+
+void MON_LFB78(std::uint8_t a) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/math.o65.lst
+    // Labels: LFB78 (inclusive) .. LFB94 (exclusive)
+    // Name normalization: LFB78 -> MON_LFB78 (monitor label gets MON_ prefix).
+    //
+    // On carriage return, Ctrl-S pauses monitor output until another key is
+    // pressed. A resumed Ctrl-C is left latched so the interpreter can still
+    // observe it; all other resume keys are consumed before falling through to
+    // VIDOUT.
+
+    constexpr std::uint8_t kCarriageReturn = 0x8du;
+    constexpr std::uint8_t kCtrlS = 0x93u;
+    constexpr std::uint8_t kCtrlC = 0x83u;
+
+    if (a == kCarriageReturn) {
+        std::uint8_t keycode = ioPorts_const().readByte(IOPorts::ADDR_KEYBOARD);
+        if ((keycode & 0x80u) != 0u && keycode == kCtrlS) {
+            consumeKeyboardLatch(keycode);
+
+            do {
+                keycode = ioPorts_const().readByte(IOPorts::ADDR_KEYBOARD);
+            } while ((keycode & 0x80u) == 0u);
+
+            if (keycode != kCtrlC) {
+                // LFB88 consumes the resume key unless it is Ctrl-C.
+                consumeKeyboardLatch(keycode);
+            }
+        }
+    }
+
+    // LFB94 tail-jumps to VIDOUT.
+    MON_VIDOUT(a);
+}
+
 // MON_VIDOUT -- the ROM's VIDOUT ($fb3c in display2.o65): the character
 // renderer that updates monitor screen state. Called from MON_COUT1 via LFB78.
 void MON_VIDOUT(std::uint8_t a) {
@@ -149,7 +191,7 @@ void MON_COUT1(std::uint8_t a) {
         a &= readZeroPageByte(ApplesoftVariables::ZP_MON_INVFLG); // and $32
     }
 
-    MON_VIDOUT(a);
+    MON_LFB78(a);
 }
 
 MonitorOutputRoutine resolveMonitorOutputVector(std::uint16_t vector) {
