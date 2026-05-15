@@ -28,8 +28,53 @@ void PEEK();
 void QINT();
 void ERROR(std::uint8_t error_code_offset);
 
-static void NORMALIZE_FAC_1() {
-    // TODO(asm-port): port NORMALIZE_FAC_1 label.
+static void NORMALIZE_FAC_1(std::uint8_t facSign) {
+    constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
+    constexpr std::uint8_t kFAC_EXTENSION = static_cast<std::uint8_t>(ApplesoftVariables::ZP_STRNG1 + 1u);
+    constexpr std::uint8_t kFAC_SIGN = ApplesoftVariables::ZP_FAC_SIGN;
+
+    std::uint64_t integerValue =
+        (static_cast<std::uint64_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u))) << 24u) |
+        (static_cast<std::uint64_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u))) << 16u) |
+        (static_cast<std::uint64_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u))) << 8u) |
+        static_cast<std::uint64_t>(ReadZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u)));
+
+    if ((facSign & 0x80u) != 0u) {
+        integerValue = (~integerValue + 1u) & 0xffff'ffffu;
+        WriteZeroPageByte(kFAC_SIGN, 0xffu);
+    } else {
+        WriteZeroPageByte(kFAC_SIGN, 0u);
+    }
+
+    if (integerValue == 0u) {
+        WriteZeroPageByte(kFAC, 0u);
+        WriteZeroPageByte(kFAC_EXTENSION, 0u);
+        return;
+    }
+
+    std::uint8_t exponent = ReadZeroPageByte(kFAC);
+    while ((integerValue & 0x8000'0000u) == 0u) {
+        integerValue <<= 1u;
+        if (exponent == 0u) {
+            WriteZeroPageByte(kFAC, 0u);
+            WriteZeroPageByte(kFAC_SIGN, 0u);
+            WriteZeroPageByte(kFAC_EXTENSION, 0u);
+            WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u), 0u);
+            WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u), 0u);
+            WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u), 0u);
+            WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u), 0u);
+            return;
+        }
+
+        --exponent;
+    }
+
+    WriteZeroPageByte(kFAC, exponent);
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 1u), static_cast<std::uint8_t>((integerValue >> 24u) & 0xffu));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 2u), static_cast<std::uint8_t>((integerValue >> 16u) & 0xffu));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 3u), static_cast<std::uint8_t>((integerValue >> 8u) & 0xffu));
+    WriteZeroPageByte(static_cast<std::uint8_t>(kFAC + 4u), static_cast<std::uint8_t>(integerValue & 0xffu));
+    WriteZeroPageByte(kFAC_EXTENSION, 0u);
 }
 
 void PDL() {
@@ -80,18 +125,14 @@ void INT_fn() {
     // Convert FAC to integer form in FAC+1..FAC+4 (QINT contract).
     QINT();
 
-    // ROM clears extension/sign, sets exponent to 32, saves FAC+4 in CHARAC,
-    // then continues at NORMALIZE_FAC_1 with carry encoding the sign.
-    WriteZeroPageByte(kFAC_EXTENSION, 0u);
+    // The ROM uses carry to decide whether the integer needs complementing
+    // before re-normalization. Model that explicitly with the saved FAC sign.
     const std::uint8_t facSign = ReadZeroPageByte(kFAC_SIGN);
-    WriteZeroPageByte(kFAC_SIGN, 0u);
+    WriteZeroPageByte(kFAC_EXTENSION, 0u);
     WriteZeroPageByte(kFAC, 0xa0u);
     WriteZeroPageByte(kCHARAC, ReadZeroPageByte(kFAC_LAST));
 
-    // Carry-sensitive normalization entry is not ported yet.
-    // TODO(asm-port): model carry handoff into NORMALIZE_FAC_1.
-    (void)facSign;
-    NORMALIZE_FAC_1();
+    NORMALIZE_FAC_1(facSign);
 }
 void ABS() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
