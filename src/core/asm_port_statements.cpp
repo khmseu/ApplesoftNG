@@ -197,7 +197,11 @@ void AS_WAIT() {
 }
 
 void AS_RTS_10() {
-    // Shared RTS target for AS_WAIT in ROM.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: AS_RTS_10 (inclusive) .. AS_FADDH (exclusive)
+    // Name normalization: RTS_10 -> AS_RTS_10 virtual Applesoft prefix only.
+    // ROM label RTS_10 is a shared return target for AS_WAIT.
+    return;
 }
 
 struct TokenMatch {
