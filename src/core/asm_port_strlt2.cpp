@@ -389,7 +389,11 @@ void AS_CHECK_BUMP() {
 // AS_Labels: AS_CHECK_EXIT (inclusive) .. AS_MOVE_HIGHEST_STRING_TO_TOP (exclusive)
 // Name normalization: none (assembler label AS_CHECK_EXIT kept verbatim).
 void AS_CHECK_EXIT() {
-    // RTS in ROM; state is already in AS_INDEX and Y=0 equivalent in this model.
+    // ROM epilogue: ldx INDEX+1 ; ldy #0 ; rts.
+    // This port models the return-register outcomes as local values because callers
+    // in the current C++ path consume AS_INDEX directly.
+    [[maybe_unused]] const std::uint8_t xOnReturn = ApplesoftVariables::highByte(read_AS_INDEX());
+    [[maybe_unused]] constexpr std::uint8_t yOnReturn = 0u;
 }
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
