@@ -548,9 +548,9 @@ void AS_PULL3() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // AS_Labels: AS_PULL3 (inclusive) .. AS_IF (exclusive)
     // Name normalization: none (assembler label AS_PULL3 kept verbatim).
-    (void)theStack().popByte();
-    (void)theStack().popByte();
-    (void)theStack().popByte();
+    [[maybe_unused]] const std::uint8_t pulled1 = theStack().popByte();
+    [[maybe_unused]] const std::uint8_t pulled2 = theStack().popByte();
+    [[maybe_unused]] const std::uint8_t pulled3 = theStack().popByte();
 }
 
 std::uint8_t AS_REMN() {

@@ -292,7 +292,7 @@
 | AS_PTRGET2                          | real   | 1    | 3       | src/core/asm_port_core.cpp                | 974  |
 | AS_PTRGET3                          | real   | 7    | 6       | src/core/asm_port_core.cpp                | 958  |
 | AS_PTRGET4                          | real   | 36   | 4       | src/core/asm_port_core.cpp                | 1034 |
-| AS_PULL3                            | stub   | 3    | 5       | src/core/asm_port_control_flow.cpp        | 547  |
+| AS_PULL3                            | real   | 3    | 5       | src/core/asm_port_control_flow.cpp        | 547  |
 | AS_PUTEMP                           | real   | 8    | 4       | src/core/asm_port_strlt2.cpp              | 537  |
 | AS_PUTNEW                           | real   | 8    | 7       | src/core/asm_port_strlt2.cpp              | 514  |
 | AS_PUTSTR                           | real   | 44   | 5       | src/core/asm_port_statements.cpp          | 362  |
