@@ -705,6 +705,10 @@ void AS_DRAW1() {
     // TODO(asm-port): port AS_DRAW1 label range from Applesoft ROM.
 }
 
+void AS_XDRAW1() {
+    // TODO(asm-port): port AS_XDRAW1 label range from Applesoft ROM.
+}
+
 } // namespace
 
 void AS_DRAW() {
@@ -718,8 +722,13 @@ void AS_DRAW() {
 }
 
 void AS_XDRAW() {
-    // TODO(asm-port): port AS_XDRAW label range from Applesoft ROM.
-    // Draws a hi-res shape with XOR mode.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: AS_XDRAW (inclusive) .. AS_SHLOAD (exclusive)
+    // Name normalization: XDRAW -> AS_XDRAW (applesoft virtual prefix).
+    // XDRAW statement: parse/prepare shape draw point, then dispatch to XDRAW1.
+
+    AS_DRWPNT();
+    AS_XDRAW1();
 }
 
 void AS_COLOR() {
