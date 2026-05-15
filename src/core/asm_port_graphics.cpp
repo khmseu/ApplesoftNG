@@ -600,6 +600,20 @@ void AS_HGLIN(const HiResCoordinates& start, const HiResCoordinates& target) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // AS_Labels: HGLIN (inclusive) .. COSINE_TABLE (exclusive)
     // Draws a line from current point to target point.
+    // Mirrors key ROM line-state bookkeeping in HGR_DX/HGR_DY/HGR_E/HGR_QUADRANT/HGR_COUNT.
+
+    constexpr std::uint8_t kAS_HGR_DX = ApplesoftVariables::ZP_AS_HGR_DX;
+    constexpr std::uint8_t kAS_HGR_DY = ApplesoftVariables::ZP_AS_HGR_DY;
+    constexpr std::uint8_t kAS_HGR_QUADRANT = ApplesoftVariables::ZP_AS_HGR_QUADRANT;
+    constexpr std::uint8_t kAS_HGR_E = ApplesoftVariables::ZP_AS_HGR_E;
+    constexpr std::uint8_t kAS_HGR_COUNT = ApplesoftVariables::ZP_AS_HGR_COUNT;
+    constexpr std::uint8_t kAS_HGR_X = ApplesoftVariables::ZP_AS_HGR_X;
+    constexpr std::uint8_t kAS_HGR_Y = ApplesoftVariables::ZP_AS_HGR_Y;
+
+    auto writeWord = [](std::uint8_t base, std::uint16_t value) {
+        WriteZeroPageByte(base, ApplesoftVariables::lowByte(value));
+        WriteZeroPageByte(static_cast<std::uint8_t>(base + 1u), ApplesoftVariables::highByte(value));
+    };
 
     auto absInt = [](int v) -> int { return v < 0 ? -v : v; };
 
@@ -614,6 +628,20 @@ void AS_HGLIN(const HiResCoordinates& start, const HiResCoordinates& target) {
     const int sy = (y0 < y1) ? 1 : -1;
     int err = dx + dy;
 
+    // Seed ROM-style line state.
+    writeWord(kAS_HGR_DX, static_cast<std::uint16_t>(dx));
+    WriteZeroPageByte(kAS_HGR_DY, static_cast<std::uint8_t>(0u - static_cast<std::uint8_t>(absInt(y1 - y0)) - 1u));
+    writeWord(kAS_HGR_E, static_cast<std::uint16_t>(dx));
+    WriteZeroPageByte(kAS_HGR_COUNT, static_cast<std::uint8_t>((static_cast<std::uint16_t>(dx + absInt(y1 - y0))) >> 8u));
+
+    // Bit 7 follows horizontal direction (right=1, left=0); bit 0 follows vertical direction (down=1, up=0).
+    const std::uint8_t quadrant = static_cast<std::uint8_t>(((sx > 0) ? 0x80u : 0x00u) | ((sy > 0) ? 0x01u : 0x00u));
+    WriteZeroPageByte(kAS_HGR_QUADRANT, quadrant);
+
+    // ROM stores target endpoint in HGR_X/HGR_Y during HGLIN setup.
+    writeWord(kAS_HGR_X, target.x);
+    WriteZeroPageByte(kAS_HGR_Y, target.y);
+
     while (x0 != x1 || y0 != y1) {
         const int e2 = 2 * err;
         if (e2 >= dy) {
@@ -624,6 +652,9 @@ void AS_HGLIN(const HiResCoordinates& start, const HiResCoordinates& target) {
             err += dx;
             y0 += sy;
         }
+
+        // Keep HGR_E synchronized with the current signed error accumulator.
+        writeWord(kAS_HGR_E, static_cast<std::uint16_t>(err));
 
         AS_HPLOT0({static_cast<std::uint16_t>(x0), static_cast<std::uint8_t>(y0), true});
     }
