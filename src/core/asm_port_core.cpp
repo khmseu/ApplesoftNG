@@ -234,16 +234,31 @@ void MON_PRBYTE(std::uint8_t value) {
 }
 
 bool MON_JumpByAddress(std::uint16_t target) {
-    // Keep reset-range control flow explicit while most monitor entrypoints
-    // remain unported.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
+    // Labels: LFAA3 (inclusive) .. LFAA6 (exclusive), plus LFAC7 tail-jump use
+    // Name normalization: none (helper name kept for C++ indirect-jump modeling).
+    //
+    // Emulates monitor reset-time indirect transfers used by `jmp ($03f2)` and
+    // `jmp ($00)` in RESET2's warm/slot scan flow.
+
+    // Standard RESET2 warm vector target: transfer to Applesoft cold start.
     if (target == 0xe000u) {
         COLD_START();
         return true;
     }
 
-    // TODO(asm-port): dispatch remaining monitor jump targets.
-    (void)target;
-    return false;
+    // RESET2 slot scan (`jmp ($00)`) jumps to Cx00 for x in [1,7] after a ROM
+    // signature match. Slot-ROM runtime is not ported yet, so preserve
+    // non-returning transfer semantics by falling back to BASIC cold start.
+    const bool isSlotRomJump = ((target & 0x00ffu) == 0x0000u) && (target >= 0xc100u) && (target <= 0xc700u);
+    if (isSlotRomJump) {
+        COLD_START();
+        return true;
+    }
+
+    // Unknown monitor vector target: keep startup progress deterministic.
+    COLD_START();
+    return true;
 }
 
 } // namespace
