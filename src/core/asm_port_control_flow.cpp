@@ -5,6 +5,7 @@
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_token_address_table.hpp"
+#include "core/asm_port_stack.hpp"
 #include "core/io_ports.hpp"
 
 #include <cstdint>
@@ -19,12 +20,6 @@ void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
-std::uint8_t ReadStackPointer();
-void SetStackPointer(std::uint8_t value);
-void PushWordToStack(std::uint16_t value);
-void PushByteToStack(std::uint8_t value);
-std::uint8_t PopByteFromStack();
-void PopReturnAddress();
 void PRINT_ERROR_LINNUM(std::string_view prefix);
 std::uint8_t CHRGOT();
 std::uint8_t CHRGET();
@@ -44,9 +39,6 @@ void FRMEVL();
 void CHKNUM();
 void FADD();
 void PushForPntFrame();
-void PushTextPointerAddress();
-void PushCurrentLineNumber();
-void PushTokenTo(std::uint8_t token);
 std::uint8_t GETBYT();
 void ADDON(std::uint8_t offset);
 bool ISCNTC();
@@ -103,11 +95,6 @@ constexpr std::uint8_t kStepValueOffsetInForFrame = 4u;
 // Applesoft packed float for 1.0:
 // exponent=0x81 (biased exponent for 2^0), then sign-packed high mantissa, mid mantissa, low mantissa, extension byte.
 constexpr std::uint8_t kConOnePacked[kPackedFloatByteCount] = {0x81u, 0x00u, 0x00u, 0x00u, 0x00u};
-
-std::uint8_t readStackByteAt(std::uint8_t x, std::uint8_t plus) {
-    const std::uint8_t offset = static_cast<std::uint8_t>(x + plus);
-    return ReadProgramByte(static_cast<std::uint16_t>(0x0100u + offset));
-}
 
 void ApplyFacSign() {
     constexpr std::uint8_t kFAC = ApplesoftVariables::ZP_FAC;
@@ -189,15 +176,15 @@ void FRM_STACK_2(std::uint8_t signByte) {
     constexpr std::uint8_t kINDEXHighByteAddress =
         static_cast<std::uint8_t>(kINDEXZeroPageAddress + 1u);
 
-    const std::uint8_t returnAddressLow = PopByteFromStack();
+    const std::uint8_t returnAddressLow = theStack().popByte();
     // Net effect of ROM sequence PLA / STA INDEX / INC INDEX:
     // store the low return-address byte plus one as an 8-bit value so INDEX
     // points at the byte immediately after the JSR call-site return location.
     // The uint8_t cast intentionally truncates carry; ROM assumes no page-boundary carry into INDEX+1.
     WriteZeroPageByte(kINDEXZeroPageAddress, static_cast<std::uint8_t>(returnAddressLow + 1u));
-    WriteZeroPageByte(kINDEXHighByteAddress, PopByteFromStack());
+    WriteZeroPageByte(kINDEXHighByteAddress, theStack().popByte());
 
-    PushByteToStack(signByte);
+    theStack().pushByte(signByte);
 }
 
 void FRM_STACK_3() {
@@ -209,11 +196,11 @@ void FRM_STACK_3() {
 
     ROUND_FAC();
 
-    PushByteToStack(ReadZeroPageByte(kFAC + 4u));
-    PushByteToStack(ReadZeroPageByte(kFAC + 3u));
-    PushByteToStack(ReadZeroPageByte(kFAC + 2u));
-    PushByteToStack(ReadZeroPageByte(kFAC + 1u));
-    PushByteToStack(ReadZeroPageByte(kFAC));
+    theStack().pushByte(ReadZeroPageByte(kFAC + 4u));
+    theStack().pushByte(ReadZeroPageByte(kFAC + 3u));
+    theStack().pushByte(ReadZeroPageByte(kFAC + 2u));
+    theStack().pushByte(ReadZeroPageByte(kFAC + 1u));
+    theStack().pushByte(ReadZeroPageByte(kFAC));
 
     const std::uint16_t branchTarget = ReadZeroPageWord(kINDEX);
     if (branchTarget == kStepLabelAddress) {
@@ -227,7 +214,7 @@ constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
 }
 
 std::uint16_t readStackWordAt(std::uint8_t x, std::uint8_t lowOffset, std::uint8_t highOffset) {
-    return ApplesoftVariables::makeWord(readStackByteAt(x, lowOffset), readStackByteAt(x, highOffset));
+    return ApplesoftVariables::makeWord(theStack().readByteAt(x, lowOffset), theStack().readByteAt(x, highOffset));
 }
 
 // TODO(asm-port): decide branch condition after comparing FOR value with end value.
@@ -314,7 +301,7 @@ bool ReturnWasFromPOPContext() {
 }
 
 std::uint8_t PeekTopControlTokenAfterGTFORPNT() {
-    return readStackByteAt(ReadStackPointer(), 1u);
+    return theStack().readByteAt(theStack().readStackPointer(), 1u);
 }
 
 bool ISCNTC() {
@@ -364,8 +351,8 @@ void ENDX_impl(bool shouldPrintBreak) {
         WriteZeroPageWord(kOLDLIN, currentLine);
     }
 
-    PopReturnAddress();
-    PopReturnAddress();
+    theStack().popReturnAddress();
+    theStack().popReturnAddress();
 
     if (shouldPrintBreak) {
         PRINT_ERROR_LINNUM(QT_ERROR(QT_BREAK_INDEX));
@@ -464,7 +451,7 @@ void GOSUB() {
 
     CHKMEMState chkmemState{};
     chkmemState.a = 3;
-    chkmemState.stackPointer = ReadStackPointer();
+    chkmemState.stackPointer = theStack().readStackPointer();
     const auto chkmemResult = CHKMEM(chkmemState);
     if (!chkmemResult.ok) {
         return;
@@ -473,9 +460,9 @@ void GOSUB() {
     const std::uint16_t textPointer = ReadZeroPageWord(kTXTPTR);
     const std::uint16_t currentLine = ReadZeroPageWord(kCURLIN);
 
-    PushWordToStack(textPointer);
-    PushWordToStack(currentLine);
-    PushByteToStack(kTOKEN_GOSUB);
+    theStack().pushWord(textPointer);
+    theStack().pushWord(currentLine);
+    theStack().pushByte(kTOKEN_GOSUB);
 
     GO_TO_LINE();
 }
@@ -528,7 +515,7 @@ void RESUME() {
 
     WriteZeroPageWord(kCURLIN, ReadZeroPageWord(kERRLIN));
     WriteZeroPageWord(kTXTPTR, ReadZeroPageWord(kERRPOS));
-    SetStackPointer(ReadZeroPageByte(kERRSTK));
+    theStack().setStackPointer(ReadZeroPageByte(kERRSTK));
     NEWSTT();
 }
 
@@ -561,9 +548,9 @@ void PULL3() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: PULL3 (inclusive) .. IF (exclusive)
     // Name normalization: none (assembler label PULL3 kept verbatim).
-    PopByteFromStack();
-    PopByteFromStack();
-    PopByteFromStack();
+    (void)theStack().popByte();
+    (void)theStack().popByte();
+    (void)theStack().popByte();
 }
 
 std::uint8_t REMN() {
@@ -576,9 +563,9 @@ std::uint8_t REMN() {
 
 void PushForPntFrame() {
     constexpr std::uint8_t kFORPNT = ApplesoftVariables::ZP_FORPNT;
-    PushByteToStack(ReadZeroPageByte(add_u8(kFORPNT, 1u)));
-    PushByteToStack(ReadZeroPageByte(kFORPNT));
-    PushTokenTo(TOKEN_FOR);
+    theStack().pushByte(ReadZeroPageByte(add_u8(kFORPNT, 1u)));
+    theStack().pushByte(ReadZeroPageByte(kFORPNT));
+    theStack().pushToken(TOKEN_FOR);
 }
 
 void FOR() {
@@ -593,26 +580,26 @@ void FOR() {
         gtforpntState.stackPage[i] =
             ReadProgramByte(static_cast<std::uint16_t>(0x0100u + i));
     }
-    const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
+    const auto gtforpntResult = GTFORPNT(theStack().readStackPointer(), gtforpntState);
     if (gtforpntResult.found) {
-        SetStackPointer(add_u8(gtforpntResult.x, 15u));
+        theStack().setStackPointer(add_u8(gtforpntResult.x, 15u));
     }
 
-    PopReturnAddress();
-    PopReturnAddress();
+    theStack().popReturnAddress();
+    theStack().popReturnAddress();
 
     CHKMEMState chkmemState{};
     chkmemState.a = 9;
-    chkmemState.stackPointer = ReadStackPointer();
+    chkmemState.stackPointer = theStack().readStackPointer();
     const auto chkmemResult = CHKMEM(chkmemState);
     if (!chkmemResult.ok) {
         return;
     }
 
     DATAN();
-    PushTextPointerAddress();
-    PushCurrentLineNumber();
-    PushTokenTo(kTOKEN_TO);
+    theStack().pushTextPointerAddress();
+    theStack().pushCurrentLineNumber();
+    theStack().pushToken(kTOKEN_TO);
     SYNCHR(kTOKEN_TO);
     CHKNUM();
     FRMNUM();
@@ -648,7 +635,7 @@ void NEXT() {
             ReadProgramByte(static_cast<std::uint16_t>(0x0100u + i));
     }
 
-    const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
+    const auto gtforpntResult = GTFORPNT(theStack().readStackPointer(), gtforpntState);
     if (!gtforpntResult.found) {
         // Ldx #ERR_NOFOR / jmp ERROR via GERR/JERROR path.
         ERROR(ERR_NOFOR);
@@ -656,7 +643,7 @@ void NEXT() {
     }
 
     // NEXT_3: txs
-    SetStackPointer(gtforpntResult.x);
+    theStack().setStackPointer(gtforpntResult.x);
 
     // STEP arithmetic path (LOAD_FAC_FROM_YA / FADD / SETFOR / FCOMP2).
     // Stack offsets follow ROM comments; helpers are placeholders until stack
@@ -664,7 +651,7 @@ void NEXT() {
     WriteZeroPageWord(ApplesoftVariables::ZP_INDEX,
                       static_cast<std::uint16_t>(0x0100u + add_u8(gtforpntResult.x, kStepValueOffsetInForFrame)));
     LOAD_FAC_FROM_YA();
-    WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, readStackByteAt(gtforpntResult.x, 9u)); // FAC_SIGN
+    WriteZeroPageByte(ApplesoftVariables::ZP_FAC_SIGN, theStack().readByteAt(gtforpntResult.x, 9u)); // FAC_SIGN
     WriteZeroPageWord(kFORPNT, ReadZeroPageWord(kFORPNT));
     FADD();
     SETFOR();
@@ -682,7 +669,7 @@ void NEXT() {
 
     // L_NEXT_3_2: pop FOR frame, then continue NEWSTT unless another variable
     // follows in NEXT var-list (NEXT I,J,...).
-    SetStackPointer(add_u8(gtforpntResult.x, 18u));
+    theStack().setStackPointer(add_u8(gtforpntResult.x, 18u));
 
     if (CHRGOT() != static_cast<std::uint8_t>(',')) {
         NEWSTT();
@@ -706,8 +693,8 @@ void POP() {
     WriteZeroPageByte(kFORPNT, 0xffu);
 
     GTFORPNTState gtforpntState{};
-    const auto gtforpntResult = GTFORPNT(ReadStackPointer(), gtforpntState);
-    SetStackPointer(gtforpntResult.x);
+    const auto gtforpntResult = GTFORPNT(theStack().readStackPointer(), gtforpntState);
+    theStack().setStackPointer(gtforpntResult.x);
 
     if (PeekTopControlTokenAfterGTFORPNT() == kTOKEN_GOSUB) {
         gReturnFromPopContext = true;
@@ -722,17 +709,17 @@ void RETURN() {
     constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
     constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
 
-    (void)PopByteFromStack();
-    const std::uint8_t currentLineLo = PopByteFromStack();
+    (void)theStack().popByte();
+    const std::uint8_t currentLineLo = theStack().popByte();
 
     if (ReturnWasFromPOPContext()) {
         PULL3();
         return;
     }
 
-    const std::uint8_t currentLineHi = PopByteFromStack();
-    const std::uint8_t textPointerLo = PopByteFromStack();
-    const std::uint8_t textPointerHi = PopByteFromStack();
+    const std::uint8_t currentLineHi = theStack().popByte();
+    const std::uint8_t textPointerLo = theStack().popByte();
+    const std::uint8_t textPointerHi = theStack().popByte();
 
     WriteZeroPageWord(kCURLIN, ApplesoftVariables::makeWord(currentLineLo, currentLineHi));
     WriteZeroPageWord(kTXTPTR, ApplesoftVariables::makeWord(textPointerLo, textPointerHi));
@@ -763,7 +750,7 @@ void NEWSTT() {
     constexpr std::uint8_t kCURLIN = ApplesoftVariables::ZP_CURLIN;
     constexpr std::uint8_t kOLDTEXT = ApplesoftVariables::ZP_OLDTEXT;
 
-    WriteZeroPageByte(kREMSTK, ReadStackPointer());
+    WriteZeroPageByte(kREMSTK, theStack().readStackPointer());
 
     if (ISCNTC()) {
         return;

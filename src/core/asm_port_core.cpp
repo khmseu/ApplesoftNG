@@ -6,6 +6,8 @@
 #include "core/asm_port_reason.hpp"
 #include "core/asm_port_chkmem.hpp"
 #include "core/asm_port_mathtbl.hpp"
+#include "core/asm_port_unfnc.hpp"
+#include "core/asm_port_stack.hpp"
 #include "core/io_ports.hpp"
 #include "platform/asm_port_outdo.hpp"
 
@@ -69,6 +71,9 @@ void MON_INPORT(std::uint8_t slot);
 void MON_OUTPORT(std::uint8_t slot);
 void MON_SETTXT();
 void CAT();
+void CHKSTR();
+void CHKCOM();
+std::uint8_t GETBYT();
 extern std::int8_t gNumericCompareResult;
 extern bool gNumericCompareCarry;
 extern std::uint8_t gFloatInput;
@@ -124,8 +129,6 @@ bool IsDirectMode() {
     return ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_CURLIN + 1u)) == 0xffu;
 }
 
-void SetStackPointer(std::uint8_t value);
-void PushByteToStack(std::uint8_t value);
 void NORMAL();
 void CRDO();
 void SCRTCH();
@@ -396,7 +399,7 @@ void COLD_START() {
     constexpr std::uint16_t kProgramStart = 0x0800u;
 
     WriteZeroPageByte(kCURLIN_HI, 0xffu);
-    SetStackPointer(0xfbu);
+    theStack().setStackPointer(0xfbu);
 
     WriteZeroPageWord(static_cast<std::uint8_t>(ApplesoftVariables::ZP_GOWARM + 1u), kColdStartROM);
     WriteZeroPageWord(static_cast<std::uint8_t>(ApplesoftVariables::ZP_GOSTROUT + 1u), kColdStartROM);
@@ -419,7 +422,7 @@ void COLD_START() {
     WriteZeroPageByte(ApplesoftVariables::ZP_SHIFT_SIGN_EXT, 0u);
     WriteZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_LASTPT + 1u), 0u);
     MON_M6502VEC();
-    PushByteToStack(0u);
+    theStack().pushByte(0u);
     WriteZeroPageByte(ApplesoftVariables::ZP_DSCLEN, 3u);
 
     CRDO();
@@ -1011,19 +1014,56 @@ void UNARY() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: UNARY (inclusive) .. OR (exclusive)
     // Name normalization: none (assembler label UNARY kept verbatim).
+    //
+    // Dispatch a built-in unary function or string function identified by
+    // the current token.  String functions (LEFT$, RIGHT$, MID$) parse two
+    // arguments; all other functions parse one argument via PARCHK.
 
-    constexpr std::uint8_t kTOKEN_SCRN = 0xd7u;
+    constexpr std::uint8_t kTOKEN_SCRN    = 0xd7u;
+    constexpr std::uint8_t kTOKEN_SGN     = 0xd2u;
+    constexpr std::uint8_t kTOKEN_LEFTSTR = 0xe8u;
 
-    if (CHRGOT() == kTOKEN_SCRN) {
+    const std::uint8_t token = CHRGOT();
+
+    if (token == kTOKEN_SCRN) {
         // ROM branches back to SCREEN for SCRN(.
         SCREEN();
         return;
     }
 
+    // ASL: double the token (8-bit) as the UNFNC table index key.
+    const std::uint8_t doubled = static_cast<std::uint8_t>(token << 1);
+
     CHRGET();
 
-    // TODO(asm-port): complete unary-function dispatch through UNFNC/JMPADRS.
-    FRMEVL();
+    // cpx #<(TOKEN_LEFTSTR*2-1) = $cf
+    // bcc L_UNARY_1: doubled < $cf means numeric or CHR$ function.
+    if (doubled >= static_cast<std::uint8_t>((kTOKEN_LEFTSTR * 2u) - 1u)) {
+        // String function path (LEFT$, RIGHT$, MID$).
+        CHKOPN();   // require '('
+        FRMEVL();   // evaluate string argument into FAC
+        CHKCOM();   // require ','
+        CHKSTR();   // ensure FAC holds a string value
+
+        // Save the string descriptor address (VPNT = FAC+3/FAC+4) into
+        // DSCPTR before GETBYT overwrites FAC+4 with the sub-argument.
+        // VPNT = $a0/$a1 = ZP_FAC+3/+4; DSCPTR = ZP_DSCPTR ($8c).
+        const std::uint16_t vpnt = variables_const().readWord(
+            static_cast<std::uint8_t>(ApplesoftVariables::ZP_FAC + 3u));
+        variables().writeWord(ApplesoftVariables::ZP_DSCPTR, vpnt);
+
+        // GETBYT evaluates the numeric sub-argument; result lands in FAC+4.
+        (void)GETBYT();
+    } else {
+        // L_UNARY_1: numeric or CHR$ function — require "(expression)".
+        PARCHK();
+    }
+
+    // L_UNARY_2: dispatch through UNFNC table.
+    // Index = token - TOKEN_SGN (0-based, matches UNFNC table layout).
+    const std::size_t index = static_cast<std::size_t>(token - kTOKEN_SGN);
+    UNFNC(index)();
+    // CHR$, LEFT$, RIGHT$, MID$ handlers do not return to this point.
     CHKNUM();
 }
 
@@ -1193,9 +1233,7 @@ void DEF() {
 
 // Stack emulation for FUNCT/FNCDATA.
 // 6502 stack is LIFO at $0100-$01FF; we model it as a simple deque during execution.
-namespace {
-    thread_local std::vector<std::uint8_t> g_fn_call_stack;
-}
+// FN call stack is managed via theStack().pushFnByte() / peekFnByte() / popFnByte().
 
 void FUNCT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -1211,15 +1249,15 @@ void FUNCT() {
     constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
 
     // Clear stack for this function call
-    g_fn_call_stack.clear();
+    theStack().clearFnStack();
 
     // Parse "FN name"
     FNC_();
 
     // Stack function address for nested FN calls (push high byte, then low byte)
     const std::uint16_t fncAddr = ReadZeroPageWord(kFNCNAM);
-    g_fn_call_stack.push_back(ApplesoftVariables::highByte(fncAddr));
-    g_fn_call_stack.push_back(ApplesoftVariables::lowByte(fncAddr));
+    theStack().pushFnByte(ApplesoftVariables::highByte(fncAddr));
+    theStack().pushFnByte(ApplesoftVariables::lowByte(fncAddr));
 
     // Parse "(expression)" and evaluate
     PARCHK();
@@ -1229,10 +1267,10 @@ void FUNCT() {
 
     // Pop function address back (in reverse order: low byte, then high byte)
     std::uint16_t tempAddr = ReadZeroPageWord(kFNCNAM);
-    ApplesoftVariables::setLowByte(tempAddr, g_fn_call_stack.back());
-    g_fn_call_stack.pop_back();
-    ApplesoftVariables::setHighByte(tempAddr, g_fn_call_stack.back());
-    g_fn_call_stack.pop_back();
+    ApplesoftVariables::setLowByte(tempAddr, theStack().peekFnByte());
+    theStack().popFnByte();
+    ApplesoftVariables::setHighByte(tempAddr, theStack().peekFnByte());
+    theStack().popFnByte();
     WriteZeroPageWord(kFNCNAM, tempAddr);
 
     // Get argument variable pointer from FNCNAM+2,+3 (offsets within function definition)
@@ -1255,7 +1293,7 @@ void FUNCT() {
     // Loop from Y=4 down to Y=0 (inclusive)
     for (std::int8_t y = 4; y >= 0; --y) {
         const std::uint8_t byte = variables_const().readByte(argVarAddr + y);
-        g_fn_call_stack.push_back(byte);
+        theStack().pushFnByte(byte);
     }
 
     // Store FAC to argument variable (rounded)
@@ -1266,25 +1304,25 @@ void FUNCT() {
 
     // Save current TXTPTR to stack (push high byte, then low byte)
     const std::uint16_t savedTxtPtr = ReadZeroPageWord(kTXTPTR);
-    g_fn_call_stack.push_back(ApplesoftVariables::highByte(savedTxtPtr));
-    g_fn_call_stack.push_back(ApplesoftVariables::lowByte(savedTxtPtr));
+    theStack().pushFnByte(ApplesoftVariables::highByte(savedTxtPtr));
+    theStack().pushFnByte(ApplesoftVariables::lowByte(savedTxtPtr));
 
     // Load function definition address to TXTPTR (point to function body)
     WriteZeroPageWord(kTXTPTR, funcDefAddr);
 
     // Save argument variable address to stack (push high byte, then low byte)
-    g_fn_call_stack.push_back(ApplesoftVariables::highByte(argVarAddr));
-    g_fn_call_stack.push_back(ApplesoftVariables::lowByte(argVarAddr));
+    theStack().pushFnByte(ApplesoftVariables::highByte(argVarAddr));
+    theStack().pushFnByte(ApplesoftVariables::lowByte(argVarAddr));
 
     // Evaluate the function expression
     FRMNUM();
 
     // Pop argument variable address back and store to FNCNAM
     std::uint16_t argAddr = ReadZeroPageWord(kVARPNT);
-    ApplesoftVariables::setLowByte(argAddr, g_fn_call_stack.back());
-    g_fn_call_stack.pop_back();
-    ApplesoftVariables::setHighByte(argAddr, g_fn_call_stack.back());
-    g_fn_call_stack.pop_back();
+    ApplesoftVariables::setLowByte(argAddr, theStack().peekFnByte());
+    theStack().popFnByte();
+    ApplesoftVariables::setHighByte(argAddr, theStack().peekFnByte());
+    theStack().popFnByte();
     WriteZeroPageWord(kFNCNAM, argAddr);
 
     // Check for ":" or EOL
@@ -1294,10 +1332,10 @@ void FUNCT() {
 
     // Pop and restore TXTPTR
     std::uint16_t txtAddr = ReadZeroPageWord(kTXTPTR);
-    ApplesoftVariables::setLowByte(txtAddr, g_fn_call_stack.back());
-    g_fn_call_stack.pop_back();
-    ApplesoftVariables::setHighByte(txtAddr, g_fn_call_stack.back());
-    g_fn_call_stack.pop_back();
+    ApplesoftVariables::setLowByte(txtAddr, theStack().peekFnByte());
+    theStack().popFnByte();
+    ApplesoftVariables::setHighByte(txtAddr, theStack().peekFnByte());
+    theStack().popFnByte();
     WriteZeroPageWord(kTXTPTR, txtAddr);
 
     // Stack now contains 5 saved bytes - fall through to FNCDATA to restore
@@ -1317,9 +1355,9 @@ void FNCDATA() {
 
     // Loop 5 times: pop stack byte and store to (FNCNAM)+Y
     for (std::uint8_t y = 0u; y < 5u; ++y) {
-        if (!g_fn_call_stack.empty()) {
-            const std::uint8_t byte = g_fn_call_stack.back();
-            g_fn_call_stack.pop_back();
+        if (!theStack().fnStackEmpty()) {
+            const std::uint8_t byte = theStack().peekFnByte();
+            theStack().popFnByte();
             variables().writeByte(fncnampnt + y, byte);
         }
     }

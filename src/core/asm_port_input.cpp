@@ -10,6 +10,7 @@
 #include "core/asm_port_inlin.hpp"
 #include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_clear.hpp"
+#include "core/asm_port_stack.hpp"
 
 #include <cstdint>
 #include <string_view>
@@ -22,7 +23,6 @@ void SYNERR();
 void ERRDIR();
 void SYNCHR(std::uint8_t expected);
 void SetPendingErrorCode(std::uint8_t errorCode);
-std::uint8_t PopByteFromStack();
 
 namespace {
 
@@ -217,7 +217,7 @@ void RESPERR() {
 // Labels: INPERR (inclusive) .. RESPERR (exclusive)
 // Name normalization: none (assembler label INPERR kept verbatim).
 void INPERR() {
-    (void)PopByteFromStack();
+    (void)theStack().popByte();
     RESPERR();
 }
 

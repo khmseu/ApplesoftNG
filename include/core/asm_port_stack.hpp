@@ -1,0 +1,51 @@
+#pragma once
+
+#include <cstdint>
+#include <vector>
+
+namespace applesoft::asm_port {
+
+/**
+ * @brief 6502 hardware stack and FN-call stack, unified.
+ *
+ * Hardware stack: LIFO at $0100–$01FF, SP grows downward (6502 convention).
+ * FN call stack:  auxiliary LIFO used by FUNCT/FNCDATA for user-defined
+ *                 function call/return context.
+ */
+class ApplesoftStack {
+public:
+    // --- Hardware stack ---
+
+    void setStackPointer(std::uint8_t value) noexcept;
+    [[nodiscard]] std::uint8_t readStackPointer() const noexcept;
+
+    void pushByte(std::uint8_t value);
+    void pushWord(std::uint16_t value);
+    [[nodiscard]] std::uint8_t popByte();
+    [[nodiscard]] std::uint16_t popWord();
+    void popReturnAddress();
+
+    void pushTextPointerAddress();
+    void pushCurrentLineNumber();
+    void pushToken(std::uint8_t token);
+
+    /// Read a byte at stack address (0x0100 + x + plus).
+    [[nodiscard]] std::uint8_t readByteAt(std::uint8_t x, std::uint8_t plus) const;
+
+    // --- FN call stack ---
+
+    void clearFnStack();
+    void pushFnByte(std::uint8_t value);
+    [[nodiscard]] std::uint8_t peekFnByte() const;
+    void popFnByte();
+    [[nodiscard]] bool fnStackEmpty() const noexcept;
+
+private:
+    std::uint8_t m_sp = 0xffu;
+    std::vector<std::uint8_t> m_fn_stack;
+};
+
+/// Global accessor — thread_local so each thread owns independent stack state.
+ApplesoftStack& theStack();
+
+} // namespace applesoft::asm_port

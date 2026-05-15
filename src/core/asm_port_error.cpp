@@ -11,6 +11,7 @@
 #include "core/asm_port_token_address_table.hpp"
 #include "core/asm_port_token_name_table.hpp"
 #include "core/asm_port_mathtbl.hpp"
+#include "core/asm_port_stack.hpp"
 
 #include <array>
 #include <optional>
@@ -25,9 +26,6 @@ std::uint16_t ReadZeroPageWord(std::uint8_t address);
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
     return static_cast<std::uint8_t>(lhs + rhs);
 }
-void SetStackPointer(std::uint8_t value);
-void PushByteToStack(std::uint8_t value);
-
 void SCRTCH();
 void RESTART();
 void CRDO();
@@ -75,12 +73,6 @@ void COLD_START();
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
 
-std::uint8_t ReadStackPointer();
-void PopReturnAddress();
-void PushByteToStack(std::uint8_t value);
-void PushTextPointerAddress();
-void PushCurrentLineNumber();
-void PushTokenTo(std::uint8_t token);
 void ApplyFacSign();
 void SetBranchTargetToSTEP();
 void LOAD_FAC_FROM_YA();
@@ -110,7 +102,6 @@ bool IsStatementEndOfParsedInput();
 std::uint8_t REMN();
 bool FL1(std::uint16_t startAddress);
 bool FL1(std::uint8_t startLo, std::uint8_t startHi);
-std::uint8_t PopByteFromStack();
 std::uint8_t PeekTopControlTokenAfterGTFORPNT();
 void PULL3();
 void RTS_5();
@@ -214,14 +205,6 @@ std::uint8_t gJerErrorCode = ERR_SYNTAX;
 //     // TODO(asm-port): write the current output character from the Applesoft line
 //     // printer to the console.
 // }
-
-void PopReturnAddress();
-void PushByteToStack(std::uint8_t value);
-void PushWordToStack(std::uint16_t value);
-std::uint16_t PopWordFromStack();
-void PushTextPointerAddress();
-void PushCurrentLineNumber();
-void PushTokenTo(std::uint8_t token);
 
 
 // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst

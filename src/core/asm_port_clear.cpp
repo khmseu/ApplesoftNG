@@ -1,6 +1,7 @@
 #include "core/asm_port_clear.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_chrget.hpp"
+#include "core/asm_port_stack.hpp"
 #include <cstdint>
 
 namespace applesoft::asm_port {
@@ -10,7 +11,6 @@ std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 std::uint16_t ReadZeroPageWord(std::uint8_t address);
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
-void SetStackPointer(std::uint8_t value);
 
 void CLEAR() {
     if (CHRGOT() != 0) {
@@ -46,8 +46,8 @@ void STKINI() {
 
     // 1727-1734: Stack management
     // Applesoft preserves the return address across the stack reset (TXS $F8).
-    // In our C++ interpreter, SetStackPointer mimics TXS.
-    SetStackPointer(0xf8u);
+    // In our C++ interpreter, theStack().setStackPointer() mimics TXS.
+    theStack().setStackPointer(0xf8u);
 
     // Resetting OLDTEXT (high byte) and SUBFLG
     WriteZeroPageByte(kOLDTEXT + 1, 0); 
