@@ -29,6 +29,7 @@ void GETARY();
 void GETARY2();
 void FIND_ARRAY_ELEMENT();
 std::uint16_t MULTIPLY_SUBS_1(std::uint8_t multiplierHigh);
+std::uint16_t MULTIPLY_SUBSCRIPT(std::uint8_t descriptorOffset);
 void GIVAYF(std::int16_t value);
 void SNGFLT(std::uint8_t value);
 void FALSE();
@@ -597,20 +598,152 @@ void USE_OLD_ARRAY() {
 
 void MAKE_NEW_ARRAY() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // Labels: MAKE_NEW_ARRAY (inclusive) .. FIND_ARRAY_ELEMENT (exclusive)
+    // Labels: MAKE_NEW_ARRAY (T:11b8, inclusive) .. FIND_ARRAY_ELEMENT (T:124b, exclusive)
     // Name normalization: none (assembler label MAKE_NEW_ARRAY kept verbatim).
+    //
+    // Creates a new array entry at LOWTR: writes header (name, size, numdim, dim extents),
+    // allocates element space, zeroes it, and stores the array byte-size in the descriptor.
+    // Falls through to FIND_ARRAY_ELEMENT unless called from DIM (DIMFLG != 0).
 
+    // T:11b8 – lda SUBFLG; bne ERR_NODATA
     if (ReadZeroPageByte(ApplesoftVariables::ZP_SUBFLG) != 0u) {
         ERROR(ERR_NODATA);
         return;
     }
 
+    // T:11c1 – jsr GETARY: sets ARYPNT = LOWTR + 5 + 2*NUMDIM (first element address)
     GETARY();
 
-    // TODO(asm-port): complete dynamic allocation, descriptor population, and zeroing.
-    if (ReadZeroPageByte(ApplesoftVariables::ZP_DIMFLG) == 0u) {
-        FIND_ARRAY_ELEMENT();
+    // T:11c4 – jsr REASON: ensure array header fits below FRETOP
+    {
+        const std::uint16_t arypnt = ReadZeroPageWord(ApplesoftVariables::ZP_ARYPNT);
+        const std::uint16_t fretop = ReadZeroPageWord(ApplesoftVariables::ZP_FRETOP);
+        REASONState rs{};
+        rs.a = static_cast<std::uint8_t>(arypnt & 0xffu);
+        rs.y = static_cast<std::uint8_t>(arypnt >> 8u);
+        rs.fretopLo = static_cast<std::uint8_t>(fretop & 0xffu);
+        rs.fretopHi = static_cast<std::uint8_t>(fretop >> 8u);
+        if (!REASON(rs).ok) return;
     }
+
+    // T:11c7 – lda #0; tay; sta STRNG2+1; ldx #5  (seed element-size accumulator)
+    WriteZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_STRNG2 + 1u), 0u);
+    std::uint8_t elemSize = 5u;   // X in asm: float default
+
+    // T:11cd – Y=0: write VARNAM byte to descriptor[0]; bit 7 → integer, dex
+    const ProgramPointer lowtr{ReadZeroPageWord(ApplesoftVariables::ZP_LOWTR)};
+    const std::uint8_t varnam0 = ReadZeroPageByte(ApplesoftVariables::ZP_VARNAM);
+    lowtr.write(varnam0, 0u);
+    if ((varnam0 & 0x80u) != 0u) { --elemSize; }   // integer: 5→4
+
+    // T:11d5 – Y=1: write VARNAM+1 to descriptor[1]; bit 7 → integer/string, dex dex
+    const std::uint8_t varnam1 =
+        ReadZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_VARNAM + 1u));
+    lowtr.write(varnam1, 1u);
+    if ((varnam1 & 0x80u) != 0u) { elemSize -= 2u; }  // integer→2, string→3, float→5
+
+    // T:11de – stx STRNG2: seed running product with element size
+    WriteZeroPageByte(ApplesoftVariables::ZP_STRNG2, elemSize);
+
+    // T:11e0 – Y=4: write NUMDIM to descriptor[4]  (three iny's advance Y past size slots)
+    const std::uint8_t numDim = ReadZeroPageByte(ApplesoftVariables::ZP_NUMDIM);
+    lowtr.write(numDim, 4u);
+
+    // T:11e7 – dimension loop: write each dim to descriptor and accumulate total bytes.
+    // Y starts at 4 (NUMDIM slot); each iteration writes 2 bytes and advances Y by 2.
+    std::uint8_t descriptorY  = 4u;
+    std::uint8_t remainingDims = numDim;
+    while (remainingDims != 0u) {
+        // T:11e7 – ldx #11; lda #0; bit DIMFLG; bvc use_default
+        std::uint8_t dimLo = 11u;   // default: 11 elements (indices 0..10)
+        std::uint8_t dimHi = 0u;
+
+        // bit DIMFLG: V flag (bit 6) set → explicit dimension was pushed on 6502 stack.
+        if ((ReadZeroPageByte(ApplesoftVariables::ZP_DIMFLG) & 0x40u) != 0u) {
+            // T:11ef – pla (raw dim_lo); clc; adc #1; tax
+            const std::uint8_t rawLo = theStack().popByte();
+            const std::uint16_t lo16 = static_cast<std::uint16_t>(rawLo) + 1u;
+            dimLo = static_cast<std::uint8_t>(lo16 & 0xffu);
+            const std::uint8_t carry = static_cast<std::uint8_t>(lo16 >> 8u);
+            // T:11f4 – pla (dim_hi); adc #0 (carry from low add)
+            dimHi = static_cast<std::uint8_t>(theStack().popByte() + carry);
+        }
+
+        // T:11f7 – iny; sta (LOWTR),Y [dim_hi]; iny; txa; sta (LOWTR),Y [dim_lo]
+        ++descriptorY;
+        lowtr.write(dimHi, descriptorY);
+        ++descriptorY;
+        lowtr.write(dimLo, descriptorY);
+
+        // T:11fe – jsr MULTIPLY_SUBSCRIPT: running_product = STRNG2 * dim_count
+        // STRNG2 must be set before the call (done above / updated each iteration).
+        const std::uint16_t product = MULTIPLY_SUBSCRIPT(descriptorY);
+        WriteZeroPageByte(ApplesoftVariables::ZP_STRNG2,
+                          static_cast<std::uint8_t>(product & 0xffu));
+        WriteZeroPageByte(static_cast<std::uint8_t>(ApplesoftVariables::ZP_STRNG2 + 1u),
+                          static_cast<std::uint8_t>(product >> 8u));
+
+        // T:1205 – ldy INDEX: restore Y (MULTIPLY_SUBSCRIPT saved descriptorY there)
+        descriptorY = ReadZeroPageByte(ApplesoftVariables::ZP_INDEX);
+
+        // T:1207 – dec NUMDIM; bne loop
+        --remainingDims;
+        WriteZeroPageByte(ApplesoftVariables::ZP_NUMDIM, remainingDims);
+    }
+
+    // T:120b – compute endAddr = ARYPNT + totalBytes; both overflow checks collapse to one.
+    const std::uint16_t totalBytes = ReadZeroPageWord(ApplesoftVariables::ZP_STRNG2);
+    const std::uint16_t arypnt    = ReadZeroPageWord(ApplesoftVariables::ZP_ARYPNT);
+    const std::uint32_t endAddr32 =
+        static_cast<std::uint32_t>(arypnt) + static_cast<std::uint32_t>(totalBytes);
+    if (endAddr32 > 0xffffu) {
+        // Covers asm: bcs GME (high-byte overflow) and iny;beq GME (wrap-to-zero).
+        GME();
+        return;
+    }
+    const std::uint16_t endAddr = static_cast<std::uint16_t>(endAddr32);
+
+    // T:121a – jsr REASON: ensure end address fits below FRETOP; result → new STREND.
+    std::uint16_t strend;
+    {
+        const std::uint16_t fretop = ReadZeroPageWord(ApplesoftVariables::ZP_FRETOP);
+        REASONState rs{};
+        rs.a      = static_cast<std::uint8_t>(endAddr & 0xffu);
+        rs.y      = static_cast<std::uint8_t>(endAddr >> 8u);
+        rs.fretopLo = static_cast<std::uint8_t>(fretop & 0xffu);
+        rs.fretopHi = static_cast<std::uint8_t>(fretop >> 8u);
+        const REASONResult rr = REASON(rs);
+        if (!rr.ok) return;
+        strend = static_cast<std::uint16_t>(
+            static_cast<std::uint16_t>(rr.y) << 8u | static_cast<std::uint16_t>(rr.a));
+    }
+
+    // T:121d – sta STREND; sty STREND+1
+    WriteZeroPageWord(ApplesoftVariables::ZP_STREND, strend);
+
+    // T:1221–1232 – zero element region [ARYPNT .. STREND)
+    // Asm uses a page-by-page backward sweep; C++ equivalent byte loop has same effect.
+    for (std::uint16_t addr = arypnt; addr != strend;
+         addr = static_cast<std::uint16_t>(addr + 1u)) {
+        WriteProgramByte(addr, 0u);
+    }
+
+    // T:1234 – inc ARYPNT+1: after zeroing the asm modified ARYPNT+1 for the loop;
+    // restoring ARYPNT to elemStart is equivalent here.
+    WriteZeroPageWord(ApplesoftVariables::ZP_ARYPNT, arypnt);
+
+    // T:1236–1244 – sec; STREND - LOWTR → descriptor[2..3] (offset to next array entry)
+    const std::uint16_t lowtrAddr = ReadZeroPageWord(ApplesoftVariables::ZP_LOWTR);
+    const std::uint16_t arraySize = static_cast<std::uint16_t>(strend - lowtrAddr);
+    lowtr.write(static_cast<std::uint8_t>(arraySize & 0xffu), 2u);
+    lowtr.write(static_cast<std::uint8_t>(arraySize >> 8u),  3u);
+
+    // T:1246 – lda DIMFLG; bne RTS_9: DIM statement is done; otherwise find element.
+    if (ReadZeroPageByte(ApplesoftVariables::ZP_DIMFLG) != 0u) {
+        return;
+    }
+    // T:124a – iny (Y=4 for FIND_ARRAY_ELEMENT descriptor[4] = NUMDIM); fall through.
+    FIND_ARRAY_ELEMENT();
 }
 
 void FIND_ARRAY_ELEMENT() {
