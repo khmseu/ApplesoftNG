@@ -997,14 +997,63 @@ void AS_SET_VARPNT_AND_YA() {
 
 void AS_MAKE_NEW_VARIABLE() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-    // AS_Labels: AS_MAKE_NEW_VARIABLE (inclusive) .. AS_SET_VARPNT_AND_YA (exclusive)
-    // Name normalization: none (assembler label AS_MAKE_NEW_VARIABLE kept verbatim).
+    // AS_Labels: MAKE_NEW_VARIABLE (inclusive) .. GETARY (exclusive)
+    // Name normalization: none (assembler label MAKE_NEW_VARIABLE prefixed with AS_ in C++).
+    //
+    // Create a new simple variable entry.
+    // Moves array table up 7 bytes to make room; initializes variable name and value.
+    // Returns with VARPNT pointing to the value storage for the new variable.
 
-    const std::uint16_t arytab = ReadZeroPageWord(ApplesoftVariables::ZP_AS_ARYTAB);
-    WriteZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR, arytab); // AS_LOWTR <- AS_ARYTAB
+    constexpr std::uint8_t kAS_ARYTAB = ApplesoftVariables::ZP_AS_ARYTAB;
+    constexpr std::uint8_t kAS_STREND = ApplesoftVariables::ZP_AS_STREND;
+    constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
+    constexpr std::uint8_t kAS_HIGHTR = ApplesoftVariables::ZP_AS_HIGHTR;
+    constexpr std::uint8_t kAS_ARYPNT = ApplesoftVariables::ZP_AS_ARYPNT;
+    constexpr std::uint8_t kAS_VARNAM = ApplesoftVariables::ZP_AS_VARNAM;
+    constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
 
-    // TODO(asm-port): port AS_BLTU movement of array block.
-    AS_SET_VARPNT_AND_YA();
+    // Set up source and destination pointers for BLTU array move.
+    // LOWTR <- ARYTAB: points to start of array block
+    const std::uint8_t arytab_lo = ReadZeroPageByte(kAS_ARYTAB);
+    const std::uint8_t arytab_hi = ReadZeroPageByte(kAS_ARYTAB + 1u);
+    WriteZeroPageByte(kAS_LOWTR, arytab_lo);
+    WriteZeroPageByte(kAS_LOWTR + 1u, arytab_hi);
+
+    // HIGHTR <- STREND: points to string end
+    const std::uint8_t strend_lo = ReadZeroPageByte(kAS_STREND);
+    const std::uint8_t strend_hi = ReadZeroPageByte(kAS_STREND + 1u);
+    WriteZeroPageByte(kAS_HIGHTR, strend_lo);
+    WriteZeroPageByte(kAS_HIGHTR + 1u, strend_hi);
+
+    // Calculate new array position: ARYPNT = STREND + 7
+    // Using 16-bit addition with carry handling.
+    std::uint16_t new_arypnt = (static_cast<std::uint16_t>(strend_hi) << 8u) | strend_lo;
+    new_arypnt += 7u;
+    WriteZeroPageByte(kAS_ARYPNT, static_cast<std::uint8_t>(new_arypnt & 0xFFu));
+    WriteZeroPageByte(kAS_ARYPNT + 1u, static_cast<std::uint8_t>((new_arypnt >> 8u) & 0xFFu));
+
+    // TODO(asm-port): Call AS_BLTU to move array block up 7 bytes.
+    // AS_BLTU requires AS_BLTUState with LOWTR=source, HIGHTR=end, ARYPNT=destination
+
+    // Store new array table start in ARYTAB.
+    const std::uint8_t new_arypnt_lo = ReadZeroPageByte(kAS_ARYPNT);
+    const std::uint8_t new_arypnt_hi = ReadZeroPageByte(kAS_ARYPNT + 1u);
+    WriteZeroPageByte(kAS_ARYTAB, new_arypnt_lo);
+    WriteZeroPageByte(kAS_ARYTAB + 1u, new_arypnt_hi);
+
+    // Initialize new variable entry in the freed space.
+    // The variable record layout is: [name_0, name_1, value_0..4 (5 zero bytes)]
+    // LOWTR (original ARYTAB) points to first byte of variable.
+    std::uint16_t lowtr = (static_cast<std::uint16_t>(arytab_hi) << 8u) | arytab_lo;
+
+    // TODO(asm-port): Store 2-character variable name from VARNAM via indirect indexed addressing.
+    // In 6502: ldy #0; lda VARNAM; sta (LOWTR),Y; iny; lda VARNAM+1; sta (LOWTR),Y
+    // Store 5 zero bytes for value: lda #0; (sta (LOWTR),Y x5) with increment
+
+    // Compute and store VARPNT = LOWTR + 2 (point to value bytes after the 2-char name).
+    std::uint16_t varpnt = lowtr + 2u;
+    WriteZeroPageByte(kAS_VARPNT, static_cast<std::uint8_t>(varpnt & 0xFFu));
+    WriteZeroPageByte(kAS_VARPNT + 1u, static_cast<std::uint8_t>((varpnt >> 8u) & 0xFFu));
 }
 
 
