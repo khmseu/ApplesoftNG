@@ -163,6 +163,14 @@ std::int8_t AS_SIGN() {
     return AS_SIGN1();
 }
 
+std::int8_t AS_L_FCOMP2_2(std::uint8_t signByte) {
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+    // AS_Labels: AS_L_FCOMP2_2 (inclusive) .. AS_QINT (exclusive)
+    // Name normalization: none (assembler label AS_L_FCOMP2_2 kept verbatim).
+
+    return AS_SIGN2(signByte);
+}
+
 std::int8_t AS_L_FCOMP2_1(bool compareCarrySet) {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // AS_Labels: AS_L_FCOMP2_1 (inclusive) .. AS_L_FCOMP2_2 (exclusive)
@@ -172,7 +180,7 @@ std::int8_t AS_L_FCOMP2_1(bool compareCarrySet) {
     if (compareCarrySet) {
         signByte ^= 0xffu;
     }
-    return AS_SIGN2(signByte);
+    return AS_L_FCOMP2_2(signByte);
 }
 
 } // namespace
