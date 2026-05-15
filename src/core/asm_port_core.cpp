@@ -792,9 +792,15 @@ void FIND_ARRAY_ELEMENT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: FIND_ARRAY_ELEMENT (inclusive) .. FAE_1 (exclusive)
     // Name normalization: none (assembler label FIND_ARRAY_ELEMENT kept verbatim).
+    // LOWTR is the base pointer to the current array descriptor; descriptor[4] stores #dims.
 
-    WriteZeroPageByte(ApplesoftVariables::ZP_NUMDIM, ReadZeroPageByte(ApplesoftVariables::ZP_NUMDIM)); // TODO(asm-port): fetch #dims from descriptor pointer.
-    WriteZeroPageWord(ApplesoftVariables::ZP_STRNG2, 0u); // STRNG2 accumulator
+    const ProgramPointer descriptor{ReadZeroPageWord(ApplesoftVariables::ZP_LOWTR)};
+    const std::uint8_t numDims = descriptor.read(4u);
+
+    WriteZeroPageByte(ApplesoftVariables::ZP_NUMDIM, numDims);
+    WriteZeroPageWord(ApplesoftVariables::ZP_STRNG2, 0u);
+
+    // The source slice falls through directly into FAE_1.
     FAE_1();
 }
 
