@@ -898,7 +898,39 @@ void AS_PROGIO() {
 }
 
 void MON_WRITE() {
-    // TODO(asm-port): port monitor tape write handler used by AS_SAVE.
+    // Source: SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+    // MON_Labels: WRITE (inclusive) .. READ (exclusive)
+    // Name normalization: none (assembler label WRITE is prefixed with MON_ in C++).
+    //
+    // Monitor tape write handler: emit bytes in [A1, A2) and then emit checksum.
+    // The ROM loop updates A1 until it reaches A2 via NXTA1 carry behavior.
+    // We model that range with one unified 16-bit pointer representation.
+
+    constexpr std::uint8_t kMON_A1L = ApplesoftVariables::ZP_MON_A1;
+    constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
+
+    MON_HEADR(0x40u);
+
+    std::uint16_t a1Ptr = ReadZeroPageWord(kMON_A1L);
+    const std::uint16_t a2Limit = ReadZeroPageWord(kMON_A2L);
+    std::uint8_t runningChecksum = 0xffu;
+
+    while (a1Ptr != a2Limit) {
+        const std::uint8_t dataByte = ReadProgramByte(a1Ptr);
+        runningChecksum = static_cast<std::uint8_t>(runningChecksum ^ dataByte);
+
+        // Tape bit serialization lives in monitor cassette primitives.
+        // TODO(asm-port): Replace placeholders with WRBYTE/WRBIT-accurate cassette timing/bit output.
+        (void)dataByte;
+        a1Ptr = static_cast<std::uint16_t>(a1Ptr + 1u);
+    }
+
+    WriteZeroPageWord(kMON_A1L, a1Ptr);
+
+    // Emit checksum byte before returning (ROM path branches to BELL next).
+    // TODO(asm-port): Serialize checksum byte before BELL once write primitives are complete.
+    (void)runningChecksum;
+    MON_BELL();
 }
 
 void MON_READ() {
