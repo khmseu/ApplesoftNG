@@ -11,6 +11,7 @@
 
 #include <array>
 #include <cstdint>
+#include <vector>
 
 namespace applesoft::asm_port {
 
@@ -1190,6 +1191,12 @@ void DEF() {
 }
 
 
+// Stack emulation for FUNCT/FNCDATA.
+// 6502 stack is LIFO at $0100-$01FF; we model it as a simple deque during execution.
+namespace {
+    thread_local std::vector<std::uint8_t> g_fn_call_stack;
+}
+
 void FUNCT() {
     // Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
     // Labels: FUNCT (inclusive) .. FNCDATA (exclusive)
@@ -1199,15 +1206,20 @@ void FUNCT() {
     // Parse FN name, save old argument value, evaluate expression with new value,
     // restore old value via FNCDATA.
 
-    // Parse "FN name"
-    FNC_();
-
     constexpr std::uint8_t kFNCNAM = ApplesoftVariables::ZP_FNCNAM;
     constexpr std::uint8_t kVARPNT = ApplesoftVariables::ZP_VARPNT;
     constexpr std::uint8_t kTXTPTR = ApplesoftVariables::ZP_TXTPTR;
 
-    // Stack function address for nested FN calls
+    // Clear stack for this function call
+    g_fn_call_stack.clear();
+
+    // Parse "FN name"
+    FNC_();
+
+    // Stack function address for nested FN calls (push high byte, then low byte)
     const std::uint16_t fncAddr = ReadZeroPageWord(kFNCNAM);
+    g_fn_call_stack.push_back(ApplesoftVariables::highByte(fncAddr));
+    g_fn_call_stack.push_back(ApplesoftVariables::lowByte(fncAddr));
 
     // Parse "(expression)" and evaluate
     PARCHK();
@@ -1215,39 +1227,78 @@ void FUNCT() {
     // Result in FAC - must be numeric
     CHKNUM();
 
-    // Get argument variable pointer from FNCNAM+2,+3
-    const std::uint16_t argVarAddr = static_cast<std::uint16_t>(fncAddr + 2u);
+    // Pop function address back (in reverse order: low byte, then high byte)
+    std::uint16_t tempAddr = ReadZeroPageWord(kFNCNAM);
+    ApplesoftVariables::setLowByte(tempAddr, g_fn_call_stack.back());
+    g_fn_call_stack.pop_back();
+    ApplesoftVariables::setHighByte(tempAddr, g_fn_call_stack.back());
+    g_fn_call_stack.pop_back();
+    WriteZeroPageWord(kFNCNAM, tempAddr);
+
+    // Get argument variable pointer from FNCNAM+2,+3 (offsets within function definition)
+    // Read 16-bit pointer from function definition at offset +2,+3
+    const std::uint16_t funcDefAddr = ReadZeroPageWord(kFNCNAM);
+    const std::uint8_t argVarAddrLo = variables_const().readByte(funcDefAddr + 2u);
+    const std::uint8_t argVarAddrHi = variables_const().readByte(funcDefAddr + 3u);
+    
+    // Check for undefined function (high byte of address must be non-zero)
+    if (argVarAddrHi == 0u) {
+        // Undefined function error
+        UNDFNC();
+        return;
+    }
+    
+    const std::uint16_t argVarAddr = variables_const().makeWord(argVarAddrLo, argVarAddrHi);
     WriteZeroPageWord(kVARPNT, argVarAddr);
 
     // Save old value of argument variable (5 bytes) to stack
-    for (std::uint8_t i = 4u; i <= 4u; --i) {
-        const std::uint8_t byte = variables_const().pointer(argVarAddr).read(i);
-        (void)byte;
-        // TODO(asm-port): push byte to stack
+    // Loop from Y=4 down to Y=0 (inclusive)
+    for (std::int8_t y = 4; y >= 0; --y) {
+        const std::uint8_t byte = variables_const().readByte(argVarAddr + y);
+        g_fn_call_stack.push_back(byte);
     }
 
     // Store FAC to argument variable (rounded)
+    // The assembly loads Y with VARPNT+1 and then calls STORE_FACDB_YX_ROUNDED.
+    // Since STORE_FACDB_YX_ROUNDED takes no parameters, it must read the target
+    // address from VARPNT (which we just set).
     STORE_FACDB_YX_ROUNDED();
 
-    // Save current TXTPTR
+    // Save current TXTPTR to stack (push high byte, then low byte)
     const std::uint16_t savedTxtPtr = ReadZeroPageWord(kTXTPTR);
+    g_fn_call_stack.push_back(ApplesoftVariables::highByte(savedTxtPtr));
+    g_fn_call_stack.push_back(ApplesoftVariables::lowByte(savedTxtPtr));
 
-    // Load function definition address from FNCNAM+0,+1
-    const std::uint16_t defAddr = fncAddr;  // Will read via pointer arithmetic
-    WriteZeroPageWord(kTXTPTR, defAddr);
+    // Load function definition address to TXTPTR (point to function body)
+    WriteZeroPageWord(kTXTPTR, funcDefAddr);
 
-    // Stack argument variable address for later
+    // Save argument variable address to stack (push high byte, then low byte)
+    g_fn_call_stack.push_back(ApplesoftVariables::highByte(argVarAddr));
+    g_fn_call_stack.push_back(ApplesoftVariables::lowByte(argVarAddr));
 
-    // Evaluate function expression
+    // Evaluate the function expression
     FRMNUM();
 
-    // Validate at ":" or EOL
+    // Pop argument variable address back and store to FNCNAM
+    std::uint16_t argAddr = ReadZeroPageWord(kVARPNT);
+    ApplesoftVariables::setLowByte(argAddr, g_fn_call_stack.back());
+    g_fn_call_stack.pop_back();
+    ApplesoftVariables::setHighByte(argAddr, g_fn_call_stack.back());
+    g_fn_call_stack.pop_back();
+    WriteZeroPageWord(kFNCNAM, argAddr);
+
+    // Check for ":" or EOL
     if (CHRGOT() != 0u && CHRGOT() != static_cast<std::uint8_t>(':')) {
         SYNERR();
     }
 
-    // Restore TXTPTR
-    WriteZeroPageWord(kTXTPTR, savedTxtPtr);
+    // Pop and restore TXTPTR
+    std::uint16_t txtAddr = ReadZeroPageWord(kTXTPTR);
+    ApplesoftVariables::setLowByte(txtAddr, g_fn_call_stack.back());
+    g_fn_call_stack.pop_back();
+    ApplesoftVariables::setHighByte(txtAddr, g_fn_call_stack.back());
+    g_fn_call_stack.pop_back();
+    WriteZeroPageWord(kTXTPTR, txtAddr);
 
     // Stack now contains 5 saved bytes - fall through to FNCDATA to restore
 }
@@ -1259,17 +1310,18 @@ void FNCDATA() {
     // Name normalization: none (assembler label FNCDATA kept verbatim).
     //
     // STORE FIVE BYTES FROM STACK AT (FNCNAM)
-    // Pop 5 stack bytes and store to (FNCNAM),Y with Y incrementing.
+    // Pop 5 stack bytes and store to (FNCNAM),Y with Y incrementing from 0 to 4.
 
     constexpr std::uint8_t kFNCNAM = ApplesoftVariables::ZP_FNCNAM;
     const std::uint16_t fncnampnt = ReadZeroPageWord(kFNCNAM);
-    (void)fncnampnt;
 
-    // Loop 5 times: pop stack and store
+    // Loop 5 times: pop stack byte and store to (FNCNAM)+Y
     for (std::uint8_t y = 0u; y < 5u; ++y) {
-        (void)y;
-        // TODO(asm-port): pop stack byte
-        // Store to (fncnampnt + y)
+        if (!g_fn_call_stack.empty()) {
+            const std::uint8_t byte = g_fn_call_stack.back();
+            g_fn_call_stack.pop_back();
+            variables().writeByte(fncnampnt + y, byte);
+        }
     }
 }
 
