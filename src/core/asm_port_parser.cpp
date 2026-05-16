@@ -7,10 +7,6 @@
 
 namespace applesoft::asm_port {
 
-std::uint8_t ReadZeroPageByte(std::uint8_t address);
-std::uint16_t ReadZeroPageWord(std::uint8_t address);
-void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
-void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void AS_SYNERR();
 void AS_FRMEVL();
@@ -39,9 +35,7 @@ void AS_SYNCHR(std::uint8_t expected) {
   // Read current character from AS_TXTPTR, compare with expected, advance if
   // match, error if not.
 
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-
-  const std::uint16_t txtPtr = ReadZeroPageWord(kAS_TXTPTR);
+  const std::uint16_t txtPtr = variables_const().AS_TXTPTR;
   const std::uint8_t current = variables_const().pointer(txtPtr).read(0u);
 
   if (current != expected) {
@@ -49,7 +43,7 @@ void AS_SYNCHR(std::uint8_t expected) {
   }
 
   // Advance AS_TXTPTR by 1.
-  WriteZeroPageWord(kAS_TXTPTR, static_cast<std::uint16_t>(txtPtr + 1u));
+  variables().AS_TXTPTR = static_cast<std::uint16_t>(txtPtr + 1u);
 }
 
 void AS_CHKNUM() {
@@ -121,10 +115,9 @@ void AS_STORE_FACDB_YX_ROUNDED() {
   // AS_STORE_FACDB_YX_ROUNDED virtual Applesoft prefix only. Pointer candidate
   // lifted: the ROM passes the destination in Y:X; the current C++ path
   // materializes that destination in AS_VARPNT before calling this helper.
-  constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
   AS_ROUND_FAC();
 
-  const std::uint16_t destinationAddress = ReadZeroPageWord(kAS_VARPNT);
+  const std::uint16_t destinationAddress = variables_const().AS_VARPNT;
   auto destination = variables().pointer(destinationAddress);
 
   destination.write(variables_const().AS_FAC[0], 0u);
@@ -155,13 +148,12 @@ void AS_LINGET() {
   // AS_Labels: AS_LINGET (inclusive) .. AS_LET (exclusive)
   // Name normalization: none (assembler label AS_LINGET kept verbatim).
 
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
   auto is_digit = [](std::uint8_t ch) {
     return ch >= static_cast<std::uint8_t>('0') &&
            ch <= static_cast<std::uint8_t>('9');
   };
 
-  WriteZeroPageWord(kAS_LINNUM, 0);
+  variables().AS_LINNUM = 0u;
 
   std::uint8_t current = AS_CHRGOT();
   while (is_digit(current)) {
@@ -179,9 +171,8 @@ void AS_LINGET() {
       return;
     }
 
-    const std::uint16_t value = ReadZeroPageWord(kAS_LINNUM);
-    WriteZeroPageWord(kAS_LINNUM,
-                      static_cast<std::uint16_t>(value * 10u + digit));
+    const std::uint16_t value = variables_const().AS_LINNUM;
+    variables().AS_LINNUM = static_cast<std::uint16_t>(value * 10u + digit);
 
     current = AS_CHRGET();
   }
@@ -333,8 +324,7 @@ std::uint8_t CurrentStatementChar() {
   // (exclusive) Name normalization: helper name chosen for the inline
   // AS_EXECUTE_STATEMENT load. AS_EXECUTE_STATEMENT uses `ldy #0` then `lda
   // (AS_TXTPTR),Y`.
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  return ReadProgramByte(ReadZeroPageWord(kAS_TXTPTR));
+  return ReadProgramByte(variables_const().AS_TXTPTR);
 }
 
 bool IsStatementEndOfParsedInput() {

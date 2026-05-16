@@ -6,10 +6,6 @@
 namespace applesoft::asm_port {
 
 // Memory access helpers (defined in asm_port_core.cpp or local declarations)
-std::uint8_t ReadZeroPageByte(std::uint8_t address);
-void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
-std::uint16_t ReadZeroPageWord(std::uint8_t address);
-void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 std::uint8_t ReadProgramByte(std::uint16_t address);
 
 /**
@@ -28,14 +24,12 @@ std::uint8_t ReadProgramByte(std::uint16_t address);
  * / flag setting 2122: 60        rts
  */
 static std::uint8_t AS_CHRGET_INTERNAL(bool increment) {
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-
-  std::uint16_t txtptr = ReadZeroPageWord(kAS_TXTPTR);
+  std::uint16_t txtptr = variables_const().AS_TXTPTR;
 
   while (true) {
     if (increment) {
       txtptr++;
-      WriteZeroPageWord(kAS_TXTPTR, txtptr);
+      variables().AS_TXTPTR = txtptr;
     }
 
     std::uint8_t c = ReadProgramByte(txtptr);
