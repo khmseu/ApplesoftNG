@@ -135,8 +135,7 @@ void AS_LOAD_FAC_FROM_YA() {
   // mantissa bits). AS_FAC+1 then reuses mantissa bits with bit 7 forced set by
   // AS_OR #$80 to restore normalized form.
   variables().AS_FAC_SIGN = signPackedMantissa;
-  variables().AS_FAC[1] =
-      static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
+  variables().AS_FAC[1] = static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
   variables().AS_FAC[0] = source.read(0u);
   variables().AS_FAC_EXTENSION = 0u;
 }
@@ -661,7 +660,8 @@ std::uint8_t AS_REMN() {
 }
 
 void PushForPntFrame() {
-  theStack().pushByte(ApplesoftVariables::highByte(variables_const().AS_FORPNT));
+  theStack().pushByte(
+      ApplesoftVariables::highByte(variables_const().AS_FORPNT));
   theStack().pushByte(ApplesoftVariables::lowByte(variables_const().AS_FORPNT));
   theStack().pushToken(AS_TOKEN_FOR);
 }
@@ -727,9 +727,9 @@ void AS_NEXT() {
 
   // jsr AS_GTFORPNT
   AS_GTFORPNTState gtforpntState{};
-    gtforpntState.forpntAS_Lo =
+  gtforpntState.forpntAS_Lo =
       ApplesoftVariables::lowByte(variables_const().AS_FORPNT);
-    gtforpntState.forpntHi =
+  gtforpntState.forpntHi =
       ApplesoftVariables::highByte(variables_const().AS_FORPNT);
   for (std::size_t i = 0; i < gtforpntState.stackPage.size(); ++i) {
     gtforpntState.stackPage[i] =
