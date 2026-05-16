@@ -70,18 +70,19 @@ void AS_FINDATA() {
     // jsr DATAN: returns offset of the next ':' or NUL (end of statement).
     const std::uint8_t datanOffset = AS_DATAN();
     // iny: Y = datanOffset + 1 points one past the terminator.
-    const std::uint8_t nextOffset =
-        static_cast<std::uint8_t>(datanOffset + 1u);
+    const std::uint8_t nextOffset = static_cast<std::uint8_t>(datanOffset + 1u);
     // tax: token = char at (TXTPTR + datanOffset).
-    const std::uint8_t termChar =
-        variables_const().pointer(variables_const().AS_TXTPTR).read(datanOffset);
+    const std::uint8_t termChar = variables_const()
+                                      .pointer(variables_const().AS_TXTPTR)
+                                      .read(datanOffset);
 
     if (termChar == 0u) {
       // EOL: check the forward link two bytes past the terminator.
       // (TXTPTR),Y = high byte of forward link to next line.
       const std::uint8_t fwdHigh =
-          variables_const().pointer(variables_const().AS_TXTPTR).read(
-              static_cast<std::uint8_t>(nextOffset + 1u));
+          variables_const()
+              .pointer(variables_const().AS_TXTPTR)
+              .read(static_cast<std::uint8_t>(nextOffset + 1u));
       if (fwdHigh == 0u) {
         // End of program: ?OUT OF DATA ERROR
         AS_ERROR(AS_ERR_NODATA);
@@ -89,13 +90,14 @@ void AS_FINDATA() {
       }
       // Store new line number into AS_DATLIN.
       const std::uint8_t linLow =
-          variables_const().pointer(variables_const().AS_TXTPTR).read(
-              static_cast<std::uint8_t>(nextOffset + 2u));
+          variables_const()
+              .pointer(variables_const().AS_TXTPTR)
+              .read(static_cast<std::uint8_t>(nextOffset + 2u));
       const std::uint8_t linHigh =
-          variables_const().pointer(variables_const().AS_TXTPTR).read(
-              static_cast<std::uint8_t>(nextOffset + 3u));
-      variables().AS_DATLIN =
-          ApplesoftVariables::makeWord(linLow, linHigh);
+          variables_const()
+              .pointer(variables_const().AS_TXTPTR)
+              .read(static_cast<std::uint8_t>(nextOffset + 3u));
+      variables().AS_DATLIN = ApplesoftVariables::makeWord(linLow, linHigh);
       // Advance TXTPTR by (nextOffset + 4) to reach first char of new line.
       AS_ADDON(static_cast<std::uint8_t>(nextOffset + 4u));
       continue;

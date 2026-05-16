@@ -759,8 +759,8 @@ void AS_NEXT() {
   AS_SETFOR();
   // Assembly: stx DEST (X = frame_x + 10) then ldy #>STACK; jsr FCOMP2.
   // Set AS_DEST to the full 16-bit address of the end value in the FOR frame.
-  variables().AS_DEST = static_cast<std::uint16_t>(
-      0x0100u + add_u8(gtforpntResult.x, 10u));
+  variables().AS_DEST =
+      static_cast<std::uint16_t>(0x0100u + add_u8(gtforpntResult.x, 10u));
   AS_FCOMP2();
 
   if (!AS_NEXT_shouldTerminateLoop(gtforpntResult.x)) {

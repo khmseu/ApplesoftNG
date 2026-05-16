@@ -6,8 +6,8 @@
 #include "core/asm_port_strlit.hpp"
 #include "platform/asm_port_outdo.hpp"
 
-#include <cstdint>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 
 namespace applesoft::asm_port {
@@ -33,7 +33,8 @@ static double facToDouble() {
       (static_cast<std::uint32_t>(cv.AS_FAC[3]) << 8u) |
       static_cast<std::uint32_t>(cv.AS_FAC[4]);
   // Mantissa has implicit leading 1 at bit 31; actual fraction = mantissa/2^32
-  // biased exponent: real exponent = exp8 - 128; value = 2^(exp8-128) * (mant/2^32)
+  // biased exponent: real exponent = exp8 - 128; value = 2^(exp8-128) *
+  // (mant/2^32)
   const double fraction = static_cast<double>(mantissa) / 4294967296.0; // /2^32
   const double value = std::ldexp(fraction, static_cast<int>(exp8) - 128);
   return (cv.AS_FAC_SIGN != 0u) ? -value : value;
@@ -86,7 +87,8 @@ static void foutImpl(std::uint8_t startOffset) {
     }
     // Normalise to 9-digit integer: absVal / 10^(tmpexp-8) rounded.
     // After QINT the ROM has a 32-bit integer in FAC[1..4].
-    double scaled = absVal * std::pow(10.0, static_cast<double>(kDigits - 1 - tmpexp));
+    double scaled =
+        absVal * std::pow(10.0, static_cast<double>(kDigits - 1 - tmpexp));
     // Round to nearest integer.
     long long iVal = static_cast<long long>(scaled + 0.5);
     // Clamp to [100000000, 999999999].
@@ -164,7 +166,10 @@ static void foutImpl(std::uint8_t startOffset) {
       // Find 'E' position.
       std::uint8_t ePos = 0u;
       for (std::uint8_t i = 0u; i < len; ++i) {
-        if (buf[i] == 'E') { ePos = i; break; }
+        if (buf[i] == 'E') {
+          ePos = i;
+          break;
+        }
       }
       // Trim zeros before ePos.
       std::uint8_t mantEnd = ePos;
@@ -187,7 +192,8 @@ static void foutImpl(std::uint8_t startOffset) {
                      static_cast<std::uint8_t>(buf[i]));
   }
   // AS_STRNG2 = 1-based offset of last written character (null byte position).
-  // ROM: STRNG2 is the 0x0100-based offset after the last char (pointing at null).
+  // ROM: STRNG2 is the 0x0100-based offset after the last char (pointing at
+  // null).
   variables().AS_STRNG2 =
       static_cast<std::uint16_t>(0x0100u + startOffset + len);
 }
@@ -283,30 +289,46 @@ void AS_FOUT_1() {
   } else {
     constexpr int kDigits = 9;
     int tmpexp = static_cast<int>(std::floor(std::log10(absVal)));
-    double scaled = absVal * std::pow(10.0, static_cast<double>(kDigits - 1 - tmpexp));
+    double scaled =
+        absVal * std::pow(10.0, static_cast<double>(kDigits - 1 - tmpexp));
     long long iVal = static_cast<long long>(scaled + 0.5);
-    if (iVal >= 1000000000LL) { iVal /= 10; tmpexp++; }
-    if (iVal < 100000000LL && iVal > 0) { iVal *= 10; tmpexp--; }
+    if (iVal >= 1000000000LL) {
+      iVal /= 10;
+      tmpexp++;
+    }
+    if (iVal < 100000000LL && iVal > 0) {
+      iVal *= 10;
+      tmpexp--;
+    }
     const bool decimalForm = (tmpexp >= -2 && tmpexp <= 9);
     char digits[kDigits + 1];
-    std::snprintf(digits, sizeof(digits), "%09lld", static_cast<long long>(iVal < 0 ? 0 : iVal));
+    std::snprintf(digits, sizeof(digits), "%09lld",
+                  static_cast<long long>(iVal < 0 ? 0 : iVal));
     if (decimalForm) {
       const int dotPos = tmpexp + 1;
       if (dotPos <= 0) {
-        emit('0'); emit('.');
-        for (int z = 0; z < -dotPos; ++z) emit('0');
-        for (int d = 0; d < kDigits; ++d) emit(digits[d]);
+        emit('0');
+        emit('.');
+        for (int z = 0; z < -dotPos; ++z)
+          emit('0');
+        for (int d = 0; d < kDigits; ++d)
+          emit(digits[d]);
       } else {
         for (int d = 0; d < kDigits; ++d) {
-          if (d == dotPos) emit('.');
+          if (d == dotPos)
+            emit('.');
           emit(digits[d]);
         }
       }
-      while (len > 0u && buf[len - 1u] == '0') --len;
-      if (len > 0u && buf[len - 1u] == '.') --len;
+      while (len > 0u && buf[len - 1u] == '0')
+        --len;
+      if (len > 0u && buf[len - 1u] == '.')
+        --len;
     } else {
-      emit(digits[0]); emit('.');
-      for (int d = 1; d < kDigits; ++d) emit(digits[d]);
+      emit(digits[0]);
+      emit('.');
+      for (int d = 1; d < kDigits; ++d)
+        emit(digits[d]);
       const int eVal = tmpexp;
       emit('E');
       if (eVal < 0) {
@@ -320,12 +342,20 @@ void AS_FOUT_1() {
         emit(static_cast<char>('0' + eVal % 10));
       }
       std::uint8_t ePos = 0u;
-      for (std::uint8_t i = 0u; i < len; ++i) { if (buf[i] == 'E') { ePos = i; break; } }
+      for (std::uint8_t i = 0u; i < len; ++i) {
+        if (buf[i] == 'E') {
+          ePos = i;
+          break;
+        }
+      }
       std::uint8_t mantEnd = ePos;
-      while (mantEnd > 0u && buf[mantEnd - 1u] == '0') --mantEnd;
-      if (mantEnd > 0u && buf[mantEnd - 1u] == '.') --mantEnd;
+      while (mantEnd > 0u && buf[mantEnd - 1u] == '0')
+        --mantEnd;
+      if (mantEnd > 0u && buf[mantEnd - 1u] == '.')
+        --mantEnd;
       const std::uint8_t tailLen = static_cast<std::uint8_t>(len - ePos);
-      for (std::uint8_t i = 0u; i < tailLen; ++i) buf[mantEnd + i] = buf[ePos + i];
+      for (std::uint8_t i = 0u; i < tailLen; ++i)
+        buf[mantEnd + i] = buf[ePos + i];
       len = static_cast<std::uint8_t>(mantEnd + tailLen);
     }
   }

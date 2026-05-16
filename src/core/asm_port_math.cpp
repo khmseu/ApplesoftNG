@@ -586,7 +586,8 @@ void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount) {
     AS_ZERO_FAC();
     return;
   }
-  // new_exponent = exponent - shiftCount (eor #$ff; adc #1 with C=0 gives this).
+  // new_exponent = exponent - shiftCount (eor #$ff; adc #1 with C=0 gives
+  // this).
   variables().AS_FAC[0] = static_cast<std::uint8_t>(exponent - shiftCount);
   // Fall through to NORMALIZE_FAC_5: carry=0 here, so bcc RTS_11 → return.
 }
@@ -648,8 +649,9 @@ void AS_NORMALIZE_FAC_6() {
 // Load A=0 and fall through to STA_IN_FAC_SIGN_AND_EXP/STA_IN_FAC_SIGN.
 // Stores 0 into FAC exponent and FAC_SIGN; returns.
 void AS_ZERO_FAC() {
-  variables().AS_FAC[0] = 0u;   // lda #0; sta FAC
-  variables().AS_FAC_SIGN = 0u; // sta FAC_SIGN (via STA_IN_FAC_SIGN_AND_EXP fall-through)
+  variables().AS_FAC[0] = 0u; // lda #0; sta FAC
+  variables().AS_FAC_SIGN =
+      0u; // sta FAC_SIGN (via STA_IN_FAC_SIGN_AND_EXP fall-through)
   // rts
 }
 
