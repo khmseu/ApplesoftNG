@@ -28,6 +28,9 @@ std::uint8_t AS_FRETMP(std::uint16_t descriptorAddress);
 // AS_Labels: AS_FRETMS (inclusive) .. AS_CHRSTR (exclusive)
 bool AS_FRETMS(std::uint16_t descriptorAddress);
 
+// AS_Labels: AS_FREFAC (inclusive) .. AS_FRETMP (exclusive)
+std::uint8_t AS_FREFAC();
+
 // AS_Labels: AS_CHRSTR (inclusive) .. AS_LEFTSTR (exclusive)
 void AS_CHRSTR();
 

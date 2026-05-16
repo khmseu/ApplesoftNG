@@ -11,7 +11,6 @@ namespace applesoft::asm_port {
 // AS_FREFAC: dereference the string descriptor at AS_FAC[3]/AS_FAC[4],
 // optionally release the temporary descriptor, store the data pointer in
 // AS_INDEX, and return the string length.
-// TODO(asm-port): AS_FRETMS (temporary-release part) not yet implemented.
 std::uint8_t AS_FREFAC();
 
 // AS_Labels: AS_STRPRT (inclusive) .. AS_OUTSP (exclusive)

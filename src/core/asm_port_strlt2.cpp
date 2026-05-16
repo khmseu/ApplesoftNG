@@ -197,7 +197,6 @@ void AS_CAT();
 void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length);
 void AS_MOVSTR_1(std::uint8_t length);
 std::uint8_t AS_FRESTR();
-std::uint8_t AS_FREFAC();
 
 // TODO(asm-port): port AS_FRM_ELEMENT label.
 void AS_FRM_ELEMENT() {}
@@ -544,7 +543,9 @@ std::uint8_t AS_FRESTR() {
 // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // AS_Labels: AS_FREFAC (inclusive) .. AS_FRETMP (exclusive)
 // Name normalization: none (assembler label AS_FREFAC kept verbatim).
-std::uint8_t AS_FREFAC() { return AS_FRETMP(read_AS_FAC_descriptor_address()); }
+std::uint8_t AS_FREFAC_impl() {
+  return AS_FRETMP(read_AS_FAC_descriptor_address());
+}
 
 // Source:
 // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -598,6 +599,12 @@ void AS_PUTEMP(std::uint8_t tempDescriptorAddress) {
 
 void AS_STRLIT(std::uint16_t address);
 } // namespace
+
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: AS_FREFAC (inclusive) .. AS_FRETMP (exclusive)
+// Name normalization: none (assembler label AS_FREFAC kept verbatim).
+std::uint8_t AS_FREFAC() { return AS_FREFAC_impl(); }
 
 // AS_Labels: AS_STRINI (inclusive) .. AS_STRSPA (exclusive)
 // Name normalization: none (assembler label AS_STRINI kept verbatim).

@@ -76,23 +76,8 @@ static std::uint8_t AS_GTBYTC_PRINT() {
   return AS_GETBYT();
 }
 
-// AS_FREFAC: dereference the string descriptor at AS_FAC[3]/AS_FAC[4],
-// optionally release the temporary descriptor, store the data pointer in
-// AS_INDEX, and return the string length.
-// TODO(asm-port): AS_FRETMS (temporary-release part) not yet implemented.
-std::uint8_t AS_FREFAC() {
-  const std::uint16_t descriptorAddress = ApplesoftVariables::makeWord(
-      variables_const().AS_FAC[3], variables_const().AS_FAC[4]);
-  const auto descriptorPtr = variables_const().pointer(descriptorAddress);
-
-  // String descriptor layout: [length, data_lo, data_hi]
-  const std::uint8_t length = descriptorPtr.read();
-
-  variables().AS_INDEX = ApplesoftVariables::makeWord(descriptorPtr.read(1u),
-                                                      descriptorPtr.read(2u));
-
-  return length;
-}
+// Forward declaration to the real implementation in asm_port_strlt2.cpp.
+extern std::uint8_t AS_FREFAC();
 
 // ---------------------------------------------------------------------------
 // Token constants used in AS_PRINT2.
