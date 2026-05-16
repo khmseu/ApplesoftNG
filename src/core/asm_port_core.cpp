@@ -1518,8 +1518,7 @@ void AS_UNARY() {
     // Save the string descriptor address (AS_VPNT = AS_FAC+3/AS_FAC+4) into
     // AS_DSCPTR before AS_GETBYT overwrites AS_FAC+4 with the sub-argument.
     // AS_VPNT = $a0/$a1 = ZP_AS_FAC+3/+4; AS_DSCPTR = ZP_AS_DSCPTR ($8c).
-    const std::uint16_t vpnt = ApplesoftVariables::makeWord(
-        variables_const().AS_FAC[3], variables_const().AS_FAC[4]);
+    const std::uint16_t vpnt = variables_const().AS_FAC_WORD_3;
     variables().AS_DSCPTR = vpnt;
 
     // AS_GETBYT evaluates the numeric sub-argument; result lands in AS_FAC+4.
@@ -1583,15 +1582,10 @@ void AS_STRCMP() {
   variables().AS_FAC[2] =
       static_cast<std::uint8_t>(variables_const().AS_INDEX >> 8u);
 
-  const std::uint16_t argDescriptorAddress =
-      variables_const().AS_ARG[3] |
-      (static_cast<std::uint16_t>(variables_const().AS_ARG[4]) << 8u);
+  const std::uint16_t argDescriptorAddress = variables_const().AS_ARG_WORD_3;
   const std::uint8_t argLength = AS_FRETMP(argDescriptorAddress);
   variables().AS_ARG[0] = argLength;
-  variables().AS_ARG[3] =
-      static_cast<std::uint8_t>(variables_const().AS_INDEX & 0xffu);
-  variables().AS_ARG[4] =
-      static_cast<std::uint8_t>(variables_const().AS_INDEX >> 8u);
+  variables().AS_ARG_WORD_3 = variables_const().AS_INDEX;
 
   gNumericCompareResult = CompareArgAndFacStrings();
   AS_NUMCMP();
@@ -2152,9 +2146,8 @@ std::int8_t CompareArgAndFacStrings() {
   }
   variables().AS_FAC_SIGN = shorterFlag;
 
-  const auto argString = variables_const().pointer(
-      variables_const().AS_ARG[3] |
-      (static_cast<std::uint16_t>(variables_const().AS_ARG[4]) << 8u));
+  const auto argString =
+      variables_const().pointer(variables_const().AS_ARG_WORD_3);
   const auto facString = variables_const().pointer(
       variables_const().AS_FAC[1] |
       (static_cast<std::uint16_t>(variables_const().AS_FAC[2]) << 8u));

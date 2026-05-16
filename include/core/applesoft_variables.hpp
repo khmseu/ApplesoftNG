@@ -156,6 +156,52 @@ public:
     ApplesoftVariables *vars_ = nullptr;
   };
 
+  class FacWord3Alias {
+  public:
+    explicit FacWord3Alias(ApplesoftVariables *vars = nullptr) : vars_(vars) {}
+
+    void bind(ApplesoftVariables *vars) { vars_ = vars; }
+
+    operator std::uint16_t() const {
+      return vars_ == nullptr ? 0u
+                              : makeWord(vars_->AS_FAC[3], vars_->AS_FAC[4]);
+    }
+
+    FacWord3Alias &operator=(std::uint16_t value) {
+      if (vars_ != nullptr) {
+        vars_->AS_FAC[3] = lowByte(value);
+        vars_->AS_FAC[4] = highByte(value);
+      }
+      return *this;
+    }
+
+  private:
+    ApplesoftVariables *vars_ = nullptr;
+  };
+
+  class ArgWord3Alias {
+  public:
+    explicit ArgWord3Alias(ApplesoftVariables *vars = nullptr) : vars_(vars) {}
+
+    void bind(ApplesoftVariables *vars) { vars_ = vars; }
+
+    operator std::uint16_t() const {
+      return vars_ == nullptr ? 0u
+                              : makeWord(vars_->AS_ARG[3], vars_->AS_ARG[4]);
+    }
+
+    ArgWord3Alias &operator=(std::uint16_t value) {
+      if (vars_ != nullptr) {
+        vars_->AS_ARG[3] = lowByte(value);
+        vars_->AS_ARG[4] = highByte(value);
+      }
+      return *this;
+    }
+
+  private:
+    ApplesoftVariables *vars_ = nullptr;
+  };
+
   ApplesoftVariables() {
     AS_LENGTH.bind(this);
     AS_SGNCPR.bind(this);
@@ -164,6 +210,8 @@ public:
     AS_TMPEXP.bind(this);
     AS_DPFLG.bind(this);
     AS_EXPSGN.bind(this);
+    AS_FAC_WORD_3.bind(this);
+    AS_ARG_WORD_3.bind(this);
   }
 
   // Canonical zero-page/fixed address names used by assembler ports.
@@ -438,10 +486,12 @@ public:
   std::uint8_t AS_EXPON = 0;   // $9a
   std::uint16_t AS_LOWTR = 0;  // $9b/$9c
   std::array<std::uint8_t, 5> AS_FAC{}; // $9d..$a1
+  FacWord3Alias AS_FAC_WORD_3{};        // Virtual alias for $a0/$a1
   std::uint8_t AS_FAC_SIGN = 0;         // $a2
   std::uint8_t AS_SERLEN = 0;           // $a3
   std::uint8_t AS_SHIFT_SIGN_EXT = 0;   // $a4
   std::array<std::uint8_t, 6> AS_ARG{}; // $a5..$aa
+  ArgWord3Alias AS_ARG_WORD_3{};        // Virtual alias for $a8/$a9
   std::uint16_t AS_STRNG1 = 0;          // $ab/$ac
   SGNCPRAlias AS_SGNCPR{}; // Virtual alias for $ab (AS_STRNG1 low byte)
   FACExtensionAlias

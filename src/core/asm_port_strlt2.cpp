@@ -103,13 +103,11 @@ std::uint16_t read_AS_STRNG1() { return variables_const().AS_STRNG1; }
 std::uint16_t read_AS_FRESPC() { return variables_const().AS_FRESPC; }
 
 std::uint16_t read_AS_FAC_descriptor_address() {
-  return ApplesoftVariables::makeWord(variables_const().AS_FAC[3],
-                                      variables_const().AS_FAC[4]);
+  return variables_const().AS_FAC_WORD_3;
 }
 
 void write_AS_FAC_descriptor_address(std::uint16_t value) {
-  variables().AS_FAC[3] = ApplesoftVariables::lowByte(value);
-  variables().AS_FAC[4] = ApplesoftVariables::highByte(value);
+  variables().AS_FAC_WORD_3 = value;
 }
 
 std::uint8_t g_jerr_error = AS_ERR_FRMCPX;
