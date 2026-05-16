@@ -1,6 +1,7 @@
 #include "core/asm_port_inlin2.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/io_ports.hpp"
+#include "core/jump_table.hpp"
 #include "platform/asm_port_getln.hpp"
 
 #include <cstdint>
@@ -10,9 +11,6 @@ namespace {
 
 constexpr std::uint16_t kInputBufferAddress =
     ApplesoftVariables::ADDR_AS_INPUT_BUFFER;
-constexpr std::uint16_t kMonitorKeyinVector = 0xfd0fu;
-
-using MonitorInputRoutine = std::uint8_t (*)();
 
 void write_MON_PROMPT(std::uint8_t v) {
   variables().writeByte(ApplesoftVariables::ZP_MON_PROMPT, v);
@@ -71,25 +69,6 @@ std::uint8_t MON_KEYIN() {
     }
   }
 }
-namespace {
-
-MonitorInputRoutine resolveMonitorInputVector(std::uint16_t vector) {
-  switch (vector) {
-  case kMonitorKeyinVector:
-    return &MON_KEYIN;
-  default:
-    // Slot ROM input vectors are not ported yet; keep monitor default
-    // semantics.
-    return &MON_KEYIN;
-  }
-}
-
-std::uint8_t useMonitorInputVector() {
-  return resolveMonitorInputVector(
-      readZeroPageWord(ApplesoftVariables::ZP_MON_KSW))();
-}
-
-} // namespace
 
 // MON_RDKEY: monitor label RDKEY (keyin.o65.lst).
 // All monitor labels carry a virtual MON_ prefix in C++; RDKEY -> MON_RDKEY.
@@ -115,7 +94,9 @@ std::uint8_t MON_RDKEY() {
       static_cast<std::uint8_t>((originalChar & 0x3fu) | 0x40u);
   variables().writeByte(cursorAddress, flashingChar);
 
-  const std::uint8_t keyboardValue = useMonitorInputVector();
+  const std::uint8_t keyboardValue =
+      ApplesoftNG::ExternalJumpDispatcher::Jump<std::uint8_t>(
+          readZeroPageWord(ApplesoftVariables::ZP_MON_KSW));
 
   // KEYIN epilogue: restore original screen char, clear keyboard strobe, return
   // keycode.
@@ -153,9 +134,11 @@ std::uint8_t AS_INCHR() {
   // Source:
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_INCHR (inclusive) .. AS_PARSE_INPUT_LINE (exclusive)
-  // Name normalization: none (assembler label AS_INCHR kept verbatim).
+  // name normalization: none (assembler label AS_INCHR kept verbatim).
 
-  return useMonitorInputVector();
+  return ApplesoftNG::ExternalJumpDispatcher::Jump<std::uint8_t>(
+             readZeroPageWord(ApplesoftVariables::ZP_MON_KSW)) &
+         0x7fu;
 }
 
 } // namespace applesoft::asm_port
