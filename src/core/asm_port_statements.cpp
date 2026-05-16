@@ -84,11 +84,6 @@ bool AS_NEW_impl() {
 }
 
 void AS_SCRTCH_impl() {
-  constexpr std::uint8_t kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
-  constexpr std::uint8_t kAS_LOCK = ApplesoftVariables::ZP_AS_LOCK;
-  constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
-  constexpr std::uint8_t kAS_FRETOP = ApplesoftVariables::ZP_AS_FRETOP;
-
   const std::uint16_t txtTabAddr = variables_const().AS_TXTTAB;
   variables().AS_LOCK = 0;
   WriteProgramByte(txtTabAddr, 0);
@@ -365,8 +360,6 @@ void AS_PUTSTR() {
 
   constexpr std::uint8_t kAS_FAC_PLUS_3 =
       static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 3u);
-  constexpr std::uint8_t kAS_FRETOP = ApplesoftVariables::ZP_AS_FRETOP;
-  constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
 
   const std::uint16_t facDescriptor = variables_const().AS_FAC_WORD_3;
   const auto facDescriptorPtr = variables_const().pointer(facDescriptor);
@@ -821,12 +814,6 @@ void AS_LOAD() {
   // AS_Labels: AS_LOAD (inclusive) .. AS_VARTIO (exclusive)
   // Name normalization: none (assembler label AS_LOAD kept verbatim).
 
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
-  constexpr std::uint8_t kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
-  constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
-  constexpr std::uint8_t kAS_TEMPPT = ApplesoftVariables::ZP_AS_TEMPPT;
-  constexpr std::uint8_t kAS_LOCK = ApplesoftVariables::ZP_AS_LOCK;
-
   AS_VARTIO();
   MON_READ();
 
@@ -856,7 +843,6 @@ void AS_VARTIO() {
 
   constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
   constexpr std::uint8_t kAS_TEMPPT = ApplesoftVariables::ZP_AS_TEMPPT;
-  constexpr std::uint8_t kAS_LOCK = ApplesoftVariables::ZP_AS_LOCK;
   variables().MON_A1 = ApplesoftVariables::makeWord(kAS_LINNUM, 0x00u);
   variables().MON_A2 = ApplesoftVariables::makeWord(kAS_TEMPPT, 0x00u);
   variables().AS_LOCK = 0x00;

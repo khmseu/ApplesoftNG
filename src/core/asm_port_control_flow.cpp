@@ -106,11 +106,7 @@ void ApplyFacSign() {
   variables().AS_FAC[1] = signedMantissaHigh;
 }
 
-void SetBranchTargetToAS_STEP() {
-  constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
-
-  variables().AS_INDEX = kStepAS_LabelAddress;
-}
+void SetBranchTargetToAS_STEP() { variables().AS_INDEX = kStepAS_LabelAddress; }
 
 void AS_LOAD_FAC_FROM_YA() {
   // Source:
@@ -119,7 +115,6 @@ void AS_LOAD_FAC_FROM_YA() {
   // (exclusive) This function ports only AS_LOAD_FAC_FROM_YA;
   // AS_STORE_FAC_IN_TEMP2_ROUNDED starts at the exclusive end label. Name
   // normalization: none (assembler label AS_LOAD_FAC_FROM_YA kept verbatim).
-  constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
   // Caller precondition: AS_INDEX points to the packed 5-byte source value.
   const ProgramPointer source{variables_const().AS_INDEX};
   variables().AS_FAC[4] = source.read(4u);
@@ -189,9 +184,6 @@ void AS_FCOMP2() {
   // Name normalization: none (assembler label AS_FCOMP2 kept verbatim).
   // Pointer candidate: DEST ($60/$61) is one unified pointer to the packed
   // comparand.
-
-  constexpr std::uint8_t kAS_FAC_EXTENSION =
-      ApplesoftVariables::ZP_AS_FAC_EXTENSION;
 
   const auto comparand = variables_const().pointer(variables_const().AS_DEST);
   const std::uint8_t comparandExponent = comparand.read(0u);
@@ -273,8 +265,6 @@ void AS_FRM_STACK_3() {
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_FRM_STACK_3 (inclusive) .. AS_NOTMATH (exclusive)
   // Name normalization: none (assembler label AS_FRM_STACK_3 kept verbatim).
-  constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
-
   AS_ROUND_FAC();
 
   theStack().pushByte(variables_const().AS_FAC[4]);
@@ -310,8 +300,6 @@ bool AS_NEXT_shouldTerminateLoop(std::uint8_t forFrameX) {
 }
 
 std::uint8_t ScanAheadOffset(std::uint8_t terminator) {
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-
   variables().AS_CHARAC = terminator;
   std::uint8_t offset = 0;
   variables().AS_ENDCHR = 0;
@@ -346,7 +334,6 @@ void AS_SETFOR() {
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_SETFOR (inclusive) .. AS_COPY_ARG_TO_FAC (exclusive)
   // Name normalization: none (assembler label AS_SETFOR kept verbatim).
-  constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
   AS_ROUND_FAC();
 
   const ProgramPointer forVariablePtr{variables_const().AS_FORPNT};
@@ -412,11 +399,6 @@ void AS_ENDX_impl(bool shouldPrintBreak) {
   if (!IsStatementEndOfParsedInput()) {
     return;
   }
-
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
-  constexpr std::uint8_t kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
-  constexpr std::uint8_t kAS_OLDLIN = ApplesoftVariables::ZP_AS_OLDLIN;
 
   const std::uint16_t textPointer = variables_const().AS_TXTPTR;
   const std::uint16_t currentAS_Line = variables_const().AS_CURLIN;
@@ -499,11 +481,6 @@ void AS_CONT() {
     return;
   }
 
-  constexpr std::uint8_t kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
-  constexpr std::uint8_t kAS_OLDLIN = ApplesoftVariables::ZP_AS_OLDLIN;
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
-
   if (ApplesoftVariables::highByte(variables_const().AS_OLDTEXT) == 0) {
     AS_ERROR(AS_ERR_CANTCONT);
     return;
@@ -527,8 +504,6 @@ void AS_GOSUB() {
   // target line
   // - On AS_RETURN, restores execution state from the stack frame
 
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
   constexpr std::uint8_t kAS_TOKEN_GOSUB = 0xb0;
 
   AS_CHKMEMState chkmemState{};
@@ -556,9 +531,6 @@ void AS_GO_TO_LINE() {
 }
 
 void AS_GOTO() {
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-
   AS_LINGET();
   const std::uint8_t remnOffset = AS_REMN();
 
@@ -590,9 +562,6 @@ void AS_RESUME() {
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_RESUME (inclusive) .. AS_JSYN (exclusive)
   // Name normalization: none (assembler label AS_RESUME kept verbatim).
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-
   variables().AS_CURLIN = variables_const().AS_ERRLIN;
   variables().AS_TXTPTR = variables_const().AS_ERRPOS;
   theStack().setStackPointer(variables_const().AS_ERRSTK);
@@ -605,8 +574,6 @@ void AS_ONERR() {
   // AS_Labels: AS_ONERR (inclusive) .. AS_HANDLERR (exclusive)
   // Name normalization: none (assembler label AS_ONERR kept verbatim).
   constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
 
   AS_SYNCHR(kAS_TOKEN_GOTO);
   variables().AS_TXPSV = variables_const().AS_TXTPTR;
@@ -699,10 +666,6 @@ void AS_NEXT() {
   // AS_Labels: AS_NEXT (inclusive) .. AS_FRMNUM (exclusive)
   // Name normalization: none (assembler label AS_NEXT kept verbatim).
 
-  constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-
   // d0 04 / AS_NEXT_1 jsr AS_PTRGET / AS_NEXT_2 sta AS_FORPNT, sty AS_FORPNT+1
   // No-variable AS_NEXT case is represented by AS_FORPNT+1 = 0.
   if (AS_CHRGOT() == 0u) {
@@ -778,7 +741,6 @@ void AS_NEXT() {
 }
 
 void AS_POP() {
-  constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
   constexpr std::uint8_t kAS_TOKEN_GOSUB = 0xb0;
 
   if (!IsStatementEndOfParsedInput()) {
@@ -803,9 +765,6 @@ void AS_POP() {
 }
 
 void AS_RETURN() {
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-
   (void)theStack().popByte();
   const std::uint8_t currentAS_LineLo = theStack().popByte();
 
@@ -845,10 +804,6 @@ void AS_STEP() {
 }
 
 void AS_NEWSTT() {
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
-  constexpr std::uint8_t kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
-
   variables().AS_REMSTK = theStack().readStackPointer();
 
   if (AS_ISCNTC()) {

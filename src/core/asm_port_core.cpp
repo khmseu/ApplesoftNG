@@ -601,13 +601,6 @@ void AS_FAE_1() {
   // AS_Labels: AS_FAE_1 (inclusive) .. AS_MULTIPLY_SUBSCRIPT (exclusive)
   // Name normalization: none (assembler label AS_FAE_1 kept verbatim).
 
-  constexpr std::uint8_t kAS_NUMDIM = ApplesoftVariables::ZP_AS_NUMDIM;
-  constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_VARNAM = ApplesoftVariables::ZP_AS_VARNAM;
-  constexpr std::uint8_t kAS_ARYPNT = ApplesoftVariables::ZP_AS_ARYPNT;
-  constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
-
   ProgramPointer descriptor{variables_const().AS_LOWTR};
   std::uint8_t descriptorY = 4u; // FIND_ARRAY_ELEMENT leaves descriptor[4]
                                  // (#dims) as the current slot.
@@ -1055,13 +1048,6 @@ void AS_MAKE_NEW_VARIABLE() {
   // bytes, then writing the two-byte name and a zero-initialized five-byte
   // value.
 
-  constexpr std::uint8_t kAS_ARYTAB = ApplesoftVariables::ZP_AS_ARYTAB;
-  constexpr std::uint8_t kAS_STREND = ApplesoftVariables::ZP_AS_STREND;
-  constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
-  constexpr std::uint8_t kAS_ARYPNT = ApplesoftVariables::ZP_AS_ARYPNT;
-  constexpr std::uint8_t kAS_VARNAM = ApplesoftVariables::ZP_AS_VARNAM;
-  constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
-
   const std::uint16_t arytab = variables_const().AS_ARYTAB;
   const std::uint16_t strend = variables_const().AS_STREND;
 
@@ -1188,17 +1174,6 @@ void AS_ARRAY() {
   // Name normalization: none (assembler label AS_ARRAY kept verbatim).
   // Parse subscripts (if present), then search AS_ARYTAB for matching array
   // name.
-
-  constexpr std::uint8_t kAS_SUBFLG = ApplesoftVariables::ZP_AS_SUBFLG;
-  constexpr std::uint8_t kAS_VALTYP = ApplesoftVariables::ZP_AS_VALTYP;
-  constexpr std::uint8_t kAS_VALTYP_PLUS_1 =
-      ApplesoftVariables::ZP_AS_VALTYP_PLUS_1;
-  constexpr std::uint8_t kAS_NUMDIM = ApplesoftVariables::ZP_AS_NUMDIM;
-  constexpr std::uint8_t kAS_VARNAM = ApplesoftVariables::ZP_AS_VARNAM;
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_ARYTAB = ApplesoftVariables::ZP_AS_ARYTAB;
-  constexpr std::uint8_t kAS_STREND = ApplesoftVariables::ZP_AS_STREND;
-  constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
 
   if (variables_const().AS_SUBFLG == 0u) {
     const std::uint8_t dimflgOrInteger = static_cast<std::uint8_t>(
@@ -1388,8 +1363,6 @@ void AS_CMPDONE() {
   // AS_Labels: AS_CMPDONE (inclusive) .. AS_PDL (exclusive)
   // Name normalization: none (assembler label AS_CMPDONE kept verbatim).
 
-  constexpr std::uint8_t kAS_CPRMASK = ApplesoftVariables::ZP_AS_CPRMASK;
-
   std::int16_t x = static_cast<std::int16_t>(gNumericCompareResult) + 1;
   if (x < 0) {
     x = 0;
@@ -1429,8 +1402,6 @@ void AS_HANDLERR() {
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_HANDLERR (inclusive) .. AS_RESUME (exclusive)
   // Name normalization: none (assembler label AS_HANDLERR kept verbatim).
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-
   variables().AS_ERRNUM = gPendingErrorCode;
   variables().AS_ERRSTK = variables_const().AS_REMSTK;
 
@@ -1526,7 +1497,6 @@ void AS_RELOPS() {
   // AS_Labels: AS_RELOPS (inclusive) .. AS_STRCMP (exclusive)
   // Name normalization: none (assembler label AS_RELOPS kept verbatim).
 
-  constexpr std::uint8_t kAS_CPRTYP = ApplesoftVariables::ZP_AS_CPRTYP;
   constexpr std::uint16_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
 
   const std::uint8_t compareTypeFlags = variables_const().AS_CPRTYP;
@@ -1548,11 +1518,6 @@ void AS_STRCMP() {
   // Name normalization: none (assembler label AS_STRCMP kept verbatim).
   // Pointer candidates lifted: FAC+1/+2 and ARG+3/+4 are unified string-data
   // pointers.
-
-  constexpr std::uint8_t kAS_VALTYP = ApplesoftVariables::ZP_AS_VALTYP;
-  constexpr std::uint8_t kAS_CPRTYP = ApplesoftVariables::ZP_AS_CPRTYP;
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
 
   variables().AS_VALTYP = 0u;
   variables().AS_CPRTYP =
@@ -1626,7 +1591,6 @@ void AS_FNC_() {
   AS_SYNCHR(static_cast<std::uint8_t>(0xc2u)); // AS_TOKEN_FN = 0xc2
 
   // Set high bit in AS_SUBFLG to signal this is from AS_DEF/FN context
-  constexpr std::uint8_t kAS_SUBFLG = ApplesoftVariables::ZP_AS_SUBFLG;
   const std::uint8_t subflg = variables_const().AS_SUBFLG;
   variables().AS_SUBFLG = static_cast<std::uint8_t>(subflg | 0x80u);
 
@@ -1667,7 +1631,6 @@ void AS_DEF() {
   AS_CHKOPN();
 
   // Set AS_SUBFLG to flag AS_DEF context for AS_PTRGET
-  constexpr std::uint8_t kAS_SUBFLG = ApplesoftVariables::ZP_AS_SUBFLG;
   variables().AS_SUBFLG = 0x80u;
 
   // Get pointer to argument variable
@@ -1683,11 +1646,9 @@ void AS_DEF() {
   AS_SYNCHR(static_cast<std::uint8_t>(0xd0u)); // TOKEN_EQUAL = 0xd0
 
   // Stack the argument variable pointer (AS_VARPNT)
-  constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
   variables().AS_VARPNT = variables_const().AS_VARPNT;
 
   // Stack the text pointer (AS_TXTPTR)
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
   const std::uint16_t txtPtr = variables_const().AS_TXTPTR;
   (void)txtPtr;
 
@@ -1711,10 +1672,6 @@ void AS_FUNCT() {
   // "FN" AS_FUNCTION AS_CALL - invoke user-defined function
   // Parse FN name, save old argument value, evaluate expression with new value,
   // restore old value via AS_FNCDATA.
-
-  constexpr std::uint8_t kAS_FNCNAM = ApplesoftVariables::ZP_AS_FNCNAM;
-  constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
 
   // Clear stack for this function call
   theStack().clearFnStack();
@@ -1826,7 +1783,6 @@ void AS_FNCDATA() {
   // Pop 5 stack bytes and store to (AS_FNCNAM),Y with Y incrementing from 0
   // to 4.
 
-  constexpr std::uint8_t kAS_FNCNAM = ApplesoftVariables::ZP_AS_FNCNAM;
   const std::uint16_t fncnampnt = variables_const().AS_FNCNAM;
 
   // AS_Loop 5 times: pop stack byte and store to (AS_FNCNAM)+Y
@@ -1850,13 +1806,6 @@ void AS_FRMEVL() {
   // the recursive precedence walk and the stacked-AS_LHS frame handoff to
   // AS_ARG/AS_CPRMASK.
 
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  constexpr std::uint8_t kAS_VALTYP = ApplesoftVariables::ZP_AS_VALTYP;
-  constexpr std::uint8_t kAS_CPRTYP = ApplesoftVariables::ZP_AS_CPRTYP;
-  constexpr std::uint8_t kAS_CPRMASK = ApplesoftVariables::ZP_AS_CPRMASK;
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
-  constexpr std::uint8_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
   constexpr std::uint8_t kAS_SGNCPR =
       ApplesoftVariables::ZP_AS_STRNG1; // AS_SGNCPR shares $AB with AS_STRNG1.
   constexpr std::uint8_t kAS_STACK_ROOM_BYTES = 1u;
@@ -2110,10 +2059,6 @@ std::int8_t CompareArgAndFacStrings() {
   // Name normalization: CompareArgAndFacStrings is the C++ helper name for the
   // STRCMP_1/STRCMP_2 loop. Pointer candidates lifted: ARG+3/+4 and FAC+1/+2
   // are the two unified string-data pointers.
-
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
-  constexpr std::uint8_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
 
   const std::uint8_t argLength = variables_const().AS_ARG[0];
   const std::uint8_t facLength = variables_const().AS_FAC[0];
