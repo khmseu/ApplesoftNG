@@ -1634,8 +1634,8 @@ void AS_STRCMP() {
   constexpr std::uint8_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
   constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
 
-    variables().AS_VALTYP = 0u;
-    variables().AS_CPRTYP =
+  variables().AS_VALTYP = 0u;
+  variables().AS_CPRTYP =
       static_cast<std::uint8_t>(variables_const().AS_CPRTYP - 1u);
 
   const std::uint8_t facLength = AS_FREFAC();
@@ -2060,8 +2060,7 @@ void AS_FRMEVL() {
       // AS_FRM_PERFORM_2 frame handoff: move stacked left operand to AS_ARG and
       // synthesize AS_CPRMASK/AS_SGNCPR as if popped from the ROM expression
       // stack.
-        variables().AS_CPRMASK =
-          static_cast<std::uint8_t>(cprtypForFrame >> 1u);
+      variables().AS_CPRMASK = static_cast<std::uint8_t>(cprtypForFrame >> 1u);
       for (std::uint8_t i = 0; i < lhsFac.size(); ++i) {
         WriteZeroPageByte(static_cast<std::uint8_t>(kAS_ARG + i), lhsFac[i]);
       }

@@ -67,9 +67,12 @@ static void AS_NORMALIZE_FAC_1(std::uint8_t facSign) {
   }
 
   variables().AS_FAC[0] = exponent;
-  variables().AS_FAC[1] = static_cast<std::uint8_t>((integerValue >> 24u) & 0xffu);
-  variables().AS_FAC[2] = static_cast<std::uint8_t>((integerValue >> 16u) & 0xffu);
-  variables().AS_FAC[3] = static_cast<std::uint8_t>((integerValue >> 8u) & 0xffu);
+  variables().AS_FAC[1] =
+      static_cast<std::uint8_t>((integerValue >> 24u) & 0xffu);
+  variables().AS_FAC[2] =
+      static_cast<std::uint8_t>((integerValue >> 16u) & 0xffu);
+  variables().AS_FAC[3] =
+      static_cast<std::uint8_t>((integerValue >> 8u) & 0xffu);
   variables().AS_FAC[4] = static_cast<std::uint8_t>(integerValue & 0xffu);
   variables().AS_FAC_EXTENSION = 0u;
 }

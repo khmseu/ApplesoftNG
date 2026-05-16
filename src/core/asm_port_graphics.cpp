@@ -497,7 +497,7 @@ void AS_HPOSN(const HiResCoordinates &point) {
   static constexpr std::uint8_t kMaskTable[7] = {0x81u, 0x82u, 0x84u, 0x88u,
                                                  0x90u, 0xa0u, 0xc0u};
 
-    const std::uint16_t pageBase =
+  const std::uint16_t pageBase =
       static_cast<std::uint16_t>(variables_const().AS_HGR_PAGE << 8u);
   const std::uint16_t rowOffset = static_cast<std::uint16_t>(
       (static_cast<std::uint16_t>(point.y & 0x07u) << 10u) +
@@ -522,7 +522,8 @@ void AS_HPOSN(const HiResCoordinates &point) {
   if ((horiz & 0x01u) != 0u) {
     hgrBits = static_cast<std::uint8_t>(hgrBits << 1u);
     if (hgrBits < 0xc0u) {
-      hgrBits = static_cast<std::uint8_t>(variables_const().AS_HGR_COLOR ^ 0x7fu);
+      hgrBits =
+          static_cast<std::uint8_t>(variables_const().AS_HGR_COLOR ^ 0x7fu);
     }
   }
   variables().AS_HGR_BITS = hgrBits;
@@ -605,11 +606,11 @@ void AS_HGLIN(const HiResCoordinates &start, const HiResCoordinates &target) {
   int err = dx + dy;
 
   // Seed ROM-style line state.
-    variables().AS_HGR_DX = static_cast<std::uint16_t>(dx);
-    variables().AS_HGR_DY = static_cast<std::uint8_t>(
+  variables().AS_HGR_DX = static_cast<std::uint16_t>(dx);
+  variables().AS_HGR_DY = static_cast<std::uint8_t>(
       0u - static_cast<std::uint8_t>(absInt(y1 - y0)) - 1u);
-    variables().AS_HGR_E = static_cast<std::uint8_t>(dx);
-    variables().AS_HGR_COUNT = static_cast<std::uint8_t>(
+  variables().AS_HGR_E = static_cast<std::uint8_t>(dx);
+  variables().AS_HGR_COUNT = static_cast<std::uint8_t>(
       (static_cast<std::uint16_t>(dx + absInt(y1 - y0))) >> 8u);
 
   // Bit 7 follows horizontal direction (right=1, left=0); bit 0 follows
@@ -650,8 +651,8 @@ void AS_HPLOT() {
 
   constexpr std::uint8_t kTOKEN_TO = 0xc1;
 
-  HiResCoordinates current{
-      variables_const().AS_HGR_X, variables_const().AS_HGR_Y, true};
+  HiResCoordinates current{variables_const().AS_HGR_X,
+                           variables_const().AS_HGR_Y, true};
 
   const std::uint8_t first_token = AS_CHRGOT();
   if (first_token != kTOKEN_TO) {
@@ -695,8 +696,10 @@ void AS_DRWPNT() {
 
   // Copy shape table pointer from HGR_SHAPE_PNTR to working HGR_SHAPE (16-bit
   // copy).
-  const std::uint8_t shape_tbl_lo = ApplesoftVariables::lowByte(variables_const().AS_HGR_SHAPE_PNTR);
-  const std::uint8_t shape_tbl_hi = ApplesoftVariables::highByte(variables_const().AS_HGR_SHAPE_PNTR);
+  const std::uint8_t shape_tbl_lo =
+      ApplesoftVariables::lowByte(variables_const().AS_HGR_SHAPE_PNTR);
+  const std::uint8_t shape_tbl_hi =
+      ApplesoftVariables::highByte(variables_const().AS_HGR_SHAPE_PNTR);
   variables().AS_HGR_SHAPE = variables_const().AS_HGR_SHAPE_PNTR;
 
   const std::uint16_t shape_tbl_ptr =
@@ -803,7 +806,7 @@ void AS_MOVE_LEFT() {
 }
 
 void AS_LRUD4() {
-    std::uint8_t dir = static_cast<std::uint8_t>(
+  std::uint8_t dir = static_cast<std::uint8_t>(
       (ApplesoftVariables::highByte(variables_const().AS_HGR_DX) +
        variables_const().AS_HGR_QUADRANT) &
       0x03u);
@@ -870,17 +873,18 @@ static constexpr std::uint8_t kCosineTable[] = {
     0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18, 0xff};
 
 void AS_DRAW1_Internal(bool xdraw) {
-    std::uint8_t rotation = variables_const().AS_HGR_ROTATION;
-    variables().AS_HGR_QUADRANT = static_cast<std::uint8_t>(rotation >> 4u);
+  std::uint8_t rotation = variables_const().AS_HGR_ROTATION;
+  variables().AS_HGR_QUADRANT = static_cast<std::uint8_t>(rotation >> 4u);
 
   std::uint8_t trigIndex = rotation & 0x0Fu;
-    ApplesoftVariables::setLowByte(variables().AS_HGR_DX, kCosineTable[trigIndex]);
-    variables().AS_HGR_DY =
+  ApplesoftVariables::setLowByte(variables().AS_HGR_DX,
+                                 kCosineTable[trigIndex]);
+  variables().AS_HGR_DY =
       static_cast<std::uint8_t>(kCosineTable[15 - trigIndex] + 1u);
 
-    variables().AS_HGR_COLLISIONS = 0u;
+  variables().AS_HGR_COLLISIONS = 0u;
 
-    std::uint16_t shapeAddr = variables_const().AS_HGR_SHAPE;
+  std::uint16_t shapeAddr = variables_const().AS_HGR_SHAPE;
 
   while (true) {
     std::uint8_t shapeByte = variables().pointer(shapeAddr).read(0);
@@ -890,8 +894,8 @@ void AS_DRAW1_Internal(bool xdraw) {
     ApplesoftVariables::setHighByte(variables().AS_HGR_DX, shapeByte);
 
     for (int i = 0; i < 3; ++i) {
-      std::uint8_t vector =
-          static_cast<std::uint8_t>(ApplesoftVariables::highByte(variables_const().AS_HGR_DX) & 0x07u);
+      std::uint8_t vector = static_cast<std::uint8_t>(
+          ApplesoftVariables::highByte(variables_const().AS_HGR_DX) & 0x07u);
       if (vector == 0 && i > 0)
         break; // End of byte
 
@@ -983,10 +987,14 @@ void AS_HIMEM() {
   AS_GETADR();
 
   // Check AS_LINNUM >= AS_STREND (must be above string storage)
-  const std::uint8_t linnum_lo = ApplesoftVariables::lowByte(variables_const().AS_LINNUM);
-  const std::uint8_t linnum_hi = ApplesoftVariables::highByte(variables_const().AS_LINNUM);
-  const std::uint8_t strend_lo = ApplesoftVariables::lowByte(variables_const().AS_STREND);
-  const std::uint8_t strend_hi = ApplesoftVariables::highByte(variables_const().AS_STREND);
+  const std::uint8_t linnum_lo =
+      ApplesoftVariables::lowByte(variables_const().AS_LINNUM);
+  const std::uint8_t linnum_hi =
+      ApplesoftVariables::highByte(variables_const().AS_LINNUM);
+  const std::uint8_t strend_lo =
+      ApplesoftVariables::lowByte(variables_const().AS_STREND);
+  const std::uint8_t strend_hi =
+      ApplesoftVariables::highByte(variables_const().AS_STREND);
 
   // Compare: if linnum < strend, error
   if (linnum_hi < strend_hi ||
@@ -1010,10 +1018,14 @@ void AS_LOMEM() {
   AS_GETADR();
 
   // Check AS_LINNUM < AS_MEMSIZ (must be below AS_HIMEM)
-  const std::uint8_t linnum_lo = ApplesoftVariables::lowByte(variables_const().AS_LINNUM);
-  const std::uint8_t linnum_hi = ApplesoftVariables::highByte(variables_const().AS_LINNUM);
-  const std::uint8_t memsiz_lo = ApplesoftVariables::lowByte(variables_const().AS_MEMSIZ);
-  const std::uint8_t memsiz_hi = ApplesoftVariables::highByte(variables_const().AS_MEMSIZ);
+  const std::uint8_t linnum_lo =
+      ApplesoftVariables::lowByte(variables_const().AS_LINNUM);
+  const std::uint8_t linnum_hi =
+      ApplesoftVariables::highByte(variables_const().AS_LINNUM);
+  const std::uint8_t memsiz_lo =
+      ApplesoftVariables::lowByte(variables_const().AS_MEMSIZ);
+  const std::uint8_t memsiz_hi =
+      ApplesoftVariables::highByte(variables_const().AS_MEMSIZ);
 
   // If linnum >= memsiz, error
   if (linnum_hi > memsiz_hi ||
@@ -1023,8 +1035,10 @@ void AS_LOMEM() {
   }
 
   // Check AS_LINNUM > AS_TXTTAB (must be above program text)
-  const std::uint8_t txttab_lo = ApplesoftVariables::lowByte(variables_const().AS_TXTTAB);
-  const std::uint8_t txttab_hi = ApplesoftVariables::highByte(variables_const().AS_TXTTAB);
+  const std::uint8_t txttab_lo =
+      ApplesoftVariables::lowByte(variables_const().AS_TXTTAB);
+  const std::uint8_t txttab_hi =
+      ApplesoftVariables::highByte(variables_const().AS_TXTTAB);
 
   // If linnum <= txttab, error
   if (linnum_hi < txttab_hi ||

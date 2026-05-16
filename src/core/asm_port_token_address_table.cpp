@@ -108,8 +108,7 @@ static void AS_SHLOAD_Handler() { /* AS_SHLOAD stub */ }
 //                           off).
 static void AS_TRACE() {
   const std::uint8_t trcflg = variables_const().AS_TRCFLG;
-  variables().AS_TRCFLG =
-      static_cast<std::uint8_t>((trcflg >> 1u) | 0x80u);
+  variables().AS_TRCFLG = static_cast<std::uint8_t>((trcflg >> 1u) | 0x80u);
 }
 static void AS_NOTRACE() {
   const std::uint8_t trcflg = variables_const().AS_TRCFLG;
