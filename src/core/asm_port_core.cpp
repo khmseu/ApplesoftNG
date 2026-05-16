@@ -966,7 +966,7 @@ std::uint16_t AS_MULTIPLY_SUBSCRIPT(std::uint8_t descriptorOffset) {
 
   const ProgramPointer descriptor{
       ReadZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR)};
-    variables().AS_RESULT[2] = descriptor.read(descriptorOffset);
+  variables().AS_RESULT[2] = descriptor.read(descriptorOffset);
 
   return AS_MULTIPLY_SUBS_1(
       descriptor.read(static_cast<std::uint16_t>(descriptorOffset - 1u)));
@@ -983,9 +983,8 @@ std::uint16_t AS_MULTIPLY_SUBS_1(std::uint8_t multiplierHigh) {
   variables().AS_RESULT[3] = multiplierHigh;
   variables().AS_INDX = 16u;
 
-  const std::uint16_t multiplier =
-      ApplesoftVariables::makeWord(variables_const().AS_RESULT[2],
-                                   multiplierHigh);
+  const std::uint16_t multiplier = ApplesoftVariables::makeWord(
+      variables_const().AS_RESULT[2], multiplierHigh);
 
   std::uint16_t multiplicand =
       ReadZeroPageWord(ApplesoftVariables::ZP_AS_STRNG2);
@@ -1394,9 +1393,9 @@ void AS_PTRGET4() {
 
     variables().AS_VALTYP_PLUS_1 = 0x80u; // integer mode
     ApplesoftVariables::setLowByte(
-      variables().AS_VARNAM,
-      static_cast<std::uint8_t>(
-        ApplesoftVariables::lowByte(variables_const().AS_VARNAM) | 0x80u));
+        variables().AS_VARNAM,
+        static_cast<std::uint8_t>(
+            ApplesoftVariables::lowByte(variables_const().AS_VARNAM) | 0x80u));
     secondChar = static_cast<std::uint8_t>(secondChar | 0x80u);
     current = AS_CHRGET();
   }
