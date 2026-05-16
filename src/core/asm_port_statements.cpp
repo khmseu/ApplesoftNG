@@ -793,7 +793,6 @@ void AS_LIST() {
 
   constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
   constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
-  constexpr std::uint8_t kMON_CH = ApplesoftVariables::ZP_MON_CH;
   constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
 
   if (!IsStatementEndOfParsedInput()) {
@@ -832,7 +831,7 @@ void AS_LIST() {
 
     WriteZeroPageWord(kAS_CURLIN, currentAS_Line);
     AS_LINPRT();
-    WriteZeroPageByte(kMON_CH, 5u);
+    variables().MON_CH = 5u;
 
     std::uint16_t offset = 4u;
     while (true) {
@@ -916,17 +915,8 @@ void AS_VARTIO() {
   constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
   constexpr std::uint8_t kAS_TEMPPT = ApplesoftVariables::ZP_AS_TEMPPT;
   constexpr std::uint8_t kAS_LOCK = ApplesoftVariables::ZP_AS_LOCK;
-  constexpr std::uint8_t kMON_A1L = ApplesoftVariables::ZP_MON_A1;
-  constexpr std::uint8_t kMON_A1H =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_MON_A1 + 1u);
-  constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
-  constexpr std::uint8_t kMON_A2H =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_MON_A2 + 1u);
-
-  WriteZeroPageByte(kMON_A1L, kAS_LINNUM);
-  WriteZeroPageByte(kMON_A1H, 0x00);
-  WriteZeroPageByte(kMON_A2L, kAS_TEMPPT);
-  WriteZeroPageByte(kMON_A2H, 0x00);
+  variables().MON_A1 = ApplesoftVariables::makeWord(kAS_LINNUM, 0x00u);
+  variables().MON_A2 = ApplesoftVariables::makeWord(kAS_TEMPPT, 0x00u);
   WriteZeroPageByte(kAS_LOCK, 0x00);
 }
 
@@ -938,19 +928,8 @@ void AS_PROGIO() {
 
   constexpr std::uint8_t kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
   constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
-  constexpr std::uint8_t kMON_A1L = ApplesoftVariables::ZP_MON_A1;
-  constexpr std::uint8_t kMON_A1H =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_MON_A1 + 1u);
-  constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
-  constexpr std::uint8_t kMON_A2H =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_MON_A2 + 1u);
-
-  WriteZeroPageWord(kMON_A1L, ReadZeroPageWord(kAS_TXTTAB));
-  WriteZeroPageWord(kMON_A2L, ReadZeroPageWord(kAS_VARTAB));
-
-  // Keep symbolic names visible for monitor register parity.
-  (void)kMON_A1H;
-  (void)kMON_A2H;
+  variables().MON_A1 = ReadZeroPageWord(kAS_TXTTAB);
+  variables().MON_A2 = ReadZeroPageWord(kAS_VARTAB);
 }
 
 void MON_WRITE() {
@@ -964,13 +943,10 @@ void MON_WRITE() {
   // The ROM loop updates A1 until it reaches A2 via NXTA1 carry behavior.
   // We model that range with one unified 16-bit pointer representation.
 
-  constexpr std::uint8_t kMON_A1L = ApplesoftVariables::ZP_MON_A1;
-  constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
-
   MON_HEADR(0x40u);
 
-  std::uint16_t a1Ptr = ReadZeroPageWord(kMON_A1L);
-  const std::uint16_t a2Limit = ReadZeroPageWord(kMON_A2L);
+  std::uint16_t a1Ptr = variables_const().MON_A1;
+  const std::uint16_t a2Limit = variables_const().MON_A2;
   std::uint8_t runningChecksum = 0xffu;
 
   while (a1Ptr != a2Limit) {
@@ -986,7 +962,7 @@ void MON_WRITE() {
     a1Ptr = static_cast<std::uint16_t>(a1Ptr + 1u);
   }
 
-  WriteZeroPageWord(kMON_A1L, a1Ptr);
+  variables().MON_A1 = a1Ptr;
 
   // Emit checksum byte before returning (ROM path branches to BELL next).
   for (std::uint8_t bit = 0u; bit < 8u; ++bit) {
@@ -1007,7 +983,7 @@ void MON_READ() {
   // FIND TAPEIN EDGE, DELAY 3.5 SECONDS, INIT CHKSUM=$FF, FIND EDGE AGAIN.
   MON_RD2BIT();
   MON_HEADR(0x16u);
-  WriteZeroPageByte(ApplesoftVariables::ZP_MON_CHKSUM, 0xffu);
+  variables().MON_CHKSUM = 0xffu;
   MON_RD2BIT();
 
   // READ does not terminate; it falls through directly into RD2.
@@ -1112,8 +1088,6 @@ void MON_RD3() {
   // Name normalization: none (assembler label RD3 is prefixed with MON_ in
   // C++).
 
-  constexpr std::uint8_t kMON_A1L = ApplesoftVariables::ZP_MON_A1;
-  constexpr std::uint8_t kMON_CHKSUM = ApplesoftVariables::ZP_MON_CHKSUM;
   constexpr std::uint8_t kReadLoopIndex = 0x3bu;
   constexpr std::uint8_t kCompensatedIndex = 0x35u;
 
@@ -1121,19 +1095,19 @@ void MON_RD3() {
   bool carry_set = false;
   do {
     const std::uint8_t value = MON_RDBYTE();
-    const std::uint16_t a1Ptr = ReadZeroPageWord(kMON_A1L);
+    const std::uint16_t a1Ptr = variables_const().MON_A1;
     WriteProgramByte(a1Ptr, value);
 
     const std::uint8_t runningChecksum =
-        static_cast<std::uint8_t>(value ^ ReadZeroPageByte(kMON_CHKSUM));
-    WriteZeroPageByte(kMON_CHKSUM, runningChecksum);
+      static_cast<std::uint8_t>(value ^ variables_const().MON_CHKSUM);
+    variables().MON_CHKSUM = runningChecksum;
 
     carry_set = MON_NXTA1();
     bitTimingIndex = kCompensatedIndex;
   } while (!carry_set);
 
   const std::uint8_t checksumByte = MON_RDBYTE();
-  const std::uint8_t runningChecksum = ReadZeroPageByte(kMON_CHKSUM);
+  const std::uint8_t runningChecksum = variables_const().MON_CHKSUM;
   if (checksumByte == runningChecksum) {
     MON_BELL();
     return;
@@ -1164,14 +1138,11 @@ std::uint8_t MON_RDBYTE() {
 
 bool MON_NXTA1() {
   // Increment A1 and return carry-equivalent (A1 >= A2 after increment).
-  constexpr std::uint8_t kMON_A1L = ApplesoftVariables::ZP_MON_A1;
-  constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
-
-  std::uint16_t a1 = ReadZeroPageWord(kMON_A1L);
-  const std::uint16_t a2 = ReadZeroPageWord(kMON_A2L);
+  std::uint16_t a1 = variables_const().MON_A1;
+  const std::uint16_t a2 = variables_const().MON_A2;
 
   a1 = static_cast<std::uint16_t>(a1 + 1u);
-  WriteZeroPageWord(kMON_A1L, a1);
+  variables().MON_A1 = a1;
   return a1 >= a2;
 }
 

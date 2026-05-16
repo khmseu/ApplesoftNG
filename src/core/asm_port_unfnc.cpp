@@ -190,7 +190,7 @@ void AS_POS() {
   // AS_Labels: AS_POS (inclusive) .. AS_SNGFLT (exclusive)
   // Name normalization: none (assembler label AS_POS kept verbatim).
 
-  AS_SNGFLT(ReadZeroPageByte(ApplesoftVariables::ZP_MON_CH));
+  AS_SNGFLT(variables_const().MON_CH);
 }
 static void AS_SQR() {} // TODO(asm-port): AS_SQR        $DA...218
 static void AS_RND() {} // TODO(asm-port): AS_RND        $DB...219

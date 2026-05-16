@@ -19,7 +19,7 @@ public:
 
     ASLengthAlias &operator=(std::uint8_t value) {
       if (vars_ != nullptr) {
-        setAS_LowByte(vars_->AS_JMPADRS, value);
+        setLowByte(vars_->AS_JMPADRS, value);
       }
       return *this;
     }
@@ -325,7 +325,7 @@ public:
   static std::uint8_t lowByte(std::uint16_t value);
   static std::uint8_t highByte(std::uint16_t value);
   static std::uint16_t makeWord(std::uint8_t low, std::uint8_t high);
-  static void setAS_LowByte(std::uint16_t &target, std::uint8_t value);
+  static void setLowByte(std::uint16_t &target, std::uint8_t value);
   static void setHighByte(std::uint16_t &target, std::uint8_t value);
 };
 

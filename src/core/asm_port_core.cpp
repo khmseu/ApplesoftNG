@@ -163,8 +163,7 @@ void MON_SETNORM() {
   // Name normalization: SETNORM -> MON_SETNORM (monitor label gets MON_
   // prefix).
 
-  constexpr std::uint8_t kMON_INVFLG = ApplesoftVariables::ZP_MON_INVFLG;
-  WriteZeroPageByte(kMON_INVFLG, 0xffu);
+  variables().MON_INVFLG = 0xffu;
 }
 
 void MON_INIT() {
@@ -1826,7 +1825,7 @@ void AS_FUNCT() {
 
   // Pop function address back (in reverse order: low byte, then high byte)
   std::uint16_t tempAddr = ReadZeroPageWord(kAS_FNCNAM);
-  ApplesoftVariables::setAS_LowByte(tempAddr, theStack().peekFnByte());
+  ApplesoftVariables::setLowByte(tempAddr, theStack().peekFnByte());
   theStack().popFnByte();
   ApplesoftVariables::setHighByte(tempAddr, theStack().peekFnByte());
   theStack().popFnByte();
@@ -1882,7 +1881,7 @@ void AS_FUNCT() {
 
   // Pop argument variable address back and store to AS_FNCNAM
   std::uint16_t argAddr = ReadZeroPageWord(kAS_VARPNT);
-  ApplesoftVariables::setAS_LowByte(argAddr, theStack().peekFnByte());
+  ApplesoftVariables::setLowByte(argAddr, theStack().peekFnByte());
   theStack().popFnByte();
   ApplesoftVariables::setHighByte(argAddr, theStack().peekFnByte());
   theStack().popFnByte();
@@ -1895,7 +1894,7 @@ void AS_FUNCT() {
 
   // Pop and restore AS_TXTPTR
   std::uint16_t txtAddr = ReadZeroPageWord(kAS_TXTPTR);
-  ApplesoftVariables::setAS_LowByte(txtAddr, theStack().peekFnByte());
+  ApplesoftVariables::setLowByte(txtAddr, theStack().peekFnByte());
   theStack().popFnByte();
   ApplesoftVariables::setHighByte(txtAddr, theStack().peekFnByte());
   theStack().popFnByte();

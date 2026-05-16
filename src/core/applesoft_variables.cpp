@@ -28,8 +28,7 @@ std::uint16_t ApplesoftVariables::makeWord(std::uint8_t low,
                                     low);
 }
 
-void ApplesoftVariables::setAS_LowByte(std::uint16_t &target,
-                                       std::uint8_t value) {
+void ApplesoftVariables::setLowByte(std::uint16_t &target, std::uint8_t value) {
   target = static_cast<std::uint16_t>((target & 0xff00u) | value);
 }
 
@@ -329,7 +328,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     AS_GOWARM = value;
     return;
   case ZP_AS_GOWARM + 1:
-    setAS_LowByte(AS_GOWARM_TARGET, value);
+    setLowByte(AS_GOWARM_TARGET, value);
     return;
   case ZP_AS_GOWARM + 2:
     setHighByte(AS_GOWARM_TARGET, value);
@@ -338,7 +337,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     AS_GOSTROUT = value;
     return;
   case ZP_AS_GOSTROUT + 1:
-    setAS_LowByte(AS_GOSTROUT_TARGET, value);
+    setLowByte(AS_GOSTROUT_TARGET, value);
     return;
   case ZP_AS_GOSTROUT + 2:
     setHighByte(AS_GOSTROUT_TARGET, value);
@@ -347,7 +346,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     AS_USR = value;
     return;
   case ZP_AS_USR + 1:
-    setAS_LowByte(AS_USR_TARGET, value);
+    setLowByte(AS_USR_TARGET, value);
     return;
   case ZP_AS_USR + 2:
     setHighByte(AS_USR_TARGET, value);
@@ -395,19 +394,19 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     MON_PROMPT = value;
     return;
   case ZP_MON_A1:
-    setAS_LowByte(MON_A1, value);
+    setLowByte(MON_A1, value);
     return;
   case ZP_MON_A1 + 1:
     setHighByte(MON_A1, value);
     return;
   case ZP_MON_A2:
-    setAS_LowByte(MON_A2, value);
+    setLowByte(MON_A2, value);
     return;
   case ZP_MON_A2 + 1:
     setHighByte(MON_A2, value);
     return;
   case ZP_AS_LINNUM:
-    setAS_LowByte(AS_LINNUM, value);
+    setLowByte(AS_LINNUM, value);
     return;
   case ZP_AS_LINNUM + 1:
     setHighByte(AS_LINNUM, value);
@@ -419,7 +418,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     AS_LASTPT = value;
     return;
   case ZP_AS_INDEX:
-    setAS_LowByte(AS_INDEX, value);
+    setLowByte(AS_INDEX, value);
     return;
   case ZP_AS_INDEX + 1:
     setHighByte(AS_INDEX, value);
@@ -437,103 +436,103 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     AS_RESULT[3] = value;
     return;
   case ZP_AS_TXTTAB:
-    setAS_LowByte(AS_TXTTAB, value);
+    setLowByte(AS_TXTTAB, value);
     return;
   case ZP_AS_TXTTAB + 1:
     setHighByte(AS_TXTTAB, value);
     return;
   case ZP_AS_VARTAB:
-    setAS_LowByte(AS_VARTAB, value);
+    setLowByte(AS_VARTAB, value);
     return;
   case ZP_AS_VARTAB + 1:
     setHighByte(AS_VARTAB, value);
     return;
   case ZP_AS_ARYTAB:
-    setAS_LowByte(AS_ARYTAB, value);
+    setLowByte(AS_ARYTAB, value);
     return;
   case ZP_AS_ARYTAB + 1:
     setHighByte(AS_ARYTAB, value);
     return;
   case ZP_AS_STREND:
-    setAS_LowByte(AS_STREND, value);
+    setLowByte(AS_STREND, value);
     return;
   case ZP_AS_STREND + 1:
     setHighByte(AS_STREND, value);
     return;
   case ZP_AS_FRETOP:
-    setAS_LowByte(AS_FRETOP, value);
+    setLowByte(AS_FRETOP, value);
     return;
   case ZP_AS_FRETOP + 1:
     setHighByte(AS_FRETOP, value);
     return;
   case ZP_AS_FRESPC:
-    setAS_LowByte(AS_FRESPC, value);
+    setLowByte(AS_FRESPC, value);
     return;
   case ZP_AS_FRESPC + 1:
     setHighByte(AS_FRESPC, value);
     return;
   case ZP_AS_MEMSIZ:
-    setAS_LowByte(AS_MEMSIZ, value);
+    setLowByte(AS_MEMSIZ, value);
     return;
   case ZP_AS_MEMSIZ + 1:
     setHighByte(AS_MEMSIZ, value);
     return;
   case ZP_AS_CURLIN:
-    setAS_LowByte(AS_CURLIN, value);
+    setLowByte(AS_CURLIN, value);
     return;
   case ZP_AS_CURLIN + 1:
     setHighByte(AS_CURLIN, value);
     return;
   case ZP_AS_OLDLIN:
-    setAS_LowByte(AS_OLDLIN, value);
+    setLowByte(AS_OLDLIN, value);
     return;
   case ZP_AS_OLDLIN + 1:
     setHighByte(AS_OLDLIN, value);
     return;
   case ZP_AS_OLDTEXT:
-    setAS_LowByte(AS_OLDTEXT, value);
+    setLowByte(AS_OLDTEXT, value);
     return;
   case ZP_AS_OLDTEXT + 1:
     setHighByte(AS_OLDTEXT, value);
     return;
   case ZP_AS_DATLIN:
-    setAS_LowByte(AS_DATLIN, value);
+    setLowByte(AS_DATLIN, value);
     return;
   case ZP_AS_DATLIN + 1:
     setHighByte(AS_DATLIN, value);
     return;
   case ZP_AS_DATPTR:
-    setAS_LowByte(AS_DATPTR, value);
+    setLowByte(AS_DATPTR, value);
     return;
   case ZP_AS_DATPTR + 1:
     setHighByte(AS_DATPTR, value);
     return;
   case ZP_AS_INPTR:
-    setAS_LowByte(AS_INPTR, value);
+    setLowByte(AS_INPTR, value);
     return;
   case ZP_AS_INPTR + 1:
     setHighByte(AS_INPTR, value);
     return;
   case ZP_AS_VARNAM:
-    setAS_LowByte(AS_VARNAM, value);
+    setLowByte(AS_VARNAM, value);
     return;
   case ZP_AS_VARNAM + 1:
     setHighByte(AS_VARNAM, value);
     return;
   case ZP_AS_VARPNT:
-    setAS_LowByte(AS_VARPNT, value);
+    setLowByte(AS_VARPNT, value);
     return;
   case ZP_AS_VARPNT + 1:
     setHighByte(AS_VARPNT, value);
     return;
   case ZP_AS_FORPNT:
-    setAS_LowByte(AS_FORPNT, value);
+    setLowByte(AS_FORPNT, value);
     return;
   case ZP_AS_FORPNT + 1:
     setHighByte(AS_FORPNT, value);
     return;
   case ZP_AS_TXPSV:
-    setAS_LowByte(AS_TXPSV, value);
+    setLowByte(AS_TXPSV, value);
     return;
   case ZP_AS_TXPSV + 1:
     setHighByte(AS_TXPSV, value);
@@ -542,13 +541,13 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     AS_CPRTYP = value;
     return;
   case ZP_AS_FNCNAM:
-    setAS_LowByte(AS_FNCNAM, value);
+    setLowByte(AS_FNCNAM, value);
     return;
   case ZP_AS_FNCNAM + 1:
     setHighByte(AS_FNCNAM, value);
     return;
   case ZP_AS_DSCPTR:
-    setAS_LowByte(AS_DSCPTR, value);
+    setLowByte(AS_DSCPTR, value);
     return;
   case ZP_AS_DSCPTR + 1:
     setHighByte(AS_DSCPTR, value);
@@ -560,19 +559,19 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     AS_JMPADRS_OPCODE = value;
     return;
   case ZP_AS_JMPADRS + 1:
-    setAS_LowByte(AS_JMPADRS, value);
+    setLowByte(AS_JMPADRS, value);
     return;
   case ZP_AS_JMPADRS + 2:
     setHighByte(AS_JMPADRS, value);
     return;
   case ZP_AS_ARYPNT:
-    setAS_LowByte(AS_ARYPNT, value);
+    setLowByte(AS_ARYPNT, value);
     return;
   case ZP_AS_ARYPNT + 1:
     setHighByte(AS_ARYPNT, value);
     return;
   case ZP_AS_HIGHTR:
-    setAS_LowByte(AS_HIGHTR, value);
+    setLowByte(AS_HIGHTR, value);
     return;
   case ZP_AS_HIGHTR + 1:
     setHighByte(AS_HIGHTR, value);
@@ -581,7 +580,7 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     AS_INDX = value;
     return;
   case ZP_AS_LOWTR:
-    setAS_LowByte(AS_LOWTR, value);
+    setLowByte(AS_LOWTR, value);
     return;
   case ZP_AS_LOWTR + 1:
     setHighByte(AS_LOWTR, value);
@@ -626,25 +625,25 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     AS_ARG[5] = value;
     return;
   case ZP_AS_STRNG1:
-    setAS_LowByte(AS_STRNG1, value);
+    setLowByte(AS_STRNG1, value);
     return;
   case ZP_AS_STRNG1 + 1:
     setHighByte(AS_STRNG1, value);
     return;
   case ZP_AS_STRNG2:
-    setAS_LowByte(AS_STRNG2, value);
+    setLowByte(AS_STRNG2, value);
     return;
   case ZP_AS_STRNG2 + 1:
     setHighByte(AS_STRNG2, value);
     return;
   case ZP_AS_PRGEND:
-    setAS_LowByte(AS_PRGEND, value);
+    setLowByte(AS_PRGEND, value);
     return;
   case ZP_AS_PRGEND + 1:
     setHighByte(AS_PRGEND, value);
     return;
   case ZP_AS_TXTPTR:
-    setAS_LowByte(AS_TXTPTR, value);
+    setLowByte(AS_TXTPTR, value);
     return;
   case ZP_AS_TXTPTR + 1:
     setHighByte(AS_TXTPTR, value);
