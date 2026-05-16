@@ -3,6 +3,7 @@
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_clear.hpp"
 #include "core/asm_port_error.hpp"
+#include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_inlin.hpp"
 #include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_input.hpp"
@@ -23,6 +24,9 @@ void AS_SYNERR();
 void AS_ERRDIR();
 void AS_SYNCHR(std::uint8_t expected);
 void SetPendingErrorCode(std::uint8_t errorCode);
+
+std::uint8_t AS_DATAN();
+void AS_ADDON(std::uint8_t offset);
 
 namespace {
 
@@ -50,9 +54,70 @@ void parseStringInputAndStore() {}
 // TODO(asm-port): parse numeric input and assign variable.
 void parseNumericInputAndStore() {}
 
-// TODO(asm-port): AS_FINDATA scanner path (within
-// AS_PROCESS_INPUT_LIST..AS_NEXT range).
-void AS_FINDATA() {}
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: AS_FINDATA (inclusive) .. AS_INPDONE (exclusive)
+// Name normalization: none (assembler label AS_FINDATA kept verbatim).
+// Scans forward from AS_TXTPTR through program lines looking for a DATA
+// statement.  Updates AS_DATLIN as each new line is entered.  When a DATA
+// token (0x83) is found, sets AS_INPTR to the byte immediately following
+// the token (the first data item character), so the caller can restore
+// AS_TXTPTR = AS_INPTR for subsequent parsing.
+void AS_FINDATA() {
+  constexpr std::uint8_t kAS_TOKEN_DATA = 0x83u;
+
+  while (true) {
+    // jsr DATAN: returns offset of the next ':' or NUL (end of statement).
+    const std::uint8_t datanOffset = AS_DATAN();
+    // iny: Y = datanOffset + 1 points one past the terminator.
+    const std::uint8_t nextOffset =
+        static_cast<std::uint8_t>(datanOffset + 1u);
+    // tax: token = char at (TXTPTR + datanOffset).
+    const std::uint8_t termChar =
+        variables_const().pointer(variables_const().AS_TXTPTR).read(datanOffset);
+
+    if (termChar == 0u) {
+      // EOL: check the forward link two bytes past the terminator.
+      // (TXTPTR),Y = high byte of forward link to next line.
+      const std::uint8_t fwdHigh =
+          variables_const().pointer(variables_const().AS_TXTPTR).read(
+              static_cast<std::uint8_t>(nextOffset + 1u));
+      if (fwdHigh == 0u) {
+        // End of program: ?OUT OF DATA ERROR
+        AS_ERROR(AS_ERR_NODATA);
+        return;
+      }
+      // Store new line number into AS_DATLIN.
+      const std::uint8_t linLow =
+          variables_const().pointer(variables_const().AS_TXTPTR).read(
+              static_cast<std::uint8_t>(nextOffset + 2u));
+      const std::uint8_t linHigh =
+          variables_const().pointer(variables_const().AS_TXTPTR).read(
+              static_cast<std::uint8_t>(nextOffset + 3u));
+      variables().AS_DATLIN =
+          ApplesoftVariables::makeWord(linLow, linHigh);
+      // Advance TXTPTR by (nextOffset + 4) to reach first char of new line.
+      AS_ADDON(static_cast<std::uint8_t>(nextOffset + 4u));
+      continue;
+    }
+
+    // Colon: L_FINDATA_1 — read first token of this statement.
+    // lda (TXTPTR),Y; tax = token byte; jsr ADDON(nextOffset)
+    const std::uint8_t tokenByte =
+        variables_const().pointer(variables_const().AS_TXTPTR).read(nextOffset);
+    AS_ADDON(nextOffset);
+    if (tokenByte != kAS_TOKEN_DATA) {
+      continue;
+    }
+
+    // Found DATA: AS_INPTR = AS_TXTPTR (points at the byte after the token,
+    // i.e. at the first data character, since CHRGET in INSTART will advance).
+    // The C++ caller does: variables().AS_TXTPTR = variables_const().AS_INPTR;
+    // so just propagate the current AS_TXTPTR as AS_INPTR.
+    variables().AS_INPTR = variables_const().AS_TXTPTR;
+    return;
+  }
+}
 
 // TODO(asm-port): comma checker used between input variables.
 // void AS_CHKCOM() {}
