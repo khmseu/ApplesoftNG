@@ -137,6 +137,12 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return lowByte(MON_A2);
   case ZP_MON_A2 + 1:
     return highByte(MON_A2);
+  case ZP_MON_DEBUG_REG_A:
+    return MON_DEBUG_REG_A;
+  case ZP_MON_DEBUG_REG_X:
+    return MON_DEBUG_REG_X;
+  case ZP_MON_DEBUG_REG_Y:
+    return MON_DEBUG_REG_Y;
   case ZP_MON_STATUS:
     return MON_STATUS;
   case ZP_MON_RNDL:
@@ -151,6 +157,8 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return AS_TEMPPT;
   case ZP_AS_LASTPT:
     return AS_LASTPT;
+  case ZP_AS_LASTPT_HI:
+    return AS_LASTPT_HI;
   case ZP_AS_INDEX:
     return lowByte(AS_INDEX);
   case ZP_AS_INDEX + 1:
@@ -510,6 +518,15 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
   case ZP_MON_A2 + 1:
     setHighByte(MON_A2, value);
     return;
+  case ZP_MON_DEBUG_REG_A:
+    MON_DEBUG_REG_A = value;
+    return;
+  case ZP_MON_DEBUG_REG_X:
+    MON_DEBUG_REG_X = value;
+    return;
+  case ZP_MON_DEBUG_REG_Y:
+    MON_DEBUG_REG_Y = value;
+    return;
   case ZP_MON_STATUS:
     MON_STATUS = value;
     return;
@@ -530,6 +547,9 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     return;
   case ZP_AS_LASTPT:
     AS_LASTPT = value;
+    return;
+  case ZP_AS_LASTPT_HI:
+    AS_LASTPT_HI = value;
     return;
   case ZP_AS_INDEX:
     setLowByte(AS_INDEX, value);

@@ -491,8 +491,7 @@ void AS_COLD_START() {
 
   variables().AS_TRCFLG = 0u;
   variables().AS_SHIFT_SIGN_EXT = 0u;
-  WriteZeroPageByte(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_LASTPT + 1u), 0u);
+  variables().AS_LASTPT_HI = 0u;
   theStack().pushByte(0u);
   variables().AS_DSCLEN = 3u;
 
@@ -2132,7 +2131,8 @@ void MON_IRQ() {
   // - If BRK (bit 4 of status on stack is set), branches to BREAK.
   // - If IRQ, jumps through vector at $03FE.
 
-  WriteZeroPageByte(0x45, 0); // sta $45 (A is currently not passed, using 0)
+  variables().MON_DEBUG_REG_A =
+      0; // sta $45 (A is currently not passed, using 0)
 
   // Simulate bit 4 (Break) check. In a real environment, we'd examine the
   // stack frame pushed by the CPU.

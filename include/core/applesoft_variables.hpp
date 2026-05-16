@@ -145,6 +145,7 @@ public:
   static constexpr std::uint8_t ZP_AS_LINNUM = 0x50;
   static constexpr std::uint8_t ZP_AS_TEMPPT = 0x52;
   static constexpr std::uint8_t ZP_AS_LASTPT = 0x53;
+  static constexpr std::uint8_t ZP_AS_LASTPT_HI = 0x54;
   static constexpr std::uint8_t ZP_AS_TEMPST = 0x55;
   static constexpr std::uint8_t ZP_AS_INDEX = 0x5e;
   static constexpr std::uint8_t ZP_AS_DEST = 0x60;
@@ -320,6 +321,9 @@ public:
   std::uint8_t MON_INVFLG = 0xffu; // $32  $ff=normal, $3f=inverse
   std::uint8_t MON_PROMPT = 0;     // $33
   std::uint8_t MON_CHKSUM = 0;     // $2e
+  std::uint8_t MON_DEBUG_REG_A = 0; // $45
+  std::uint8_t MON_DEBUG_REG_X = 0; // $46
+  std::uint8_t MON_DEBUG_REG_Y = 0; // $47
   std::uint8_t MON_STATUS = 0;     // $48
   std::uint16_t MON_RND = 0;       // $4e/$4f
   std::uint16_t MON_A1 = 0;        // $3c/$3d
@@ -327,6 +331,7 @@ public:
   std::uint16_t AS_LINNUM = 0;     // $50/$51
   std::uint8_t AS_TEMPPT = 0;      // $52
   std::uint8_t AS_LASTPT = 0;      // $53
+  std::uint8_t AS_LASTPT_HI = 0;   // $54
   std::uint16_t AS_INDEX = 0; // $5e/$5f scratch pointer (string data address)
   std::array<std::uint8_t, 4> AS_RESULT{}; // $62..$65
   std::uint16_t AS_TXTTAB = 0;             // $67/$68
