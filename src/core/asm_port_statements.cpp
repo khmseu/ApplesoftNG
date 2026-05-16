@@ -595,9 +595,7 @@ void HandleNumberedAS_Line() {
   AS_FIX_LINKS();
 }
 
-std::uint16_t GetTextTablePointer() {
-  return variables_const().AS_TXTTAB;
-}
+std::uint16_t GetTextTablePointer() { return variables_const().AS_TXTTAB; }
 
 bool IsEndOfProgram(std::uint16_t current) { return current == 0u; }
 
