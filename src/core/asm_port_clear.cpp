@@ -37,12 +37,9 @@ void AS_CLEARC() {
 }
 
 void AS_STKINI() {
-  constexpr auto kAS_TEMPPT = ApplesoftVariables::ZP_AS_TEMPPT;
   constexpr auto kAS_TEMPST = ApplesoftVariables::ZP_AS_TEMPST;
-  constexpr auto kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
-  constexpr auto kAS_SUBFLG = ApplesoftVariables::ZP_AS_SUBFLG;
 
-  WriteZeroPageByte(kAS_TEMPPT, kAS_TEMPST);
+  variables().AS_TEMPPT = kAS_TEMPST;
 
   // 1727-1734: Stack management
   // Applesoft preserves the return address across the stack reset (TXS $F8).
@@ -50,8 +47,8 @@ void AS_STKINI() {
   theStack().setStackPointer(0xf8u);
 
   // Resetting AS_OLDTEXT (high byte) and AS_SUBFLG
-  WriteZeroPageByte(kAS_OLDTEXT + 1, 0);
-  WriteZeroPageByte(kAS_SUBFLG, 0);
+  ApplesoftVariables::setHighByte(variables().AS_OLDTEXT, 0);
+  variables().AS_SUBFLG = 0;
 }
 
 void AS_STXTPT() {
