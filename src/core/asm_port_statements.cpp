@@ -1099,7 +1099,7 @@ void MON_RD3() {
     WriteProgramByte(a1Ptr, value);
 
     const std::uint8_t runningChecksum =
-      static_cast<std::uint8_t>(value ^ variables_const().MON_CHKSUM);
+        static_cast<std::uint8_t>(value ^ variables_const().MON_CHKSUM);
     variables().MON_CHKSUM = runningChecksum;
 
     carry_set = MON_NXTA1();
