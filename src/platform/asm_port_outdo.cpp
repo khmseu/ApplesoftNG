@@ -1,6 +1,7 @@
 #include "platform/asm_port_outdo.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/io_ports.hpp"
+#include "core/jump_table.hpp"
 #include <cstdint>
 namespace applesoft::asm_port {
 void MON_TABV(std::uint8_t row_zero_based);
@@ -134,9 +135,6 @@ void MON_VIDOUT(std::uint8_t a) {
     break;
   }
 }
-MonitorOutputRoutine resolveMonitorOutputVector(std::uint16_t vector) {
-  return (vector == kMonitorCout1Vector) ? &MON_COUT1 : &MON_COUT1;
-}
 } // namespace
 void MON_COUT1(std::uint8_t a) {
   if (a >= 0xa0u)
@@ -154,8 +152,8 @@ void MON_WAIT(std::uint8_t a) {
   } while (outer != 0u);
 }
 void MON_COUT(std::uint8_t a) {
-  resolveMonitorOutputVector(readZeroPageWord(ApplesoftVariables::ZP_MON_CSW))(
-      a);
+  ApplesoftNG::ExternalJumpDispatcher::Jump(
+      readZeroPageWord(ApplesoftVariables::ZP_MON_CSW), a);
 }
 std::uint8_t AS_OUTDO(std::uint8_t a) {
   a |= 0x80u;
