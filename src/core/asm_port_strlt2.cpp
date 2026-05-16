@@ -28,9 +28,7 @@ std::uint8_t read_AS_CHARAC() { return variables_const().AS_CHARAC; }
 
 std::uint8_t read_AS_ENDCHR() { return variables_const().AS_ENDCHR; }
 
-void write_AS_STRNG1(std::uint16_t value) {
-  variables().writeWord(ApplesoftVariables::ZP_AS_STRNG1, value);
-}
+void write_AS_STRNG1(std::uint16_t value) { variables().AS_STRNG1 = value; }
 
 void write_AS_FAC(std::uint8_t v) { variables().AS_FAC[0] = v; }
 
@@ -39,9 +37,7 @@ void write_AS_FAC_pointer(std::uint16_t value) {
       static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 1u), value);
 }
 
-void write_AS_STRNG2(std::uint16_t value) {
-  variables().writeWord(ApplesoftVariables::ZP_AS_STRNG2, value);
-}
+void write_AS_STRNG2(std::uint16_t value) { variables().AS_STRNG2 = value; }
 
 std::uint8_t read_AS_TEMPPT() { return variables_const().AS_TEMPPT; }
 
@@ -53,57 +49,31 @@ std::uint8_t read_AS_GARFLG() { return variables_const().AS_GARFLG; }
 
 void write_AS_GARFLG(std::uint8_t value) { variables().AS_GARFLG = value; }
 
-std::uint16_t read_AS_FRETOP() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_FRETOP);
-}
+std::uint16_t read_AS_FRETOP() { return variables_const().AS_FRETOP; }
 
-void write_AS_FRETOP(std::uint16_t value) {
-  variables().writeWord(ApplesoftVariables::ZP_AS_FRETOP, value);
-}
+void write_AS_FRETOP(std::uint16_t value) { variables().AS_FRETOP = value; }
 
-void write_AS_FRESPC(std::uint16_t value) {
-  variables().writeWord(ApplesoftVariables::ZP_AS_FRESPC, value);
-}
+void write_AS_FRESPC(std::uint16_t value) { variables().AS_FRESPC = value; }
 
-std::uint16_t read_AS_MEMSIZ() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_MEMSIZ);
-}
+std::uint16_t read_AS_MEMSIZ() { return variables_const().AS_MEMSIZ; }
 
-std::uint16_t read_AS_STREND() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_STREND);
-}
+std::uint16_t read_AS_STREND() { return variables_const().AS_STREND; }
 
-std::uint16_t read_AS_VARTAB() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_VARTAB);
-}
+std::uint16_t read_AS_VARTAB() { return variables_const().AS_VARTAB; }
 
-std::uint16_t read_AS_ARYTAB() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_ARYTAB);
-}
+std::uint16_t read_AS_ARYTAB() { return variables_const().AS_ARYTAB; }
 
-std::uint16_t read_AS_INDEX() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_INDEX);
-}
+std::uint16_t read_AS_INDEX() { return variables_const().AS_INDEX; }
 
-void write_AS_INDEX(std::uint16_t value) {
-  variables().writeWord(ApplesoftVariables::ZP_AS_INDEX, value);
-}
+void write_AS_INDEX(std::uint16_t value) { variables().AS_INDEX = value; }
 
-std::uint16_t read_AS_LOWTR() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_LOWTR);
-}
+std::uint16_t read_AS_LOWTR() { return variables_const().AS_LOWTR; }
 
-void write_AS_LOWTR(std::uint16_t value) {
-  variables().writeWord(ApplesoftVariables::ZP_AS_LOWTR, value);
-}
+void write_AS_LOWTR(std::uint16_t value) { variables().AS_LOWTR = value; }
 
-std::uint16_t read_AS_FNCNAM() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_FNCNAM);
-}
+std::uint16_t read_AS_FNCNAM() { return variables_const().AS_FNCNAM; }
 
-void write_AS_FNCNAM(std::uint16_t value) {
-  variables().writeWord(ApplesoftVariables::ZP_AS_FNCNAM, value);
-}
+void write_AS_FNCNAM(std::uint16_t value) { variables().AS_FNCNAM = value; }
 
 void clear_AS_FNCNAM_hi() {
   auto &vars = variables();
@@ -114,51 +84,32 @@ std::uint8_t read_AS_DSCLEN() { return variables_const().AS_DSCLEN; }
 
 void write_AS_DSCLEN(std::uint8_t value) { variables().AS_DSCLEN = value; }
 
-std::uint8_t read_AS_LENGTH() {
-  return variables_const().readByte(ApplesoftVariables::ZP_AS_LENGTH);
-}
+std::uint8_t read_AS_LENGTH() { return variables_const().AS_LENGTH; }
 
-void write_AS_LENGTH(std::uint8_t value) {
-  // Dual-use storage: AS_LENGTH aliases AS_JMPADRS low-byte in ROM.
-  variables().writeByte(ApplesoftVariables::ZP_AS_LENGTH, value);
-}
+void write_AS_LENGTH(std::uint8_t value) { variables().AS_LENGTH = value; }
 
-std::uint16_t read_AS_ARYPNT() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_ARYPNT);
-}
+std::uint16_t read_AS_ARYPNT() { return variables_const().AS_ARYPNT; }
 
-void write_AS_ARYPNT(std::uint16_t value) {
-  variables().writeWord(ApplesoftVariables::ZP_AS_ARYPNT, value);
-}
+void write_AS_ARYPNT(std::uint16_t value) { variables().AS_ARYPNT = value; }
 
-void write_AS_HIGHTR(std::uint16_t value) {
-  variables().writeWord(ApplesoftVariables::ZP_AS_HIGHTR, value);
-}
+void write_AS_HIGHTR(std::uint16_t value) { variables().AS_HIGHTR = value; }
 
-void write_AS_DSCPTR(std::uint16_t value) {
-  variables().writeWord(ApplesoftVariables::ZP_AS_DSCPTR, value);
-}
+void write_AS_DSCPTR(std::uint16_t value) { variables().AS_DSCPTR = value; }
 
-std::uint16_t read_AS_DSCPTR() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_DSCPTR);
-}
+std::uint16_t read_AS_DSCPTR() { return variables_const().AS_DSCPTR; }
 
-std::uint16_t read_AS_STRNG1() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_STRNG1);
-}
+std::uint16_t read_AS_STRNG1() { return variables_const().AS_STRNG1; }
 
-std::uint16_t read_AS_FRESPC() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_FRESPC);
-}
+std::uint16_t read_AS_FRESPC() { return variables_const().AS_FRESPC; }
 
 std::uint16_t read_AS_FAC_descriptor_address() {
-  return variables_const().readWord(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 3u));
+  return ApplesoftVariables::makeWord(variables_const().AS_FAC[3],
+                                      variables_const().AS_FAC[4]);
 }
 
 void write_AS_FAC_descriptor_address(std::uint16_t value) {
-  variables().writeWord(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 3u), value);
+  variables().AS_FAC[3] = ApplesoftVariables::lowByte(value);
+  variables().AS_FAC[4] = ApplesoftVariables::highByte(value);
 }
 
 std::uint8_t g_jerr_error = AS_ERR_FRMCPX;
@@ -197,8 +148,7 @@ bool AS_SUBSTRING_SETUP(SubstringSetupResult &out) {
   // verbatim).
   AS_CHKCLS();
 
-  const std::uint8_t first = variables_const().readByte(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 4u));
+  const std::uint8_t first = variables_const().AS_FAC[4];
   if (first == 0u) {
     AS_IQERR();
     return false;

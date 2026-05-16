@@ -8,9 +8,7 @@
 namespace applesoft::asm_port {
 namespace {
 
-std::uint16_t read_AS_TXTPTR() {
-  return variables_const().readWord(ApplesoftVariables::ZP_AS_TXTPTR);
-}
+std::uint16_t read_AS_TXTPTR() { return variables_const().AS_TXTPTR; }
 
 bool read_carry_flag() { return variables_const().carryFlag; }
 
@@ -21,9 +19,8 @@ void AS_STRLIT_from_word(std::uint16_t address) { AS_STRLIT(address); }
 // AS_Labels: AS_POINT (inclusive) .. AS_GTNUM (exclusive)
 // Name normalization: none (assembler label AS_POINT kept verbatim).
 void AS_POINT() {
-  const std::uint16_t strng2 =
-      variables_const().readWord(ApplesoftVariables::ZP_AS_STRNG2);
-  variables().writeWord(ApplesoftVariables::ZP_AS_TXTPTR, strng2);
+  const std::uint16_t strng2 = variables_const().AS_STRNG2;
+  variables().AS_TXTPTR = strng2;
 }
 
 namespace {} // namespace

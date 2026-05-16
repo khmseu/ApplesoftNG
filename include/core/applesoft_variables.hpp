@@ -7,6 +7,29 @@ namespace applesoft::asm_port {
 
 class ApplesoftVariables {
 public:
+  class ASLengthAlias {
+  public:
+    explicit ASLengthAlias(ApplesoftVariables *vars = nullptr) : vars_(vars) {}
+
+    void bind(ApplesoftVariables *vars) { vars_ = vars; }
+
+    operator std::uint8_t() const {
+      return vars_ == nullptr ? 0u : lowByte(vars_->AS_JMPADRS);
+    }
+
+    ASLengthAlias &operator=(std::uint8_t value) {
+      if (vars_ != nullptr) {
+        setAS_LowByte(vars_->AS_JMPADRS, value);
+      }
+      return *this;
+    }
+
+  private:
+    ApplesoftVariables *vars_ = nullptr;
+  };
+
+  ApplesoftVariables() { AS_LENGTH.bind(this); }
+
   // Canonical zero-page/fixed address names used by assembler ports.
   static constexpr std::uint8_t ZP_AS_GOWARM = 0x00;
   static constexpr std::uint8_t ZP_AS_GOSTROUT = 0x03;
@@ -246,12 +269,13 @@ public:
   std::uint16_t AS_FNCNAM = 0; // $8a/$8b
   std::uint16_t AS_DSCPTR = 0; // $8c/$8d
   std::uint8_t AS_DSCLEN = 0;  // $8f
-  std::uint8_t AS_JMPADRS_OPCODE = 0;   // $90
-  std::uint16_t AS_JMPADRS = 0;         // $91/$92 (AS_JMPADRS+1,+2)
-  std::uint16_t AS_ARYPNT = 0;          // $94/$95
-  std::uint16_t AS_HIGHTR = 0;          // $96/$97
-  std::uint8_t AS_INDX = 0;             // $99
-  std::uint16_t AS_LOWTR = 0;           // $9b/$9c
+  std::uint8_t AS_JMPADRS_OPCODE = 0; // $90
+  std::uint16_t AS_JMPADRS = 0;       // $91/$92 (AS_JMPADRS+1,+2)
+  ASLengthAlias AS_LENGTH{};   // Virtual alias for $91 (AS_JMPADRS low byte)
+  std::uint16_t AS_ARYPNT = 0; // $94/$95
+  std::uint16_t AS_HIGHTR = 0; // $96/$97
+  std::uint8_t AS_INDX = 0;    // $99
+  std::uint16_t AS_LOWTR = 0;  // $9b/$9c
   std::array<std::uint8_t, 5> AS_FAC{}; // $9d..$a1
   std::uint8_t AS_FAC_SIGN = 0;         // $a2
   std::uint8_t AS_SHIFT_SIGN_EXT = 0;   // $a4

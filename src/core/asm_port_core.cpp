@@ -84,9 +84,7 @@ extern bool gNumericCompareCarry;
 extern std::uint8_t gFloatInput;
 extern std::uint8_t gPendingErrorCode;
 
-void SetTextPointer(std::uint16_t address) {
-  variables().writeWord(ApplesoftVariables::ZP_AS_TXTPTR, address);
-}
+void SetTextPointer(std::uint16_t address) { variables().AS_TXTPTR = address; }
 
 void ClearErrFlag() { variables().AS_ERRFLG = 0; }
 
@@ -1584,9 +1582,9 @@ void AS_UNARY() {
     // Save the string descriptor address (AS_VPNT = AS_FAC+3/AS_FAC+4) into
     // AS_DSCPTR before AS_GETBYT overwrites AS_FAC+4 with the sub-argument.
     // AS_VPNT = $a0/$a1 = ZP_AS_FAC+3/+4; AS_DSCPTR = ZP_AS_DSCPTR ($8c).
-    const std::uint16_t vpnt = variables_const().readWord(
-        static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 3u));
-    variables().writeWord(ApplesoftVariables::ZP_AS_DSCPTR, vpnt);
+    const std::uint16_t vpnt = ApplesoftVariables::makeWord(
+        variables_const().AS_FAC[3], variables_const().AS_FAC[4]);
+    variables().AS_DSCPTR = vpnt;
 
     // AS_GETBYT evaluates the numeric sub-argument; result lands in AS_FAC+4.
     (void)AS_GETBYT();
