@@ -119,8 +119,9 @@ void MON_IOPRT(std::uint8_t slot, std::uint8_t vectorBase,
     vectorHigh = static_cast<std::uint8_t>(slotNibble | kIoBaseHigh);
   }
 
-  WriteZeroPageByte(vectorBase, vectorAS_Low);
-  WriteZeroPageByte(static_cast<std::uint8_t>(vectorBase + 1u), vectorHigh);
+  variables().writeByte(vectorBase, vectorAS_Low);
+  variables().writeByte(static_cast<std::uint8_t>(vectorBase + 1u),
+                        vectorHigh);
 }
 
 } // namespace
@@ -704,8 +705,8 @@ void AS_DRWPNT() {
       (static_cast<std::uint16_t>(shape_tbl_hi) << 8u) | shape_tbl_lo;
 
   // Compare requested shape number with count of shapes in table (first byte).
-  const std::uint8_t num_shapes =
-      ReadZeroPageByte(static_cast<std::uint8_t>(shape_tbl_ptr & 0xFFu));
+    const std::uint8_t num_shapes = variables_const().readByte(
+      static_cast<std::uint8_t>(shape_tbl_ptr & 0xFFu));
   if (shape_num > num_shapes) {
     // Shape number too large; signal error.
     AS_IQERR();
@@ -722,9 +723,9 @@ void AS_DRWPNT() {
   // Read 2-byte offset from table.
   // Low byte: (HGR_SHAPE),Y where Y = shape_index
   // High byte: next byte
-  const std::uint8_t offset_lo =
-      ReadZeroPageByte(static_cast<std::uint8_t>(table_entry_addr & 0xFFu));
-  const std::uint8_t offset_hi = ReadZeroPageByte(
+    const std::uint8_t offset_lo = variables_const().readByte(
+      static_cast<std::uint8_t>(table_entry_addr & 0xFFu));
+    const std::uint8_t offset_hi = variables_const().readByte(
       static_cast<std::uint8_t>((table_entry_addr + 1u) & 0xFFu));
   const std::uint16_t shape_offset =
       (static_cast<std::uint16_t>(offset_hi) << 8u) | offset_lo;
