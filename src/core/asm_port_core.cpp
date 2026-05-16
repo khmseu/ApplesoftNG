@@ -501,8 +501,8 @@ void AS_COLD_START() {
 
   AS_CRDO();
 
-  variables().writeByte(ApplesoftVariables::ADDR_AS_INPUT_BUFFER_MINUS_3, 1u);
-  variables().writeByte(ApplesoftVariables::ADDR_AS_INPUT_BUFFER_MINUS_4, 1u);
+  variables().AS_INPUT_BUFFER_MINUS_3 = 1u;
+  variables().AS_INPUT_BUFFER_MINUS_4 = 1u;
   WriteZeroPageByte(ApplesoftVariables::ZP_AS_TEMPPT,
                     ApplesoftVariables::ZP_AS_TEMPST);
 

@@ -9,13 +9,9 @@
 namespace applesoft::asm_port {
 namespace {
 
-void write_AS_CHARAC(std::uint8_t v) {
-  variables().writeByte(ApplesoftVariables::ZP_AS_CHARAC, v);
-}
+void write_AS_CHARAC(std::uint8_t v) { variables().AS_CHARAC = v; }
 
-void write_AS_ENDCHR(std::uint8_t v) {
-  variables().writeByte(ApplesoftVariables::ZP_AS_ENDCHR, v);
-}
+void write_AS_ENDCHR(std::uint8_t v) { variables().AS_ENDCHR = v; }
 
 // TODO(asm-port): port AS_FOUT_1 label.
 void AS_FOUT_1() {}

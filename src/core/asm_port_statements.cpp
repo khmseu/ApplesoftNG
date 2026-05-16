@@ -496,8 +496,7 @@ void InsertNewAS_Line() {
   constexpr std::uint8_t kAS_MEMSIZ = ApplesoftVariables::ZP_AS_MEMSIZ;
   constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
 
-  if (variables_const().readByte(ApplesoftVariables::ADDR_AS_INPUT_BUFFER) ==
-      0u) {
+  if (variables_const().AS_INPUT_BUFFER_PAGE[0] == 0u) {
     return;
   }
 
