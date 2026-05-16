@@ -1713,8 +1713,8 @@ void AS_FNC_() {
       ApplesoftVariables::lowByte(variables_const().AS_STRNG1);
   const std::uint8_t nameY =
       ApplesoftVariables::highByte(variables_const().AS_STRNG1);
-    ApplesoftVariables::setLowByte(variables().AS_FNCNAM, nameA);
-    ApplesoftVariables::setHighByte(variables().AS_FNCNAM, nameY);
+  ApplesoftVariables::setLowByte(variables().AS_FNCNAM, nameA);
+  ApplesoftVariables::setHighByte(variables().AS_FNCNAM, nameY);
 
   // Jump to AS_CHKNUM to validate numeric type
   AS_CHKNUM();
