@@ -746,8 +746,6 @@ void AS_LRUD3();
 
 void AS_MOVE_UP() {
   // Ported from MOVE_UP in monitor/paddles.o65.lst
-  std::uint16_t gbas = variables_const().MON_GBASL;
-
   // Decrement HGR_Y (ABCDEFGH) logic
   // Simplified: Apple II hi-res vertical lines are complex,
   // but we can compute the new address from a new Y.
