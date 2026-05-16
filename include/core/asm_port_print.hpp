@@ -29,6 +29,12 @@ void AS_STROUT(std::uint16_t address);
 // Helper for direct string literal output used by error/input paths.
 void AS_STROUT(std::string_view text);
 
+// AS_Labels: AS_FOUT_1 (inclusive) .. AS_FOUT_3 (exclusive)
+// Name normalization: none (assembler label AS_FOUT_1 kept verbatim).
+// STR$ entry point: converts FAC float to ASCII in the stack page starting at
+// STACK-1 (address 0x00FF).  Same algorithm as AS_FOUT but Y=0 on entry.
+void AS_FOUT_1();
+
 // AS_Labels: AS_PR_STRING (inclusive) .. AS_PRINT (exclusive)
 // Name normalization: none (assembler label AS_PR_STRING kept verbatim).
 // Prints the current AS_FAC string via AS_STRPRT, fetches the next character

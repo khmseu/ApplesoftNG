@@ -1,13 +1,196 @@
 #include "core/asm_port_print.hpp"
 
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_error.hpp"
 #include "core/asm_port_qt_error.hpp"
 #include "core/asm_port_strlit.hpp"
 #include "platform/asm_port_outdo.hpp"
 
 #include <cstdint>
+#include <cmath>
+#include <cstdio>
 
 namespace applesoft::asm_port {
+// ---------------------------------------------------------------------------
+// facToDouble: convert Applesoft 5-byte FAC to native double.
+//
+// Applesoft float format:
+//   FAC[0] = biased exponent (excess-128); 0 means value is zero
+//   FAC[1..4] = mantissa, with implicit leading 1 (bit 7 of FAC[1] = MSB)
+//   FAC_SIGN = 0x00 for positive, 0xFF for negative
+//
+// Value = (-1)^sign * 2^(exp-128) * (0.mantissa_with_leading_1)
+// i.e.  value = (-1)^sign * 2^(exp-129) * (1 + mantissa/2^31)
+// ---------------------------------------------------------------------------
+static double facToDouble() {
+  const auto &cv = variables_const();
+  const std::uint8_t exp8 = cv.AS_FAC[0];
+  if (exp8 == 0u)
+    return 0.0;
+  const std::uint32_t mantissa =
+      (static_cast<std::uint32_t>(cv.AS_FAC[1]) << 24u) |
+      (static_cast<std::uint32_t>(cv.AS_FAC[2]) << 16u) |
+      (static_cast<std::uint32_t>(cv.AS_FAC[3]) << 8u) |
+      static_cast<std::uint32_t>(cv.AS_FAC[4]);
+  // Mantissa has implicit leading 1 at bit 31; actual fraction = mantissa/2^32
+  // biased exponent: real exponent = exp8 - 128; value = 2^(exp8-128) * (mant/2^32)
+  const double fraction = static_cast<double>(mantissa) / 4294967296.0; // /2^32
+  const double value = std::ldexp(fraction, static_cast<int>(exp8) - 128);
+  return (cv.AS_FAC_SIGN != 0u) ? -value : value;
+}
+
+// ---------------------------------------------------------------------------
+// foutImpl: core float-to-string conversion, matching Applesoft FOUT/FOUT_1.
+//
+// startOffset: byte offset within the stack page (0x0100+) where the first
+//              character of the string should be placed.  FOUT uses offset 1
+//              (string at 0x0101...), FOUT_1 uses offset 0 (string at 0x0100).
+// On return writes null-terminated string into the stack page, sets
+// AS_STRNG2 to the 1-based offset of the last byte (matches ROM behaviour).
+// ---------------------------------------------------------------------------
+static void foutImpl(std::uint8_t startOffset) {
+  // Each byte is written to 0x0100+index (the 6502 stack page).
+  // The assembly writes to STACK-1,Y where Y is 1-based; we use 0-based index
+  // into the stack page (0x0100 = index 0, 0x0101 = index 1, ...).
+  //
+  // We build into a local buffer then copy, to avoid partial writes on error.
+  constexpr std::uint8_t kMaxLen = 20u; // sufficient for any Applesoft number
+  char buf[kMaxLen + 1u];
+  std::uint8_t len = 0u;
+
+  auto emit = [&](char c) {
+    if (len < kMaxLen)
+      buf[len++] = c;
+  };
+
+  const double val = facToDouble();
+  const bool isNeg = val < 0.0;
+  const double absVal = isNeg ? -val : val;
+
+  if (isNeg)
+    emit('-');
+
+  if (absVal == 0.0) {
+    emit('0');
+  } else {
+    // Determine the power-of-10 exponent (floor of log10).
+    // TMPEXP in ROM = number of digits before decimal point minus 1.
+    // Applesoft uses exactly 9 significant digits.
+    // Decimal form when -2 <= tmpexp <= 9 (i.e. 0.01 <= |val| < 1e10).
+    // Outside that range, exponential form "d.xxxxxxxxE±yy".
+    constexpr int kDigits = 9;
+    // Compute tmpexp: floor(log10(absVal)).
+    int tmpexp = 0;
+    if (absVal != 0.0) {
+      tmpexp = static_cast<int>(std::floor(std::log10(absVal)));
+    }
+    // Normalise to 9-digit integer: absVal / 10^(tmpexp-8) rounded.
+    // After QINT the ROM has a 32-bit integer in FAC[1..4].
+    double scaled = absVal * std::pow(10.0, static_cast<double>(kDigits - 1 - tmpexp));
+    // Round to nearest integer.
+    long long iVal = static_cast<long long>(scaled + 0.5);
+    // Clamp to [100000000, 999999999].
+    if (iVal >= 1000000000LL) {
+      iVal /= 10;
+      tmpexp++;
+    }
+    if (iVal < 100000000LL && iVal > 0) {
+      iVal *= 10;
+      tmpexp--;
+    }
+    // expon = tmpexp - (kDigits-1), adjusted to 0 for decimal form.
+    // Applesoft's EXPON = TMPEXP + 10 - 2 - (digits before decimal point)
+    // We need to decide: decimal or exponential form?
+    // Decimal form: tmpexp in [-2, 9].
+    const bool decimalForm = (tmpexp >= -2 && tmpexp <= 9);
+    // Build 9-digit string, with decimal point inserted.
+    char digits[kDigits + 1];
+    std::snprintf(digits, sizeof(digits), "%09lld",
+                  static_cast<long long>(iVal < 0 ? 0 : iVal));
+    if (decimalForm) {
+      // dotPos: number of digits before the decimal point.
+      // tmpexp==0 means value is 1.xxxxxxxx (1 digit before dot).
+      // tmpexp==1 means 2 digits before dot, etc.
+      const int dotPos = tmpexp + 1; // digits before decimal point
+      if (dotPos <= 0) {
+        // Value like 0.0x...  => "0." followed by (-dotPos) zeros then digits
+        emit('0');
+        emit('.');
+        for (int z = 0; z < -dotPos; ++z)
+          emit('0');
+        for (int d = 0; d < kDigits; ++d)
+          emit(digits[d]);
+      } else {
+        // dotPos >= 1: emit dotPos digits, then '.', then rest
+        for (int d = 0; d < kDigits; ++d) {
+          if (d == dotPos)
+            emit('.');
+          emit(digits[d]);
+        }
+        // If dotPos >= kDigits, no decimal point was emitted (pure integer).
+      }
+    } else {
+      // Exponential form: "d.xxxxxxxxE±yy"
+      emit(digits[0]);
+      emit('.');
+      for (int d = 1; d < kDigits; ++d)
+        emit(digits[d]);
+      // E value = tmpexp
+      const int eVal = tmpexp;
+      emit('E');
+      if (eVal < 0) {
+        emit('-');
+        const int absE = -eVal;
+        emit(static_cast<char>('0' + absE / 10));
+        emit(static_cast<char>('0' + absE % 10));
+      } else {
+        emit('+');
+        emit(static_cast<char>('0' + eVal / 10));
+        emit(static_cast<char>('0' + eVal % 10));
+      }
+    }
+    // Strip trailing zeros and trailing decimal point.
+    // Only strip within the mantissa (not from E notation digits).
+    if (decimalForm) {
+      // Walk back from end, removing '0' and possibly '.'.
+      while (len > 0u && buf[len - 1u] == '0')
+        --len;
+      if (len > 0u && buf[len - 1u] == '.')
+        --len;
+      // Handle negative: if we stripped everything after '-', that shouldn't
+      // happen for non-zero absVal, but guard anyway.
+    } else {
+      // For exponential: strip trailing zeros from mantissa only.
+      // Find 'E' position.
+      std::uint8_t ePos = 0u;
+      for (std::uint8_t i = 0u; i < len; ++i) {
+        if (buf[i] == 'E') { ePos = i; break; }
+      }
+      // Trim zeros before ePos.
+      std::uint8_t mantEnd = ePos;
+      while (mantEnd > 0u && buf[mantEnd - 1u] == '0')
+        --mantEnd;
+      if (mantEnd > 0u && buf[mantEnd - 1u] == '.')
+        --mantEnd;
+      // Shift E-part to follow mantissa.
+      const std::uint8_t tailLen = static_cast<std::uint8_t>(len - ePos);
+      for (std::uint8_t i = 0u; i < tailLen; ++i)
+        buf[mantEnd + i] = buf[ePos + i];
+      len = static_cast<std::uint8_t>(mantEnd + tailLen);
+    }
+  }
+  buf[len] = '\0';
+
+  // Write into stack page starting at startOffset.
+  for (std::uint8_t i = 0u; i <= len; ++i) {
+    WriteProgramByte(static_cast<std::uint16_t>(0x0100u + startOffset + i),
+                     static_cast<std::uint8_t>(buf[i]));
+  }
+  // AS_STRNG2 = 1-based offset of last written character (null byte position).
+  // ROM: STRNG2 is the 0x0100-based offset after the last char (pointing at null).
+  variables().AS_STRNG2 =
+      static_cast<std::uint16_t>(0x0100u + startOffset + len);
+}
 
 std::uint8_t AS_CHRGET();
 std::uint8_t AS_CHRGOT();
@@ -60,7 +243,101 @@ void AS_STROUT(std::string_view text) {
 // buffer; on return (A, Y) point to the buffer.  Used inside the AS_PRINT2
 // number path.
 // TODO(asm-port): port AS_FOUT.
-static void AS_FOUT() {}
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: AS_FOUT (inclusive) .. AS_FOUT_3 (exclusive)
+// Name normalization: none (assembler label AS_FOUT kept verbatim).
+static void AS_FOUT() {
+  // FOUT entry: Y=1, string placed starting at STACK+1 (address 0x0101).
+  // The ROM stores STRNG2=Y=1 initially, then increments before first write.
+  // Result string begins at 0x0101 (index 1 in the 0x0100 page).
+  foutImpl(1u);
+}
+
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: AS_FOUT_1 (inclusive) .. AS_FOUT_3 (exclusive)
+// Name normalization: none (assembler label AS_FOUT_1 kept verbatim).
+void AS_FOUT_1() {
+  // FOUT_1 entry: Y=0, string placed starting at STACK-1 (address 0x00FF).
+  // Used by STR$.  AS_STRLIT(0x00ff) in AS_STR uses address 0x00FF.
+  // We write from address 0x00FF, which is offset -1 from 0x0100.
+  // Using address 0x0100 - 1 = 0x00FF as start.
+  const auto &cv = variables_const();
+  const bool isNeg = (cv.AS_FAC_SIGN != 0u);
+  const double absVal = std::abs(facToDouble());
+
+  constexpr std::uint8_t kMaxLen = 20u;
+  char buf[kMaxLen + 1u];
+  std::uint8_t len = 0u;
+  auto emit = [&](char c) {
+    if (len < kMaxLen)
+      buf[len++] = c;
+  };
+
+  if (isNeg)
+    emit('-');
+
+  if (absVal == 0.0) {
+    emit('0');
+  } else {
+    constexpr int kDigits = 9;
+    int tmpexp = static_cast<int>(std::floor(std::log10(absVal)));
+    double scaled = absVal * std::pow(10.0, static_cast<double>(kDigits - 1 - tmpexp));
+    long long iVal = static_cast<long long>(scaled + 0.5);
+    if (iVal >= 1000000000LL) { iVal /= 10; tmpexp++; }
+    if (iVal < 100000000LL && iVal > 0) { iVal *= 10; tmpexp--; }
+    const bool decimalForm = (tmpexp >= -2 && tmpexp <= 9);
+    char digits[kDigits + 1];
+    std::snprintf(digits, sizeof(digits), "%09lld", static_cast<long long>(iVal < 0 ? 0 : iVal));
+    if (decimalForm) {
+      const int dotPos = tmpexp + 1;
+      if (dotPos <= 0) {
+        emit('0'); emit('.');
+        for (int z = 0; z < -dotPos; ++z) emit('0');
+        for (int d = 0; d < kDigits; ++d) emit(digits[d]);
+      } else {
+        for (int d = 0; d < kDigits; ++d) {
+          if (d == dotPos) emit('.');
+          emit(digits[d]);
+        }
+      }
+      while (len > 0u && buf[len - 1u] == '0') --len;
+      if (len > 0u && buf[len - 1u] == '.') --len;
+    } else {
+      emit(digits[0]); emit('.');
+      for (int d = 1; d < kDigits; ++d) emit(digits[d]);
+      const int eVal = tmpexp;
+      emit('E');
+      if (eVal < 0) {
+        emit('-');
+        const int absE = -eVal;
+        emit(static_cast<char>('0' + absE / 10));
+        emit(static_cast<char>('0' + absE % 10));
+      } else {
+        emit('+');
+        emit(static_cast<char>('0' + eVal / 10));
+        emit(static_cast<char>('0' + eVal % 10));
+      }
+      std::uint8_t ePos = 0u;
+      for (std::uint8_t i = 0u; i < len; ++i) { if (buf[i] == 'E') { ePos = i; break; } }
+      std::uint8_t mantEnd = ePos;
+      while (mantEnd > 0u && buf[mantEnd - 1u] == '0') --mantEnd;
+      if (mantEnd > 0u && buf[mantEnd - 1u] == '.') --mantEnd;
+      const std::uint8_t tailLen = static_cast<std::uint8_t>(len - ePos);
+      for (std::uint8_t i = 0u; i < tailLen; ++i) buf[mantEnd + i] = buf[ePos + i];
+      len = static_cast<std::uint8_t>(mantEnd + tailLen);
+    }
+  }
+  buf[len] = '\0';
+
+  // Write to 0x00FF onward.
+  for (std::uint8_t i = 0u; i <= len; ++i) {
+    WriteProgramByte(static_cast<std::uint16_t>(0x00FFu + i),
+                     static_cast<std::uint8_t>(buf[i]));
+  }
+  variables().AS_STRNG2 = static_cast<std::uint16_t>(0x00FFu + len);
+}
 
 // AS_GTBYTC: advance AS_TXTPTR (via AS_CHRGET), evaluate a numeric expression,
 // and return the result clamped to a byte (0-255) in the X register equivalent.
@@ -143,7 +420,8 @@ static void PrintNumericExpression() {
   // jsr AS_FOUT — convert the floating-point value to an AS_ASCII buffer.
   AS_FOUT();
   // jsr AS_STRLIT — wrap the buffer as a temporary AS_FAC string descriptor.
-  AS_STRLIT(0x0000u);
+  // FOUT writes starting at 0x0101; pass that address to STRLIT.
+  AS_STRLIT(0x0101u);
   // jmp AS_PR_STRING — print the temporary string and re-enter the list loop.
   AS_STRPRT();
 }
