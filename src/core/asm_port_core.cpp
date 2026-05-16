@@ -459,7 +459,7 @@ void AS_COLD_START() {
   constexpr std::uint16_t kChrgetRuntime = 0x00b1u;
   constexpr std::uint16_t kProgramStart = 0x0800u;
 
-  WriteZeroPageByte(kAS_CURLIN_HI, 0xffu);
+  ApplesoftVariables::setHighByte(variables().AS_CURLIN, 0xffu);
   theStack().setStackPointer(0xfbu);
 
   WriteZeroPageWord(
@@ -652,8 +652,8 @@ void AS_FAE_1() {
     const std::uint8_t subscriptLow = theStack().popByte();
     const std::uint8_t subscriptHigh = theStack().popByte();
 
-    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u), subscriptLow);
-    WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u), subscriptHigh);
+    variables().AS_FAC[3] = subscriptLow;
+    variables().AS_FAC[4] = subscriptHigh;
 
     // Bounds check: subscript must be strictly less than descriptor extent.
     const std::uint8_t dimHigh = descriptor.read(descriptorY);
@@ -697,7 +697,7 @@ void AS_FAE_1() {
     elementSize = static_cast<std::uint8_t>(elementSize - 2u);
   }
 
-  WriteZeroPageByte(static_cast<std::uint8_t>(kAS_RESULT + 2u), elementSize);
+  variables().AS_RESULT[2] = elementSize;
   const std::uint16_t elementOffset = AS_MULTIPLY_SUBS_1(0u);
   const std::uint16_t varpnt =
       static_cast<std::uint16_t>(ReadZeroPageWord(kAS_ARYPNT) + elementOffset);
@@ -733,9 +733,8 @@ void AS_C_ZERO() {
   // AS_Labels: AS_C_ZERO (inclusive) .. AS_MAKE_NEW_VARIABLE (exclusive)
   // Name normalization: none (assembler label AS_C_ZERO kept verbatim).
 
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_RESULT, kCZeroData[0]);
-  WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_AS_RESULT, 1u),
-                    kCZeroData[1]);
+  variables().AS_RESULT[0] = kCZeroData[0];
+  variables().AS_RESULT[1] = kCZeroData[1];
 }
 
 void AS_USE_OLD_ARRAY() {
@@ -795,8 +794,7 @@ void AS_MAKE_NEW_ARRAY() {
 
   // T:11c7 – lda #0; tay; sta AS_STRNG2+1; ldx #5  (seed element-size
   // accumulator)
-  WriteZeroPageByte(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_STRNG2 + 1u), 0u);
+  ApplesoftVariables::setHighByte(variables().AS_STRNG2, 0u);
   std::uint8_t elemSize = 5u; // X in asm: float default
 
   // T:11cd – Y=0: write AS_VARNAM byte to descriptor[0]; bit 7 → integer, dex
@@ -858,11 +856,7 @@ void AS_MAKE_NEW_ARRAY() {
     // dim_count AS_STRNG2 must be set before the call (done above / updated
     // each iteration).
     const std::uint16_t product = AS_MULTIPLY_SUBSCRIPT(descriptorY);
-    WriteZeroPageByte(ApplesoftVariables::ZP_AS_STRNG2,
-                      static_cast<std::uint8_t>(product & 0xffu));
-    WriteZeroPageByte(
-        static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_STRNG2 + 1u),
-        static_cast<std::uint8_t>(product >> 8u));
+    variables().AS_STRNG2 = product;
 
     // T:1205 – ldy AS_INDEX: restore Y (AS_MULTIPLY_SUBSCRIPT saved descriptorY
     // there)
@@ -972,9 +966,7 @@ std::uint16_t AS_MULTIPLY_SUBSCRIPT(std::uint8_t descriptorOffset) {
 
   const ProgramPointer descriptor{
       ReadZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR)};
-  WriteZeroPageByte(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_RESULT + 2u),
-      descriptor.read(descriptorOffset));
+    variables().AS_RESULT[2] = descriptor.read(descriptorOffset);
 
   return AS_MULTIPLY_SUBS_1(
       descriptor.read(static_cast<std::uint16_t>(descriptorOffset - 1u)));
@@ -988,14 +980,11 @@ std::uint16_t AS_MULTIPLY_SUBS_1(std::uint8_t multiplierHigh) {
   // verbatim). AS_STRNG2 is dual-use elsewhere, but in this slice it is the
   // 16-bit multiplicand.
 
-  WriteZeroPageByte(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_RESULT + 3u),
-      multiplierHigh);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_INDX, 16u);
+  variables().AS_RESULT[3] = multiplierHigh;
+  variables().AS_INDX = 16u;
 
   const std::uint16_t multiplier =
-      ApplesoftVariables::makeWord(ReadZeroPageByte(static_cast<std::uint8_t>(
-                                       ApplesoftVariables::ZP_AS_RESULT + 2u)),
+      ApplesoftVariables::makeWord(variables_const().AS_RESULT[2],
                                    multiplierHigh);
 
   std::uint16_t multiplicand =
@@ -1026,7 +1015,7 @@ std::uint16_t AS_MULTIPLY_SUBS_1(std::uint8_t multiplierHigh) {
     product = static_cast<std::uint16_t>(product + multiplier);
   }
 
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_INDX, 0u);
+  variables().AS_INDX = 0u;
   return product;
 }
 
@@ -1404,10 +1393,10 @@ void AS_PTRGET4() {
     }
 
     variables().AS_VALTYP_PLUS_1 = 0x80u; // integer mode
-    WriteZeroPageByte(
-        ApplesoftVariables::ZP_AS_VARNAM,
-        static_cast<std::uint8_t>(
-            ApplesoftVariables::lowByte(variables_const().AS_VARNAM) | 0x80u));
+    ApplesoftVariables::setLowByte(
+      variables().AS_VARNAM,
+      static_cast<std::uint8_t>(
+        ApplesoftVariables::lowByte(variables_const().AS_VARNAM) | 0x80u));
     secondChar = static_cast<std::uint8_t>(secondChar | 0x80u);
     current = AS_CHRGET();
   }
@@ -2247,7 +2236,7 @@ std::uint8_t MON_PREAD() {
 
   // In the original monitor, paddle index is supplied in X.
   // The current C++ calling path provides the converted operand in AS_FAC+4.
-  const std::uint8_t paddleIndex = ReadZeroPageByte(kAS_FAC_LAST);
+  const std::uint8_t paddleIndex = variables_const().AS_FAC[4];
   const std::uint16_t paddleAddress =
       static_cast<std::uint16_t>(IOPorts::ADDR_PADDLE_0 + paddleIndex);
 
