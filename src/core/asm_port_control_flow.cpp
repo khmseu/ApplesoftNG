@@ -290,7 +290,7 @@ void AS_FRM_STACK_3() {
   theStack().pushByte(variables_const().AS_FAC[1]);
   theStack().pushByte(variables_const().AS_FAC[0]);
 
-  const std::uint16_t branchTarget = ReadZeroPageWord(kAS_INDEX);
+  const std::uint16_t branchTarget = variables_const().AS_INDEX;
   if (branchTarget == kStepAS_LabelAddress) {
     AS_STEP();
   }
@@ -722,7 +722,7 @@ void AS_NEXT() {
     ApplesoftVariables::setHighByte(variables().AS_FORPNT, 0u);
   } else {
     const std::uint16_t varPtr = AS_PTRGET();
-    WriteZeroPageWord(kAS_FORPNT, varPtr);
+    variables().AS_FORPNT = varPtr;
   }
 
   // jsr AS_GTFORPNT
@@ -750,14 +750,10 @@ void AS_NEXT() {
   // AS_STEP arithmetic path (AS_LOAD_FAC_FROM_YA / AS_FADD / AS_SETFOR /
   // AS_FCOMP2). Stack offsets follow ROM comments; helpers are placeholders
   // until stack memory and AS_FAC math ports are fully wired.
-  WriteZeroPageWord(
-      ApplesoftVariables::ZP_AS_INDEX,
-      static_cast<std::uint16_t>(
-          0x0100u + add_u8(gtforpntResult.x, kStepValueOffsetInForFrame)));
+  variables().AS_INDEX = static_cast<std::uint16_t>(
+      0x0100u + add_u8(gtforpntResult.x, kStepValueOffsetInForFrame));
   AS_LOAD_FAC_FROM_YA();
-  variables().AS_FAC_SIGN =
-      theStack().readByteAt(gtforpntResult.x, 9u); // AS_FAC_SIGN
-  WriteZeroPageWord(kAS_FORPNT, ReadZeroPageWord(kAS_FORPNT));
+  variables().AS_FAC_SIGN = theStack().readByteAt(gtforpntResult.x, 9u); // AS_FAC_SIGN
   AS_FADD();
   AS_SETFOR();
   AS_FCOMP2();
@@ -768,8 +764,8 @@ void AS_NEXT() {
         readStackWordAt(gtforpntResult.x, 15u, 16u);
     const std::uint16_t restoredTextPointer =
         readStackWordAt(gtforpntResult.x, 18u, 17u);
-    WriteZeroPageWord(kAS_CURLIN, restoredAS_Line);
-    WriteZeroPageWord(kAS_TXTPTR, restoredTextPointer);
+    variables().AS_CURLIN = restoredAS_Line;
+    variables().AS_TXTPTR = restoredTextPointer;
     AS_NEWSTT();
     return;
   }
@@ -830,10 +826,10 @@ void AS_RETURN() {
   const std::uint8_t textPointerAS_Lo = theStack().popByte();
   const std::uint8_t textPointerHi = theStack().popByte();
 
-  WriteZeroPageWord(kAS_CURLIN, ApplesoftVariables::makeWord(currentAS_LineLo,
-                                                             currentAS_LineHi));
-  WriteZeroPageWord(kAS_TXTPTR, ApplesoftVariables::makeWord(textPointerAS_Lo,
-                                                             textPointerHi));
+  variables().AS_CURLIN =
+      ApplesoftVariables::makeWord(currentAS_LineLo, currentAS_LineHi);
+  variables().AS_TXTPTR =
+      ApplesoftVariables::makeWord(textPointerAS_Lo, textPointerHi);
 }
 
 void AS_STEP() {
@@ -843,7 +839,7 @@ void AS_STEP() {
     WriteProgramByte(static_cast<std::uint16_t>(kConOneScratchAddress + i),
                      kConOnePacked[i]);
   }
-  WriteZeroPageWord(ApplesoftVariables::ZP_AS_INDEX, kConOneScratchAddress);
+  variables().AS_INDEX = kConOneScratchAddress;
   AS_LOAD_FAC_FROM_YA();
   if (AS_CHRGOT() == kAS_TOKEN_STEP) {
     AS_CHRGET();
@@ -913,16 +909,14 @@ void AS_GOEND() {
 bool IsEndOfAS_LineAtTextPointer() {
   // Source: AS_NEWSTT inline — ldy #0 / lda (AS_TXTPTR),Y: end-of-statement
   // when byte is 0.
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  return ReadProgramByte(ReadZeroPageWord(kAS_TXTPTR)) == 0u;
+  return ReadProgramByte(variables_const().AS_TXTPTR) == 0u;
 }
 
 bool IsEndOfProgramAtTextPointer() {
   // Source: AS_NEWSTT inline — ldy #2 / lda (AS_TXTPTR),Y: next-line link high
   // byte; if zero the program has ended (null forward pointer).
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  return ReadProgramByte(static_cast<std::uint16_t>(
-             ReadZeroPageWord(kAS_TXTPTR) + 2u)) == 0u;
+  return ReadProgramByte(
+             static_cast<std::uint16_t>(variables_const().AS_TXTPTR + 2u)) == 0u;
 }
 
 std::uint16_t ReadAS_LineNumberFromTextPointer() {
@@ -930,8 +924,7 @@ std::uint16_t ReadAS_LineNumberFromTextPointer() {
   // (AS_TXTPTR)+4. Memory layout at AS_TXTPTR when it sits on an EOL 0x00:
   //   [0] = 0x00 (EOL), [1] = link.lo, [2] = link.hi, [3] = lineno.lo, [4] =
   //   lineno.hi.
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  const std::uint16_t txtptr = ReadZeroPageWord(kAS_TXTPTR);
+  const std::uint16_t txtptr = variables_const().AS_TXTPTR;
   const std::uint8_t lo =
       ReadProgramByte(static_cast<std::uint16_t>(txtptr + 3u));
   const std::uint8_t hi =
@@ -943,9 +936,8 @@ void AdvanceTextPointerToNextAS_Line() {
   // Source: AS_NEWSTT inline — tya (A=4) + adc AS_TXTPTR → AS_TXTPTR += 4.
   // AS_CHRGET called next by AS_TRACE_ adds 1 more, landing on the first
   // content byte.
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  WriteZeroPageWord(kAS_TXTPTR, static_cast<std::uint16_t>(
-                                    ReadZeroPageWord(kAS_TXTPTR) + 4u));
+  variables().AS_TXTPTR =
+      static_cast<std::uint16_t>(variables_const().AS_TXTPTR + 4u);
 }
 
 bool IsRunningMode() {
