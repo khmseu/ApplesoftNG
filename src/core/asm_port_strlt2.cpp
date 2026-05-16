@@ -24,21 +24,15 @@ void AS_SNGFLT(std::uint8_t value);
 
 namespace {
 
-std::uint8_t read_AS_CHARAC() {
-  return variables_const().readByte(ApplesoftVariables::ZP_AS_CHARAC);
-}
+std::uint8_t read_AS_CHARAC() { return variables_const().AS_CHARAC; }
 
-std::uint8_t read_AS_ENDCHR() {
-  return variables_const().readByte(ApplesoftVariables::ZP_AS_ENDCHR);
-}
+std::uint8_t read_AS_ENDCHR() { return variables_const().AS_ENDCHR; }
 
 void write_AS_STRNG1(std::uint16_t value) {
   variables().writeWord(ApplesoftVariables::ZP_AS_STRNG1, value);
 }
 
-void write_AS_FAC(std::uint8_t v) {
-  variables().writeByte(ApplesoftVariables::ZP_AS_FAC, v);
-}
+void write_AS_FAC(std::uint8_t v) { variables().AS_FAC[0] = v; }
 
 void write_AS_FAC_pointer(std::uint16_t value) {
   variables().writeWord(
@@ -49,25 +43,15 @@ void write_AS_STRNG2(std::uint16_t value) {
   variables().writeWord(ApplesoftVariables::ZP_AS_STRNG2, value);
 }
 
-std::uint8_t read_AS_TEMPPT() {
-  return variables_const().readByte(ApplesoftVariables::ZP_AS_TEMPPT);
-}
+std::uint8_t read_AS_TEMPPT() { return variables_const().AS_TEMPPT; }
 
-void write_AS_TEMPPT(std::uint8_t value) {
-  variables().writeByte(ApplesoftVariables::ZP_AS_TEMPPT, value);
-}
+void write_AS_TEMPPT(std::uint8_t value) { variables().AS_TEMPPT = value; }
 
-void write_AS_LASTPT(std::uint8_t value) {
-  variables().writeByte(ApplesoftVariables::ZP_AS_LASTPT, value);
-}
+void write_AS_LASTPT(std::uint8_t value) { variables().AS_LASTPT = value; }
 
-std::uint8_t read_AS_GARFLG() {
-  return variables_const().readByte(ApplesoftVariables::ZP_AS_GARFLG);
-}
+std::uint8_t read_AS_GARFLG() { return variables_const().AS_GARFLG; }
 
-void write_AS_GARFLG(std::uint8_t value) {
-  variables().writeByte(ApplesoftVariables::ZP_AS_GARFLG, value);
-}
+void write_AS_GARFLG(std::uint8_t value) { variables().AS_GARFLG = value; }
 
 std::uint16_t read_AS_FRETOP() {
   return variables_const().readWord(ApplesoftVariables::ZP_AS_FRETOP);
@@ -122,17 +106,13 @@ void write_AS_FNCNAM(std::uint16_t value) {
 }
 
 void clear_AS_FNCNAM_hi() {
-  variables().writeByte(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FNCNAM + 1u), 0u);
+  auto &vars = variables();
+  ApplesoftVariables::setHighByte(vars.AS_FNCNAM, 0u);
 }
 
-std::uint8_t read_AS_DSCLEN() {
-  return variables_const().readByte(ApplesoftVariables::ZP_AS_DSCLEN);
-}
+std::uint8_t read_AS_DSCLEN() { return variables_const().AS_DSCLEN; }
 
-void write_AS_DSCLEN(std::uint8_t value) {
-  variables().writeByte(ApplesoftVariables::ZP_AS_DSCLEN, value);
-}
+void write_AS_DSCLEN(std::uint8_t value) { variables().AS_DSCLEN = value; }
 
 std::uint8_t read_AS_LENGTH() {
   return variables_const().readByte(ApplesoftVariables::ZP_AS_LENGTH);
@@ -577,21 +557,17 @@ void AS_JERR() { AS_ERROR(g_jerr_error); }
 // Name normalization: none (assembler label AS_PUTEMP kept verbatim).
 void AS_PUTEMP(std::uint8_t tempDescriptorAddress) {
   auto tempDescriptor = variables().pointer(tempDescriptorAddress);
-  tempDescriptor.write(
-      variables_const().readByte(ApplesoftVariables::ZP_AS_FAC));
-  tempDescriptor.write(variables_const().readByte(static_cast<std::uint8_t>(
-                           ApplesoftVariables::ZP_AS_FAC + 1u)),
-                       1u);
-  tempDescriptor.write(variables_const().readByte(static_cast<std::uint8_t>(
-                           ApplesoftVariables::ZP_AS_FAC + 2u)),
-                       2u);
+  const auto &vars = variables_const();
+  tempDescriptor.write(vars.AS_FAC[0]);
+  tempDescriptor.write(vars.AS_FAC[1], 1u);
+  tempDescriptor.write(vars.AS_FAC[2], 2u);
 
   // AS_FAC+3/AS_FAC+4 is one logical pointer to the temp descriptor.
   write_AS_FAC_descriptor_address(
       static_cast<std::uint16_t>(tempDescriptorAddress));
 
   // AS_VALTYP=$ff marks AS_FAC as string.
-  variables().writeByte(ApplesoftVariables::ZP_AS_VALTYP, 0xffu);
+  variables().AS_VALTYP = 0xffu;
   write_AS_LASTPT(tempDescriptorAddress);
 
   write_AS_TEMPPT(static_cast<std::uint8_t>(tempDescriptorAddress + 3u));
@@ -627,7 +603,7 @@ void AS_STRSPA(std::uint8_t length) {
   const std::uint16_t allocatedAddress = AS_GETSPA(length);
 
   // Store length and address into AS_FAC.
-  variables().writeByte(ApplesoftVariables::ZP_AS_FAC, length);
+  variables().AS_FAC[0] = length;
   write_AS_FAC_pointer(allocatedAddress);
 }
 
@@ -651,7 +627,7 @@ void AS_LEN() {
 // length. After return AS_INDEX points at the string data.
 std::uint8_t AS_GETSTR() {
   const std::uint8_t length = AS_FRESTR();
-  variables().writeByte(ApplesoftVariables::ZP_AS_VALTYP, 0u);
+  variables().AS_VALTYP = 0u;
   return length;
 }
 
@@ -724,8 +700,7 @@ std::uint8_t AS_FRETMP(std::uint16_t descriptorAddress) {
 bool AS_FRETMS(std::uint16_t descriptorAddress) {
   const std::uint8_t a = ApplesoftVariables::lowByte(descriptorAddress);
   const std::uint8_t y = ApplesoftVariables::highByte(descriptorAddress);
-  const std::uint8_t lastpt =
-      variables_const().readByte(ApplesoftVariables::ZP_AS_LASTPT);
+  const std::uint8_t lastpt = variables_const().AS_LASTPT;
   const std::uint8_t lastptHi = variables_const().readByte(
       static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_LASTPT + 1u));
 
@@ -756,8 +731,7 @@ void AS_CHRSTR() {
   // writes the converted value into AS_FAC[4] (the X-register proxy at
   // ZP_AS_FAC+4); we read it back from there.
   AS_CONINT();
-  const std::uint8_t ch = variables_const().readByte(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 4u));
+  const std::uint8_t ch = variables_const().AS_FAC[4];
 
   // Allocate space for the 1-byte string.  AS_STRSPA sets AS_FAC[0]=1 (length)
   // and AS_FAC+1,2 = allocated address.
@@ -766,8 +740,8 @@ void AS_CHRSTR() {
   // sta (AS_FAC+1),Y  with Y=0: write the character to the allocated string
   // space. AS_FAC+1/AS_FAC+2 is one unified pointer (write_AS_FAC_pointer uses
   // the same address).
-  const std::uint16_t strData = variables_const().readWord(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 1u));
+  const std::uint16_t strData = ApplesoftVariables::makeWord(
+      variables_const().AS_FAC[1], variables_const().AS_FAC[2]);
   variables().writeByte(strData, ch);
 
   // jmp AS_PUTNEW: convert the raw AS_FAC string data into a temporary

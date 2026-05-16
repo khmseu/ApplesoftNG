@@ -61,28 +61,29 @@ static void AS_COPY_RESULT_INTO_FAC() {
 // AS_Labels: AS_FDIVT (inclusive) .. AS_COPY_RESULT_INTO_FAC (exclusive)
 // Name normalization: none (assembler label AS_FDIVT kept verbatim).
 static void AS_FDIVT() {
-  constexpr std::uint8_t kFac = ApplesoftVariables::ZP_AS_FAC;
   constexpr std::uint8_t kFacMant = ApplesoftVariables::ZP_AS_FAC_MANTISSA;
   constexpr std::uint8_t kArgMant = ApplesoftVariables::ZP_AS_ARG_MANTISSA;
   constexpr std::uint8_t kResult3 =
       static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_RESULT + 3u);
   constexpr std::uint8_t kFacExt = ApplesoftVariables::ZP_AS_FAC_EXTENSION;
+  auto &vars = variables();
+  const auto &cvars = variables_const();
 
-  if (variables_const().readByte(kFac) == 0u) {
+  if (cvars.AS_FAC[0] == 0u) {
     AS_ERROR(AS_ERR_ZERODIV);
     return;
   }
 
   AS_ROUND_FAC();
 
-  const std::uint8_t facExp = variables_const().readByte(kFac);
-  variables().writeByte(kFac, static_cast<std::uint8_t>(0u - facExp));
+  const std::uint8_t facExp = cvars.AS_FAC[0];
+  vars.AS_FAC[0] = static_cast<std::uint8_t>(0u - facExp);
 
   AS_ADD_EXPONENTS();
 
   const std::uint8_t adjustedExp =
-      static_cast<std::uint8_t>(variables_const().readByte(kFac) + 1u);
-  variables().writeByte(kFac, adjustedExp);
+      static_cast<std::uint8_t>(cvars.AS_FAC[0] + 1u);
+  vars.AS_FAC[0] = adjustedExp;
   if (adjustedExp == 0u) {
     AS_ERROR(0x45u); // AS_OVERFLOW
     return;
@@ -119,7 +120,7 @@ static void AS_FDIVT() {
         for (int i = 0; i < 6; ++i) {
           quotientByte = static_cast<std::uint8_t>(quotientByte << 1u);
         }
-        variables().writeByte(kFacExt, quotientByte);
+        vars.writeByte(kFacExt, quotientByte);
         AS_COPY_RESULT_INTO_FAC();
         return;
       } else {
@@ -175,16 +176,16 @@ void AS_NEGOP() {
   // AS_Labels: AS_NEGOP (inclusive) .. AS_CON_LOG_E (exclusive)
   // Name normalization: none (assembler label AS_NEGOP kept verbatim).
 
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
+  auto &vars = variables();
+  const auto &cvars = variables_const();
 
   // ROM: if AS_FAC exponent is zero, value is 0 so sign toggle is skipped.
-  if (variables_const().readByte(kAS_FAC) == 0u) {
+  if (cvars.AS_FAC[0] == 0u) {
     return;
   }
 
-  const std::uint8_t sign = variables_const().readByte(kAS_FAC_SIGN);
-  variables().writeByte(kAS_FAC_SIGN, static_cast<std::uint8_t>(sign ^ 0xffu));
+  const std::uint8_t sign = cvars.AS_FAC_SIGN;
+  vars.AS_FAC_SIGN = static_cast<std::uint8_t>(sign ^ 0xffu);
 }
 
 void AS_EQUOP() {
@@ -200,9 +201,7 @@ void AS_EQUOP() {
   // and as the implementation of the NOT pseudo-function (via AS_NOT_ ->
   // AS_EQUL -> AS_EQUOP).
 
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-
-  const std::uint8_t facExponent = variables_const().readByte(kAS_FAC);
+  const std::uint8_t facExponent = variables_const().AS_FAC[0];
   AS_SNGFLT(facExponent == 0u ? static_cast<std::uint8_t>(1u)
                               : static_cast<std::uint8_t>(0u));
 }

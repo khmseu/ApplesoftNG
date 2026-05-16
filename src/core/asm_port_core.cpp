@@ -88,13 +88,11 @@ void SetTextPointer(std::uint16_t address) {
   variables().writeWord(ApplesoftVariables::ZP_AS_TXTPTR, address);
 }
 
-void ClearErrFlag() {
-  variables().writeByte(ApplesoftVariables::ZP_AS_ERRFLG, 0);
-}
+void ClearErrFlag() { variables().AS_ERRFLG = 0; }
 
 void MarkDirectMode() {
-  variables().writeByte(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_CURLIN + 1u), 0xffu);
+  auto &vars = variables();
+  ApplesoftVariables::setHighByte(vars.AS_CURLIN, 0xffu);
 }
 
 std::uint8_t ReadZeroPageByte(std::uint8_t address) {
@@ -129,12 +127,11 @@ bool IsOnErr() {
   // AS_Labels: AS_ERROR (inclusive) .. AS_L_ERROR_1 (exclusive)
   // Name normalization: helper name chosen for the inline AS_ERROR predicate.
   // `bit AS_ERRFLG` + `bpl` means ON ERR is active when AS_ERRFLG bit 7 is set.
-  return (ReadZeroPageByte(ApplesoftVariables::ZP_AS_ERRFLG) & 0x80u) != 0u;
+  return (variables_const().AS_ERRFLG & 0x80u) != 0u;
 }
 
 bool IsDirectMode() {
-  return ReadZeroPageByte(static_cast<std::uint8_t>(
-             ApplesoftVariables::ZP_AS_CURLIN + 1u)) == 0xffu;
+  return ApplesoftVariables::highByte(variables_const().AS_CURLIN) == 0xffu;
 }
 
 void AS_NORMAL();

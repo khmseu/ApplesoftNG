@@ -12,9 +12,7 @@ namespace {
 constexpr std::uint16_t kInputBufferAddress =
     ApplesoftVariables::ADDR_AS_INPUT_BUFFER;
 
-void write_MON_PROMPT(std::uint8_t v) {
-  variables().writeByte(ApplesoftVariables::ZP_MON_PROMPT, v);
-}
+void write_MON_PROMPT(std::uint8_t v) { variables().MON_PROMPT = v; }
 
 void write_AS_INPUT_BUFFER(std::uint8_t index, std::uint8_t v) {
   variables().pointer(kInputBufferAddress).write(v, index);
@@ -81,8 +79,7 @@ std::uint8_t MON_RDKEY() {
   constexpr std::uint8_t kMON_BASL = ApplesoftVariables::ZP_MON_BASL;
   // RDKEY prologue: fetch cursor row/column source char through ($28),Y,
   // then rewrite it in flashing form while waiting for input.
-  const std::uint8_t y =
-      variables_const().readByte(ApplesoftVariables::ZP_MON_CH);
+  const std::uint8_t y = variables_const().MON_CH;
   const std::uint16_t screenBase = ApplesoftVariables::makeWord(
       variables_const().readByte(kMON_BASL),
       variables_const().readByte(static_cast<std::uint16_t>(kMON_BASL + 1u)));

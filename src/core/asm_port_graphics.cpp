@@ -418,7 +418,7 @@ void AS_HTAB() {
     col = static_cast<std::uint8_t>(col - 40u);
     AS_CRDO();
   }
-  variables().writeByte(ApplesoftVariables::ZP_MON_CH, col);
+  variables().MON_CH = col;
 }
 
 void AS_HCOLOR();
