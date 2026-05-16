@@ -1746,10 +1746,10 @@ void AS_DEF() {
 
   // Stack the argument variable pointer (AS_VARPNT)
   constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
-    ApplesoftVariables::setHighByte(
+  ApplesoftVariables::setHighByte(
       variables().AS_VARPNT,
       ApplesoftVariables::highByte(variables_const().AS_VARPNT));
-    ApplesoftVariables::setLowByte(
+  ApplesoftVariables::setLowByte(
       variables().AS_VARPNT,
       ApplesoftVariables::lowByte(variables_const().AS_VARPNT));
 
