@@ -19,8 +19,6 @@
 
 namespace applesoft::asm_port {
 
-std::uint8_t ReadZeroPageByte(std::uint8_t address);
-void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
   return static_cast<std::uint8_t>(lhs + rhs);
 }

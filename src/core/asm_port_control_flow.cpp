@@ -14,8 +14,6 @@
 namespace applesoft::asm_port {
 
 bool IsStatementEndOfParsedInput();
-std::uint8_t ReadZeroPageByte(std::uint8_t address);
-void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
 void AS_PRINT_ERROR_LINNUM(std::string_view prefix);

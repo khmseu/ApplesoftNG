@@ -6,10 +6,6 @@
 
 namespace applesoft::asm_port {
 
-// Forward declarations for memory access (should ideally be in a header)
-std::uint8_t ReadZeroPageByte(std::uint8_t address);
-void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
-
 void AS_CLEAR() {
   if (AS_CHRGOT() != 0) {
     return;

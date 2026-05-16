@@ -18,8 +18,6 @@ namespace applesoft::asm_port {
 
 std::uint8_t MON_PREAD();
 void AS_CONINT();
-std::uint8_t ReadZeroPageByte(std::uint8_t address);
-void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void AS_SNGFLT(std::uint8_t value);
 void AS_GIVAYF(std::int16_t value);
 void AS_FIN();

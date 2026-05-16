@@ -93,14 +93,6 @@ void MarkDirectMode() {
   vars.AS_CURLIN = 0xff00u | (vars.AS_CURLIN & 0x00ffu);
 }
 
-std::uint8_t ReadZeroPageByte(std::uint8_t address) {
-  return variables_const().readByte(address);
-}
-
-void WriteZeroPageByte(std::uint8_t address, std::uint8_t value) {
-  variables().writeByte(address, value);
-}
-
 std::uint8_t ReadProgramByte(std::uint16_t address) {
   // Program text lives in the same flat address space as zero-page variables;
   // ApplesoftVariables::readByte handles all address regions.

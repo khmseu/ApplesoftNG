@@ -13,8 +13,6 @@ namespace applesoft::asm_port {
 constexpr std::size_t kTokenCount = 107;
 constexpr std::uint8_t kTokenBase = 0x80u;
 
-std::uint8_t ReadZeroPageByte(std::uint8_t address);
-void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void SetTextPointer(std::uint16_t address);
 void AS_RESTART();
 void MON_WRITE();

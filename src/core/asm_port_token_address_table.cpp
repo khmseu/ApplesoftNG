@@ -8,8 +8,6 @@
 
 namespace applesoft::asm_port {
 
-std::uint8_t ReadZeroPageByte(std::uint8_t address);
-void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 std::uint8_t AS_CHRGET();
 
 bool AS_CLEAR();

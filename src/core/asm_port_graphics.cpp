@@ -14,8 +14,6 @@ void AS_CLEARC();
 std::uint8_t AS_GETBYT();
 void AS_IQERR();
 std::uint8_t AS_CHRGOT();
-std::uint8_t ReadZeroPageByte(std::uint8_t address);
-void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void AS_SYNCHR(std::uint8_t expected);
 
 void AS_NORMAL() {
