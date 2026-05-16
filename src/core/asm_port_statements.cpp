@@ -97,17 +97,17 @@ void AS_SCRTCH_impl() {
   constexpr std::uint8_t kAS_MEMSIZ = ApplesoftVariables::ZP_AS_MEMSIZ;
   constexpr std::uint8_t kAS_FRETOP = ApplesoftVariables::ZP_AS_FRETOP;
 
-  const std::uint16_t txtTabAddr = ReadZeroPageWord(kAS_TXTTAB);
+  const std::uint16_t txtTabAddr = variables_const().AS_TXTTAB;
   variables().AS_LOCK = 0;
   WriteProgramByte(txtTabAddr, 0);
   WriteProgramByte(static_cast<std::uint16_t>(txtTabAddr + 1u), 0);
 
   const std::uint16_t nextFree = static_cast<std::uint16_t>(txtTabAddr + 2u);
-  WriteZeroPageWord(kAS_VARTAB, nextFree);
-  WriteZeroPageWord(kAS_PRGEND, nextFree);
-  WriteZeroPageWord(kAS_FRETOP, ReadZeroPageWord(kAS_MEMSIZ));
-  WriteZeroPageWord(kAS_ARYTAB, ReadZeroPageWord(kAS_VARTAB));
-  WriteZeroPageWord(kAS_STREND, ReadZeroPageWord(kAS_VARTAB));
+  variables().AS_VARTAB = nextFree;
+  variables().AS_PRGEND = nextFree;
+  variables().AS_FRETOP = variables_const().AS_MEMSIZ;
+  variables().AS_ARYTAB = variables_const().AS_VARTAB;
+  variables().AS_STREND = variables_const().AS_VARTAB;
 
   AS_SETPTRS_impl();
 }
@@ -148,12 +148,10 @@ void AS_RUN() {
 }
 
 void AS_PEEK() {
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
-
-  const std::uint16_t savedAS_Linnum = ReadZeroPageWord(kAS_LINNUM);
+  const std::uint16_t savedAS_Linnum = variables_const().AS_LINNUM;
   AS_GETADR();
-  const std::uint8_t value = ReadProgramByte(ReadZeroPageWord(kAS_LINNUM));
-  WriteZeroPageWord(kAS_LINNUM, savedAS_Linnum);
+  const std::uint8_t value = ReadProgramByte(variables_const().AS_LINNUM);
+  variables().AS_LINNUM = savedAS_Linnum;
   AS_SNGFLT(value);
 }
 
@@ -162,10 +160,8 @@ void AS_PEEK() {
 // AS_Labels: AS_POKE (inclusive) .. AS_WAIT (exclusive)
 // Name normalization: none (assembler label AS_POKE kept verbatim).
 void AS_POKE() {
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
-
   const std::uint8_t value = AS_GTNUM();
-  WriteProgramByte(ReadZeroPageWord(kAS_LINNUM), value);
+  WriteProgramByte(variables_const().AS_LINNUM, value);
 }
 
 // Source:
@@ -173,8 +169,6 @@ void AS_POKE() {
 // AS_Labels: AS_WAIT (inclusive) .. AS_FADDH (exclusive)
 // Name normalization: none (assembler label AS_WAIT kept verbatim).
 void AS_WAIT() {
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
-
   const std::uint8_t mask = AS_GTNUM();
   ApplesoftVariables::setLowByte(variables().AS_FORPNT, mask);
 
@@ -185,7 +179,7 @@ void AS_WAIT() {
   ApplesoftVariables::setHighByte(variables().AS_FORPNT, xorMask);
 
   while (true) {
-    const std::uint8_t value = ReadProgramByte(ReadZeroPageWord(kAS_LINNUM));
+    const std::uint8_t value = ReadProgramByte(variables_const().AS_LINNUM);
     const std::uint8_t masked =
         static_cast<std::uint8_t>((value ^ xorMask) & mask);
     if (masked != 0u) {
@@ -283,7 +277,7 @@ std::uint8_t ScanAheadOffsetForData(std::uint8_t terminator) {
     variables().AS_ENDCHR = previousCharac;
 
     while (true) {
-      const std::uint16_t textPtr = ReadZeroPageWord(kAS_TXTPTR);
+      const std::uint16_t textPtr = variables_const().AS_TXTPTR;
       const std::uint8_t ch = variables_const().pointer(textPtr).read(offset);
       if (ch == 0 || ch == variables_const().AS_ENDCHR) {
         return offset;
@@ -303,10 +297,8 @@ void AS_ADDON(std::uint8_t offset) {
   // AS_Labels: AS_ADDON (inclusive) .. AS_DATAN (exclusive)
   // Name normalization: none (assembler label AS_ADDON kept verbatim).
 
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-
-  const std::uint16_t textPtr = ReadZeroPageWord(kAS_TXTPTR);
-  WriteZeroPageWord(kAS_TXTPTR, static_cast<std::uint16_t>(textPtr + offset));
+  const std::uint16_t textPtr = variables_const().AS_TXTPTR;
+  variables().AS_TXTPTR = static_cast<std::uint16_t>(textPtr + offset);
 }
 
 std::uint8_t AS_DATAN() {
@@ -334,12 +326,10 @@ void AS_LET() {
   // AS_Labels: AS_LET (inclusive) .. AS_LET2 (exclusive)
   // Name normalization: none (assembler label AS_LET kept verbatim).
 
-  constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
   constexpr std::uint8_t kTOKEN_EQUAL = 0xd0;
-  constexpr std::uint8_t kAS_VALTYP = ApplesoftVariables::ZP_AS_VALTYP;
 
   const std::uint16_t variablePtr = AS_PTRGET();
-  WriteZeroPageWord(kAS_FORPNT, variablePtr);
+  variables().AS_FORPNT = variablePtr;
 
   AS_SYNCHR(kTOKEN_EQUAL);
 
@@ -364,12 +354,6 @@ void AS_LET2(std::uint8_t savedValTypPlus1) {
   // AS_Labels: AS_LET2 (inclusive) .. AS_PUTSTR (exclusive)
   // Name normalization: none (assembler label AS_LET2 kept verbatim).
 
-  constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
-  constexpr std::uint8_t kAS_FAC_PLUS_3 =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 3u);
-  constexpr std::uint8_t kAS_FAC_PLUS_4 =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 4u);
-
   // Positive means real variable; ROM jumps directly to AS_SETFOR.
   if ((savedValTypPlus1 & 0x80u) == 0u) {
     AS_SETFOR();
@@ -379,7 +363,7 @@ void AS_LET2(std::uint8_t savedValTypPlus1) {
   AS_ROUND_FAC();
   AS_AYINT();
 
-  const std::uint16_t forPtr = ReadZeroPageWord(kAS_FORPNT);
+  const std::uint16_t forPtr = variables_const().AS_FORPNT;
   auto forPtrByte = variables().pointer(forPtr);
   forPtrByte.write(variables_const().AS_FAC[3]);
   forPtrByte.write(variables_const().AS_FAC[4], 1u);
@@ -399,13 +383,15 @@ void AS_PUTSTR() {
   constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
   constexpr std::uint8_t kAS_STRNG1 = ApplesoftVariables::ZP_AS_STRNG1;
 
-  const std::uint16_t facDescriptor = ReadZeroPageWord(kAS_FAC_PLUS_3);
+  const std::uint16_t facDescriptor = ApplesoftVariables::makeWord(
+      variables_const().AS_FAC[3], variables_const().AS_FAC[4]);
   const auto facDescriptorPtr = variables_const().pointer(facDescriptor);
   auto readDescriptorByte = [&](std::uint8_t offset) {
     return facDescriptorPtr.read(offset);
   };
 
-  std::uint16_t descriptorPointer = ReadZeroPageWord(kAS_FAC_PLUS_3);
+  std::uint16_t descriptorPointer = ApplesoftVariables::makeWord(
+      variables_const().AS_FAC[3], variables_const().AS_FAC[4]);
 
   const std::uint8_t descDataHigh = readDescriptorByte(2);
   const std::uint8_t fretopHigh =
@@ -425,24 +411,24 @@ void AS_PUTSTR() {
   }
 
   if (!useExistingDescriptor) {
-    if (descriptorPointer >= ReadZeroPageWord(kAS_VARTAB)) {
+    if (descriptorPointer >= variables_const().AS_VARTAB) {
       descriptorIsVariable = true;
     }
   }
 
   if (descriptorIsVariable) {
     AS_STRINI(readDescriptorByte(0));
-    WriteZeroPageWord(kAS_STRNG1, ReadZeroPageWord(kAS_DSCPTR));
+    variables().AS_STRNG1 = variables_const().AS_DSCPTR;
     AS_MOVINS();
     descriptorPointer = kAS_FAC_PLUS_3;
   }
 
-  WriteZeroPageWord(kAS_DSCPTR, descriptorPointer);
+  variables().AS_DSCPTR = descriptorPointer;
 
   (void)AS_FRETMS(descriptorPointer);
 
-  const std::uint16_t source = ReadZeroPageWord(kAS_DSCPTR);
-  const std::uint16_t dest = ReadZeroPageWord(kAS_FORPNT);
+  const std::uint16_t source = variables_const().AS_DSCPTR;
+  const std::uint16_t dest = variables_const().AS_FORPNT;
   const auto sourcePtr = variables_const().pointer(source);
   auto destPtr = variables().pointer(dest);
   for (std::uint8_t i = 0; i < 3; ++i) {
@@ -458,17 +444,14 @@ void DeleteExistingAS_Line() {
   // delete block inside AS_NUMBERED_LINE (T:0471–T:04b5) in the assembler
   // listing.
 
-  constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
-  constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
-
-  const std::uint16_t lowtr = ReadZeroPageWord(kAS_LOWTR);
+  const std::uint16_t lowtr = variables_const().AS_LOWTR;
   const std::uint16_t nextAS_Line = ApplesoftVariables::makeWord(
       variables_const().readByte(lowtr),
       variables_const().readByte(static_cast<std::uint16_t>(lowtr + 1u)));
 
   const std::uint16_t lineSize =
       static_cast<std::uint16_t>(nextAS_Line - lowtr);
-  const std::uint16_t vartab = ReadZeroPageWord(kAS_VARTAB);
+  const std::uint16_t vartab = variables_const().AS_VARTAB;
 
   const std::uint16_t moveCount =
       static_cast<std::uint16_t>(vartab - nextAS_Line);
@@ -478,7 +461,7 @@ void DeleteExistingAS_Line() {
                               static_cast<std::uint16_t>(nextAS_Line + i)));
   }
 
-  WriteZeroPageWord(kAS_VARTAB, static_cast<std::uint16_t>(vartab - lineSize));
+  variables().AS_VARTAB = static_cast<std::uint16_t>(vartab - lineSize);
 }
 
 void InsertNewAS_Line() {
@@ -490,18 +473,12 @@ void InsertNewAS_Line() {
 
   constexpr std::uint16_t kTokenBuf =
       static_cast<std::uint16_t>(ApplesoftVariables::ADDR_AS_INPUT_BUFFER - 5u);
-  constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
-  constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
-  constexpr std::uint8_t kAS_STREND = ApplesoftVariables::ZP_AS_STREND;
-  constexpr std::uint8_t kAS_FRETOP = ApplesoftVariables::ZP_AS_FRETOP;
-  constexpr std::uint8_t kAS_MEMSIZ = ApplesoftVariables::ZP_AS_MEMSIZ;
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
 
   if (variables_const().AS_INPUT_BUFFER_PAGE[0] == 0u) {
     return;
   }
 
-  WriteZeroPageWord(kAS_FRETOP, ReadZeroPageWord(kAS_MEMSIZ));
+  variables().AS_FRETOP = variables_const().AS_MEMSIZ;
 
   std::uint16_t tokenAS_Len = 0;
   while (variables_const().readByte(
@@ -510,8 +487,8 @@ void InsertNewAS_Line() {
   }
 
   const std::uint16_t lineSize = static_cast<std::uint16_t>(tokenAS_Len + 5u);
-  const std::uint16_t lowtr = ReadZeroPageWord(kAS_LOWTR);
-  const std::uint16_t vartab = ReadZeroPageWord(kAS_VARTAB);
+  const std::uint16_t lowtr = variables_const().AS_LOWTR;
+  const std::uint16_t vartab = variables_const().AS_VARTAB;
 
   for (std::uint16_t i = vartab; i > lowtr; --i) {
     const std::uint16_t src = static_cast<std::uint16_t>(i - 1u);
@@ -519,7 +496,7 @@ void InsertNewAS_Line() {
                           variables_const().readByte(src));
   }
 
-  const std::uint16_t linnum = ReadZeroPageWord(kAS_LINNUM);
+  const std::uint16_t linnum = variables_const().AS_LINNUM;
   variables().writeByte(lowtr, 0u);
   variables().writeByte(static_cast<std::uint16_t>(lowtr + 1u), 0u);
   variables().writeByte(static_cast<std::uint16_t>(lowtr + 2u),
@@ -534,8 +511,8 @@ void InsertNewAS_Line() {
   }
 
   const std::uint16_t newVartab = static_cast<std::uint16_t>(vartab + lineSize);
-  WriteZeroPageWord(kAS_VARTAB, newVartab);
-  WriteZeroPageWord(kAS_STREND, newVartab);
+  variables().AS_VARTAB = newVartab;
+  variables().AS_STREND = newVartab;
 }
 
 void AS_PARSE_INPUT_LINE() {
@@ -619,8 +596,7 @@ void HandleNumberedAS_Line() {
 }
 
 std::uint16_t GetTextTablePointer() {
-  constexpr std::uint8_t kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
-  return ReadZeroPageWord(kAS_TXTTAB);
+  return variables_const().AS_TXTTAB;
 }
 
 bool IsEndOfProgram(std::uint16_t current) { return current == 0u; }
@@ -670,11 +646,9 @@ bool AS_FNDLIN() {
   // AS_Labels: AS_FNDLIN (inclusive) .. AS_FL1 (exclusive)
   // Name normalization: none (assembler label AS_FNDLIN kept verbatim).
 
-  constexpr std::uint8_t kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
-
   // Assembler falls through from AS_FNDLIN directly into AS_FL1 with
   // A=AS_TXTTAB, X=AS_TXTTAB+1.
-  return AS_FL1(ReadZeroPageWord(kAS_TXTTAB));
+  return AS_FL1(variables_const().AS_TXTTAB);
 }
 
 bool AS_FL1(std::uint16_t startAddress) {
@@ -682,9 +656,6 @@ bool AS_FL1(std::uint16_t startAddress) {
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_FL1 (inclusive) .. AS_NEW (exclusive)
   // Name normalization: none (assembler label AS_FL1 kept verbatim).
-
-  constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
 
   const std::uint8_t targetAS_Lo =
       ApplesoftVariables::lowByte(variables_const().AS_LINNUM);
@@ -694,7 +665,7 @@ bool AS_FL1(std::uint16_t startAddress) {
   std::uint16_t current = startAddress;
 
   while (true) {
-    WriteZeroPageWord(kAS_LOWTR, current);
+    variables().AS_LOWTR = current;
 
     const std::uint8_t nextHi =
         variables_const().readByte(static_cast<std::uint16_t>(current + 1u));
@@ -734,18 +705,12 @@ void AS_DEL() {
   // AS_Labels: AS_DEL (inclusive) .. AS_GR (exclusive)
   // Name normalization: none (assembler label AS_DEL kept verbatim).
 
-  constexpr std::uint8_t kAS_PRGEND = ApplesoftVariables::ZP_AS_PRGEND;
-  constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
-  constexpr std::uint8_t kAS_DEST = ApplesoftVariables::ZP_AS_DEST;
-  constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
-
-  const std::uint16_t prgend = ReadZeroPageWord(kAS_PRGEND);
-  WriteZeroPageWord(kAS_VARTAB, prgend);
+  const std::uint16_t prgend = variables_const().AS_PRGEND;
+  variables().AS_VARTAB = prgend;
 
   AS_LINGET();
   AS_FNDLIN();
-  WriteZeroPageWord(kAS_DEST, ReadZeroPageWord(kAS_LOWTR));
+  variables().AS_DEST = variables_const().AS_LOWTR;
 
   AS_SYNCHR(static_cast<std::uint8_t>(','));
   AS_LINGET();
@@ -765,13 +730,13 @@ void AS_DEL() {
 
   AS_FNDLIN();
 
-  const std::uint16_t lowtr = ReadZeroPageWord(kAS_LOWTR);
-  const std::uint16_t dest = ReadZeroPageWord(kAS_DEST);
+  const std::uint16_t lowtr = variables_const().AS_LOWTR;
+  const std::uint16_t dest = variables_const().AS_DEST;
   if (lowtr < dest) {
     return;
   }
 
-  const std::uint16_t vartab = ReadZeroPageWord(kAS_VARTAB);
+  const std::uint16_t vartab = variables_const().AS_VARTAB;
   std::uint16_t source = lowtr;
   std::uint16_t destination = dest;
   while (source < vartab) {
@@ -784,7 +749,7 @@ void AS_DEL() {
   const std::uint16_t deletedSize = static_cast<std::uint16_t>(lowtr - dest);
   const std::uint16_t newVartab =
       static_cast<std::uint16_t>(vartab - deletedSize);
-  WriteZeroPageWord(kAS_VARTAB, newVartab);
+  variables().AS_VARTAB = newVartab;
 
   AS_FIX_LINKS();
 }
@@ -794,10 +759,6 @@ void AS_LIST() {
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_LIST (inclusive) .. AUTO (exclusive)
   // Name normalization: none (assembler label AS_LIST kept verbatim).
-
-  constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
 
   if (!IsStatementEndOfParsedInput()) {
     return;
@@ -813,12 +774,12 @@ void AS_LIST() {
     AS_LINGET();
   }
 
-  std::uint16_t endRange = ReadZeroPageWord(kAS_LINNUM);
+  std::uint16_t endRange = variables_const().AS_LINNUM;
   if (endRange == 0u) {
     endRange = 0xffffu;
   }
 
-  std::uint16_t current = ReadZeroPageWord(kAS_LOWTR);
+  std::uint16_t current = variables_const().AS_LOWTR;
   while (current != 0u) {
     if (AS_ISCNTC()) {
       break;
@@ -833,7 +794,7 @@ void AS_LIST() {
       break;
     }
 
-    WriteZeroPageWord(kAS_CURLIN, currentAS_Line);
+    variables().AS_CURLIN = currentAS_Line;
     AS_LINPRT();
     variables().MON_CH = 5u;
 
@@ -849,7 +810,7 @@ void AS_LIST() {
     }
 
     current = static_cast<std::uint16_t>(current + offset + 1u);
-    WriteZeroPageWord(kAS_LOWTR, current);
+    variables().AS_LOWTR = current;
   }
 
   AS_CRDO();
@@ -861,15 +822,11 @@ void AS_SAVE() {
   // AS_Labels: AS_SAVE (inclusive) .. AS_LOAD (exclusive)
   // Name normalization: none (assembler label AS_SAVE kept verbatim).
 
-  constexpr std::uint8_t kAS_PRGEND = ApplesoftVariables::ZP_AS_PRGEND;
-  constexpr std::uint8_t kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
-
-  const std::uint16_t programEnd = ReadZeroPageWord(kAS_PRGEND);
-  const std::uint16_t textTable = ReadZeroPageWord(kAS_TXTTAB);
+  const std::uint16_t programEnd = variables_const().AS_PRGEND;
+  const std::uint16_t textTable = variables_const().AS_TXTTAB;
   const std::uint16_t programAS_Length =
       static_cast<std::uint16_t>(programEnd - textTable);
-  WriteZeroPageWord(kAS_LINNUM, programAS_Length);
+  variables().AS_LINNUM = programAS_Length;
 
   AS_VARTIO();
   MON_WRITE();
@@ -892,10 +849,10 @@ void AS_LOAD() {
   AS_VARTIO();
   MON_READ();
 
-  const std::uint16_t textTable = ReadZeroPageWord(kAS_TXTTAB);
-  const std::uint16_t programAS_Length = ReadZeroPageWord(kAS_LINNUM);
-  WriteZeroPageWord(kAS_VARTAB,
-                    static_cast<std::uint16_t>(textTable + programAS_Length));
+  const std::uint16_t textTable = variables_const().AS_TXTTAB;
+  const std::uint16_t programAS_Length = variables_const().AS_LINNUM;
+  variables().AS_VARTAB =
+      static_cast<std::uint16_t>(textTable + programAS_Length);
 
   variables().AS_LOCK = variables_const().AS_TEMPPT;
 
@@ -930,10 +887,8 @@ void AS_PROGIO() {
   // AS_Labels: AS_PROGIO (inclusive) .. AS_RUN (exclusive)
   // Name normalization: none (assembler label AS_PROGIO kept verbatim).
 
-  constexpr std::uint8_t kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
-  constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
-  variables().MON_A1 = ReadZeroPageWord(kAS_TXTTAB);
-  variables().MON_A2 = ReadZeroPageWord(kAS_VARTAB);
+  variables().MON_A1 = variables_const().AS_TXTTAB;
+  variables().MON_A2 = variables_const().AS_VARTAB;
 }
 
 void MON_WRITE() {
@@ -1004,12 +959,10 @@ void AS_CALL() {
   // Evaluates the numeric expression to a 16-bit address, then performs
   // an indirect jump to that address. The called routine returns with RTS.
 
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
-
   AS_FRMNUM();
   AS_GETADR();
 
-  const std::uint16_t callAddress = ReadZeroPageWord(kAS_LINNUM);
+  const std::uint16_t callAddress = variables_const().AS_LINNUM;
   auto callRoutine = reinterpret_cast<void (*)()>(callAddress);
   callRoutine();
 }
