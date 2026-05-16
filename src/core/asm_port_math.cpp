@@ -38,10 +38,8 @@ void AS_INCREMENT_MANTISSA();
 
 void AS_LOAD_ARG_FROM_YA() {
   const std::uint16_t address = static_cast<std::uint16_t>(
-      (static_cast<std::uint16_t>(
-           ReadZeroPageByte(ApplesoftVariables::ZP_MON_DEBUG_REG_Y))
-       << 8u) |
-      ReadZeroPageByte(ApplesoftVariables::ZP_MON_DEBUG_REG_A));
+      (static_cast<std::uint16_t>(variables_const().MON_DEBUG_REG_Y) << 8u) |
+      variables_const().MON_DEBUG_REG_A);
   AS_LOAD_ARG_FROM_YA(address);
 }
 

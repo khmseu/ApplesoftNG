@@ -1160,20 +1160,13 @@ void MON_RESTORE() {
   // via PLP; RTS.
 
   constexpr std::uint8_t kMON_STATUS = ApplesoftVariables::ZP_MON_STATUS;
-  constexpr std::uint8_t kMON_DEBUG_REG_A =
-      ApplesoftVariables::ZP_MON_DEBUG_REG_A;
-  constexpr std::uint8_t kMON_DEBUG_REG_X =
-      ApplesoftVariables::ZP_MON_DEBUG_REG_X;
-  constexpr std::uint8_t kMON_DEBUG_REG_Y =
-      ApplesoftVariables::ZP_MON_DEBUG_REG_Y;
-
   // Read saved processor status (this will be re-pushed via PLP emulation).
-  const std::uint8_t saved_status = ReadZeroPageByte(kMON_STATUS);
+    const std::uint8_t saved_status = variables_const().MON_STATUS;
 
   // Read saved register values from zero-page storage.
-  const std::uint8_t saved_reg_a = ReadZeroPageByte(kMON_DEBUG_REG_A);
-  const std::uint8_t saved_reg_x = ReadZeroPageByte(kMON_DEBUG_REG_X);
-  const std::uint8_t saved_reg_y = ReadZeroPageByte(kMON_DEBUG_REG_Y);
+    const std::uint8_t saved_reg_a = variables_const().MON_DEBUG_REG_A;
+    const std::uint8_t saved_reg_x = variables_const().MON_DEBUG_REG_X;
+    const std::uint8_t saved_reg_y = variables_const().MON_DEBUG_REG_Y;
 
   // In 6502 emulation, these values would restore the virtual CPU state.
   // TODO(asm-port): Restore processor flags (status register) to emulated CPU

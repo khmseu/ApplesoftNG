@@ -651,8 +651,7 @@ bool AS_FRETMS(std::uint16_t descriptorAddress) {
   const std::uint8_t a = ApplesoftVariables::lowByte(descriptorAddress);
   const std::uint8_t y = ApplesoftVariables::highByte(descriptorAddress);
   const std::uint8_t lastpt = variables_const().AS_LASTPT;
-  const std::uint8_t lastptHi = variables_const().readByte(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_LASTPT + 1u));
+  const std::uint8_t lastptHi = variables_const().AS_LASTPT_HI;
 
   if (y != lastptHi || a != lastpt) {
     return false;
