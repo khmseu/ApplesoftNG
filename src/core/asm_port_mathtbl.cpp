@@ -13,6 +13,7 @@
 #include "core/asm_port_mathtbl.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_error.hpp"
+#include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_math.hpp"
 
 namespace applesoft::asm_port {
@@ -31,8 +32,111 @@ namespace {
 // asm_port_math.cpp
 } // namespace
 static void AS_FMULTT() {} // TODO(asm-port): AS_FMULTT $CA...202...*
-static void AS_FDIVT() {}  // TODO(asm-port): AS_FDIVT  $CB...203.../
-static void AS_FPWRT() {}  // TODO(asm-port): AS_FPWRT  $CC...204...^
+static void AS_COPY_RESULT_INTO_FAC() {
+} // TODO(asm-port): AS_COPY_RESULT_INTO_FAC
+
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: AS_FDIVT (inclusive) .. AS_COPY_RESULT_INTO_FAC (exclusive)
+// Name normalization: none (assembler label AS_FDIVT kept verbatim).
+static void AS_FDIVT() {
+  constexpr std::uint8_t kFac = ApplesoftVariables::ZP_AS_FAC;
+  constexpr std::uint8_t kFacMant = ApplesoftVariables::ZP_AS_FAC_MANTISSA;
+  constexpr std::uint8_t kArgMant = ApplesoftVariables::ZP_AS_ARG_MANTISSA;
+  constexpr std::uint8_t kResult3 =
+      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_RESULT + 3u);
+  constexpr std::uint8_t kFacExt = ApplesoftVariables::ZP_AS_FAC_EXTENSION;
+
+  if (variables_const().readByte(kFac) == 0u) {
+    AS_ERROR(AS_ERR_ZERODIV);
+    return;
+  }
+
+  AS_ROUND_FAC();
+
+  const std::uint8_t facExp = variables_const().readByte(kFac);
+  variables().writeByte(kFac, static_cast<std::uint8_t>(0u - facExp));
+
+  AS_ADD_EXPONENTS();
+
+  const std::uint8_t adjustedExp =
+      static_cast<std::uint8_t>(variables_const().readByte(kFac) + 1u);
+  variables().writeByte(kFac, adjustedExp);
+  if (adjustedExp == 0u) {
+    AS_ERROR(0x45u); // AS_OVERFLOW
+    return;
+  }
+
+  std::uint8_t x = 0xfcu;
+  std::uint8_t quotientByte = 0x01u;
+
+  while (true) {
+    bool facCanBeSubtracted = true;
+    for (std::uint8_t i = 0u; i < 4u; ++i) {
+      const std::uint8_t arg =
+          variables_const().readByte(static_cast<std::uint8_t>(kArgMant + i));
+      const std::uint8_t fac =
+          variables_const().readByte(static_cast<std::uint8_t>(kFacMant + i));
+      if (arg != fac) {
+        facCanBeSubtracted = arg > fac;
+        break;
+      }
+    }
+
+    const bool sentinelRolledOut = (quotientByte & 0x80u) != 0u;
+    quotientByte = static_cast<std::uint8_t>((quotientByte << 1u) |
+                                             (facCanBeSubtracted ? 1u : 0u));
+
+    if (sentinelRolledOut) {
+      x = static_cast<std::uint8_t>(x + 1u);
+      const std::uint8_t storeAddr = static_cast<std::uint8_t>(kResult3 + x);
+      variables().writeByte(storeAddr, quotientByte);
+
+      if (quotientByte == 0u) {
+        quotientByte = 0x40u;
+      } else if ((quotientByte & 0x80u) == 0u) {
+        for (int i = 0; i < 6; ++i) {
+          quotientByte = static_cast<std::uint8_t>(quotientByte << 1u);
+        }
+        variables().writeByte(kFacExt, quotientByte);
+        AS_COPY_RESULT_INTO_FAC();
+        return;
+      } else {
+        quotientByte = 0x01u;
+      }
+    }
+
+    if (facCanBeSubtracted) {
+      std::uint16_t borrow = 0u;
+      for (int i = 3; i >= 0; --i) {
+        const std::uint8_t argAddr =
+            static_cast<std::uint8_t>(kArgMant + static_cast<std::uint8_t>(i));
+        const std::uint8_t facAddr =
+            static_cast<std::uint8_t>(kFacMant + static_cast<std::uint8_t>(i));
+        const std::uint16_t arg = variables_const().readByte(argAddr);
+        const std::uint16_t fac = variables_const().readByte(facAddr);
+        const std::uint16_t diff =
+            static_cast<std::uint16_t>(arg - fac - borrow);
+        variables().writeByte(argAddr, static_cast<std::uint8_t>(diff & 0xffu));
+        borrow = (arg < (fac + borrow)) ? 1u : 0u;
+      }
+    }
+
+    // Shift ARG+4..ARG+1 left by one bit as in ASL/ROL chain in ROM code.
+    std::uint8_t carry = 0u;
+    for (int i = 3; i >= 0; --i) {
+      const std::uint8_t addr =
+          static_cast<std::uint8_t>(kArgMant + static_cast<std::uint8_t>(i));
+      const std::uint8_t value = variables_const().readByte(addr);
+      const std::uint8_t nextCarry = static_cast<std::uint8_t>(value >> 7u);
+      const std::uint8_t shifted =
+          static_cast<std::uint8_t>((value << 1u) | carry);
+      variables().writeByte(addr, shifted);
+      carry = nextCarry;
+    }
+  }
+}
+static void AS_FPWRT() {} // TODO(asm-port): AS_FPWRT  $CC...204...^
 
 void AS_OR_op() {
   // Source:
