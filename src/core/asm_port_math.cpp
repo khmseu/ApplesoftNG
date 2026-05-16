@@ -519,15 +519,18 @@ void AS_NORMALIZE_FAC_2() {
 
   do {
     const std::uint8_t msb = variables_const().AS_FAC[1]; // ldx FAC+1
-    if (msb != 0u) {                                       // bne NORMALIZE_FAC_4
+    if (msb != 0u) {                                      // bne NORMALIZE_FAC_4
       // Some 1-bits present; hand off to bit-level normalization.
       AS_NORMALIZE_FAC_4(shiftCount);
       return;
     }
     // FAC[1] still zero: fast 8-bit left shuffle of mantissa + extension.
-    variables().AS_FAC[1] = variables_const().AS_FAC[2]; // ldx FAC+2 / stx FAC+1
-    variables().AS_FAC[2] = variables_const().AS_FAC[3]; // ldx FAC+3 / stx FAC+2
-    variables().AS_FAC[3] = variables_const().AS_FAC[4]; // ldx FAC+4 / stx FAC+3
+    variables().AS_FAC[1] =
+        variables_const().AS_FAC[2]; // ldx FAC+2 / stx FAC+1
+    variables().AS_FAC[2] =
+        variables_const().AS_FAC[3]; // ldx FAC+3 / stx FAC+2
+    variables().AS_FAC[3] =
+        variables_const().AS_FAC[4]; // ldx FAC+4 / stx FAC+3
     variables().AS_FAC[4] =
         variables_const().AS_FAC_EXTENSION; // ldx FAC_EXTENSION / stx FAC+4
     variables().AS_FAC_EXTENSION = 0u;      // sty FAC_EXTENSION (Y=0)

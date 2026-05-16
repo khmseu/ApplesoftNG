@@ -355,19 +355,21 @@ public:
   std::uint8_t AS_SHIFT_SIGN_EXT = 0;   // $a4
   std::array<std::uint8_t, 6> AS_ARG{}; // $a5..$aa
   std::uint16_t AS_STRNG1 = 0;          // $ab/$ac
-  SGNCPRAlias AS_SGNCPR{};      // Virtual alias for $ab (AS_STRNG1 low byte)
-  FACExtensionAlias AS_FAC_EXTENSION{}; // Virtual alias for $ac (AS_STRNG1 high byte)
-  ARGExtensionAlias AS_ARG_EXTENSION{}; // Virtual alias for $92 (AS_JMPADRS high byte)
-  std::uint16_t AS_STRNG2 = 0;          // $ad/$ae
-  std::uint16_t AS_PRGEND = 0;          // $af/$b0
-  std::uint16_t AS_TXTPTR = 0;          // $b8/$b9
-  std::uint8_t AS_LOCK = 0;             // $d6
-  std::uint8_t AS_ERRFLG = 0;           // $d8
-  std::uint8_t AS_FIRST = 0;            // $f0
-  std::uint8_t AS_SPEEDZ = 0;           // $f1  complement of speed value
-  std::uint8_t AS_TRCFLG = 0;           // $f2
-  std::uint8_t AS_FLASH_BIT = 0;        // $f3  $40=flash mode, $00=normal
-  std::uint8_t AS_REMSTK = 0;           // $f8
+  SGNCPRAlias AS_SGNCPR{}; // Virtual alias for $ab (AS_STRNG1 low byte)
+  FACExtensionAlias
+      AS_FAC_EXTENSION{}; // Virtual alias for $ac (AS_STRNG1 high byte)
+  ARGExtensionAlias
+      AS_ARG_EXTENSION{};        // Virtual alias for $92 (AS_JMPADRS high byte)
+  std::uint16_t AS_STRNG2 = 0;   // $ad/$ae
+  std::uint16_t AS_PRGEND = 0;   // $af/$b0
+  std::uint16_t AS_TXTPTR = 0;   // $b8/$b9
+  std::uint8_t AS_LOCK = 0;      // $d6
+  std::uint8_t AS_ERRFLG = 0;    // $d8
+  std::uint8_t AS_FIRST = 0;     // $f0
+  std::uint8_t AS_SPEEDZ = 0;    // $f1  complement of speed value
+  std::uint8_t AS_TRCFLG = 0;    // $f2
+  std::uint8_t AS_FLASH_BIT = 0; // $f3  $40=flash mode, $00=normal
+  std::uint8_t AS_REMSTK = 0;    // $f8
 
   // Non-zero-page fixed addresses currently used.
   std::uint8_t AS_INPUT_BUFFER_MINUS_1 = 0;             // $01ff
