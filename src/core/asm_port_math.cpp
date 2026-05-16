@@ -446,9 +446,8 @@ void AS_ADDACC_WITH_DIGIT(std::uint8_t digit) {
   AS_COPY_FAC_TO_ARG_ROUNDED();
   AS_FLOAT(static_cast<std::int8_t>(digit));
   // AS_SGNCPR is $AB
-  variables().AS_SGNCPR =
-      static_cast<std::uint8_t>(variables_const().AS_ARG[5] ^
-                                variables_const().AS_FAC_SIGN);
+  variables().AS_SGNCPR = static_cast<std::uint8_t>(
+      variables_const().AS_ARG[5] ^ variables_const().AS_FAC_SIGN);
   AS_FADDT();
 }
 
