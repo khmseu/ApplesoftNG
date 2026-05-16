@@ -492,8 +492,6 @@ void AS_HPOSN(const HiResCoordinates &point) {
   // AS_Labels: HPOSN (inclusive) .. HPLOT0 (exclusive)
   // Computes hi-res cursor address and bit state for the given coordinate.
 
-  constexpr std::uint8_t kMON_HMASK = ApplesoftVariables::ZP_MON_HMASK;
-
   static constexpr std::uint8_t kMaskTable[7] = {0x81u, 0x82u, 0x84u, 0x88u,
                                                  0x90u, 0xa0u, 0xc0u};
 
@@ -514,7 +512,8 @@ void AS_HPOSN(const HiResCoordinates &point) {
 
   variables().MON_GBASL = rowBase;
   variables().AS_HGR_HORIZ = horiz;
-  WriteZeroPageByte(kMON_HMASK, mask);
+  // MON_HMASK shares $30 storage with MON_COLOR in ROM.
+  variables().MON_COLOR = mask;
 
   // HPOSN seeds HGR_BITS from HGR_COLOR and rotates pattern on odd byte
   // columns.
@@ -567,8 +566,6 @@ void AS_HPLOT0(const HiResCoordinates &point) {
   // AS_Labels: HPLOT0 (inclusive) .. MOVE_LEFT_OR_RIGHT (exclusive)
   // Plots one hi-res pixel using current HGR bit pattern.
 
-  constexpr std::uint8_t kMON_HMASK = ApplesoftVariables::ZP_MON_HMASK;
-
   AS_HPOSN(point);
 
   const std::uint16_t rowBase = variables_const().MON_GBASL;
@@ -577,7 +574,8 @@ void AS_HPLOT0(const HiResCoordinates &point) {
       static_cast<std::uint16_t>(rowBase + horiz);
 
   const std::uint8_t hgrBits = variables_const().AS_HGR_BITS;
-  const std::uint8_t mask = ReadZeroPageByte(kMON_HMASK);
+  // MON_HMASK shares $30 storage with MON_COLOR in ROM.
+  const std::uint8_t mask = variables_const().MON_COLOR;
   const std::uint8_t existing = variables_const().readByte(pixelAddress);
   const std::uint8_t updated =
       static_cast<std::uint8_t>(((hgrBits ^ existing) & mask) ^ existing);
@@ -834,7 +832,7 @@ void AS_LRUD4() {
 
 void AS_LRUD3_SETBIT() {
   std::uint8_t horiz = variables_const().AS_HGR_HORIZ;
-  std::uint8_t mask = ReadZeroPageByte(ApplesoftVariables::ZP_MON_HMASK);
+  std::uint8_t mask = variables_const().MON_COLOR;
   std::uint16_t gbas = variables_const().MON_GBASL;
   std::uint8_t screen = variables().pointer(gbas).read(horiz);
 
@@ -847,7 +845,7 @@ void AS_LRUD3_SETBIT() {
 
 void AS_LRUD3_XORBIT() {
   std::uint8_t horiz = variables_const().AS_HGR_HORIZ;
-  std::uint8_t mask = ReadZeroPageByte(ApplesoftVariables::ZP_MON_HMASK);
+  std::uint8_t mask = variables_const().MON_COLOR;
   std::uint16_t gbas = variables_const().MON_GBASL;
   std::uint8_t screen = variables().pointer(gbas).read(horiz);
 

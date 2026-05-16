@@ -174,7 +174,7 @@ void MON_INIT() {
   //
   // Falls through into SETTXT in ROM; modeled by explicit call.
 
-  WriteZeroPageByte(ApplesoftVariables::ZP_MON_STATUS, 0u);
+  variables().MON_STATUS = 0u;
   (void)variables_const().readByte(IOPorts::ADDR_AS_SW_LORES);
   (void)variables_const().readByte(IOPorts::ADDR_AS_SW_LOWSCR);
 
@@ -471,10 +471,10 @@ void AS_COLD_START() {
 
   AS_NORMAL();
 
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_GOWARM, kJmpOpcode);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_GOSTROUT, kJmpOpcode);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_JMPADRS, kJmpOpcode);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_USR, kJmpOpcode);
+  variables().AS_GOWARM = kJmpOpcode;
+  variables().AS_GOSTROUT = kJmpOpcode;
+  variables().AS_JMPADRS_OPCODE = kJmpOpcode;
+  variables().AS_USR = kJmpOpcode;
   WriteZeroPageWord(
       static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_USR + 1u), kIqErrROM);
 
@@ -486,22 +486,21 @@ void AS_COLD_START() {
         .pointer(kChrgetRuntime)
         .write(kGenericAS_CHRGETImage[x - 1u],
                static_cast<std::uint16_t>(x - 1u));
-    WriteZeroPageByte(ApplesoftVariables::ZP_AS_SPEEDZ, x);
+    variables().AS_SPEEDZ = x;
   }
 
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_TRCFLG, 0u);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_SHIFT_SIGN_EXT, 0u);
+  variables().AS_TRCFLG = 0u;
+  variables().AS_SHIFT_SIGN_EXT = 0u;
   WriteZeroPageByte(
       static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_LASTPT + 1u), 0u);
   theStack().pushByte(0u);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_DSCLEN, 3u);
+  variables().AS_DSCLEN = 3u;
 
   AS_CRDO();
 
   variables().AS_INPUT_BUFFER_MINUS_3 = 1u;
   variables().AS_INPUT_BUFFER_MINUS_4 = 1u;
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_TEMPPT,
-                    ApplesoftVariables::ZP_AS_TEMPST);
+  variables().AS_TEMPPT = ApplesoftVariables::ZP_AS_TEMPST;
 
   // Unified RAM probe pointer lifted from AS_LINNUM low/high carry-chain in
   // ROM.
@@ -516,7 +515,7 @@ void AS_COLD_START() {
   WriteZeroPageWord(ApplesoftVariables::ZP_AS_FRETOP, memoryTop);
 
   WriteZeroPageWord(ApplesoftVariables::ZP_AS_TXTTAB, kProgramStart);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_LOCK, 0u);
+  variables().AS_LOCK = 0u;
   variables().pointer(kProgramStart).write(0u);
   WriteZeroPageWord(ApplesoftVariables::ZP_AS_TXTTAB,
                     static_cast<std::uint16_t>(kProgramStart + 1u));
@@ -744,13 +743,13 @@ void AS_USE_OLD_ARRAY() {
   // AS_Labels: AS_USE_OLD_ARRAY (inclusive) .. AS_MAKE_NEW_ARRAY (exclusive)
   // Name normalization: none (assembler label AS_USE_OLD_ARRAY kept verbatim).
 
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_DIMFLG) != 0u) {
+  if (variables_const().AS_DIMFLG != 0u) {
     gJerErrorCode = AS_ERR_REDIMD;
     AS_JER();
     return;
   }
 
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_SUBFLG) == 0u) {
+  if (variables_const().AS_SUBFLG == 0u) {
     AS_GETARY();
     AS_FIND_ARRAY_ELEMENT();
   }
@@ -769,7 +768,7 @@ void AS_MAKE_NEW_ARRAY() {
   // called from AS_DIM (AS_DIMFLG != 0).
 
   // T:11b8 – lda AS_SUBFLG; bne AS_ERR_NODATA
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_SUBFLG) != 0u) {
+  if (variables_const().AS_SUBFLG != 0u) {
     AS_ERROR(AS_ERR_NODATA);
     return;
   }
@@ -838,7 +837,7 @@ void AS_MAKE_NEW_ARRAY() {
 
     // bit AS_DIMFLG: V flag (bit 6) set → explicit dimension was pushed on 6502
     // stack.
-    if ((ReadZeroPageByte(ApplesoftVariables::ZP_AS_DIMFLG) & 0x40u) != 0u) {
+    if ((variables_const().AS_DIMFLG & 0x40u) != 0u) {
       // T:11ef – pla (raw dim_lo); clc; adc #1; tax
       const std::uint8_t rawAS_Lo = theStack().popByte();
       const std::uint16_t lo16 = static_cast<std::uint16_t>(rawAS_Lo) + 1u;
@@ -867,11 +866,11 @@ void AS_MAKE_NEW_ARRAY() {
 
     // T:1205 – ldy AS_INDEX: restore Y (AS_MULTIPLY_SUBSCRIPT saved descriptorY
     // there)
-    descriptorY = ReadZeroPageByte(ApplesoftVariables::ZP_AS_INDEX);
+    descriptorY = ApplesoftVariables::lowByte(variables_const().AS_INDEX);
 
     // T:1207 – dec AS_NUMDIM; bne loop
     --remainingDims;
-    WriteZeroPageByte(ApplesoftVariables::ZP_AS_NUMDIM, remainingDims);
+    variables().AS_NUMDIM = remainingDims;
   }
 
   // T:120b – compute endAddr = AS_ARYPNT + totalBytes; both overflow checks
@@ -934,7 +933,7 @@ void AS_MAKE_NEW_ARRAY() {
 
   // T:1246 – lda AS_DIMFLG; bne AS_RTS_9: AS_DIM statement is done; otherwise
   // find element.
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_DIMFLG) != 0u) {
+  if (variables_const().AS_DIMFLG != 0u) {
     return;
   }
   // T:124a – iny (Y=4 for AS_FIND_ARRAY_ELEMENT descriptor[4] = AS_NUMDIM);
@@ -954,7 +953,7 @@ void AS_FIND_ARRAY_ELEMENT() {
       ReadZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR)};
   const std::uint8_t numDims = descriptor.read(4u);
 
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_NUMDIM, numDims);
+  variables().AS_NUMDIM = numDims;
   WriteZeroPageWord(ApplesoftVariables::ZP_AS_STRNG2, 0u);
 
   // The source slice falls through directly into AS_FAE_1.
@@ -969,7 +968,7 @@ std::uint16_t AS_MULTIPLY_SUBSCRIPT(std::uint8_t descriptorOffset) {
   // kept verbatim). AS_Load the 16-bit array-dimension multiplier from the
   // AS_LOWTR descriptor pointer.
 
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_INDEX, descriptorOffset);
+  ApplesoftVariables::setLowByte(variables().AS_INDEX, descriptorOffset);
 
   const ProgramPointer descriptor{
       ReadZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR)};
@@ -1239,7 +1238,7 @@ std::uint16_t AS_PTRGET() {
   // Name normalization: none (assembler label AS_PTRGET kept verbatim).
 
   AS_CHRGOT();
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_DIMFLG, 0u); // AS_DIMFLG
+  variables().AS_DIMFLG = 0u; // AS_DIMFLG
   AS_PTRGET3();
   return ReadZeroPageWord(ApplesoftVariables::ZP_AS_VARPNT); // AS_VARPNT
 }
@@ -1358,8 +1357,7 @@ void AS_DIM() {
   // AS_Labels: AS_DIM (inclusive) .. AS_PTRGET (exclusive)
   // Name normalization: none (assembler label AS_DIM kept verbatim).
 
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_DIMFLG,
-                    1u); // AS_DIMFLG non-zero when called from AS_DIM.
+  variables().AS_DIMFLG = 1u; // AS_DIMFLG non-zero when called from AS_DIM.
   AS_PTRGET2();
 
   if (AS_CHRGOT() != 0u) {
@@ -1401,21 +1399,19 @@ void AS_PTRGET4() {
   }
 
   if (current == static_cast<std::uint8_t>('$')) {
-    WriteZeroPageByte(ApplesoftVariables::ZP_AS_VALTYP,
-                      0xffu); // AS_VALTYP string
+    variables().AS_VALTYP = 0xffu; // AS_VALTYP string
     current = AS_CHRGET();
   } else if (current == static_cast<std::uint8_t>('%')) {
-    if ((ReadZeroPageByte(ApplesoftVariables::ZP_AS_SUBFLG) & 0x80u) != 0u) {
+    if ((variables_const().AS_SUBFLG & 0x80u) != 0u) {
       AS_BADNAM();
       return;
     }
 
-    WriteZeroPageByte(ApplesoftVariables::ZP_AS_VALTYP_PLUS_1,
-                      0x80u); // integer mode
+    variables().AS_VALTYP_PLUS_1 = 0x80u; // integer mode
     WriteZeroPageByte(
-        ApplesoftVariables::ZP_AS_VARNAM,
-        static_cast<std::uint8_t>(
-            ReadZeroPageByte(ApplesoftVariables::ZP_AS_VARNAM) | 0x80u));
+      ApplesoftVariables::ZP_AS_VARNAM,
+      static_cast<std::uint8_t>(
+        ApplesoftVariables::lowByte(variables_const().AS_VARNAM) | 0x80u));
     secondChar = static_cast<std::uint8_t>(secondChar | 0x80u);
     current = AS_CHRGET();
   }
@@ -1423,14 +1419,13 @@ void AS_PTRGET4() {
   WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_AS_VARNAM, 1u),
                     secondChar); // AS_VARNAM+1
 
-  const std::uint8_t subflg =
-      ReadZeroPageByte(ApplesoftVariables::ZP_AS_SUBFLG);
+  const std::uint8_t subflg = variables_const().AS_SUBFLG;
   if (subflg == 0u && current == static_cast<std::uint8_t>('(')) {
     AS_ARRAY();
     return;
   }
 
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_SUBFLG, 0u); // clear AS_SUBFLG
+  variables().AS_SUBFLG = 0u; // clear AS_SUBFLG
   AS_NAME_NOT_FOUND();
 }
 
@@ -1477,7 +1472,7 @@ void AS_AYINT() {
   // AS_Labels: AS_AYINT (inclusive) .. AS_MI1 (exclusive)
   // Name normalization: none (assembler label AS_AYINT kept verbatim).
 
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC) < 0x90u) {
+  if (variables_const().AS_FAC[0] < 0x90u) {
     AS_MI2();
     return;
   }
@@ -1508,7 +1503,7 @@ void AS_HANDLERR() {
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
 
   WriteZeroPageByte(kAS_ERRNUM, gPendingErrorCode);
-  WriteZeroPageByte(kAS_ERRSTK, ReadZeroPageByte(kAS_REMSTK));
+  WriteZeroPageByte(kAS_ERRSTK, variables_const().AS_REMSTK);
 
   WriteZeroPageWord(kAS_ERRLIN, ReadZeroPageWord(kAS_CURLIN));
   WriteZeroPageWord(kAS_ERRPOS, ReadZeroPageWord(kAS_OLDTEXT));
@@ -1533,8 +1528,8 @@ void AS_SCREEN() {
   AS_PLOTFNS();
 
   // AS_PLOTFNS returns row in X and column in AS_FIRST in ROM.
-  const std::uint8_t row = ReadZeroPageByte(kAS_FIRST);
-  const std::uint8_t column = ReadZeroPageByte(kAS_FIRST);
+  const std::uint8_t row = variables_const().AS_FIRST;
+  const std::uint8_t column = variables_const().AS_FIRST;
   const std::uint8_t color = MON_SCRN(row, column);
 
   AS_SNGFLT(color);
@@ -1639,14 +1634,14 @@ void AS_STRCMP() {
       static_cast<std::uint8_t>(variables_const().AS_CPRTYP - 1u);
 
   const std::uint8_t facLength = AS_FREFAC();
-  WriteZeroPageByte(kAS_FAC, facLength);
+  variables().AS_FAC[0] = facLength;
   WriteZeroPageWord(static_cast<std::uint8_t>(kAS_FAC + 1u),
                     ReadZeroPageWord(kAS_INDEX));
 
   const std::uint16_t argDescriptorAddress =
       ReadZeroPageWord(static_cast<std::uint8_t>(kAS_ARG + 3u));
   const std::uint8_t argLength = AS_FRETMP(argDescriptorAddress);
-  WriteZeroPageByte(kAS_ARG, argLength);
+  variables().AS_ARG[0] = argLength;
   WriteZeroPageWord(static_cast<std::uint8_t>(kAS_ARG + 3u),
                     ReadZeroPageWord(kAS_INDEX));
 
@@ -1663,7 +1658,7 @@ void AS_FRE() {
   // subtraction as one 16-bit free-space computation before floating the signed
   // result.
 
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_VALTYP) != 0u) {
+  if (variables_const().AS_VALTYP != 0u) {
     (void)AS_FREFAC();
   }
 
@@ -1687,13 +1682,11 @@ void AS_GIVAYF(std::int16_t value) {
 
   const std::uint16_t rawValue = static_cast<std::uint16_t>(value);
 
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_VALTYP, 0u);
-  WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_AS_FAC, 1u),
-                    ApplesoftVariables::lowByte(rawValue));
-  WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_AS_FAC, 2u),
-                    ApplesoftVariables::highByte(rawValue));
-  WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_AS_FAC, 3u), 0u);
-  WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_AS_FAC, 4u), 0u);
+  variables().AS_VALTYP = 0u;
+  variables().AS_FAC[1] = ApplesoftVariables::lowByte(rawValue);
+  variables().AS_FAC[2] = ApplesoftVariables::highByte(rawValue);
+  variables().AS_FAC[3] = 0u;
+  variables().AS_FAC[4] = 0u;
 
   AS_FLOAT_1(0x90u);
 }
@@ -1721,10 +1714,8 @@ void AS_FNC_() {
   // AS_PTRGET3 leaves A=name_lo, Y=name_hi
   // Store to AS_FNCNAM
   constexpr std::uint8_t kAS_FNCNAM = ApplesoftVariables::ZP_AS_FNCNAM;
-  const std::uint8_t nameA = ReadZeroPageByte(
-      ApplesoftVariables::ZP_AS_STRNG1); // Temp storage from AS_PTRGET3
-  const std::uint8_t nameY = ReadZeroPageByte(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_STRNG1 + 1u));
+    const std::uint8_t nameA = ApplesoftVariables::lowByte(variables_const().AS_STRNG1);
+    const std::uint8_t nameY = ApplesoftVariables::highByte(variables_const().AS_STRNG1);
   WriteZeroPageByte(kAS_FNCNAM, nameA);
   WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FNCNAM + 1u), nameY);
 
@@ -2203,8 +2194,8 @@ std::int8_t CompareArgAndFacStrings() {
   constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
   constexpr std::uint8_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
 
-  const std::uint8_t argLength = ReadZeroPageByte(kAS_ARG);
-  const std::uint8_t facLength = ReadZeroPageByte(kAS_FAC);
+  const std::uint8_t argLength = variables_const().AS_ARG[0];
+  const std::uint8_t facLength = variables_const().AS_FAC[0];
 
   std::uint8_t shorterFlag = 0u;
   std::uint8_t compareCount = argLength;
@@ -2214,7 +2205,7 @@ std::int8_t CompareArgAndFacStrings() {
     shorterFlag = 0xffu;
     compareCount = facLength;
   }
-  WriteZeroPageByte(kAS_FAC_SIGN, shorterFlag);
+  variables().AS_FAC_SIGN = shorterFlag;
 
   const auto argString = variables_const().pointer(
       ReadZeroPageWord(static_cast<std::uint8_t>(kAS_ARG + 3u)));
