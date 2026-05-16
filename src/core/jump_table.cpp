@@ -1,4 +1,4 @@
-#include "core/asm_port_jump_table.hpp"
+#include "core/jump_table.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/io_ports.hpp"
 #include "core/asm_port_stack.hpp"

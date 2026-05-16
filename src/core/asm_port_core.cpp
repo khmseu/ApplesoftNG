@@ -9,7 +9,7 @@
 #include "core/asm_port_unfnc.hpp"
 #include "core/asm_port_stack.hpp"
 #include "core/io_ports.hpp"
-#include "core/asm_port_jump_table.hpp"
+#include "core/jump_table.hpp"
 
 #include <array>
 #include <cstdint>
