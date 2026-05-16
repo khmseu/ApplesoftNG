@@ -440,8 +440,6 @@ void AS_HCOLOR() {
   // AS_Labels: AS_HCOLOR (inclusive) .. AS_HPLOT (exclusive)
   // Name normalization: none (assembler label AS_HCOLOR kept verbatim).
 
-  constexpr std::uint8_t kAS_HGR_COLOR = ApplesoftVariables::ZP_AS_HGR_COLOR;
-  constexpr std::uint8_t kAS_HGR_BITS = ApplesoftVariables::ZP_AS_HGR_BITS;
   static constexpr std::uint8_t kColorTable[8] = {0x00u, 0x2au, 0x55u, 0x7fu,
                                                   0x80u, 0xaau, 0xd5u, 0xffu};
 

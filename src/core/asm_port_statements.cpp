@@ -87,10 +87,6 @@ void AS_SCRTCH_impl() {
   constexpr std::uint8_t kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
   constexpr std::uint8_t kAS_LOCK = ApplesoftVariables::ZP_AS_LOCK;
   constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
-  constexpr std::uint8_t kAS_PRGEND = ApplesoftVariables::ZP_AS_PRGEND;
-  constexpr std::uint8_t kAS_ARYTAB = ApplesoftVariables::ZP_AS_ARYTAB;
-  constexpr std::uint8_t kAS_STREND = ApplesoftVariables::ZP_AS_STREND;
-  constexpr std::uint8_t kAS_MEMSIZ = ApplesoftVariables::ZP_AS_MEMSIZ;
   constexpr std::uint8_t kAS_FRETOP = ApplesoftVariables::ZP_AS_FRETOP;
 
   const std::uint16_t txtTabAddr = variables_const().AS_TXTTAB;
@@ -258,10 +254,6 @@ std::optional<TokenMatch> MatchToken(std::uint8_t index) {
 }
 
 std::uint8_t ScanAheadOffsetForData(std::uint8_t terminator) {
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  constexpr std::uint8_t kAS_CHARAC = ApplesoftVariables::ZP_AS_CHARAC;
-  constexpr std::uint8_t kAS_ENDCHR = ApplesoftVariables::ZP_AS_ENDCHR;
-
   variables().AS_CHARAC = terminator;
   std::uint8_t offset = 0;
   variables().AS_ENDCHR = 0;
@@ -373,11 +365,8 @@ void AS_PUTSTR() {
 
   constexpr std::uint8_t kAS_FAC_PLUS_3 =
       static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 3u);
-  constexpr std::uint8_t kAS_DSCPTR = ApplesoftVariables::ZP_AS_DSCPTR;
-  constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
   constexpr std::uint8_t kAS_FRETOP = ApplesoftVariables::ZP_AS_FRETOP;
   constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
-  constexpr std::uint8_t kAS_STRNG1 = ApplesoftVariables::ZP_AS_STRNG1;
 
   const std::uint16_t facDescriptor = variables_const().AS_FAC_WORD_3;
   const auto facDescriptorPtr = variables_const().pointer(facDescriptor);
@@ -1108,7 +1097,6 @@ void MON_RESTORE() {
   // Load A from $45; Load X from $46; Load Y from $47; Restore processor flags
   // via PLP; RTS.
 
-  constexpr std::uint8_t kMON_STATUS = ApplesoftVariables::ZP_MON_STATUS;
   // Read saved processor status (this will be re-pushed via PLP emulation).
   const std::uint8_t saved_status = variables_const().MON_STATUS;
 

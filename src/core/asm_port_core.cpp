@@ -399,7 +399,6 @@ void MON_REGDSP() {
   //
   // Prints monitor register labels and the saved register byte values.
 
-  constexpr std::uint8_t kMON_A4 = ApplesoftVariables::ZP_MON_A4;
   constexpr std::uint8_t kRegBase = ApplesoftVariables::ZP_MON_DEBUG_REG_A;
   constexpr std::uint8_t kSpace = static_cast<std::uint8_t>(' ' | 0x80u);
   constexpr std::uint8_t kEquals = static_cast<std::uint8_t>('=' | 0x80u);
@@ -605,8 +604,6 @@ void AS_FAE_1() {
   constexpr std::uint8_t kAS_NUMDIM = ApplesoftVariables::ZP_AS_NUMDIM;
   constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
   constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_STRNG2 = ApplesoftVariables::ZP_AS_STRNG2;
-  constexpr std::uint8_t kAS_RESULT = ApplesoftVariables::ZP_AS_RESULT;
   constexpr std::uint8_t kAS_VARNAM = ApplesoftVariables::ZP_AS_VARNAM;
   constexpr std::uint8_t kAS_ARYPNT = ApplesoftVariables::ZP_AS_ARYPNT;
   constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
@@ -1061,7 +1058,6 @@ void AS_MAKE_NEW_VARIABLE() {
   constexpr std::uint8_t kAS_ARYTAB = ApplesoftVariables::ZP_AS_ARYTAB;
   constexpr std::uint8_t kAS_STREND = ApplesoftVariables::ZP_AS_STREND;
   constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
-  constexpr std::uint8_t kAS_HIGHTR = ApplesoftVariables::ZP_AS_HIGHTR;
   constexpr std::uint8_t kAS_ARYPNT = ApplesoftVariables::ZP_AS_ARYPNT;
   constexpr std::uint8_t kAS_VARNAM = ApplesoftVariables::ZP_AS_VARNAM;
   constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
@@ -1194,7 +1190,6 @@ void AS_ARRAY() {
   // name.
 
   constexpr std::uint8_t kAS_SUBFLG = ApplesoftVariables::ZP_AS_SUBFLG;
-  constexpr std::uint8_t kAS_DIMFLG = ApplesoftVariables::ZP_AS_DIMFLG;
   constexpr std::uint8_t kAS_VALTYP = ApplesoftVariables::ZP_AS_VALTYP;
   constexpr std::uint8_t kAS_VALTYP_PLUS_1 =
       ApplesoftVariables::ZP_AS_VALTYP_PLUS_1;
@@ -1434,15 +1429,6 @@ void AS_HANDLERR() {
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_HANDLERR (inclusive) .. AS_RESUME (exclusive)
   // Name normalization: none (assembler label AS_HANDLERR kept verbatim).
-  constexpr std::uint8_t kAS_ERRNUM = ApplesoftVariables::ZP_AS_ERRNUM;
-  constexpr std::uint8_t kAS_ERRLIN = ApplesoftVariables::ZP_AS_ERRLIN;
-  constexpr std::uint8_t kAS_ERRPOS = ApplesoftVariables::ZP_AS_ERRPOS;
-  constexpr std::uint8_t kAS_ERRSTK = ApplesoftVariables::ZP_AS_ERRSTK;
-  constexpr std::uint8_t kAS_TXTPSV = ApplesoftVariables::ZP_AS_TXTPSV;
-  constexpr std::uint8_t kAS_CURLSV = ApplesoftVariables::ZP_AS_CURLSV;
-  constexpr std::uint8_t kAS_REMSTK = ApplesoftVariables::ZP_AS_REMSTK;
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
-  constexpr std::uint8_t kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
 
   variables().AS_ERRNUM = gPendingErrorCode;
@@ -1464,8 +1450,6 @@ void AS_SCREEN() {
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_SCREEN (inclusive) .. AS_UNARY (exclusive)
   // Name normalization: none (assembler label AS_SCREEN kept verbatim).
-
-  constexpr std::uint8_t kAS_FIRST = ApplesoftVariables::ZP_AS_FIRST;
 
   AS_CHRGET();
   AS_PLOTFNS();
@@ -1569,7 +1553,6 @@ void AS_STRCMP() {
   constexpr std::uint8_t kAS_CPRTYP = ApplesoftVariables::ZP_AS_CPRTYP;
   constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
   constexpr std::uint8_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
-  constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
 
   variables().AS_VALTYP = 0u;
   variables().AS_CPRTYP =

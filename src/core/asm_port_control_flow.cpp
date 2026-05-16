@@ -190,9 +190,6 @@ void AS_FCOMP2() {
   // Pointer candidate: DEST ($60/$61) is one unified pointer to the packed
   // comparand.
 
-  constexpr std::uint8_t kAS_DEST = ApplesoftVariables::ZP_AS_DEST;
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
   constexpr std::uint8_t kAS_FAC_EXTENSION =
       ApplesoftVariables::ZP_AS_FAC_EXTENSION;
 
@@ -314,8 +311,6 @@ bool AS_NEXT_shouldTerminateLoop(std::uint8_t forFrameX) {
 
 std::uint8_t ScanAheadOffset(std::uint8_t terminator) {
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  constexpr std::uint8_t kAS_CHARAC = ApplesoftVariables::ZP_AS_CHARAC;
-  constexpr std::uint8_t kAS_ENDCHR = ApplesoftVariables::ZP_AS_ENDCHR;
 
   variables().AS_CHARAC = terminator;
   std::uint8_t offset = 0;
@@ -562,10 +557,7 @@ void AS_GO_TO_LINE() {
 
 void AS_GOTO() {
   constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  constexpr std::uint8_t kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
-  constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
 
   AS_LINGET();
   const std::uint8_t remnOffset = AS_REMN();
@@ -598,9 +590,6 @@ void AS_RESUME() {
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_RESUME (inclusive) .. AS_JSYN (exclusive)
   // Name normalization: none (assembler label AS_RESUME kept verbatim).
-  constexpr std::uint8_t kAS_ERRLIN = ApplesoftVariables::ZP_AS_ERRLIN;
-  constexpr std::uint8_t kAS_ERRPOS = ApplesoftVariables::ZP_AS_ERRPOS;
-  constexpr std::uint8_t kAS_ERRSTK = ApplesoftVariables::ZP_AS_ERRSTK;
   constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
 
@@ -617,9 +606,7 @@ void AS_ONERR() {
   // Name normalization: none (assembler label AS_ONERR kept verbatim).
   constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  constexpr std::uint8_t kAS_TXTPSV = ApplesoftVariables::ZP_AS_TXTPSV;
   constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
-  constexpr std::uint8_t kAS_CURLSV = ApplesoftVariables::ZP_AS_CURLSV;
 
   AS_SYNCHR(kAS_TOKEN_GOTO);
   variables().AS_TXPSV = variables_const().AS_TXTPTR;
@@ -858,7 +845,6 @@ void AS_STEP() {
 }
 
 void AS_NEWSTT() {
-  constexpr std::uint8_t kAS_REMSTK = ApplesoftVariables::ZP_AS_REMSTK;
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
   constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
   constexpr std::uint8_t kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
