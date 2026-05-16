@@ -324,14 +324,14 @@ public:
   std::uint8_t MON_DEBUG_REG_A = 0; // $45
   std::uint8_t MON_DEBUG_REG_X = 0; // $46
   std::uint8_t MON_DEBUG_REG_Y = 0; // $47
-  std::uint8_t MON_STATUS = 0;     // $48
-  std::uint16_t MON_RND = 0;       // $4e/$4f
-  std::uint16_t MON_A1 = 0;        // $3c/$3d
-  std::uint16_t MON_A2 = 0;        // $3e/$3f
-  std::uint16_t AS_LINNUM = 0;     // $50/$51
-  std::uint8_t AS_TEMPPT = 0;      // $52
-  std::uint8_t AS_LASTPT = 0;      // $53
-  std::uint8_t AS_LASTPT_HI = 0;   // $54
+  std::uint8_t MON_STATUS = 0;      // $48
+  std::uint16_t MON_RND = 0;        // $4e/$4f
+  std::uint16_t MON_A1 = 0;         // $3c/$3d
+  std::uint16_t MON_A2 = 0;         // $3e/$3f
+  std::uint16_t AS_LINNUM = 0;      // $50/$51
+  std::uint8_t AS_TEMPPT = 0;       // $52
+  std::uint8_t AS_LASTPT = 0;       // $53
+  std::uint8_t AS_LASTPT_HI = 0;    // $54
   std::uint16_t AS_INDEX = 0; // $5e/$5f scratch pointer (string data address)
   std::array<std::uint8_t, 4> AS_RESULT{}; // $62..$65
   std::uint16_t AS_TXTTAB = 0;             // $67/$68
