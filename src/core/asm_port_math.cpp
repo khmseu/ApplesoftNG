@@ -20,7 +20,9 @@ void AS_SHIFT_RIGHT_4();
 void AS_COMPLEMENT_FAC();
 void AS_NORMALIZE_FAC_1();
 void AS_NORMALIZE_FAC_2();
+void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount);
 void AS_NORMALIZE_FAC_5();
+void AS_ZERO_FAC();
 void AS_ROUND_FAC();
 void AS_COPY_FAC_TO_ARG_ROUNDED();
 void AS_FLOAT();
@@ -508,6 +510,73 @@ void AS_COPY_ARG_TO_FAC() {
         static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + i), val);
   }
   WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_EXTENSION, 0);
+}
+
+/**
+ * AS_NORMALIZE_FAC_2: Left-normalize FAC by whole-byte shifts.
+ * Source:
+ * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * AS_Labels: AS_NORMALIZE_FAC_2 (inclusive) .. AS_ZERO_FAC (exclusive)
+ *
+ * - Entry: FAC mantissa may have leading zero bytes in FAC[1..4]+extension.
+ * - Fast 8-bit shuffles shift mantissa bytes left, zeroing the extension byte.
+ * - Shift count (A reg) accumulated: 8 per iteration, max 4 iterations = 32.
+ * - When FAC[1] becomes non-zero, delegates to AS_NORMALIZE_FAC_4 for
+ *   bit-level normalization with the accumulated shift count.
+ * - After 32 shifts with FAC[1] still zero, falls through to AS_ZERO_FAC.
+ */
+void AS_NORMALIZE_FAC_2() {
+  constexpr auto kFAC1 =
+      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 1u);
+  constexpr auto kFAC2 =
+      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 2u);
+  constexpr auto kFAC3 =
+      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 3u);
+  constexpr auto kFAC4 =
+      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 4u);
+  constexpr auto kFACExt = ApplesoftVariables::ZP_AS_FAC_EXTENSION;
+
+  // ldy #0 / tya / clc: A=0, Y=0, carry clear
+  std::uint8_t shiftCount = 0u;
+
+  do {
+    const std::uint8_t msb = ReadZeroPageByte(kFAC1); // ldx FAC+1
+    if (msb != 0u) {                                  // bne NORMALIZE_FAC_4
+      // Some 1-bits present; hand off to bit-level normalization.
+      AS_NORMALIZE_FAC_4(shiftCount);
+      return;
+    }
+    // FAC[1] still zero: fast 8-bit left shuffle of mantissa + extension.
+    WriteZeroPageByte(kFAC1, ReadZeroPageByte(kFAC2)); // ldx FAC+2 / stx FAC+1
+    WriteZeroPageByte(kFAC2, ReadZeroPageByte(kFAC3)); // ldx FAC+3 / stx FAC+2
+    WriteZeroPageByte(kFAC3, ReadZeroPageByte(kFAC4)); // ldx FAC+4 / stx FAC+3
+    WriteZeroPageByte(
+        kFAC4, ReadZeroPageByte(kFACExt)); // ldx FAC_EXTENSION / stx FAC+4
+    WriteZeroPageByte(kFACExt, 0u);        // sty FAC_EXTENSION (Y=0)
+    shiftCount = static_cast<std::uint8_t>(shiftCount + 8u); // adc #8
+  } while (shiftCount != 32u); // cmp #32 / bne L_NORMALIZE_FAC_2_1
+
+  // YES, VALUE OF FAC IS ZERO: all 32-bit mantissa exhausted.
+  // Fall through to ZERO_FAC.
+  AS_ZERO_FAC();
+}
+
+// TODO(asm-port): AS_NORMALIZE_FAC_4 — bit-level normalization after
+// byte-level shifts. Receives shift_count (number of 8-bit shifts already done
+// by NORMALIZE_FAC_2 or accumulated bit count from NORMALIZE_FAC_3).
+// Source: applesoft.o65.lst label NORMALIZE_FAC_4 @ 0x1880.
+// Bit-shifts FAC left until FAC[1] bit-7 = 1, adjusts exponent, handles
+// underflow by calling AS_ZERO_FAC, then falls through to AS_NORMALIZE_FAC_5.
+void AS_NORMALIZE_FAC_4([[maybe_unused]] std::uint8_t shiftCount) {}
+
+// TODO(asm-port): AS_ZERO_FAC — load A=0 and fall through to
+// STA_IN_FAC_SIGN_AND_EXP.
+// Source: applesoft.o65.lst label ZERO_FAC @ 0x184e.
+// Stores 0 into FAC (exponent) and FAC_SIGN; returns.
+void AS_ZERO_FAC() {
+  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC, 0u);      // sta FAC
+  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN, 0u); // sta FAC_SIGN
+  // rts
 }
 
 // TODO: Implement the rest of the AS_FADD/AS_FSUB subroutines and logic.

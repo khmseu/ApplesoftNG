@@ -22,6 +22,7 @@ void AS_OR();
 void AS_RELOPS();
 void AS_SNGFLT(std::uint8_t value);
 void AS_ANDOP();
+void AS_NORMALIZE_FAC_2();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for math operator handlers not yet ported.
@@ -32,8 +33,28 @@ namespace {
 // asm_port_math.cpp
 } // namespace
 static void AS_FMULTT() {} // TODO(asm-port): AS_FMULTT $CA...202...*
+
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: COPY_RESULT_INTO_FAC (inclusive, 0x1ae6)
+//            .. LOAD_FAC_FROM_YA (exclusive, 0x1af9)
+// Intent:
+//   - Copy 4-byte RESULT register into FAC mantissa (bytes +1 through +4)
+//   - Call NORMALIZE_FAC_2 to process the loaded value
+//   - Simple byte-by-byte copy with call-through pattern
 static void AS_COPY_RESULT_INTO_FAC() {
-} // TODO(asm-port): AS_COPY_RESULT_INTO_FAC
+  auto &vars = variables();
+  const auto &result = vars.AS_RESULT;
+
+  // Copy each byte from RESULT into FAC+1..FAC+4
+  vars.AS_FAC[1] = result[0]; // RESULT -> FAC+1
+  vars.AS_FAC[2] = result[1]; // RESULT+1 -> FAC+2
+  vars.AS_FAC[3] = result[2]; // RESULT+2 -> FAC+3
+  vars.AS_FAC[4] = result[3]; // RESULT+3 -> FAC+4
+
+  // Fall through to normalize the value in FAC
+  AS_NORMALIZE_FAC_2();
+}
 
 // Source:
 // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst

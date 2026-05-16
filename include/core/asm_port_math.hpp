@@ -27,5 +27,8 @@ void AS_ADDACC();
 void AS_ADDACC_WITH_DIGIT(std::uint8_t digit);
 void AS_LOAD_ARG_FROM_YA(std::uint16_t address);
 void AS_LOAD_ARG_FROM_YA();
+void AS_NORMALIZE_FAC_2();
+void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount);
+void AS_ZERO_FAC();
 
 } // namespace applesoft::asm_port
