@@ -24,11 +24,8 @@ void AS_NORMAL() {
   // AS_Labels: AS_NORMAL (inclusive) .. AS_INVERSE (exclusive)
   // Name normalization: none (assembler label AS_NORMAL kept verbatim).
 
-  constexpr std::uint8_t kMON_INVFLG = ApplesoftVariables::ZP_MON_INVFLG;
-  constexpr std::uint8_t kAS_FLASH_BIT = ApplesoftVariables::ZP_AS_FLASH_BIT;
-
-  WriteZeroPageByte(kMON_INVFLG, 0xffu);
-  WriteZeroPageByte(kAS_FLASH_BIT, 0x00u);
+  variables().MON_INVFLG = 0xffu;
+  variables().AS_FLASH_BIT = 0x00u;
 }
 
 void AS_INVERSE() {
@@ -37,11 +34,8 @@ void AS_INVERSE() {
   // AS_Labels: AS_INVERSE (inclusive) .. AS_FLASH (exclusive)
   // Name normalization: none (assembler label AS_INVERSE kept verbatim).
 
-  constexpr std::uint8_t kMON_INVFLG = ApplesoftVariables::ZP_MON_INVFLG;
-  constexpr std::uint8_t kAS_FLASH_BIT = ApplesoftVariables::ZP_AS_FLASH_BIT;
-
-  WriteZeroPageByte(kMON_INVFLG, 0x3fu);
-  WriteZeroPageByte(kAS_FLASH_BIT, 0x00u);
+  variables().MON_INVFLG = 0x3fu;
+  variables().AS_FLASH_BIT = 0x00u;
 }
 
 void AS_FLASH() {
@@ -50,11 +44,8 @@ void AS_FLASH() {
   // AS_Labels: AS_FLASH (inclusive) .. AS_COLOR (exclusive)
   // Name normalization: none (assembler label AS_FLASH kept verbatim).
 
-  constexpr std::uint8_t kMON_INVFLG = ApplesoftVariables::ZP_MON_INVFLG;
-  constexpr std::uint8_t kAS_FLASH_BIT = ApplesoftVariables::ZP_AS_FLASH_BIT;
-
-  WriteZeroPageByte(kMON_INVFLG, 0x7fu);
-  WriteZeroPageByte(kAS_FLASH_BIT, 0x40u);
+  variables().MON_INVFLG = 0x7fu;
+  variables().AS_FLASH_BIT = 0x40u;
 }
 
 void MON_SETCOL(std::uint8_t color) {
@@ -63,14 +54,12 @@ void MON_SETCOL(std::uint8_t color) {
   // AS_Labels: SETCOL (inclusive) .. SCRN (exclusive)
   // Name normalization: SETCOL -> MON_SETCOL (monitor label gets MON_ prefix).
 
-  constexpr std::uint8_t kMON_COLOR = ApplesoftVariables::ZP_MON_COLOR;
-
   // Monitor stores a 4-bit color and mirrors it into both nibbles (17*A mod
   // 16).
   const std::uint8_t nibble = static_cast<std::uint8_t>(color & 0x0fu);
   const std::uint8_t packed =
       static_cast<std::uint8_t>((nibble << 4u) | nibble);
-  WriteZeroPageByte(kMON_COLOR, packed);
+  variables().MON_COLOR = packed;
 }
 
 void MON_TABV(std::uint8_t row_zero_based) {
@@ -84,17 +73,12 @@ void MON_TABV(std::uint8_t row_zero_based) {
   // AS_Labels: AS_VTAB (inclusive) .. ESC1 (exclusive)
   // Name normalization: AS_VTAB logic inlined into MON_TABV.
 
-  constexpr std::uint8_t kMON_WNDLFT = ApplesoftVariables::ZP_MON_WNDLFT;
-  constexpr std::uint8_t kMON_CV = ApplesoftVariables::ZP_MON_CV;
-  constexpr std::uint8_t kMON_BASL = ApplesoftVariables::ZP_MON_BASL;
-  constexpr std::uint8_t kMON_BASH = ApplesoftVariables::ZP_MON_BASH;
-
   // display1 TABV: sta CV ; jmp AS_VTAB
-  WriteZeroPageByte(kMON_CV, row_zero_based);
+  variables().MON_CV = row_zero_based;
 
   // display2 AS_VTAB/AS_VTABZ path:
   // BASCALC computes BASL/BASH for row in CV, then AS_VTAB adds WNDLFT to BASL.
-  const std::uint8_t line = ReadZeroPageByte(kMON_CV);
+  const std::uint8_t line = variables_const().MON_CV;
   const bool carryFromAS_Lsr = (line & 0x01u) != 0u;
   const std::uint8_t bash =
       static_cast<std::uint8_t>(((line >> 1u) & 0x03u) | 0x04u);
@@ -105,7 +89,7 @@ void MON_TABV(std::uint8_t row_zero_based) {
   }
   const std::uint8_t baslBase = basl;
   basl = static_cast<std::uint8_t>((basl << 2u) | baslBase);
-  basl = static_cast<std::uint8_t>(basl + ReadZeroPageByte(kMON_WNDLFT));
+  basl = static_cast<std::uint8_t>(basl + variables_const().MON_WNDLFT);
 
   variables().MON_BASL = ApplesoftVariables::makeWord(basl, bash);
 }
@@ -147,12 +131,12 @@ void MON_INPORT(std::uint8_t slot) {
   // AS_Labels: INPORT (inclusive) .. SETVID (exclusive)
   // Name normalization: INPORT -> MON_INPORT (monitor label gets MON_ prefix).
 
-  constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
   constexpr std::uint8_t kMON_KSW = ApplesoftVariables::ZP_MON_KSW;
   constexpr std::uint8_t kKeyinAS_Low = 0x0fu; // <KEYIN from keyin.o65.sym
 
-  WriteZeroPageByte(kMON_A2L, slot);
-  MON_IOPRT(ReadZeroPageByte(kMON_A2L), kMON_KSW, kKeyinAS_Low);
+  ApplesoftVariables::setLowByte(variables().MON_A2, slot);
+  MON_IOPRT(ApplesoftVariables::lowByte(variables_const().MON_A2), kMON_KSW,
+            kKeyinAS_Low);
 }
 
 void MON_OUTPORT(std::uint8_t slot) {
@@ -162,12 +146,12 @@ void MON_OUTPORT(std::uint8_t slot) {
   // Name normalization: OUTPORT -> MON_OUTPORT (monitor label gets MON_
   // prefix).
 
-  constexpr std::uint8_t kMON_A2L = ApplesoftVariables::ZP_MON_A2;
   constexpr std::uint8_t kMON_CSW = ApplesoftVariables::ZP_MON_CSW;
   constexpr std::uint8_t kCout1AS_Low = 0x62u; // <COUT1 from cmd.o65.sym
 
-  WriteZeroPageByte(kMON_A2L, slot);
-  MON_IOPRT(ReadZeroPageByte(kMON_A2L), kMON_CSW, kCout1AS_Low);
+  ApplesoftVariables::setLowByte(variables().MON_A2, slot);
+  MON_IOPRT(ApplesoftVariables::lowByte(variables_const().MON_A2), kMON_CSW,
+            kCout1AS_Low);
 }
 
 void MON_PLOT(std::uint8_t y, std::uint8_t x) {
@@ -178,8 +162,6 @@ void MON_PLOT(std::uint8_t y, std::uint8_t x) {
   //
   // Mirrors ROM AS_PLOT/AS_PLOT1 behavior: compute lo-res cell base from Y,
   // then replace only the selected nibble (even row: low, odd row: high).
-
-  constexpr std::uint8_t kMON_COLOR = ApplesoftVariables::ZP_MON_COLOR;
 
   const std::uint8_t halfRow = static_cast<std::uint8_t>(y >> 1u);
   const bool oddRow = (y & 0x01u) != 0u;
@@ -198,7 +180,7 @@ void MON_PLOT(std::uint8_t y, std::uint8_t x) {
   const std::uint16_t screenAddress =
       static_cast<std::uint16_t>(baseAddress + x);
 
-  const std::uint8_t color = ReadZeroPageByte(kMON_COLOR);
+  const std::uint8_t color = variables_const().MON_COLOR;
   const std::uint8_t existing = variables_const().readByte(screenAddress);
   const std::uint8_t merged =
       oddRow ? static_cast<std::uint8_t>((existing & 0x0fu) | (color & 0xf0u))
@@ -233,8 +215,7 @@ void MON_VLINE(std::uint8_t x, std::uint8_t top) {
   //
   // Bottom endpoint is MON_V2 ($2d), as established by Applesoft AS_LINCOOR.
 
-  constexpr std::uint8_t kMON_V2 = ApplesoftVariables::ZP_MON_V2;
-  const std::uint8_t bottom = ReadZeroPageByte(kMON_V2);
+  const std::uint8_t bottom = variables_const().MON_V2;
 
   std::uint8_t y = top;
   for (;;) {
@@ -255,25 +236,18 @@ void MON_HOME() {
   // Monitor HOME initializes cursor to top-left of current window and clears
   // the window to blanks (high-bit set AS_ASCII space).
 
-  constexpr std::uint8_t kMON_WNDLFT = ApplesoftVariables::ZP_MON_WNDLFT;
-  constexpr std::uint8_t kMON_WNDWDTH = ApplesoftVariables::ZP_MON_WNDWDTH;
-  constexpr std::uint8_t kMON_WNDTOP = ApplesoftVariables::ZP_MON_WNDTOP;
-  constexpr std::uint8_t kMON_WNDBTM = ApplesoftVariables::ZP_MON_WNDBTM;
-  constexpr std::uint8_t kMON_CH = ApplesoftVariables::ZP_MON_CH;
   constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
 
-  const std::uint8_t windowTop = ReadZeroPageByte(kMON_WNDTOP);
-  const std::uint8_t windowBottom = ReadZeroPageByte(kMON_WNDBTM);
-  const std::uint8_t width = ReadZeroPageByte(kMON_WNDWDTH);
-  const std::uint8_t left = ReadZeroPageByte(kMON_WNDLFT);
+  const std::uint8_t windowTop = variables_const().MON_WNDTOP;
+  const std::uint8_t windowBottom = variables_const().MON_WNDBTM;
+  const std::uint8_t width = variables_const().MON_WNDWDTH;
+  const std::uint8_t left = variables_const().MON_WNDLFT;
 
-  WriteZeroPageByte(kMON_CH, 0u);
+  variables().MON_CH = 0u;
 
   for (std::uint8_t row = windowTop; row < windowBottom; ++row) {
     MON_TABV(row);
-    const std::uint16_t baseAddress = ApplesoftVariables::makeWord(
-        ReadZeroPageByte(ApplesoftVariables::ZP_MON_BASL),
-        ReadZeroPageByte(ApplesoftVariables::ZP_MON_BASH));
+    const std::uint16_t baseAddress = variables_const().MON_BASL;
 
     for (std::uint8_t col = 0u; col < width; ++col) {
       const std::uint16_t address =
@@ -283,7 +257,7 @@ void MON_HOME() {
   }
 
   MON_TABV(windowTop);
-  WriteZeroPageByte(kMON_CH, 0u);
+  variables().MON_CH = 0u;
 }
 
 void MON_CLREOL() {
@@ -295,15 +269,11 @@ void MON_CLREOL() {
   // Clears from current cursor position to end of line with high-bit-set
   // spaces.
 
-  constexpr std::uint8_t kMON_CH = ApplesoftVariables::ZP_MON_CH;
-  constexpr std::uint8_t kMON_WNDWDTH = ApplesoftVariables::ZP_MON_WNDWDTH;
-  constexpr std::uint8_t kMON_BASL = ApplesoftVariables::ZP_MON_BASL;
-  constexpr std::uint8_t kMON_BASH = ApplesoftVariables::ZP_MON_BASH;
   constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
 
   const std::uint16_t baseAddress = variables_const().MON_BASL;
-  const std::uint8_t startCol = ReadZeroPageByte(kMON_CH);
-  const std::uint8_t windowWidth = ReadZeroPageByte(kMON_WNDWDTH);
+  const std::uint8_t startCol = variables_const().MON_CH;
+  const std::uint8_t windowWidth = variables_const().MON_WNDWDTH;
 
   for (std::uint8_t col = startCol; col < windowWidth; ++col) {
     const std::uint16_t address = static_cast<std::uint16_t>(baseAddress + col);
@@ -320,17 +290,12 @@ void MON_SETTXT() {
   // ROM fall-through: SETTXT unconditionally branches to SETWND; modeled
   // directly here by writing the window fields and tabbing to row 23.
 
-  constexpr std::uint8_t kMON_WNDLFT = ApplesoftVariables::ZP_MON_WNDLFT;
-  constexpr std::uint8_t kMON_WNDWDTH = ApplesoftVariables::ZP_MON_WNDWDTH;
-  constexpr std::uint8_t kMON_WNDTOP = ApplesoftVariables::ZP_MON_WNDTOP;
-  constexpr std::uint8_t kMON_WNDBTM = ApplesoftVariables::ZP_MON_WNDBTM;
-
   (void)variables_const().readByte(IOPorts::ADDR_SW_TXTSET);
 
-  WriteZeroPageByte(kMON_WNDTOP, 0u);
-  WriteZeroPageByte(kMON_WNDLFT, 0u);
-  WriteZeroPageByte(kMON_WNDWDTH, 40u);
-  WriteZeroPageByte(kMON_WNDBTM, 24u);
+  variables().MON_WNDTOP = 0u;
+  variables().MON_WNDLFT = 0u;
+  variables().MON_WNDWDTH = 40u;
+  variables().MON_WNDBTM = 24u;
 
   // SETWND tail sets A=23 and jumps to AS_VTAB.
   MON_TABV(23u);
@@ -345,20 +310,15 @@ void MON_SETGR() {
   // Falls through into SETWND in ROM; modeled here by writing the window
   // fields and tabbing to row 23.
 
-  constexpr std::uint8_t kMON_WNDLFT = ApplesoftVariables::ZP_MON_WNDLFT;
-  constexpr std::uint8_t kMON_WNDWDTH = ApplesoftVariables::ZP_MON_WNDWDTH;
-  constexpr std::uint8_t kMON_WNDTOP = ApplesoftVariables::ZP_MON_WNDTOP;
-  constexpr std::uint8_t kMON_WNDBTM = ApplesoftVariables::ZP_MON_WNDBTM;
-
   (void)variables_const().readByte(IOPorts::ADDR_AS_SW_TXTCLR);
   (void)variables_const().readByte(IOPorts::ADDR_AS_SW_MIXSET);
 
   // CLRTOP call target is still pending; window state is applied directly here.
 
-  WriteZeroPageByte(kMON_WNDTOP, 20u);
-  WriteZeroPageByte(kMON_WNDLFT, 0u);
-  WriteZeroPageByte(kMON_WNDWDTH, 40u);
-  WriteZeroPageByte(kMON_WNDBTM, 24u);
+  variables().MON_WNDTOP = 20u;
+  variables().MON_WNDLFT = 0u;
+  variables().MON_WNDWDTH = 40u;
+  variables().MON_WNDBTM = 24u;
 
   MON_TABV(23u);
 }
@@ -431,7 +391,7 @@ void AS_HGR2() {
   // AS_HGR2 bit AS_SW_HISCR ; bit AS_SW_MIXCLR ; lda #$40 ; bne AS_SETHPG
   ioPorts().readByte(IOPorts::ADDR_AS_SW_HISCR);
   ioPorts().readByte(IOPorts::ADDR_AS_SW_MIXCLR);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_PAGE, 0x40u);
+  variables().AS_HGR_PAGE = 0x40u;
   STHPG();
 }
 
@@ -442,7 +402,7 @@ void AS_HGR() {
   // Name normalization: none (assembler label AS_HGR kept verbatim).
 
   // AS_HGR lda #$20 ; bit AS_SW_LOWSCR ; bit AS_SW_MIXSET
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_PAGE, 0x20u);
+  variables().AS_HGR_PAGE = 0x20u;
   ioPorts().readByte(IOPorts::ADDR_AS_SW_LOWSCR);
   ioPorts().readByte(IOPorts::ADDR_AS_SW_MIXSET);
   STHPG();
@@ -461,13 +421,11 @@ void STHPG() {
   ioPorts().readByte(IOPorts::ADDR_AS_SW_TXTCLR);
 
   // AS_HCLR lda #0 ; sta AS_HGR_BITS
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_BITS, 0x00u);
+  variables().AS_HGR_BITS = 0x00u;
 
   // AS_BKGND lda AS_HGR_PAGE ; sta AS_HGR_SHAPE+1 ; ldy #0 ; sta AS_HGR_SHAPE
-  const std::uint8_t page =
-      ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_PAGE);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_SHAPE + 1, page);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_SHAPE, 0x00u);
+  const std::uint8_t page = variables_const().AS_HGR_PAGE;
+  variables().AS_HGR_SHAPE = ApplesoftVariables::makeWord(0x00u, page);
 
   // AS_L.AS_BKGND.1 lda AS_HGR_BITS ; sta (AS_HGR_SHAPE),Y ; jsr AS_COLOR.SHIFT
   // ; iny ; bne AS_L.AS_BKGND.1 ... Ported as a simple memory fill for now,
@@ -496,8 +454,8 @@ void AS_HCOLOR() {
   }
 
   const std::uint8_t pattern = kColorTable[color];
-  WriteZeroPageByte(kAS_HGR_COLOR, pattern);
-  WriteZeroPageByte(kAS_HGR_BITS, pattern);
+  variables().AS_HGR_COLOR = pattern;
+  variables().AS_HGR_BITS = pattern;
 }
 
 void AS_ROT() {
@@ -507,7 +465,7 @@ void AS_ROT() {
   // Name normalization: none (assembler label AS_ROT kept verbatim).
 
   const std::uint8_t val = AS_GETBYT();
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_ROTATION, val);
+  variables().AS_HGR_ROTATION = val;
 }
 
 void AS_SCALE() {
@@ -517,7 +475,7 @@ void AS_SCALE() {
   // Name normalization: none (assembler label AS_SCALE kept verbatim).
 
   const std::uint8_t val = AS_GETBYT();
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_SCALE, val);
+  variables().AS_HGR_SCALE = val;
 }
 
 namespace {
@@ -534,21 +492,13 @@ void AS_HPOSN(const HiResCoordinates &point) {
   // AS_Labels: HPOSN (inclusive) .. HPLOT0 (exclusive)
   // Computes hi-res cursor address and bit state for the given coordinate.
 
-  constexpr std::uint8_t kMON_GBASL = ApplesoftVariables::ZP_MON_GBASL;
-  constexpr std::uint8_t kMON_GBASH = ApplesoftVariables::ZP_MON_GBASH;
   constexpr std::uint8_t kMON_HMASK = ApplesoftVariables::ZP_MON_HMASK;
-  constexpr std::uint8_t kAS_HGR_X = ApplesoftVariables::ZP_AS_HGR_X;
-  constexpr std::uint8_t kAS_HGR_Y = ApplesoftVariables::ZP_AS_HGR_Y;
-  constexpr std::uint8_t kAS_HGR_HORIZ = ApplesoftVariables::ZP_AS_HGR_HORIZ;
-  constexpr std::uint8_t kAS_HGR_PAGE = ApplesoftVariables::ZP_AS_HGR_PAGE;
-  constexpr std::uint8_t kAS_HGR_COLOR = ApplesoftVariables::ZP_AS_HGR_COLOR;
-  constexpr std::uint8_t kAS_HGR_BITS = ApplesoftVariables::ZP_AS_HGR_BITS;
 
   static constexpr std::uint8_t kMaskTable[7] = {0x81u, 0x82u, 0x84u, 0x88u,
                                                  0x90u, 0xa0u, 0xc0u};
 
-  const std::uint16_t pageBase =
-      static_cast<std::uint16_t>(ReadZeroPageByte(kAS_HGR_PAGE) << 8u);
+    const std::uint16_t pageBase =
+      static_cast<std::uint16_t>(variables_const().AS_HGR_PAGE << 8u);
   const std::uint16_t rowOffset = static_cast<std::uint16_t>(
       (static_cast<std::uint16_t>(point.y & 0x07u) << 10u) +
       (static_cast<std::uint16_t>(point.y & 0x38u) << 4u) +
@@ -559,26 +509,23 @@ void AS_HPOSN(const HiResCoordinates &point) {
   const std::uint8_t horiz = static_cast<std::uint8_t>(point.x / 7u);
   const std::uint8_t mask = kMaskTable[point.x % 7u];
 
-  WriteZeroPageByte(kAS_HGR_X, static_cast<std::uint8_t>(point.x & 0xffu));
-  WriteZeroPageByte(static_cast<std::uint8_t>(kAS_HGR_X + 1u),
-                    static_cast<std::uint8_t>(point.x >> 8u));
-  WriteZeroPageByte(kAS_HGR_Y, point.y);
+  variables().AS_HGR_X = point.x;
+  variables().AS_HGR_Y = point.y;
 
   variables().MON_GBASL = rowBase;
-  WriteZeroPageByte(kAS_HGR_HORIZ, horiz);
+  variables().AS_HGR_HORIZ = horiz;
   WriteZeroPageByte(kMON_HMASK, mask);
 
   // HPOSN seeds HGR_BITS from HGR_COLOR and rotates pattern on odd byte
   // columns.
-  std::uint8_t hgrBits = ReadZeroPageByte(kAS_HGR_COLOR);
+  std::uint8_t hgrBits = variables_const().AS_HGR_COLOR;
   if ((horiz & 0x01u) != 0u) {
     hgrBits = static_cast<std::uint8_t>(hgrBits << 1u);
     if (hgrBits < 0xc0u) {
-      hgrBits =
-          static_cast<std::uint8_t>(ReadZeroPageByte(kAS_HGR_COLOR) ^ 0x7fu);
+      hgrBits = static_cast<std::uint8_t>(variables_const().AS_HGR_COLOR ^ 0x7fu);
     }
   }
-  WriteZeroPageByte(kAS_HGR_BITS, hgrBits);
+  variables().AS_HGR_BITS = hgrBits;
 }
 
 } // namespace
@@ -589,7 +536,6 @@ HiResCoordinates AS_HFNS() {
   // AS_Labels: HFNS (inclusive) .. GGERR (exclusive)
   // Parses hi-res coordinates from TXTPTR and validates range X<280, Y<192.
 
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
   constexpr std::uint16_t kMaxXExclusive = 280u;
   constexpr std::uint8_t kMaxYExclusive = 192u;
   constexpr std::uint8_t kComma = static_cast<std::uint8_t>(',' & 0x7fu);
@@ -597,9 +543,7 @@ HiResCoordinates AS_HFNS() {
   AS_FRMNUM();
   AS_GETADR();
 
-  const std::uint16_t x = ApplesoftVariables::makeWord(
-      ReadZeroPageByte(kAS_LINNUM),
-      ReadZeroPageByte(static_cast<std::uint8_t>(kAS_LINNUM + 1u)));
+  const std::uint16_t x = variables_const().AS_LINNUM;
   if (x >= kMaxXExclusive) {
     AS_IQERR();
     return {0u, 0u, false};
@@ -622,21 +566,16 @@ void AS_HPLOT0(const HiResCoordinates &point) {
   // AS_Labels: HPLOT0 (inclusive) .. MOVE_LEFT_OR_RIGHT (exclusive)
   // Plots one hi-res pixel using current HGR bit pattern.
 
-  constexpr std::uint8_t kAS_HGR_BITS = ApplesoftVariables::ZP_AS_HGR_BITS;
-  constexpr std::uint8_t kMON_GBASL = ApplesoftVariables::ZP_MON_GBASL;
-  constexpr std::uint8_t kMON_GBASH = ApplesoftVariables::ZP_MON_GBASH;
   constexpr std::uint8_t kMON_HMASK = ApplesoftVariables::ZP_MON_HMASK;
-  constexpr std::uint8_t kAS_HGR_HORIZ = ApplesoftVariables::ZP_AS_HGR_HORIZ;
 
   AS_HPOSN(point);
 
-  const std::uint16_t rowBase = ApplesoftVariables::makeWord(
-      ReadZeroPageByte(kMON_GBASL), ReadZeroPageByte(kMON_GBASH));
-  const std::uint8_t horiz = ReadZeroPageByte(kAS_HGR_HORIZ);
+  const std::uint16_t rowBase = variables_const().MON_GBASL;
+  const std::uint8_t horiz = variables_const().AS_HGR_HORIZ;
   const std::uint16_t pixelAddress =
       static_cast<std::uint16_t>(rowBase + horiz);
 
-  const std::uint8_t hgrBits = ReadZeroPageByte(kAS_HGR_BITS);
+  const std::uint8_t hgrBits = variables_const().AS_HGR_BITS;
   const std::uint8_t mask = ReadZeroPageByte(kMON_HMASK);
   const std::uint8_t existing = variables_const().readByte(pixelAddress);
   const std::uint8_t updated =
@@ -652,21 +591,6 @@ void AS_HGLIN(const HiResCoordinates &start, const HiResCoordinates &target) {
   // Mirrors key ROM line-state bookkeeping in
   // HGR_DX/HGR_DY/HGR_E/HGR_QUADRANT/HGR_COUNT.
 
-  constexpr std::uint8_t kAS_HGR_DX = ApplesoftVariables::ZP_AS_HGR_DX;
-  constexpr std::uint8_t kAS_HGR_DY = ApplesoftVariables::ZP_AS_HGR_DY;
-  constexpr std::uint8_t kAS_HGR_QUADRANT =
-      ApplesoftVariables::ZP_AS_HGR_QUADRANT;
-  constexpr std::uint8_t kAS_HGR_E = ApplesoftVariables::ZP_AS_HGR_E;
-  constexpr std::uint8_t kAS_HGR_COUNT = ApplesoftVariables::ZP_AS_HGR_COUNT;
-  constexpr std::uint8_t kAS_HGR_X = ApplesoftVariables::ZP_AS_HGR_X;
-  constexpr std::uint8_t kAS_HGR_Y = ApplesoftVariables::ZP_AS_HGR_Y;
-
-  auto writeWord = [](std::uint8_t base, std::uint16_t value) {
-    WriteZeroPageByte(base, ApplesoftVariables::lowByte(value));
-    WriteZeroPageByte(static_cast<std::uint8_t>(base + 1u),
-                      ApplesoftVariables::highByte(value));
-  };
-
   auto absInt = [](int v) -> int { return v < 0 ? -v : v; };
 
   int x0 = static_cast<int>(start.x);
@@ -681,25 +605,22 @@ void AS_HGLIN(const HiResCoordinates &start, const HiResCoordinates &target) {
   int err = dx + dy;
 
   // Seed ROM-style line state.
-  writeWord(kAS_HGR_DX, static_cast<std::uint16_t>(dx));
-  WriteZeroPageByte(kAS_HGR_DY,
-                    static_cast<std::uint8_t>(
-                        0u - static_cast<std::uint8_t>(absInt(y1 - y0)) - 1u));
-  writeWord(kAS_HGR_E, static_cast<std::uint16_t>(dx));
-  WriteZeroPageByte(
-      kAS_HGR_COUNT,
-      static_cast<std::uint8_t>(
-          (static_cast<std::uint16_t>(dx + absInt(y1 - y0))) >> 8u));
+    variables().AS_HGR_DX = static_cast<std::uint16_t>(dx);
+    variables().AS_HGR_DY = static_cast<std::uint8_t>(
+      0u - static_cast<std::uint8_t>(absInt(y1 - y0)) - 1u);
+    variables().AS_HGR_E = static_cast<std::uint8_t>(dx);
+    variables().AS_HGR_COUNT = static_cast<std::uint8_t>(
+      (static_cast<std::uint16_t>(dx + absInt(y1 - y0))) >> 8u);
 
   // Bit 7 follows horizontal direction (right=1, left=0); bit 0 follows
   // vertical direction (down=1, up=0).
   const std::uint8_t quadrant = static_cast<std::uint8_t>(
       ((sx > 0) ? 0x80u : 0x00u) | ((sy > 0) ? 0x01u : 0x00u));
-  WriteZeroPageByte(kAS_HGR_QUADRANT, quadrant);
+  variables().AS_HGR_QUADRANT = quadrant;
 
   // ROM stores target endpoint in HGR_X/HGR_Y during HGLIN setup.
-  writeWord(kAS_HGR_X, target.x);
-  WriteZeroPageByte(kAS_HGR_Y, target.y);
+  variables().AS_HGR_X = target.x;
+  variables().AS_HGR_Y = target.y;
 
   while (x0 != x1 || y0 != y1) {
     const int e2 = 2 * err;
@@ -713,7 +634,7 @@ void AS_HGLIN(const HiResCoordinates &start, const HiResCoordinates &target) {
     }
 
     // Keep HGR_E synchronized with the current signed error accumulator.
-    writeWord(kAS_HGR_E, static_cast<std::uint16_t>(err));
+    variables().AS_HGR_E = static_cast<std::uint8_t>(err);
 
     AS_HPLOT0(
         {static_cast<std::uint16_t>(x0), static_cast<std::uint8_t>(y0), true});
@@ -730,11 +651,7 @@ void AS_HPLOT() {
   constexpr std::uint8_t kTOKEN_TO = 0xc1;
 
   HiResCoordinates current{
-      ApplesoftVariables::makeWord(
-          ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X),
-          ReadZeroPageByte(
-              static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_HGR_X + 1u))),
-      ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_Y), true};
+      variables_const().AS_HGR_X, variables_const().AS_HGR_Y, true};
 
   const std::uint8_t first_token = AS_CHRGOT();
   if (first_token != kTOKEN_TO) {
@@ -771,11 +688,6 @@ void AS_DRWPNT() {
   // Returns with HGR_SHAPE pointing to shape data, HGR_ROTATION containing
   // rotation value.
 
-  constexpr std::uint8_t kAS_HGR_SHAPE_PNTR =
-      ApplesoftVariables::ZP_AS_HGR_SHAPE_PNTR;
-  constexpr std::uint8_t kAS_HGR_SHAPE = ApplesoftVariables::ZP_AS_HGR_SHAPE;
-  constexpr std::uint8_t kAS_HGR_ROTATION =
-      ApplesoftVariables::ZP_AS_HGR_ROTATION;
   constexpr std::uint8_t kAT_TOKEN = 0xc5u; // TOKENDB for "AT"
 
   // Get shape number in X register.
@@ -783,10 +695,9 @@ void AS_DRWPNT() {
 
   // Copy shape table pointer from HGR_SHAPE_PNTR to working HGR_SHAPE (16-bit
   // copy).
-  const std::uint8_t shape_tbl_lo = ReadZeroPageByte(kAS_HGR_SHAPE_PNTR);
-  const std::uint8_t shape_tbl_hi = ReadZeroPageByte(kAS_HGR_SHAPE_PNTR + 1u);
-  WriteZeroPageByte(kAS_HGR_SHAPE, shape_tbl_lo);
-  WriteZeroPageByte(kAS_HGR_SHAPE + 1u, shape_tbl_hi);
+  const std::uint8_t shape_tbl_lo = ApplesoftVariables::lowByte(variables_const().AS_HGR_SHAPE_PNTR);
+  const std::uint8_t shape_tbl_hi = ApplesoftVariables::highByte(variables_const().AS_HGR_SHAPE_PNTR);
+  variables().AS_HGR_SHAPE = variables_const().AS_HGR_SHAPE_PNTR;
 
   const std::uint16_t shape_tbl_ptr =
       (static_cast<std::uint16_t>(shape_tbl_hi) << 8u) | shape_tbl_lo;
@@ -820,10 +731,7 @@ void AS_DRWPNT() {
   // Add offset to shape table pointer to get actual shape data address (16-bit
   // write).
   const std::uint16_t shape_data_addr = shape_tbl_ptr + shape_offset;
-  WriteZeroPageByte(kAS_HGR_SHAPE,
-                    static_cast<std::uint8_t>(shape_data_addr & 0xFFu));
-  WriteZeroPageByte(kAS_HGR_SHAPE + 1u,
-                    static_cast<std::uint8_t>((shape_data_addr >> 8u) & 0xFFu));
+  variables().AS_HGR_SHAPE = shape_data_addr;
 
   // Check for optional "AT" phrase.
   const std::uint8_t ch = AS_CHRGOT();
@@ -841,85 +749,64 @@ void AS_LRUD3();
 
 void AS_MOVE_UP() {
   // Ported from MOVE_UP in monitor/paddles.o65.lst
-  std::uint16_t gbas = (static_cast<std::uint16_t>(
-                            ReadZeroPageByte(ApplesoftVariables::ZP_MON_GBASH))
-                        << 8u) |
-                       ReadZeroPageByte(ApplesoftVariables::ZP_MON_GBASL);
+  std::uint16_t gbas = variables_const().MON_GBASL;
 
   // Decrement HGR_Y (ABCDEFGH) logic
   // Simplified: Apple II hi-res vertical lines are complex,
   // but we can compute the new address from a new Y.
-  std::uint8_t y = ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_Y);
+  std::uint8_t y = variables_const().AS_HGR_Y;
   if (y > 0) {
     y--;
   } else {
     y = 191;
   }
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_Y, y);
+  variables().AS_HGR_Y = y;
   // Refresh GBAS via HPOSN-like logic (simplified: call HPOSN for the new Y)
-  std::uint16_t x = (static_cast<std::uint16_t>(
-                         ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X + 1))
-                     << 8u) |
-                    ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X);
+  std::uint16_t x = variables_const().AS_HGR_X;
   AS_HPOSN({x, y, true});
 }
 
 void AS_MOVE_DOWN() {
-  std::uint8_t y = ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_Y);
+  std::uint8_t y = variables_const().AS_HGR_Y;
   if (y < 191) {
     y++;
   } else {
     y = 0;
   }
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_Y, y);
-  std::uint16_t x = (static_cast<std::uint16_t>(
-                         ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X + 1))
-                     << 8u) |
-                    ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X);
+  variables().AS_HGR_Y = y;
+  std::uint16_t x = variables_const().AS_HGR_X;
   AS_HPOSN({x, y, true});
 }
 
 void AS_MOVE_RIGHT() {
-  std::uint16_t x = (static_cast<std::uint16_t>(
-                         ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X + 1))
-                     << 8u) |
-                    ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X);
+  std::uint16_t x = variables_const().AS_HGR_X;
   if (x < 279) {
     x++;
   } else {
     x = 0;
   }
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X,
-                    static_cast<std::uint8_t>(x & 0xFFu));
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X + 1,
-                    static_cast<std::uint8_t>(x >> 8u));
-  std::uint8_t y = ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_Y);
+  variables().AS_HGR_X = x;
+  std::uint8_t y = variables_const().AS_HGR_Y;
   AS_HPOSN({x, y, true});
 }
 
 void AS_MOVE_LEFT() {
-  std::uint16_t x = (static_cast<std::uint16_t>(
-                         ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X + 1))
-                     << 8u) |
-                    ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X);
+  std::uint16_t x = variables_const().AS_HGR_X;
   if (x > 0) {
     x--;
   } else {
     x = 279;
   }
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X,
-                    static_cast<std::uint8_t>(x & 0xFFu));
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_X + 1,
-                    static_cast<std::uint8_t>(x >> 8u));
-  std::uint8_t y = ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_Y);
+  variables().AS_HGR_X = x;
+  std::uint8_t y = variables_const().AS_HGR_Y;
   AS_HPOSN({x, y, true});
 }
 
 void AS_LRUD4() {
-  std::uint8_t dir =
-      (ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_DX + 1u) +
-       ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_QUADRANT)) &
-      0x03u;
+    std::uint8_t dir = static_cast<std::uint8_t>(
+      (ApplesoftVariables::highByte(variables_const().AS_HGR_DX) +
+       variables_const().AS_HGR_QUADRANT) &
+      0x03u);
 
   // Original mapping from applesoft.o65.lst:
   // 00 -- UP
@@ -943,43 +830,36 @@ void AS_LRUD4() {
 }
 
 void AS_LRUD3_SETBIT() {
-  std::uint8_t horiz = ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_HORIZ);
+  std::uint8_t horiz = variables_const().AS_HGR_HORIZ;
   std::uint8_t mask = ReadZeroPageByte(ApplesoftVariables::ZP_MON_HMASK);
-  std::uint16_t gbas = (static_cast<std::uint16_t>(
-                            ReadZeroPageByte(ApplesoftVariables::ZP_MON_GBASH))
-                        << 8u) |
-                       ReadZeroPageByte(ApplesoftVariables::ZP_MON_GBASL);
+  std::uint16_t gbas = variables_const().MON_GBASL;
   std::uint8_t screen = variables().pointer(gbas).read(horiz);
 
   if (screen & mask) {
-    WriteZeroPageByte(
-        ApplesoftVariables::ZP_AS_HGR_COLLISIONS,
-        ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_COLLISIONS) + 1u);
+    variables().AS_HGR_COLLISIONS =
+        static_cast<std::uint8_t>(variables_const().AS_HGR_COLLISIONS + 1u);
   }
   variables().pointer(gbas).write(screen | mask, horiz);
 }
 
 void AS_LRUD3_XORBIT() {
-  std::uint8_t horiz = ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_HORIZ);
+  std::uint8_t horiz = variables_const().AS_HGR_HORIZ;
   std::uint8_t mask = ReadZeroPageByte(ApplesoftVariables::ZP_MON_HMASK);
-  std::uint16_t gbas = (static_cast<std::uint16_t>(
-                            ReadZeroPageByte(ApplesoftVariables::ZP_MON_GBASH))
-                        << 8u) |
-                       ReadZeroPageByte(ApplesoftVariables::ZP_MON_GBASL);
+  std::uint16_t gbas = variables_const().MON_GBASL;
   std::uint8_t screen = variables().pointer(gbas).read(horiz);
 
   variables().pointer(gbas).write(screen ^ (mask & 0x7Fu), horiz);
 }
 
 void AS_LRUD1() {
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_DX + 1u) & 0x04u) {
+  if (ApplesoftVariables::highByte(variables_const().AS_HGR_DX) & 0x04u) {
     AS_LRUD3_SETBIT();
   }
   AS_LRUD4();
 }
 
 void AS_LRUDX1() {
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_DX + 1u) & 0x04u) {
+  if (ApplesoftVariables::highByte(variables_const().AS_HGR_DX) & 0x04u) {
     AS_LRUD3_XORBIT();
   }
   AS_LRUD4();
@@ -990,34 +870,28 @@ static constexpr std::uint8_t kCosineTable[] = {
     0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18, 0xff};
 
 void AS_DRAW1_Internal(bool xdraw) {
-  std::uint8_t rotation =
-      ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_ROTATION);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_QUADRANT, rotation >> 4u);
+    std::uint8_t rotation = variables_const().AS_HGR_ROTATION;
+    variables().AS_HGR_QUADRANT = static_cast<std::uint8_t>(rotation >> 4u);
 
   std::uint8_t trigIndex = rotation & 0x0Fu;
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_DX, kCosineTable[trigIndex]);
-  WriteZeroPageByte(
-      ApplesoftVariables::ZP_AS_HGR_DY,
-      static_cast<std::uint8_t>(kCosineTable[15 - trigIndex] + 1u));
+    ApplesoftVariables::setLowByte(variables().AS_HGR_DX, kCosineTable[trigIndex]);
+    variables().AS_HGR_DY =
+      static_cast<std::uint8_t>(kCosineTable[15 - trigIndex] + 1u);
 
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_COLLISIONS, 0u);
+    variables().AS_HGR_COLLISIONS = 0u;
 
-  std::uint16_t shapeAddr =
-      (static_cast<std::uint16_t>(
-           ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_SHAPE + 1u))
-       << 8u) |
-      ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_SHAPE);
+    std::uint16_t shapeAddr = variables_const().AS_HGR_SHAPE;
 
   while (true) {
     std::uint8_t shapeByte = variables().pointer(shapeAddr).read(0);
     if (shapeByte == 0)
       break;
 
-    WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_DX + 1u, shapeByte);
+    ApplesoftVariables::setHighByte(variables().AS_HGR_DX, shapeByte);
 
     for (int i = 0; i < 3; ++i) {
       std::uint8_t vector =
-          (ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_DX + 1u)) & 0x07u;
+          static_cast<std::uint8_t>(ApplesoftVariables::highByte(variables_const().AS_HGR_DX) & 0x07u);
       if (vector == 0 && i > 0)
         break; // End of byte
 
@@ -1026,8 +900,7 @@ void AS_DRAW1_Internal(bool xdraw) {
       // Vector 0-7: 0=Up, 1=Right, 2=Down, 3=Left, 4=Up+Plot...
       // Actually DRAW1 uses the bit patterns to call LRUD.
 
-      std::uint8_t scale =
-          ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_SCALE);
+      std::uint8_t scale = variables_const().AS_HGR_SCALE;
       while (scale--) {
         if (xdraw)
           AS_LRUDX1();
@@ -1036,15 +909,13 @@ void AS_DRAW1_Internal(bool xdraw) {
       }
 
       // Shift to next vector in byte
-      WriteZeroPageByte(
-          ApplesoftVariables::ZP_AS_HGR_DX + 1u,
-          ReadZeroPageByte(ApplesoftVariables::ZP_AS_HGR_DX + 1u) >> 3u);
+      ApplesoftVariables::setHighByte(
+          variables().AS_HGR_DX,
+          static_cast<std::uint8_t>(
+              ApplesoftVariables::highByte(variables_const().AS_HGR_DX) >> 3u));
     }
     shapeAddr++;
-    WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_SHAPE,
-                      static_cast<std::uint8_t>(shapeAddr & 0xFFu));
-    WriteZeroPageByte(ApplesoftVariables::ZP_AS_HGR_SHAPE + 1u,
-                      static_cast<std::uint8_t>(shapeAddr >> 8u));
+    variables().AS_HGR_SHAPE = shapeAddr;
   }
 }
 
@@ -1108,19 +979,14 @@ void AS_HIMEM() {
   // AS_Labels: AS_HIMEM (inclusive) .. AS_LOMEM (exclusive)
   // Name normalization: none (assembler label AS_HIMEM kept verbatim).
 
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
-  constexpr std::uint8_t kAS_STREND = ApplesoftVariables::ZP_AS_STREND;
-  constexpr std::uint8_t kAS_MEMSIZ = ApplesoftVariables::ZP_AS_MEMSIZ;
-  constexpr std::uint8_t kAS_FRETOP = ApplesoftVariables::ZP_AS_FRETOP;
-
   AS_FRMNUM();
   AS_GETADR();
 
   // Check AS_LINNUM >= AS_STREND (must be above string storage)
-  const std::uint8_t linnum_lo = ReadZeroPageByte(kAS_LINNUM);
-  const std::uint8_t linnum_hi = ReadZeroPageByte(kAS_LINNUM + 1u);
-  const std::uint8_t strend_lo = ReadZeroPageByte(kAS_STREND);
-  const std::uint8_t strend_hi = ReadZeroPageByte(kAS_STREND + 1u);
+  const std::uint8_t linnum_lo = ApplesoftVariables::lowByte(variables_const().AS_LINNUM);
+  const std::uint8_t linnum_hi = ApplesoftVariables::highByte(variables_const().AS_LINNUM);
+  const std::uint8_t strend_lo = ApplesoftVariables::lowByte(variables_const().AS_STREND);
+  const std::uint8_t strend_hi = ApplesoftVariables::highByte(variables_const().AS_STREND);
 
   // Compare: if linnum < strend, error
   if (linnum_hi < strend_hi ||
@@ -1130,10 +996,8 @@ void AS_HIMEM() {
   }
 
   // Valid: store to AS_MEMSIZ and AS_FRETOP
-  WriteZeroPageByte(kAS_MEMSIZ, linnum_lo);
-  WriteZeroPageByte(kAS_MEMSIZ + 1u, linnum_hi);
-  WriteZeroPageByte(kAS_FRETOP, linnum_lo);
-  WriteZeroPageByte(kAS_FRETOP + 1u, linnum_hi);
+  variables().AS_MEMSIZ = variables_const().AS_LINNUM;
+  variables().AS_FRETOP = variables_const().AS_LINNUM;
 }
 
 void AS_LOMEM() {
@@ -1142,19 +1006,14 @@ void AS_LOMEM() {
   // AS_Labels: AS_LOMEM (inclusive) .. AS_ONERR (exclusive)
   // Name normalization: none (assembler label AS_LOMEM kept verbatim).
 
-  constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
-  constexpr std::uint8_t kAS_MEMSIZ = ApplesoftVariables::ZP_AS_MEMSIZ;
-  constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
-  constexpr std::uint8_t kAS_TXTTAB = ApplesoftVariables::ZP_AS_TXTTAB;
-
   AS_FRMNUM();
   AS_GETADR();
 
   // Check AS_LINNUM < AS_MEMSIZ (must be below AS_HIMEM)
-  const std::uint8_t linnum_lo = ReadZeroPageByte(kAS_LINNUM);
-  const std::uint8_t linnum_hi = ReadZeroPageByte(kAS_LINNUM + 1u);
-  const std::uint8_t memsiz_lo = ReadZeroPageByte(kAS_MEMSIZ);
-  const std::uint8_t memsiz_hi = ReadZeroPageByte(kAS_MEMSIZ + 1u);
+  const std::uint8_t linnum_lo = ApplesoftVariables::lowByte(variables_const().AS_LINNUM);
+  const std::uint8_t linnum_hi = ApplesoftVariables::highByte(variables_const().AS_LINNUM);
+  const std::uint8_t memsiz_lo = ApplesoftVariables::lowByte(variables_const().AS_MEMSIZ);
+  const std::uint8_t memsiz_hi = ApplesoftVariables::highByte(variables_const().AS_MEMSIZ);
 
   // If linnum >= memsiz, error
   if (linnum_hi > memsiz_hi ||
@@ -1164,8 +1023,8 @@ void AS_LOMEM() {
   }
 
   // Check AS_LINNUM > AS_TXTTAB (must be above program text)
-  const std::uint8_t txttab_lo = ReadZeroPageByte(kAS_TXTTAB);
-  const std::uint8_t txttab_hi = ReadZeroPageByte(kAS_TXTTAB + 1u);
+  const std::uint8_t txttab_lo = ApplesoftVariables::lowByte(variables_const().AS_TXTTAB);
+  const std::uint8_t txttab_hi = ApplesoftVariables::highByte(variables_const().AS_TXTTAB);
 
   // If linnum <= txttab, error
   if (linnum_hi < txttab_hi ||
@@ -1176,8 +1035,7 @@ void AS_LOMEM() {
 
   // Valid: store to AS_VARTAB and call AS_CLEARC (AS_LOMEM clears variables and
   // arrays)
-  WriteZeroPageByte(kAS_VARTAB, linnum_lo);
-  WriteZeroPageByte(kAS_VARTAB + 1u, linnum_hi);
+  variables().AS_VARTAB = variables_const().AS_LINNUM;
   AS_CLEARC();
 }
 
@@ -1187,11 +1045,10 @@ void AS_SPEED() {
   // AS_Labels: AS_SPEED (inclusive) .. AS_TRACE (exclusive)
   // Name normalization: none (assembler label AS_SPEED kept verbatim).
 
-  constexpr std::uint8_t kAS_SPEEDZ = ApplesoftVariables::ZP_AS_SPEEDZ;
   const std::uint8_t speed = AS_GETBYT();
 
   // ROM computes AS_SPEEDZ = 0x100 - AS_SPEED (via EOR #$FF / INX sequence).
-  WriteZeroPageByte(kAS_SPEEDZ, static_cast<std::uint8_t>(0u - speed));
+  variables().AS_SPEEDZ = static_cast<std::uint8_t>(0u - speed);
 }
 
 std::uint8_t AS_PLOTFNS() {
@@ -1203,9 +1060,6 @@ std::uint8_t AS_PLOTFNS() {
   // Parses "A,B" with each coordinate constrained to < 48.
   // Stores A in AS_FIRST and mirrors B into MON_H2/MON_V2.
 
-  constexpr std::uint8_t kAS_FIRST = ApplesoftVariables::ZP_AS_FIRST;
-  constexpr std::uint8_t kMON_H2 = ApplesoftVariables::ZP_MON_H2;
-  constexpr std::uint8_t kMON_V2 = ApplesoftVariables::ZP_MON_V2;
   constexpr std::uint8_t kMaxCoordExclusive = 48u;
   constexpr std::uint8_t kComma = static_cast<std::uint8_t>(',' & 0x7fu);
 
@@ -1214,7 +1068,7 @@ std::uint8_t AS_PLOTFNS() {
     AS_IQERR();
     return 0u;
   }
-  WriteZeroPageByte(kAS_FIRST, first);
+  variables().AS_FIRST = first;
 
   AS_SYNCHR(kComma);
 
@@ -1224,8 +1078,8 @@ std::uint8_t AS_PLOTFNS() {
     return 0u;
   }
 
-  WriteZeroPageByte(kMON_H2, second);
-  WriteZeroPageByte(kMON_V2, second);
+  variables().MON_H2 = second;
+  variables().MON_V2 = second;
   return second;
 }
 
@@ -1240,19 +1094,16 @@ std::uint8_t AS_LINCOOR() {
   // - requires AT token
   // - returns C coordinate when C < 48
 
-  constexpr std::uint8_t kAS_FIRST = ApplesoftVariables::ZP_AS_FIRST;
-  constexpr std::uint8_t kMON_H2 = ApplesoftVariables::ZP_MON_H2;
-  constexpr std::uint8_t kMON_V2 = ApplesoftVariables::ZP_MON_V2;
   constexpr std::uint8_t kMaxCoordExclusive = 48u;
   constexpr std::uint8_t kTOKEN_AT = 0xc5u;
 
   const std::uint8_t bValue = AS_PLOTFNS();
-  const std::uint8_t aValue = ReadZeroPageByte(kAS_FIRST);
+  const std::uint8_t aValue = variables_const().AS_FIRST;
 
   if (bValue < aValue) {
-    WriteZeroPageByte(kMON_H2, aValue);
-    WriteZeroPageByte(kMON_V2, aValue);
-    WriteZeroPageByte(kAS_FIRST, bValue);
+    variables().MON_H2 = aValue;
+    variables().MON_V2 = aValue;
+    variables().AS_FIRST = bValue;
   }
 
   AS_SYNCHR(kTOKEN_AT);
@@ -1272,11 +1123,10 @@ void AS_PLOT() {
   // AS_Labels: AS_PLOT (inclusive) .. AS_HLIN (exclusive)
   // Name normalization: none (assembler label AS_PLOT kept verbatim).
 
-  constexpr std::uint8_t kAS_FIRST = ApplesoftVariables::ZP_AS_FIRST;
   constexpr std::uint8_t kMaxXExclusive = 40u;
 
   const std::uint8_t yCoord = AS_PLOTFNS();
-  const std::uint8_t xCoord = ReadZeroPageByte(kAS_FIRST);
+  const std::uint8_t xCoord = variables_const().AS_FIRST;
 
   if (xCoord >= kMaxXExclusive) {
     AS_IQERR();
@@ -1292,18 +1142,16 @@ void AS_HLIN() {
   // AS_Labels: AS_HLIN (inclusive) .. AS_VLIN (exclusive)
   // Name normalization: none (assembler label AS_HLIN kept verbatim).
 
-  constexpr std::uint8_t kAS_FIRST = ApplesoftVariables::ZP_AS_FIRST;
-  constexpr std::uint8_t kMON_H2 = ApplesoftVariables::ZP_MON_H2;
   constexpr std::uint8_t kMaxXExclusive = 40u;
 
   const std::uint8_t yCoord = AS_LINCOOR();
-  const std::uint8_t right = ReadZeroPageByte(kMON_H2);
+  const std::uint8_t right = variables_const().MON_H2;
   if (right >= kMaxXExclusive) {
     AS_IQERR();
     return;
   }
 
-  const std::uint8_t left = ReadZeroPageByte(kAS_FIRST);
+  const std::uint8_t left = variables_const().AS_FIRST;
   MON_HLINE(yCoord, right, left);
 }
 
@@ -1313,7 +1161,6 @@ void AS_VLIN() {
   // AS_Labels: AS_VLIN (inclusive) .. AS_COLOR (exclusive)
   // Name normalization: none (assembler label AS_VLIN kept verbatim).
 
-  constexpr std::uint8_t kAS_FIRST = ApplesoftVariables::ZP_AS_FIRST;
   constexpr std::uint8_t kMaxXExclusive = 40u;
 
   const std::uint8_t xCoord = AS_LINCOOR();
@@ -1322,7 +1169,7 @@ void AS_VLIN() {
     return;
   }
 
-  const std::uint8_t top = ReadZeroPageByte(kAS_FIRST);
+  const std::uint8_t top = variables_const().AS_FIRST;
   MON_VLINE(xCoord, top);
 }
 } // namespace applesoft::asm_port

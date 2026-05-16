@@ -307,13 +307,21 @@ public:
   std::uint8_t AS_CPRMASK = 0;     // $16  relational comparison mask
   std::uint16_t MON_GBASL = 0;     // $26/$27  graphics base address low/high
   std::uint16_t MON_BASL = 0;      // $28/$29  text base address low/high
+  std::uint8_t MON_WNDLFT = 0;     // $20
+  std::uint8_t MON_WNDWDTH = 0;    // $21
+  std::uint8_t MON_WNDTOP = 0;     // $22
+  std::uint8_t MON_WNDBTM = 0;     // $23
   std::uint8_t MON_CH = 0;         // $24
   std::uint8_t MON_CV = 0;         // $25  cursor vertical
+  std::uint8_t MON_H2 = 0;         // $2c
+  std::uint8_t MON_V2 = 0;         // $2d
   std::uint8_t MON_COLOR = 0;      // $30
   std::uint8_t MON_HMASK = 0;      // $30  (shares with MON_COLOR in ROM)
   std::uint8_t MON_INVFLG = 0xffu; // $32  $ff=normal, $3f=inverse
   std::uint8_t MON_PROMPT = 0;     // $33
   std::uint8_t MON_CHKSUM = 0;     // $2e
+  std::uint8_t MON_STATUS = 0;     // $48
+  std::uint16_t MON_RND = 0;       // $4e/$4f
   std::uint16_t MON_A1 = 0;        // $3c/$3d
   std::uint16_t MON_A2 = 0;        // $3e/$3f
   std::uint16_t AS_LINNUM = 0;     // $50/$51
@@ -363,6 +371,21 @@ public:
   std::uint16_t AS_STRNG2 = 0;   // $ad/$ae
   std::uint16_t AS_PRGEND = 0;   // $af/$b0
   std::uint16_t AS_TXTPTR = 0;   // $b8/$b9
+  std::uint16_t AS_HGR_SHAPE = 0; // $1a/$1b
+  std::uint8_t AS_HGR_BITS = 0;   // $1c
+  std::uint8_t AS_HGR_COUNT = 0;  // $1d
+  std::uint16_t AS_HGR_DX = 0;    // $d0/$d1
+  std::uint8_t AS_HGR_DY = 0;     // $d2
+  std::uint8_t AS_HGR_QUADRANT = 0; // $d3
+  std::uint8_t AS_HGR_E = 0;        // $d4
+  std::uint16_t AS_HGR_X = 0;       // $e0/$e1
+  std::uint8_t AS_HGR_Y = 0;        // $e2
+  std::uint8_t AS_HGR_COLOR = 0;    // $e4
+  std::uint8_t AS_HGR_HORIZ = 0;    // $e5
+  std::uint8_t AS_HGR_PAGE = 0;     // $e6
+  std::uint8_t AS_HGR_SCALE = 0;    // $e7
+  std::uint16_t AS_HGR_SHAPE_PNTR = 0; // $e8/$e9
+  std::uint8_t AS_HGR_COLLISIONS = 0;   // $ea
   std::uint8_t AS_LOCK = 0;      // $d6
   std::uint8_t AS_ERRFLG = 0;    // $d8
   std::uint8_t AS_FIRST = 0;     // $f0
@@ -370,6 +393,7 @@ public:
   std::uint8_t AS_TRCFLG = 0;    // $f2
   std::uint8_t AS_FLASH_BIT = 0; // $f3  $40=flash mode, $00=normal
   std::uint8_t AS_REMSTK = 0;    // $f8
+  std::uint8_t AS_HGR_ROTATION = 0; // $f9
 
   // Non-zero-page fixed addresses currently used.
   std::uint8_t AS_INPUT_BUFFER_MINUS_1 = 0;             // $01ff

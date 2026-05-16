@@ -99,6 +99,14 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return AS_INPUTFLG;
   case ZP_AS_CPRMASK:
     return AS_CPRMASK;
+  case ZP_MON_WNDLFT:
+    return MON_WNDLFT;
+  case ZP_MON_WNDWDTH:
+    return MON_WNDWDTH;
+  case ZP_MON_WNDTOP:
+    return MON_WNDTOP;
+  case ZP_MON_WNDBTM:
+    return MON_WNDBTM;
   case ZP_MON_CH:
     return MON_CH;
   case ZP_MON_CV:
@@ -111,6 +119,10 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return lowByte(MON_BASL);
   case ZP_MON_BASL + 1:
     return highByte(MON_BASL);
+  case ZP_MON_H2:
+    return MON_H2;
+  case ZP_MON_V2:
+    return MON_V2;
   case ZP_MON_CHKSUM:
     return MON_CHKSUM;
   case ZP_MON_COLOR:
@@ -125,6 +137,12 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return lowByte(MON_A2);
   case ZP_MON_A2 + 1:
     return highByte(MON_A2);
+  case ZP_MON_STATUS:
+    return MON_STATUS;
+  case ZP_MON_RNDL:
+    return lowByte(MON_RND);
+  case ZP_MON_RNDH:
+    return highByte(MON_RND);
   case ZP_AS_LINNUM:
     return lowByte(AS_LINNUM);
   case ZP_AS_LINNUM + 1:
@@ -287,6 +305,44 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return lowByte(AS_TXTPTR);
   case ZP_AS_TXTPTR + 1:
     return highByte(AS_TXTPTR);
+  case ZP_AS_HGR_SHAPE:
+    return lowByte(AS_HGR_SHAPE);
+  case ZP_AS_HGR_SHAPE + 1:
+    return highByte(AS_HGR_SHAPE);
+  case ZP_AS_HGR_BITS:
+    return AS_HGR_BITS;
+  case ZP_AS_HGR_COUNT:
+    return AS_HGR_COUNT;
+  case ZP_AS_HGR_DX:
+    return lowByte(AS_HGR_DX);
+  case ZP_AS_HGR_DX + 1:
+    return highByte(AS_HGR_DX);
+  case ZP_AS_HGR_DY:
+    return AS_HGR_DY;
+  case ZP_AS_HGR_QUADRANT:
+    return AS_HGR_QUADRANT;
+  case ZP_AS_HGR_E:
+    return AS_HGR_E;
+  case ZP_AS_HGR_X:
+    return lowByte(AS_HGR_X);
+  case ZP_AS_HGR_X + 1:
+    return highByte(AS_HGR_X);
+  case ZP_AS_HGR_Y:
+    return AS_HGR_Y;
+  case ZP_AS_HGR_COLOR:
+    return AS_HGR_COLOR;
+  case ZP_AS_HGR_HORIZ:
+    return AS_HGR_HORIZ;
+  case ZP_AS_HGR_PAGE:
+    return AS_HGR_PAGE;
+  case ZP_AS_HGR_SCALE:
+    return AS_HGR_SCALE;
+  case ZP_AS_HGR_SHAPE_PNTR:
+    return lowByte(AS_HGR_SHAPE_PNTR);
+  case ZP_AS_HGR_SHAPE_PNTR + 1:
+    return highByte(AS_HGR_SHAPE_PNTR);
+  case ZP_AS_HGR_COLLISIONS:
+    return AS_HGR_COLLISIONS;
   case ZP_AS_LOCK:
     return AS_LOCK;
   case ZP_AS_ERRFLG:
@@ -301,6 +357,8 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return AS_FLASH_BIT;
   case ZP_AS_REMSTK:
     return AS_REMSTK;
+  case ZP_AS_HGR_ROTATION:
+    return AS_HGR_ROTATION;
   default:
     return general_memory_[address];
   }
@@ -391,6 +449,18 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
   case ZP_AS_CPRMASK:
     AS_CPRMASK = value;
     return;
+  case ZP_MON_WNDLFT:
+    MON_WNDLFT = value;
+    return;
+  case ZP_MON_WNDWDTH:
+    MON_WNDWDTH = value;
+    return;
+  case ZP_MON_WNDTOP:
+    MON_WNDTOP = value;
+    return;
+  case ZP_MON_WNDBTM:
+    MON_WNDBTM = value;
+    return;
   case ZP_MON_CH:
     MON_CH = value;
     return;
@@ -408,6 +478,12 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     return;
   case ZP_MON_BASL + 1:
     setHighByte(MON_BASL, value);
+    return;
+  case ZP_MON_H2:
+    MON_H2 = value;
+    return;
+  case ZP_MON_V2:
+    MON_V2 = value;
     return;
   case ZP_MON_CHKSUM:
     MON_CHKSUM = value;
@@ -429,6 +505,15 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     return;
   case ZP_MON_A2 + 1:
     setHighByte(MON_A2, value);
+    return;
+  case ZP_MON_STATUS:
+    MON_STATUS = value;
+    return;
+  case ZP_MON_RNDL:
+    setLowByte(MON_RND, value);
+    return;
+  case ZP_MON_RNDH:
+    setHighByte(MON_RND, value);
     return;
   case ZP_AS_LINNUM:
     setLowByte(AS_LINNUM, value);
@@ -673,6 +758,63 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
   case ZP_AS_TXTPTR + 1:
     setHighByte(AS_TXTPTR, value);
     return;
+  case ZP_AS_HGR_SHAPE:
+    setLowByte(AS_HGR_SHAPE, value);
+    return;
+  case ZP_AS_HGR_SHAPE + 1:
+    setHighByte(AS_HGR_SHAPE, value);
+    return;
+  case ZP_AS_HGR_BITS:
+    AS_HGR_BITS = value;
+    return;
+  case ZP_AS_HGR_COUNT:
+    AS_HGR_COUNT = value;
+    return;
+  case ZP_AS_HGR_DX:
+    setLowByte(AS_HGR_DX, value);
+    return;
+  case ZP_AS_HGR_DX + 1:
+    setHighByte(AS_HGR_DX, value);
+    return;
+  case ZP_AS_HGR_DY:
+    AS_HGR_DY = value;
+    return;
+  case ZP_AS_HGR_QUADRANT:
+    AS_HGR_QUADRANT = value;
+    return;
+  case ZP_AS_HGR_E:
+    AS_HGR_E = value;
+    return;
+  case ZP_AS_HGR_X:
+    setLowByte(AS_HGR_X, value);
+    return;
+  case ZP_AS_HGR_X + 1:
+    setHighByte(AS_HGR_X, value);
+    return;
+  case ZP_AS_HGR_Y:
+    AS_HGR_Y = value;
+    return;
+  case ZP_AS_HGR_COLOR:
+    AS_HGR_COLOR = value;
+    return;
+  case ZP_AS_HGR_HORIZ:
+    AS_HGR_HORIZ = value;
+    return;
+  case ZP_AS_HGR_PAGE:
+    AS_HGR_PAGE = value;
+    return;
+  case ZP_AS_HGR_SCALE:
+    AS_HGR_SCALE = value;
+    return;
+  case ZP_AS_HGR_SHAPE_PNTR:
+    setLowByte(AS_HGR_SHAPE_PNTR, value);
+    return;
+  case ZP_AS_HGR_SHAPE_PNTR + 1:
+    setHighByte(AS_HGR_SHAPE_PNTR, value);
+    return;
+  case ZP_AS_HGR_COLLISIONS:
+    AS_HGR_COLLISIONS = value;
+    return;
   case ZP_AS_LOCK:
     AS_LOCK = value;
     return;
@@ -693,6 +835,9 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     return;
   case ZP_AS_REMSTK:
     AS_REMSTK = value;
+    return;
+  case ZP_AS_HGR_ROTATION:
+    AS_HGR_ROTATION = value;
     return;
   default:
     general_memory_[address] = value;

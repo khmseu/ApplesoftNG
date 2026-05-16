@@ -30,63 +30,47 @@ void AS_QINT();
 void AS_ERROR(std::uint8_t error_code_offset);
 
 static void AS_NORMALIZE_FAC_1(std::uint8_t facSign) {
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_FAC_EXTENSION =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_STRNG1 + 1u);
-  constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
-
   std::uint64_t integerValue =
-      (static_cast<std::uint64_t>(
-           ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u)))
-       << 24u) |
-      (static_cast<std::uint64_t>(
-           ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u)))
-       << 16u) |
-      (static_cast<std::uint64_t>(
-           ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u)))
-       << 8u) |
-      static_cast<std::uint64_t>(
-          ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u)));
+      (static_cast<std::uint64_t>(variables_const().AS_FAC[1]) << 24u) |
+      (static_cast<std::uint64_t>(variables_const().AS_FAC[2]) << 16u) |
+      (static_cast<std::uint64_t>(variables_const().AS_FAC[3]) << 8u) |
+      static_cast<std::uint64_t>(variables_const().AS_FAC[4]);
 
   if ((facSign & 0x80u) != 0u) {
     integerValue = (~integerValue + 1u) & 0xffff'ffffu;
-    WriteZeroPageByte(kAS_FAC_SIGN, 0xffu);
+    variables().AS_FAC_SIGN = 0xffu;
   } else {
-    WriteZeroPageByte(kAS_FAC_SIGN, 0u);
+    variables().AS_FAC_SIGN = 0u;
   }
 
   if (integerValue == 0u) {
-    WriteZeroPageByte(kAS_FAC, 0u);
+    variables().AS_FAC[0] = 0u;
     variables().AS_FAC_EXTENSION = 0u;
     return;
   }
 
-  std::uint8_t exponent = ReadZeroPageByte(kAS_FAC);
+  std::uint8_t exponent = variables_const().AS_FAC[0];
   while ((integerValue & 0x8000'0000u) == 0u) {
     integerValue <<= 1u;
     if (exponent == 0u) {
-      WriteZeroPageByte(kAS_FAC, 0u);
-      WriteZeroPageByte(kAS_FAC_SIGN, 0u);
+      variables().AS_FAC[0] = 0u;
+      variables().AS_FAC_SIGN = 0u;
       variables().AS_FAC_EXTENSION = 0u;
-      WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u), 0u);
-      WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u), 0u);
-      WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u), 0u);
-      WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u), 0u);
+      variables().AS_FAC[1] = 0u;
+      variables().AS_FAC[2] = 0u;
+      variables().AS_FAC[3] = 0u;
+      variables().AS_FAC[4] = 0u;
       return;
     }
 
     --exponent;
   }
 
-  WriteZeroPageByte(kAS_FAC, exponent);
-  WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u),
-                    static_cast<std::uint8_t>((integerValue >> 24u) & 0xffu));
-  WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u),
-                    static_cast<std::uint8_t>((integerValue >> 16u) & 0xffu));
-  WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u),
-                    static_cast<std::uint8_t>((integerValue >> 8u) & 0xffu));
-  WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u),
-                    static_cast<std::uint8_t>(integerValue & 0xffu));
+  variables().AS_FAC[0] = exponent;
+  variables().AS_FAC[1] = static_cast<std::uint8_t>((integerValue >> 24u) & 0xffu);
+  variables().AS_FAC[2] = static_cast<std::uint8_t>((integerValue >> 16u) & 0xffu);
+  variables().AS_FAC[3] = static_cast<std::uint8_t>((integerValue >> 8u) & 0xffu);
+  variables().AS_FAC[4] = static_cast<std::uint8_t>(integerValue & 0xffu);
   variables().AS_FAC_EXTENSION = 0u;
 }
 
@@ -110,14 +94,11 @@ void AS_SGN() {
   // AS_Labels: AS_SGN (inclusive) .. AS_ABS (exclusive)
   // Name normalization: none (assembler label AS_SGN kept verbatim).
 
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
-
   // ROM path: jsr AS_SIGN then fall through to AS_FLOAT to convert A=-1/0/+1 to
   // AS_FAC.
   std::int16_t signValue = 0;
-  if (ReadZeroPageByte(kAS_FAC) != 0u) {
-    signValue = ((ReadZeroPageByte(kAS_FAC_SIGN) & 0x80u) != 0u) ? -1 : 1;
+  if (variables_const().AS_FAC[0] != 0u) {
+    signValue = ((variables_const().AS_FAC_SIGN & 0x80u) != 0u) ? -1 : 1;
   }
 
   AS_GIVAYF(signValue);
@@ -128,17 +109,9 @@ void AS_INT_fn() {
   // AS_Labels: AS_INT (inclusive) .. AS_QINT_3 (exclusive)
   // Name normalization: AS_INT -> AS_INT_fn (AS_INT is a C++ keyword).
 
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_FAC_EXTENSION =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_STRNG1 + 1u);
-  constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
-  constexpr std::uint8_t kAS_FAC_LAST =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 4u);
-  constexpr std::uint8_t kAS_CHARAC = ApplesoftVariables::ZP_AS_CHARAC;
-
   // If exponent >= 0xA0, AS_FAC has no fractional bits and AS_INT is already
   // done.
-  if (ReadZeroPageByte(kAS_FAC) >= 0xa0u) {
+  if (variables_const().AS_FAC[0] >= 0xa0u) {
     return;
   }
 
@@ -147,10 +120,10 @@ void AS_INT_fn() {
 
   // The ROM uses carry to decide whether the integer needs complementing
   // before re-normalization. Model that explicitly with the saved AS_FAC sign.
-  const std::uint8_t facSign = ReadZeroPageByte(kAS_FAC_SIGN);
+  const std::uint8_t facSign = variables_const().AS_FAC_SIGN;
   variables().AS_FAC_EXTENSION = 0u;
-  WriteZeroPageByte(kAS_FAC, 0xa0u);
-  WriteZeroPageByte(kAS_CHARAC, ReadZeroPageByte(kAS_FAC_LAST));
+  variables().AS_FAC[0] = 0xa0u;
+  variables().AS_CHARAC = variables_const().AS_FAC[4];
 
   AS_NORMALIZE_FAC_1(facSign);
 }
@@ -160,9 +133,8 @@ void AS_ABS() {
   // AS_Labels: AS_ABS (inclusive) .. AS_FCOMP (exclusive)
   // Name normalization: none (assembler label AS_ABS kept verbatim).
 
-  constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
-  WriteZeroPageByte(kAS_FAC_SIGN, static_cast<std::uint8_t>(
-                                      ReadZeroPageByte(kAS_FAC_SIGN) >> 1u));
+  variables().AS_FAC_SIGN =
+      static_cast<std::uint8_t>(variables_const().AS_FAC_SIGN >> 1u);
 }
 static void AS_USR() {} // TODO(asm-port): AS_USR        $D5...213 (user-defined
                         // function via zero-page JMP at $0A)

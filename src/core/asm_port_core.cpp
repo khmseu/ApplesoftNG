@@ -644,7 +644,7 @@ void AS_FAE_1() {
   ProgramPointer descriptor{ReadZeroPageWord(kAS_LOWTR)};
   std::uint8_t descriptorY = 4u; // FIND_ARRAY_ELEMENT leaves descriptor[4]
                                  // (#dims) as the current slot.
-  std::uint8_t remainingDims = ReadZeroPageByte(kAS_NUMDIM);
+  std::uint8_t remainingDims = variables_const().AS_NUMDIM;
 
   while (remainingDims != 0u) {
     ++descriptorY; // Advance to current dimension high byte.
@@ -685,7 +685,7 @@ void AS_FAE_1() {
     WriteZeroPageWord(kAS_STRNG2, runningOffset);
 
     --remainingDims;
-    WriteZeroPageByte(kAS_NUMDIM, remainingDims);
+    variables().AS_NUMDIM = remainingDims;
   }
 
   std::uint8_t elementSize = 5u;
@@ -719,8 +719,7 @@ void AS_GETARY2() {
   // AS_Labels: AS_GETARY2 (inclusive) .. AS_NEG32768 (exclusive)
   // Name normalization: none (assembler label AS_GETARY2 kept verbatim).
 
-  const std::uint8_t numDim =
-      ReadZeroPageByte(ApplesoftVariables::ZP_AS_NUMDIM);
+  const std::uint8_t numDim = variables_const().AS_NUMDIM;
   const ProgramPointer lowtr{ReadZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR)};
   const std::uint16_t arypntOffset =
       static_cast<std::uint16_t>(numDim * 2u) + 5u;
@@ -1265,11 +1264,11 @@ void AS_ARRAY() {
   constexpr std::uint8_t kAS_STREND = ApplesoftVariables::ZP_AS_STREND;
   constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
 
-  if (ReadZeroPageByte(kAS_SUBFLG) == 0u) {
+  if (variables_const().AS_SUBFLG == 0u) {
     const std::uint8_t dimflgOrInteger = static_cast<std::uint8_t>(
-        ReadZeroPageByte(kAS_DIMFLG) | ReadZeroPageByte(kAS_VALTYP_PLUS_1));
+        variables_const().AS_DIMFLG | variables_const().AS_VALTYP_PLUS_1);
     theStack().pushByte(dimflgOrInteger);
-    theStack().pushByte(ReadZeroPageByte(kAS_VALTYP));
+    theStack().pushByte(variables_const().AS_VALTYP);
 
     std::uint8_t dimensions = 0u;
     for (;;) {
@@ -1306,15 +1305,15 @@ void AS_ARRAY() {
         continue;
       }
 
-      WriteZeroPageByte(kAS_NUMDIM, dimensions);
+      variables().AS_NUMDIM = dimensions;
       AS_CHKCLS();
 
       const std::uint8_t restoredValTyp = theStack().popByte();
       const std::uint8_t restoredValTypPlus1Dim = theStack().popByte();
-      WriteZeroPageByte(kAS_VALTYP, restoredValTyp);
-      WriteZeroPageByte(kAS_VALTYP_PLUS_1, restoredValTypPlus1Dim);
-      WriteZeroPageByte(kAS_DIMFLG, static_cast<std::uint8_t>(
-                                        restoredValTypPlus1Dim & 0x7fu));
+      variables().AS_VALTYP = restoredValTyp;
+      variables().AS_VALTYP_PLUS_1 = restoredValTypPlus1Dim;
+      variables().AS_DIMFLG =
+          static_cast<std::uint8_t>(restoredValTypPlus1Dim & 0x7fu);
       break;
     }
   }
@@ -1465,7 +1464,7 @@ void AS_CMPDONE() {
 
   std::uint8_t a = static_cast<std::uint8_t>(x & 0xff);
   a = static_cast<std::uint8_t>((a << 1) | (gNumericCompareCarry ? 1u : 0u));
-  a = static_cast<std::uint8_t>(a & ReadZeroPageByte(kAS_CPRMASK));
+  a = static_cast<std::uint8_t>(a & variables_const().AS_CPRMASK);
 
   gFloatInput = (a == 0u) ? 0u : 1u;
   AS_SNGFLT(gFloatInput);
@@ -1609,7 +1608,7 @@ void AS_RELOPS() {
   constexpr std::uint8_t kAS_CPRTYP = ApplesoftVariables::ZP_AS_CPRTYP;
   constexpr std::uint16_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
 
-  const std::uint8_t compareTypeFlags = ReadZeroPageByte(kAS_CPRTYP);
+  const std::uint8_t compareTypeFlags = variables_const().AS_CPRTYP;
   if (AS_CHKVAL(compareTypeFlags)) {
     // Carry set in ROM indicates string compare path.
     AS_STRCMP();
@@ -1635,9 +1634,9 @@ void AS_STRCMP() {
   constexpr std::uint8_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
   constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
 
-  WriteZeroPageByte(kAS_VALTYP, 0u);
-  WriteZeroPageByte(
-      kAS_CPRTYP, static_cast<std::uint8_t>(ReadZeroPageByte(kAS_CPRTYP) - 1u));
+    variables().AS_VALTYP = 0u;
+    variables().AS_CPRTYP =
+      static_cast<std::uint8_t>(variables_const().AS_CPRTYP - 1u);
 
   const std::uint8_t facLength = AS_FREFAC();
   WriteZeroPageByte(kAS_FAC, facLength);
@@ -1713,8 +1712,8 @@ void AS_FNC_() {
 
   // Set high bit in AS_SUBFLG to signal this is from AS_DEF/FN context
   constexpr std::uint8_t kAS_SUBFLG = ApplesoftVariables::ZP_AS_SUBFLG;
-  const std::uint8_t subflg = ReadZeroPageByte(kAS_SUBFLG);
-  WriteZeroPageByte(kAS_SUBFLG, static_cast<std::uint8_t>(subflg | 0x80u));
+  const std::uint8_t subflg = variables_const().AS_SUBFLG;
+  variables().AS_SUBFLG = static_cast<std::uint8_t>(subflg | 0x80u);
 
   // Parse function name via AS_PTRGET3
   AS_PTRGET3();
@@ -1755,7 +1754,7 @@ void AS_DEF() {
 
   // Set AS_SUBFLG to flag AS_DEF context for AS_PTRGET
   constexpr std::uint8_t kAS_SUBFLG = ApplesoftVariables::ZP_AS_SUBFLG;
-  WriteZeroPageByte(kAS_SUBFLG, 0x80u);
+  variables().AS_SUBFLG = 0x80u;
 
   // Get pointer to argument variable
   AS_PTRGET();
@@ -1969,7 +1968,7 @@ void AS_FRMEVL() {
       return;
     }
     AS_UNARY();
-    WriteZeroPageByte(kAS_CPRTYP, 0u);
+    variables().AS_CPRTYP = 0u;
 
     while (true) {
       std::uint8_t token = AS_CHRGOT();
@@ -1986,14 +1985,13 @@ void AS_FRMEVL() {
           mask = 0x04u;
         }
 
-        const std::uint8_t existing = ReadZeroPageByte(kAS_CPRTYP);
+        const std::uint8_t existing = variables_const().AS_CPRTYP;
         if ((existing & mask) != 0u) {
           AS_SYNERR();
           return;
         }
 
-        WriteZeroPageByte(kAS_CPRTYP,
-                          static_cast<std::uint8_t>(existing | mask));
+        variables().AS_CPRTYP = static_cast<std::uint8_t>(existing | mask);
         token = AS_CHRGET();
       }
 
@@ -2001,12 +1999,12 @@ void AS_FRMEVL() {
       std::uint8_t cprtypForFrame = 0u;
       bool relationalPath = false;
 
-      if (ReadZeroPageByte(kAS_CPRTYP) != 0u) {
+      if (variables_const().AS_CPRTYP != 0u) {
         // AS_FRM_RELATIONAL: fold string-vs-numeric state into AS_CPRTYP and
         // treat as AS_MATHTBL AS_M_REL for precedence dispatch.
         relationalPath = true;
-        const std::uint8_t relFlags = ReadZeroPageByte(kAS_CPRTYP);
-        const bool facIsString = (ReadZeroPageByte(kAS_VALTYP) & 0x80u) != 0u;
+        const std::uint8_t relFlags = variables_const().AS_CPRTYP;
+        const bool facIsString = (variables_const().AS_VALTYP & 0x80u) != 0u;
         cprtypForFrame = static_cast<std::uint8_t>((relFlags << 1u) |
                                                    (facIsString ? 1u : 0u));
 
@@ -2022,7 +2020,7 @@ void AS_FRMEVL() {
 
         // AS_FRMEVL_2_3 special-case (+ with string AS_FAC) is AS_CAT in ROM.
         if (token == kAS_TOKEN_PLUS &&
-            (ReadZeroPageByte(kAS_VALTYP) & 0x80u) != 0u) {
+            (variables_const().AS_VALTYP & 0x80u) != 0u) {
           AS_CAT();
           return;
         }
@@ -2062,8 +2060,8 @@ void AS_FRMEVL() {
       // AS_FRM_PERFORM_2 frame handoff: move stacked left operand to AS_ARG and
       // synthesize AS_CPRMASK/AS_SGNCPR as if popped from the ROM expression
       // stack.
-      WriteZeroPageByte(kAS_CPRMASK,
-                        static_cast<std::uint8_t>(cprtypForFrame >> 1u));
+        variables().AS_CPRMASK =
+          static_cast<std::uint8_t>(cprtypForFrame >> 1u);
       for (std::uint8_t i = 0; i < lhsFac.size(); ++i) {
         WriteZeroPageByte(static_cast<std::uint8_t>(kAS_ARG + i), lhsFac[i]);
       }
@@ -2073,7 +2071,7 @@ void AS_FRMEVL() {
           static_cast<std::uint8_t>(lhsSign ^ ReadZeroPageByte(kAS_FAC_SIGN)));
 
       if (cprtypForFrame != 0u) {
-        WriteZeroPageByte(kAS_CPRTYP, cprtypForFrame);
+        variables().AS_CPRTYP = cprtypForFrame;
       }
 
       if (pendingEntry.handler != nullptr) {

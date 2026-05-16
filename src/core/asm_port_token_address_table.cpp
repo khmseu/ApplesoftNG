@@ -107,16 +107,13 @@ static void AS_SHLOAD_Handler() { /* AS_SHLOAD stub */ }
 //                           AS_NOTRACE: clc; ror AS_TRCFLG → bit 7 clear (trace
 //                           off).
 static void AS_TRACE() {
-  const std::uint8_t trcflg =
-      ReadZeroPageByte(ApplesoftVariables::ZP_AS_TRCFLG);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_TRCFLG,
-                    static_cast<std::uint8_t>((trcflg >> 1u) | 0x80u));
+  const std::uint8_t trcflg = variables_const().AS_TRCFLG;
+  variables().AS_TRCFLG =
+      static_cast<std::uint8_t>((trcflg >> 1u) | 0x80u);
 }
 static void AS_NOTRACE() {
-  const std::uint8_t trcflg =
-      ReadZeroPageByte(ApplesoftVariables::ZP_AS_TRCFLG);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_TRCFLG,
-                    static_cast<std::uint8_t>(trcflg >> 1u));
+  const std::uint8_t trcflg = variables_const().AS_TRCFLG;
+  variables().AS_TRCFLG = static_cast<std::uint8_t>(trcflg >> 1u);
 }
 static void AS_NORMAL_Handler() { AS_NORMAL(); }
 static void AS_INVERSE_Handler() { AS_INVERSE(); }
