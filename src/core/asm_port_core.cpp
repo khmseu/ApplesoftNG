@@ -1409,9 +1409,9 @@ void AS_PTRGET4() {
 
     variables().AS_VALTYP_PLUS_1 = 0x80u; // integer mode
     WriteZeroPageByte(
-      ApplesoftVariables::ZP_AS_VARNAM,
-      static_cast<std::uint8_t>(
-        ApplesoftVariables::lowByte(variables_const().AS_VARNAM) | 0x80u));
+        ApplesoftVariables::ZP_AS_VARNAM,
+        static_cast<std::uint8_t>(
+            ApplesoftVariables::lowByte(variables_const().AS_VARNAM) | 0x80u));
     secondChar = static_cast<std::uint8_t>(secondChar | 0x80u);
     current = AS_CHRGET();
   }
@@ -1714,8 +1714,10 @@ void AS_FNC_() {
   // AS_PTRGET3 leaves A=name_lo, Y=name_hi
   // Store to AS_FNCNAM
   constexpr std::uint8_t kAS_FNCNAM = ApplesoftVariables::ZP_AS_FNCNAM;
-    const std::uint8_t nameA = ApplesoftVariables::lowByte(variables_const().AS_STRNG1);
-    const std::uint8_t nameY = ApplesoftVariables::highByte(variables_const().AS_STRNG1);
+  const std::uint8_t nameA =
+      ApplesoftVariables::lowByte(variables_const().AS_STRNG1);
+  const std::uint8_t nameY =
+      ApplesoftVariables::highByte(variables_const().AS_STRNG1);
   WriteZeroPageByte(kAS_FNCNAM, nameA);
   WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FNCNAM + 1u), nameY);
 
