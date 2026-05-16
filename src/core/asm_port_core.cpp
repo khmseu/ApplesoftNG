@@ -101,14 +101,6 @@ void WriteZeroPageByte(std::uint8_t address, std::uint8_t value) {
   variables().writeByte(address, value);
 }
 
-void WriteZeroPageWord(std::uint8_t address, std::uint16_t value) {
-  variables().writeWord(address, value);
-}
-
-std::uint16_t ReadZeroPageWord(std::uint8_t address) {
-  return variables_const().readWord(address);
-}
-
 std::uint8_t ReadProgramByte(std::uint16_t address) {
   // Program text lives in the same flat address space as zero-page variables;
   // ApplesoftVariables::readByte handles all address regions.

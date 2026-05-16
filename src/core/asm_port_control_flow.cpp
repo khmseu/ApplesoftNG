@@ -15,8 +15,6 @@ namespace applesoft::asm_port {
 
 bool IsStatementEndOfParsedInput();
 std::uint8_t ReadZeroPageByte(std::uint8_t address);
-std::uint16_t ReadZeroPageWord(std::uint8_t address);
-void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
@@ -753,7 +751,8 @@ void AS_NEXT() {
   variables().AS_INDEX = static_cast<std::uint16_t>(
       0x0100u + add_u8(gtforpntResult.x, kStepValueOffsetInForFrame));
   AS_LOAD_FAC_FROM_YA();
-  variables().AS_FAC_SIGN = theStack().readByteAt(gtforpntResult.x, 9u); // AS_FAC_SIGN
+  variables().AS_FAC_SIGN =
+      theStack().readByteAt(gtforpntResult.x, 9u); // AS_FAC_SIGN
   AS_FADD();
   AS_SETFOR();
   AS_FCOMP2();
@@ -915,8 +914,8 @@ bool IsEndOfAS_LineAtTextPointer() {
 bool IsEndOfProgramAtTextPointer() {
   // Source: AS_NEWSTT inline — ldy #2 / lda (AS_TXTPTR),Y: next-line link high
   // byte; if zero the program has ended (null forward pointer).
-  return ReadProgramByte(
-             static_cast<std::uint16_t>(variables_const().AS_TXTPTR + 2u)) == 0u;
+  return ReadProgramByte(static_cast<std::uint16_t>(
+             variables_const().AS_TXTPTR + 2u)) == 0u;
 }
 
 std::uint16_t ReadAS_LineNumberFromTextPointer() {

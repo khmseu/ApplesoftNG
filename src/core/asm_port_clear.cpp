@@ -9,8 +9,6 @@ namespace applesoft::asm_port {
 // Forward declarations for memory access (should ideally be in a header)
 std::uint8_t ReadZeroPageByte(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
-std::uint16_t ReadZeroPageWord(std::uint8_t address);
-void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 
 void AS_CLEAR() {
   if (AS_CHRGOT() != 0) {
@@ -44,15 +42,14 @@ void AS_STKINI() {
 }
 
 void AS_STXTPT() {
-  variables().AS_TXTPTR = static_cast<std::uint16_t>(variables_const().AS_TXTTAB - 1u);
+  variables().AS_TXTPTR =
+      static_cast<std::uint16_t>(variables_const().AS_TXTTAB - 1u);
 }
 
 void AS_RESTORE() {
   AS_SETDA(static_cast<std::uint16_t>(variables_const().AS_TXTTAB - 1u));
 }
 
-void AS_SETDA(std::uint16_t addr) {
-  variables().AS_DATPTR = addr;
-}
+void AS_SETDA(std::uint16_t addr) { variables().AS_DATPTR = addr; }
 
 } // namespace applesoft::asm_port
