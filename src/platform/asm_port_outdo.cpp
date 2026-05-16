@@ -10,17 +10,6 @@ using MonitorOutputRoutine = void (*)(std::uint8_t);
 constexpr std::uint16_t kMonitorCout1Vector = 0xfd62u;
 void MON_VIDOUT(std::uint8_t a);
 } // namespace
-std::uint8_t readZeroPageByte(std::uint8_t address) {
-  return variables_const().readByte(address);
-}
-void writeZeroPageByte(std::uint8_t address, std::uint8_t value) {
-  variables().writeByte(address, value);
-}
-std::uint16_t readZeroPageWord(std::uint8_t address) {
-  return ApplesoftVariables::makeWord(
-      readZeroPageByte(address),
-      readZeroPageByte(static_cast<std::uint8_t>(address + 1u)));
-}
 std::uint16_t computeTextRowBase(std::uint8_t row_zero_based) {
   const bool carryFromAS_Lsr = (row_zero_based & 0x01u) != 0u;
   const std::uint8_t bash =
@@ -30,18 +19,15 @@ std::uint16_t computeTextRowBase(std::uint8_t row_zero_based) {
     basl = static_cast<std::uint8_t>(basl + 0x80u);
   const std::uint8_t baslBase = basl;
   basl = static_cast<std::uint8_t>((basl << 2u) | baslBase);
-  basl = static_cast<std::uint8_t>(
-      basl + readZeroPageByte(ApplesoftVariables::ZP_MON_WNDLFT));
+  basl = static_cast<std::uint8_t>(basl + variables_const().MON_WNDLFT);
   return ApplesoftVariables::makeWord(basl, bash);
 }
 void setCursorRow(std::uint8_t row_zero_based) { MON_TABV(row_zero_based); }
 void scrollWindowUp() {
   constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
-  const std::uint8_t top = readZeroPageByte(ApplesoftVariables::ZP_MON_WNDTOP);
-  const std::uint8_t bottom =
-      readZeroPageByte(ApplesoftVariables::ZP_MON_WNDBTM);
-  const std::uint8_t width =
-      readZeroPageByte(ApplesoftVariables::ZP_MON_WNDWDTH);
+  const std::uint8_t top = variables_const().MON_WNDTOP;
+  const std::uint8_t bottom = variables_const().MON_WNDBTM;
+  const std::uint8_t width = variables_const().MON_WNDWDTH;
   for (std::uint8_t row = top; static_cast<std::uint8_t>(row + 1u) < bottom;
        ++row) {
     const auto dstBase = computeTextRowBase(row);
@@ -59,12 +45,11 @@ void scrollWindowUp() {
                           kBlank);
 }
 void advanceCursorToNextAS_Line(bool resetColumn) {
-  const std::uint8_t top = readZeroPageByte(ApplesoftVariables::ZP_MON_WNDTOP);
-  const std::uint8_t bottom =
-      readZeroPageByte(ApplesoftVariables::ZP_MON_WNDBTM);
-  std::uint8_t row = readZeroPageByte(ApplesoftVariables::ZP_MON_CV);
+  const std::uint8_t top = variables_const().MON_WNDTOP;
+  const std::uint8_t bottom = variables_const().MON_WNDBTM;
+  std::uint8_t row = variables_const().MON_CV;
   if (resetColumn)
-    writeZeroPageByte(ApplesoftVariables::ZP_MON_CH, 0u);
+    variables().MON_CH = 0u;
   if (bottom <= top) {
     setCursorRow(top);
     return;
@@ -105,10 +90,9 @@ void MON_VIDOUT(std::uint8_t a) {
   case 0x07u:
     break;
   case 0x08u: {
-    const std::uint8_t column = readZeroPageByte(ApplesoftVariables::ZP_MON_CH);
+    const std::uint8_t column = variables_const().MON_CH;
     if (column != 0u)
-      writeZeroPageByte(ApplesoftVariables::ZP_MON_CH,
-                        static_cast<std::uint8_t>(column - 1u));
+      variables().MON_CH = static_cast<std::uint8_t>(column - 1u);
     break;
   }
   case 0x0au:
@@ -119,18 +103,15 @@ void MON_VIDOUT(std::uint8_t a) {
     break;
   default:
     if (a >= 0xa0u) {
-      const std::uint8_t column =
-          readZeroPageByte(ApplesoftVariables::ZP_MON_CH);
-      const std::uint8_t width =
-          readZeroPageByte(ApplesoftVariables::ZP_MON_WNDWDTH);
-      const std::uint16_t base =
-          readZeroPageWord(ApplesoftVariables::ZP_MON_BASL);
+      const std::uint8_t column = variables_const().MON_CH;
+      const std::uint8_t width = variables_const().MON_WNDWDTH;
+      const std::uint16_t base = variables_const().MON_BASL;
       variables().writeByte(static_cast<std::uint16_t>(base + column), a);
       const std::uint8_t nextColumn = static_cast<std::uint8_t>(column + 1u);
       if (nextColumn >= width)
         advanceCursorToNextAS_Line(true);
       else
-        writeZeroPageByte(ApplesoftVariables::ZP_MON_CH, nextColumn);
+        variables().MON_CH = nextColumn;
     }
     break;
   }
@@ -138,7 +119,7 @@ void MON_VIDOUT(std::uint8_t a) {
 } // namespace
 void MON_COUT1(std::uint8_t a) {
   if (a >= 0xa0u)
-    a &= readZeroPageByte(ApplesoftVariables::ZP_MON_INVFLG);
+    a &= variables_const().MON_INVFLG;
   MON_LFB78(a);
 }
 void MON_WAIT(std::uint8_t a) {
@@ -153,7 +134,7 @@ void MON_WAIT(std::uint8_t a) {
 }
 void MON_COUT(std::uint8_t a) {
   ApplesoftNG::ExternalJumpDispatcher::Jump(
-      readZeroPageWord(ApplesoftVariables::ZP_MON_CSW), a);
+      variables_const().readWord(ApplesoftVariables::ZP_MON_CSW), a);
 }
 std::uint8_t AS_OUTDO(std::uint8_t a) {
   a |= 0x80u;

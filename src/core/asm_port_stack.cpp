@@ -8,7 +8,6 @@ namespace applesoft::asm_port {
 
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
-std::uint16_t ReadZeroPageWord(std::uint8_t address);
 void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 
 // --- Hardware stack ---
@@ -48,15 +47,13 @@ void ApplesoftStack::popReturnAddress() {
 }
 
 void ApplesoftStack::pushTextPointerAddress() {
-  constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  const std::uint16_t textPointer = ReadZeroPageWord(kAS_TXTPTR);
+  const std::uint16_t textPointer = variables_const().AS_TXTPTR;
   pushByte(ApplesoftVariables::highByte(textPointer));
   pushByte(ApplesoftVariables::lowByte(textPointer));
 }
 
 void ApplesoftStack::pushCurrentAS_LineNumber() {
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
-  const std::uint16_t currentAS_Line = ReadZeroPageWord(kAS_CURLIN);
+  const std::uint16_t currentAS_Line = variables_const().AS_CURLIN;
   pushByte(ApplesoftVariables::highByte(currentAS_Line));
   pushByte(ApplesoftVariables::lowByte(currentAS_Line));
 }

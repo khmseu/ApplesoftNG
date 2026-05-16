@@ -11,9 +11,7 @@ void MON_COUT(std::uint8_t a);
 void MON_BELL();
 namespace {
 
-std::uint8_t read_prompt_char() {
-  return variables_const().readByte(ApplesoftVariables::ZP_MON_PROMPT);
-}
+std::uint8_t read_prompt_char() { return variables_const().MON_PROMPT; }
 
 void write_input_buffer(std::uint8_t index, std::uint8_t value) {
   variables().writeByte(static_cast<std::uint16_t>(
@@ -27,10 +25,8 @@ std::uint8_t read_input_buffer(std::uint8_t index) {
 }
 
 std::uint8_t read_screen_char_via_28_y() {
-  const std::uint8_t y =
-      variables_const().readByte(ApplesoftVariables::ZP_MON_CH);
-  const std::uint16_t base =
-      variables_const().readWord(ApplesoftVariables::ZP_MON_BASL);
+  const std::uint8_t y = variables_const().MON_CH;
+  const std::uint16_t base = variables_const().MON_BASL;
   return variables_const().readByte(static_cast<std::uint16_t>(base + y));
 }
 
@@ -61,12 +57,9 @@ std::uint8_t RDCHAR() {
 // Name normalization: none (assembler label CLREOL kept verbatim).
 void CLREOL() {
   constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
-  const std::uint8_t columnStart =
-      variables_const().readByte(ApplesoftVariables::ZP_MON_CH);
-  const std::uint8_t width =
-      variables_const().readByte(ApplesoftVariables::ZP_MON_WNDWDTH);
-  const std::uint16_t base =
-      variables_const().readWord(ApplesoftVariables::ZP_MON_BASL);
+  const std::uint8_t columnStart = variables_const().MON_CH;
+  const std::uint8_t width = variables_const().MON_WNDWDTH;
+  const std::uint16_t base = variables_const().MON_BASL;
 
   for (std::uint8_t column = columnStart; column < width; ++column) {
     variables().writeByte(static_cast<std::uint16_t>(base + column), kBlank);
@@ -102,15 +95,14 @@ void NOTCR(std::uint8_t &x) {
   constexpr std::uint8_t kMargin = 0xf8u;
   constexpr std::uint8_t kCancelSlash = static_cast<std::uint8_t>('\\' | 0x80u);
 
-  const std::uint8_t savedInv =
-      variables_const().readByte(ApplesoftVariables::ZP_MON_INVFLG);
-  variables().writeByte(ApplesoftVariables::ZP_MON_INVFLG, 0xffu);
+  const std::uint8_t savedInv = variables_const().MON_INVFLG;
+  variables().MON_INVFLG = 0xffu;
   // X is an 8-bit page-local index into $0200..$02FF; 0xff is the last valid
   // slot. The subsequent ++x wrap to 0 intentionally triggers the
   // cancel/restart path.
   const std::uint8_t current = read_input_buffer(x);
   COUT(current);
-  variables().writeByte(ApplesoftVariables::ZP_MON_INVFLG, savedInv);
+  variables().MON_INVFLG = savedInv;
 
   if (current == kBackspace || current == kCtrlX) {
     if (x == 0u) {
