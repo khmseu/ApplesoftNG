@@ -305,8 +305,11 @@ public:
   std::uint8_t AS_SUBFLG = 0;        // $14
   std::uint8_t AS_INPUTFLG = 0;    // $15  $00=AS_INPUT, $40=AS_GET, $98=AS_READ
   std::uint8_t AS_CPRMASK = 0;     // $16  relational comparison mask
+  std::uint16_t MON_GBASL = 0;     // $26/$27  graphics base address low/high
+  std::uint16_t MON_BASL = 0;      // $28/$29  text base address low/high
   std::uint8_t MON_CH = 0;         // $24
   std::uint8_t MON_COLOR = 0;      // $30
+  std::uint8_t MON_HMASK = 0;      // $30  (shares with MON_COLOR in ROM)
   std::uint8_t MON_INVFLG = 0xffu; // $32  $ff=normal, $3f=inverse
   std::uint8_t MON_PROMPT = 0;     // $33
   std::uint8_t MON_CHKSUM = 0;     // $2e

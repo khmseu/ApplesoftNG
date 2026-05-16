@@ -107,8 +107,7 @@ void MON_TABV(std::uint8_t row_zero_based) {
   basl = static_cast<std::uint8_t>((basl << 2u) | baslBase);
   basl = static_cast<std::uint8_t>(basl + ReadZeroPageByte(kMON_WNDLFT));
 
-  WriteZeroPageByte(kMON_BASL, basl);
-  WriteZeroPageByte(kMON_BASH, bash);
+  variables().MON_BASL = ApplesoftVariables::makeWord(basl, bash);
 }
 
 namespace {
@@ -302,8 +301,7 @@ void MON_CLREOL() {
   constexpr std::uint8_t kMON_BASH = ApplesoftVariables::ZP_MON_BASH;
   constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
 
-  const std::uint16_t baseAddress = ApplesoftVariables::makeWord(
-      ReadZeroPageByte(kMON_BASL), ReadZeroPageByte(kMON_BASH));
+  const std::uint16_t baseAddress = variables_const().MON_BASL;
   const std::uint8_t startCol = ReadZeroPageByte(kMON_CH);
   const std::uint8_t windowWidth = ReadZeroPageByte(kMON_WNDWDTH);
 
@@ -566,8 +564,7 @@ void AS_HPOSN(const HiResCoordinates &point) {
                     static_cast<std::uint8_t>(point.x >> 8u));
   WriteZeroPageByte(kAS_HGR_Y, point.y);
 
-  WriteZeroPageByte(kMON_GBASL, ApplesoftVariables::lowByte(rowBase));
-  WriteZeroPageByte(kMON_GBASH, ApplesoftVariables::highByte(rowBase));
+  variables().MON_GBASL = rowBase;
   WriteZeroPageByte(kAS_HGR_HORIZ, horiz);
   WriteZeroPageByte(kMON_HMASK, mask);
 

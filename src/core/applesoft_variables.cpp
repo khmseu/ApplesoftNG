@@ -101,6 +101,14 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return AS_CPRMASK;
   case ZP_MON_CH:
     return MON_CH;
+  case ZP_MON_GBASL:
+    return lowByte(MON_GBASL);
+  case ZP_MON_GBASL + 1:
+    return highByte(MON_GBASL);
+  case ZP_MON_BASL:
+    return lowByte(MON_BASL);
+  case ZP_MON_BASL + 1:
+    return highByte(MON_BASL);
   case ZP_MON_CHKSUM:
     return MON_CHKSUM;
   case ZP_MON_COLOR:
@@ -383,6 +391,18 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     return;
   case ZP_MON_CH:
     MON_CH = value;
+    return;
+  case ZP_MON_GBASL:
+    setLowByte(MON_GBASL, value);
+    return;
+  case ZP_MON_GBASL + 1:
+    setHighByte(MON_GBASL, value);
+    return;
+  case ZP_MON_BASL:
+    setLowByte(MON_BASL, value);
+    return;
+  case ZP_MON_BASL + 1:
+    setHighByte(MON_BASL, value);
     return;
   case ZP_MON_CHKSUM:
     MON_CHKSUM = value;
