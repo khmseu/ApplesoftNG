@@ -265,6 +265,8 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return lowByte(AS_HIGHTR);
   case ZP_AS_HIGHTR + 1:
     return highByte(AS_HIGHTR);
+  case ZP_AS_EXPON:
+    return AS_EXPON;
   case ZP_AS_INDX:
     return AS_INDX;
   case ZP_AS_LOWTR:
@@ -283,6 +285,8 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return AS_FAC[4];
   case ZP_AS_FAC_SIGN:
     return AS_FAC_SIGN;
+  case ZP_AS_SERLEN:
+    return AS_SERLEN;
   case ZP_AS_SHIFT_SIGN_EXT:
     return AS_SHIFT_SIGN_EXT;
   case ZP_AS_ARG:
@@ -710,6 +714,9 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
   case ZP_AS_HIGHTR + 1:
     setHighByte(AS_HIGHTR, value);
     return;
+  case ZP_AS_EXPON:
+    AS_EXPON = value;
+    return;
   case ZP_AS_INDX:
     AS_INDX = value;
     return;
@@ -736,6 +743,9 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     return;
   case ZP_AS_FAC_SIGN:
     AS_FAC_SIGN = value;
+    return;
+  case ZP_AS_SERLEN:
+    AS_SERLEN = value;
     return;
   case ZP_AS_SHIFT_SIGN_EXT:
     AS_SHIFT_SIGN_EXT = value;

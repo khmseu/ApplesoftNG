@@ -93,11 +93,75 @@ public:
     ApplesoftVariables *vars_ = nullptr;
   };
 
+  class TempExpAlias {
+  public:
+    explicit TempExpAlias(ApplesoftVariables *vars = nullptr) : vars_(vars) {}
+
+    void bind(ApplesoftVariables *vars) { vars_ = vars; }
+
+    operator std::uint8_t() const { return vars_ == nullptr ? 0u : vars_->AS_INDX; }
+
+    TempExpAlias &operator=(std::uint8_t value) {
+      if (vars_ != nullptr) {
+        vars_->AS_INDX = value;
+      }
+      return *this;
+    }
+
+  private:
+    ApplesoftVariables *vars_ = nullptr;
+  };
+
+  class DpFlgAlias {
+  public:
+    explicit DpFlgAlias(ApplesoftVariables *vars = nullptr) : vars_(vars) {}
+
+    void bind(ApplesoftVariables *vars) { vars_ = vars; }
+
+    operator std::uint8_t() const {
+      return vars_ == nullptr ? 0u : lowByte(vars_->AS_LOWTR);
+    }
+
+    DpFlgAlias &operator=(std::uint8_t value) {
+      if (vars_ != nullptr) {
+        setLowByte(vars_->AS_LOWTR, value);
+      }
+      return *this;
+    }
+
+  private:
+    ApplesoftVariables *vars_ = nullptr;
+  };
+
+  class ExpSignAlias {
+  public:
+    explicit ExpSignAlias(ApplesoftVariables *vars = nullptr) : vars_(vars) {}
+
+    void bind(ApplesoftVariables *vars) { vars_ = vars; }
+
+    operator std::uint8_t() const {
+      return vars_ == nullptr ? 0u : highByte(vars_->AS_LOWTR);
+    }
+
+    ExpSignAlias &operator=(std::uint8_t value) {
+      if (vars_ != nullptr) {
+        setHighByte(vars_->AS_LOWTR, value);
+      }
+      return *this;
+    }
+
+  private:
+    ApplesoftVariables *vars_ = nullptr;
+  };
+
   ApplesoftVariables() {
     AS_LENGTH.bind(this);
     AS_SGNCPR.bind(this);
     AS_FAC_EXTENSION.bind(this);
     AS_ARG_EXTENSION.bind(this);
+    AS_TMPEXP.bind(this);
+    AS_DPFLG.bind(this);
+    AS_EXPSGN.bind(this);
   }
 
   // Canonical zero-page/fixed address names used by assembler ports.
@@ -177,13 +241,18 @@ public:
             // low byte.
   static constexpr std::uint8_t ZP_AS_ARYPNT = 0x94;
   static constexpr std::uint8_t ZP_AS_HIGHTR = 0x96;
+  static constexpr std::uint8_t ZP_AS_TMPEXP = 0x99;
   static constexpr std::uint8_t ZP_AS_INDX = 0x99;
+  static constexpr std::uint8_t ZP_AS_EXPON = 0x9a;
+  static constexpr std::uint8_t ZP_AS_DPFLG = 0x9b;
+  static constexpr std::uint8_t ZP_AS_EXPSGN = 0x9c;
   static constexpr std::uint8_t ZP_AS_LOWTR = 0x9b;
   static constexpr std::uint8_t ZP_AS_FAC = 0x9d;
   static constexpr std::uint8_t ZP_AS_FAC_MANTISSA =
       0x9e; // Start of 4-byte mantissa (9e, 9f, a0, a1)
   static constexpr std::uint8_t ZP_AS_FAC_EXTENSION = 0xac;
   static constexpr std::uint8_t ZP_AS_FAC_SIGN = 0xa2;
+  static constexpr std::uint8_t ZP_AS_SERLEN = 0xa3;
   static constexpr std::uint8_t ZP_AS_SHIFT_SIGN_EXT = 0xa4;
   static constexpr std::uint8_t ZP_AS_ARG = 0xa5;
   static constexpr std::uint8_t ZP_AS_ARG_MANTISSA =
@@ -362,9 +431,11 @@ public:
   std::uint16_t AS_ARYPNT = 0; // $94/$95
   std::uint16_t AS_HIGHTR = 0; // $96/$97
   std::uint8_t AS_INDX = 0;    // $99
+  std::uint8_t AS_EXPON = 0;   // $9a
   std::uint16_t AS_LOWTR = 0;  // $9b/$9c
   std::array<std::uint8_t, 5> AS_FAC{}; // $9d..$a1
   std::uint8_t AS_FAC_SIGN = 0;         // $a2
+  std::uint8_t AS_SERLEN = 0;           // $a3
   std::uint8_t AS_SHIFT_SIGN_EXT = 0;   // $a4
   std::array<std::uint8_t, 6> AS_ARG{}; // $a5..$aa
   std::uint16_t AS_STRNG1 = 0;          // $ab/$ac
@@ -373,6 +444,9 @@ public:
       AS_FAC_EXTENSION{}; // Virtual alias for $ac (AS_STRNG1 high byte)
   ARGExtensionAlias
       AS_ARG_EXTENSION{};      // Virtual alias for $92 (AS_JMPADRS high byte)
+    TempExpAlias AS_TMPEXP{}; // Virtual alias for $99 (AS_INDX)
+    DpFlgAlias AS_DPFLG{};    // Virtual alias for $9b (AS_LOWTR low byte)
+    ExpSignAlias AS_EXPSGN{}; // Virtual alias for $9c (AS_LOWTR high byte)
   std::uint16_t AS_STRNG2 = 0; // $ad/$ae
   std::uint16_t AS_PRGEND = 0; // $af/$b0
   std::uint16_t AS_TXTPTR = 0; // $b8/$b9

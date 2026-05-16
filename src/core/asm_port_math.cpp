@@ -6,8 +6,6 @@
 
 namespace applesoft::asm_port {
 
-extern std::uint8_t ReadZeroPageByte(std::uint8_t address);
-extern void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 extern std::uint8_t ReadProgramByte(std::uint16_t address);
 extern void AS_ERROR(std::uint8_t error_code);
 extern void AS_LOAD_ARG_FROM_YA();
@@ -296,9 +294,17 @@ void AS_FIN() {
   // $9D-$A1: AS_FAC
   // $A2: AS_FAC_SIGN
   // $A3: AS_SERLEN
-  for (int i = 0x99; i <= 0xA3; ++i) {
-    WriteZeroPageByte(static_cast<std::uint8_t>(i), 0);
-  }
+  variables().AS_TMPEXP = 0;
+  variables().AS_EXPON = 0;
+  variables().AS_DPFLG = 0;
+  variables().AS_EXPSGN = 0;
+  variables().AS_FAC[0] = 0;
+  variables().AS_FAC[1] = 0;
+  variables().AS_FAC[2] = 0;
+  variables().AS_FAC[3] = 0;
+  variables().AS_FAC[4] = 0;
+  variables().AS_FAC_SIGN = 0;
+  variables().AS_SERLEN = 0;
 
   std::uint8_t ch = variables_const().AS_CHARAC;
   // Note: AS_CHRGET already populated AS_CHARAC and set C flag based on if it's
@@ -310,7 +316,7 @@ void AS_FIN() {
   }
 
   if (ch == '-') {
-    WriteZeroPageByte(0xA3, 0xFF); // AS_SERLEN is $A3
+    variables().AS_SERLEN = 0xFF;
     goto AS_FIN_1;
   }
 
@@ -352,7 +358,7 @@ AS_FIN_3:
 
 AS_L_FIN_3_1:
   // AS_EXPSGN is $9C
-  WriteZeroPageByte(0x9C, 0xFF);
+  variables().AS_EXPSGN = 0xFF;
 
 AS_FIN_4:
   ch = AS_CHRGET();
@@ -363,9 +369,9 @@ AS_FIN_5:
   }
 
 AS_FIN_6:
-  if (ReadZeroPageByte(0x9C) & 0x80) {
-    std::uint8_t expon = ReadZeroPageByte(0x9A);
-    WriteZeroPageByte(0x9A, static_cast<std::uint8_t>(0 - expon));
+  if ((static_cast<std::uint8_t>(variables_const().AS_EXPSGN) & 0x80u) != 0u) {
+    std::uint8_t expon = variables_const().AS_EXPON;
+    variables().AS_EXPON = static_cast<std::uint8_t>(0 - expon);
   }
 
 AS_FIN_7:
@@ -376,20 +382,20 @@ AS_FIN_10:
   // AS_DPFLG is $9B. Use BIT/ROR logic: first time sets $80, second time sets
   // $C0
   {
-    std::uint8_t dpflg = ReadZeroPageByte(0x9B);
+    std::uint8_t dpflg = variables_const().AS_DPFLG;
     if (dpflg & 0x80) {
       // Second decimal point terminates number
       goto AS_FIN_7;
     }
-    WriteZeroPageByte(0x9B, 0x80);
+    variables().AS_DPFLG = 0x80;
     goto AS_FIN_1;
   }
 
 AS_FIN_8: {
-  std::int8_t expon = static_cast<std::int8_t>(ReadZeroPageByte(0x9A));
-  std::int8_t tmpexp = static_cast<std::int8_t>(ReadZeroPageByte(0x99));
+  std::int8_t expon = static_cast<std::int8_t>(variables_const().AS_EXPON);
+  std::int8_t tmpexp = static_cast<std::int8_t>(static_cast<std::uint8_t>(variables_const().AS_TMPEXP));
   expon -= tmpexp;
-  WriteZeroPageByte(0x9A, static_cast<std::uint8_t>(expon));
+  variables().AS_EXPON = static_cast<std::uint8_t>(expon);
 
   while (expon != 0) {
     if (expon < 0) {
@@ -401,7 +407,7 @@ AS_FIN_8: {
     }
   }
 
-  if (ReadZeroPageByte(0xA3) & 0x80) { // AS_SERLEN is $A3
+  if ((variables_const().AS_SERLEN & 0x80u) != 0u) {
     AS_NEGATE_FAC();
   }
 }
@@ -411,9 +417,10 @@ AS_FIN_9:
   // Accumulate digit into AS_FAC
   {
     std::uint8_t digit = ch;
-    if (ReadZeroPageByte(0x9B) & 0x80) {
+    if ((variables_const().AS_DPFLG & 0x80u) != 0u) {
       // Count fractional digit
-      WriteZeroPageByte(0x99, ReadZeroPageByte(0x99) + 1);
+      variables().AS_TMPEXP = static_cast<std::uint8_t>(
+          static_cast<std::uint8_t>(variables_const().AS_TMPEXP) + 1u);
     }
     AS_MUL10();
     AS_ADDACC_WITH_DIGIT(digit - '0');
@@ -423,16 +430,17 @@ AS_FIN_9:
 AS_GETEXP:
   // Accumulate exponent digit
   {
-    std::uint16_t expon = ReadZeroPageByte(0x9A);
+    std::uint16_t expon = variables_const().AS_EXPON;
     if (expon >= 10) {
-      if (!(ReadZeroPageByte(0x9C) & 0x80)) {
+      if ((static_cast<std::uint8_t>(variables_const().AS_EXPSGN) & 0x80u) ==
+          0u) {
         AS_ERROR(0x10); // AS_OVERFLOW (AS_ERR_OVERFLOW is $10 or similar)
       }
       // AS_Large negative exponent makes AS_FAC=0 eventually
-      WriteZeroPageByte(0x9A, 100); // Caps it
+      variables().AS_EXPON = 100;
     } else {
       expon = expon * 10 + (ch - '0');
-      WriteZeroPageByte(0x9A, static_cast<std::uint8_t>(expon));
+      variables().AS_EXPON = static_cast<std::uint8_t>(expon);
     }
     goto AS_FIN_4;
   }
