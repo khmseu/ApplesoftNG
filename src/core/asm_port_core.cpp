@@ -816,7 +816,7 @@ void AS_MAKE_NEW_ARRAY() {
   } // integer→2, string→3, float→5
 
   // T:11de – stx AS_STRNG2: seed running product with element size
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_STRNG2, elemSize);
+  ApplesoftVariables::setLowByte(variables().AS_STRNG2, elemSize);
 
   // T:11e0 – Y=4: write AS_NUMDIM to descriptor[4]  (three iny's advance Y past
   // size slots)
@@ -1486,8 +1486,8 @@ void AS_HANDLERR() {
   constexpr std::uint8_t kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
 
-  WriteZeroPageByte(kAS_ERRNUM, gPendingErrorCode);
-  WriteZeroPageByte(kAS_ERRSTK, variables_const().AS_REMSTK);
+  variables().AS_ERRNUM = gPendingErrorCode;
+  variables().AS_ERRSTK = variables_const().AS_REMSTK;
 
   WriteZeroPageWord(kAS_ERRLIN, ReadZeroPageWord(kAS_CURLIN));
   WriteZeroPageWord(kAS_ERRPOS, ReadZeroPageWord(kAS_OLDTEXT));
@@ -1746,10 +1746,12 @@ void AS_DEF() {
 
   // Stack the argument variable pointer (AS_VARPNT)
   constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
-  WriteZeroPageByte(
-      static_cast<std::uint8_t>(kAS_VARPNT + 1u),
-      ReadZeroPageByte(static_cast<std::uint8_t>(kAS_VARPNT + 1u)));
-  WriteZeroPageByte(kAS_VARPNT, ReadZeroPageByte(kAS_VARPNT));
+    ApplesoftVariables::setHighByte(
+      variables().AS_VARPNT,
+      ApplesoftVariables::highByte(variables_const().AS_VARPNT));
+    ApplesoftVariables::setLowByte(
+      variables().AS_VARPNT,
+      ApplesoftVariables::lowByte(variables_const().AS_VARPNT));
 
   // Stack the text pointer (AS_TXTPTR)
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;

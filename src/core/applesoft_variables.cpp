@@ -345,6 +345,10 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return AS_HGR_COLLISIONS;
   case ZP_AS_LOCK:
     return AS_LOCK;
+  case ZP_AS_ERRNUM:
+    return AS_ERRNUM;
+  case ZP_AS_ERRSTK:
+    return AS_ERRSTK;
   case ZP_AS_ERRFLG:
     return AS_ERRFLG;
   case ZP_AS_FIRST:
@@ -817,6 +821,12 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     return;
   case ZP_AS_LOCK:
     AS_LOCK = value;
+    return;
+  case ZP_AS_ERRNUM:
+    AS_ERRNUM = value;
+    return;
+  case ZP_AS_ERRSTK:
+    AS_ERRSTK = value;
     return;
   case ZP_AS_ERRFLG:
     AS_ERRFLG = value;

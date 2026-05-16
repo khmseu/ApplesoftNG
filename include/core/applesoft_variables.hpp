@@ -387,6 +387,8 @@ public:
   std::uint16_t AS_HGR_SHAPE_PNTR = 0; // $e8/$e9
   std::uint8_t AS_HGR_COLLISIONS = 0;  // $ea
   std::uint8_t AS_LOCK = 0;            // $d6
+  std::uint8_t AS_ERRNUM = 0;          // $de
+  std::uint8_t AS_ERRSTK = 0;          // $df
   std::uint8_t AS_ERRFLG = 0;          // $d8
   std::uint8_t AS_FIRST = 0;           // $f0
   std::uint8_t AS_SPEEDZ = 0;          // $f1  complement of speed value
