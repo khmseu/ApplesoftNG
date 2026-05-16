@@ -1,4 +1,5 @@
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // AS_Labels: AS_QT_ERROR (inclusive) .. AS_GTFORPNT (exclusive)
 // Name normalization: none
 //
@@ -14,12 +15,12 @@
 namespace applesoft::asm_port {
 
 std::string_view AS_QT_ERROR(std::size_t index) {
-    static constexpr std::array<std::string_view, 3> table = {
-        " AS_ERROR\a",   // AS_QT_ERROR: leading space + AS_ERROR + bell ($07)
-        " IN ",       // AS_QT_IN: surrounding spaces
-        "\rBREAK\a", // AS_QT_BREAK: CR prefix + BREAK + bell ($07)
-    };
-    return table[index];
+  static constexpr std::array<std::string_view, 3> table = {
+      " AS_ERROR\a", // AS_QT_ERROR: leading space + AS_ERROR + bell ($07)
+      " IN ",        // AS_QT_IN: surrounding spaces
+      "\rBREAK\a",   // AS_QT_BREAK: CR prefix + BREAK + bell ($07)
+  };
+  return table[index];
 }
 
 } // namespace applesoft::asm_port

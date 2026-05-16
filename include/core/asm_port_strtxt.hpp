@@ -2,7 +2,8 @@
 
 namespace applesoft::asm_port {
 
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // AS_Labels: AS_STRTXT (inclusive) .. AS_NOT_ (exclusive)
 // Name normalization: none (assembler label AS_STRTXT kept verbatim).
 void AS_STRTXT();

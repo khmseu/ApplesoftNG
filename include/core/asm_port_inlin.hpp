@@ -4,7 +4,8 @@
 
 namespace applesoft::asm_port {
 
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // AS_Labels: AS_INLIN (inclusive) .. AS_INLIN2 (exclusive)
 // Name normalization: none (assembler label AS_INLIN kept verbatim).
 Inlin2Result AS_INLIN();

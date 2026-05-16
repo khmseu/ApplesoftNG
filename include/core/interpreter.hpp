@@ -5,16 +5,16 @@ class Memory;
 
 class Interpreter {
 public:
-    Interpreter();
-    ~Interpreter();
+  Interpreter();
+  ~Interpreter();
 
-    void execute();
-    void execute(const char* code);
-    void setMemory(Memory* memory);
-    Memory* getMemory() const;
+  void execute();
+  void execute(const char *code);
+  void setMemory(Memory *memory);
+  Memory *getMemory() const;
 
 private:
-    Memory* memory;
+  Memory *memory;
 };
 
 #endif // AS_INTERPRETER_HPP

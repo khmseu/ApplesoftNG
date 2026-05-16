@@ -1,17 +1,17 @@
 #include "core/asm_port_error.hpp"
-#include "core/asm_port_print.hpp"
-#include "platform/asm_port_outdo.hpp"
-#include "core/asm_port_error_messages.hpp"
-#include "core/asm_port_chkmem.hpp"
-#include "core/asm_port_gtforpnt.hpp"
-#include "core/asm_port_reason.hpp"
-#include "core/io_ports.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_chkmem.hpp"
+#include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_gtforpnt.hpp"
+#include "core/asm_port_mathtbl.hpp"
+#include "core/asm_port_print.hpp"
 #include "core/asm_port_qt_error.hpp"
+#include "core/asm_port_reason.hpp"
+#include "core/asm_port_stack.hpp"
 #include "core/asm_port_token_address_table.hpp"
 #include "core/asm_port_token_name_table.hpp"
-#include "core/asm_port_mathtbl.hpp"
-#include "core/asm_port_stack.hpp"
+#include "core/io_ports.hpp"
+#include "platform/asm_port_outdo.hpp"
 
 #include <array>
 #include <optional>
@@ -24,7 +24,7 @@ void WriteZeroPageByte(std::uint8_t address, std::uint8_t value);
 void WriteZeroPageWord(std::uint8_t address, std::uint16_t value);
 std::uint16_t ReadZeroPageWord(std::uint8_t address);
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
-    return static_cast<std::uint8_t>(lhs + rhs);
+  return static_cast<std::uint8_t>(lhs + rhs);
 }
 void AS_SCRTCH();
 void AS_RESTART();
@@ -64,7 +64,6 @@ void AS_LOMEM();
 void AS_SPEED();
 std::uint8_t AS_PLOTFNS();
 std::uint8_t AS_LINCOOR();
-
 
 void AS_CONTROL_C_TYPED();
 bool AS_SETPTRS();
@@ -191,7 +190,6 @@ void AS_GIVAYF(std::int16_t value);
 void AS_PRINT_ERROR_LINNUM();
 void AS_PRINT_ERROR_LINNUM(std::string_view prefix);
 
-
 std::int8_t gNumericCompareResult = 0;
 bool gNumericCompareCarry = false;
 std::uint8_t gFloatInput = 0;
@@ -200,14 +198,14 @@ std::uint8_t gPendingErrorCode = AS_ERR_SYNTAX;
 
 std::uint8_t gJerErrorCode = AS_ERR_SYNTAX;
 
-
 // void AS_OUTDO() {
-//     // TODO(asm-port): write the current output character from the Applesoft line
+//     // TODO(asm-port): write the current output character from the Applesoft
+//     line
 //     // printer to the console.
 // }
 
-
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // AS_Labels: AS_PEEK (inclusive) .. AS_POKE (exclusive)
 // Name normalization: none (assembler label AS_PEEK kept verbatim).
 } // namespace applesoft::asm_port

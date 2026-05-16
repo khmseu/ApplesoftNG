@@ -4,7 +4,8 @@
 
 namespace applesoft::asm_port {
 
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 // AS_Labels: AS_STRLT2 (inclusive) .. AS_PUTNEW (exclusive)
 // Name normalization: none (assembler label AS_STRLT2 kept verbatim).
 void AS_STRLT2(std::uint16_t address);

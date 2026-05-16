@@ -5,26 +5,26 @@
 
 namespace applesoft::asm_port {
 
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 
-// AS_FREFAC: dereference the string descriptor at AS_FAC[3]/AS_FAC[4], optionally
-// release the temporary descriptor, store the data pointer in AS_INDEX, and
-// return the string length.
+// AS_FREFAC: dereference the string descriptor at AS_FAC[3]/AS_FAC[4],
+// optionally release the temporary descriptor, store the data pointer in
+// AS_INDEX, and return the string length.
 // TODO(asm-port): AS_FRETMS (temporary-release part) not yet implemented.
- std::uint8_t AS_FREFAC() ;
-
+std::uint8_t AS_FREFAC();
 
 // AS_Labels: AS_STRPRT (inclusive) .. AS_OUTSP (exclusive)
 // Name normalization: none (assembler label AS_STRPRT kept verbatim).
-// Prints the string whose descriptor is in AS_FAC[3]/AS_FAC[4] by calling AS_FREFAC to
-// obtain the data pointer (stored in AS_INDEX) and length, then calls AS_OUTDO for
-// each character.
+// Prints the string whose descriptor is in AS_FAC[3]/AS_FAC[4] by calling
+// AS_FREFAC to obtain the data pointer (stored in AS_INDEX) and length, then
+// calls AS_OUTDO for each character.
 void AS_STRPRT();
 
 // AS_Labels: AS_STROUT (inclusive) .. AS_STRPRT (exclusive)
 // Name normalization: none (assembler label AS_STROUT kept verbatim).
-// Makes the string at address (a=lo, y=hi) into a AS_FAC descriptor via AS_STRLIT,
-// then falls through to AS_STRPRT.
+// Makes the string at address (a=lo, y=hi) into a AS_FAC descriptor via
+// AS_STRLIT, then falls through to AS_STRPRT.
 void AS_STROUT(std::uint16_t address);
 
 // Helper for direct string literal output used by error/input paths.
@@ -32,9 +32,10 @@ void AS_STROUT(std::string_view text);
 
 // AS_Labels: AS_PR_STRING (inclusive) .. AS_PRINT (exclusive)
 // Name normalization: none (assembler label AS_PR_STRING kept verbatim).
-// Prints the current AS_FAC string via AS_STRPRT, fetches the next character via
-// AS_CHRGOT, and re-enters the AS_PRINT list loop.  Falls through to AS_PRINT in the
-// original; modeled by delegating to AS_PRINT after the end-of-list check.
+// Prints the current AS_FAC string via AS_STRPRT, fetches the next character
+// via AS_CHRGOT, and re-enters the AS_PRINT list loop.  Falls through to
+// AS_PRINT in the original; modeled by delegating to AS_PRINT after the
+// end-of-list check.
 void AS_PR_STRING();
 
 // AS_Labels: AS_PRINT (inclusive) .. AS_PRINT2 (exclusive)

@@ -4,7 +4,8 @@
 
 namespace applesoft::asm_port {
 
-// Source: SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
 
 // AS_Labels: AS_OUTDO (inclusive) .. AS_INPUTERR (exclusive)
 // Name normalization: none (assembler label AS_OUTDO kept verbatim).
@@ -21,8 +22,8 @@ void MON_COUT1(std::uint8_t a);
 // AS_Labels: AS_OUTSP (inclusive) .. AS_OUTQUES (exclusive)
 // Name normalization: none.
 // Prints a space ($20).  In the 6502 original a .byt $2c trick causes AS_OUTSP
-// to bypass AS_OUTQUES's own load and fall directly to AS_OUTDO with A=$20; in C++
-// AS_OUTDO is called directly with the space character.
+// to bypass AS_OUTQUES's own load and fall directly to AS_OUTDO with A=$20; in
+// C++ AS_OUTDO is called directly with the space character.
 void AS_OUTSP();
 
 // AS_Labels: AS_OUTQUES (inclusive) .. AS_OUTDO (exclusive)
