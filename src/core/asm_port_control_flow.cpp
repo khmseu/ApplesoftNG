@@ -100,17 +100,14 @@ constexpr std::uint8_t kConOnePacked[kPackedFloatByteCount] = {
     0x81u, 0x00u, 0x00u, 0x00u, 0x00u};
 
 void ApplyFacSign() {
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
-
-  const std::uint8_t facSign = ReadZeroPageByte(kAS_FAC_SIGN);
-  const std::uint8_t facMantissaHigh = ReadZeroPageByte(kAS_FAC + 1u);
+  const std::uint8_t facSign = variables_const().AS_FAC_SIGN;
+  const std::uint8_t facMantissaHigh = variables_const().AS_FAC[1];
   // ROM sequence at $079C: AS_LDA AS_FAC_SIGN / AS_ORA #$7F / AND AS_FAC+1 /
   // STA AS_FAC+1. This clears bit 7 for positive values and preserves AS_FAC+1
   // when AS_FAC_SIGN is negative.
   const std::uint8_t signedMantissaHigh =
       static_cast<std::uint8_t>(facMantissaHigh & (facSign | 0x7fu));
-  WriteZeroPageByte(kAS_FAC + 1u, signedMantissaHigh);
+  variables().AS_FAC[1] = signedMantissaHigh;
 }
 
 void SetBranchTargetToAS_STEP() {
@@ -127,25 +124,20 @@ void AS_LOAD_FAC_FROM_YA() {
   // AS_STORE_FAC_IN_TEMP2_ROUNDED starts at the exclusive end label. Name
   // normalization: none (assembler label AS_LOAD_FAC_FROM_YA kept verbatim).
   constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
-  constexpr std::uint8_t kAS_FAC_EXTENSION =
-      ApplesoftVariables::ZP_AS_FAC_EXTENSION;
-
   // Caller precondition: AS_INDEX points to the packed 5-byte source value.
   const ProgramPointer source{ReadZeroPageWord(kAS_INDEX)};
-  WriteZeroPageByte(kAS_FAC + 4u, source.read(4u));
-  WriteZeroPageByte(kAS_FAC + 3u, source.read(3u));
-  WriteZeroPageByte(kAS_FAC + 2u, source.read(2u));
+  variables().AS_FAC[4] = source.read(4u);
+  variables().AS_FAC[3] = source.read(3u);
+  variables().AS_FAC[2] = source.read(2u);
 
   const std::uint8_t signPackedMantissa = source.read(1u);
   // AS_FAC_SIGN stores packed byte #1 (bit 7 is sign, remaining bits are high
   // mantissa bits). AS_FAC+1 then reuses mantissa bits with bit 7 forced set by
   // AS_OR #$80 to restore normalized form.
-  WriteZeroPageByte(kAS_FAC_SIGN, signPackedMantissa);
-  WriteZeroPageByte(kAS_FAC + 1u,
-                    static_cast<std::uint8_t>(signPackedMantissa | 0x80u));
-  WriteZeroPageByte(kAS_FAC, source.read(0u));
+  variables().AS_FAC_SIGN = signPackedMantissa;
+  variables().AS_FAC[1] =
+      static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
+  variables().AS_FAC[0] = source.read(0u);
   variables().AS_FAC_EXTENSION = 0u;
 }
 
@@ -160,12 +152,12 @@ std::int8_t AS_SIGN2(std::uint8_t sign) {
 
 std::int8_t AS_SIGN1() {
   // AS_Labels: AS_SIGN1 (inclusive) .. AS_SIGN2 (exclusive)
-  return AS_SIGN2(ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN));
+  return AS_SIGN2(variables_const().AS_FAC_SIGN);
 }
 
 std::int8_t AS_SIGN() {
   // AS_Labels: AS_SIGN (inclusive) .. AS_SIGN2 (exclusive)
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC) == 0u) {
+  if (variables_const().AS_FAC[0] == 0u) {
     return 0; // Numbers are effectively zero
   }
   return AS_SIGN1();
@@ -186,7 +178,7 @@ std::int8_t AS_L_FCOMP2_1(bool compareCarrySet) {
   // AS_Labels: AS_L_FCOMP2_1 (inclusive) .. AS_L_FCOMP2_2 (exclusive)
   // Name normalization: none (assembler label AS_L_FCOMP2_1 kept verbatim).
 
-  std::uint8_t signByte = ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN);
+  std::uint8_t signByte = variables_const().AS_FAC_SIGN;
   if (compareCarrySet) {
     signByte ^= 0xffu;
   }
@@ -217,13 +209,13 @@ void AS_FCOMP2() {
   }
 
   const std::uint8_t comparandMantissaHighWithSign = comparand.read(1u);
-  if (((comparandMantissaHighWithSign ^ ReadZeroPageByte(kAS_FAC_SIGN)) &
+  if (((comparandMantissaHighWithSign ^ variables_const().AS_FAC_SIGN) &
        0x80u) != 0u) {
     gNumericCompareResult = AS_SIGN1();
     return;
   }
 
-  const std::uint8_t facExponent = ReadZeroPageByte(kAS_FAC);
+  const std::uint8_t facExponent = variables_const().AS_FAC[0];
   bool compareCarrySet = comparandExponent >= facExponent;
   if (comparandExponent != facExponent) {
     gNumericCompareResult = AS_L_FCOMP2_1(compareCarrySet);
@@ -232,8 +224,7 @@ void AS_FCOMP2() {
 
   const std::uint8_t normalizedComparandMantissaHigh =
       static_cast<std::uint8_t>(comparandMantissaHighWithSign | 0x80u);
-  const std::uint8_t facMantissaHigh =
-      ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u));
+  const std::uint8_t facMantissaHigh = variables_const().AS_FAC[1];
   compareCarrySet = normalizedComparandMantissaHigh >= facMantissaHigh;
   if (normalizedComparandMantissaHigh != facMantissaHigh) {
     gNumericCompareResult = AS_L_FCOMP2_1(compareCarrySet);
@@ -242,8 +233,7 @@ void AS_FCOMP2() {
 
   for (std::uint16_t offset = 2u; offset <= 3u; ++offset) {
     const std::uint8_t comparandMantissaByte = comparand.read(offset);
-    const std::uint8_t facMantissaByte =
-        ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + offset));
+    const std::uint8_t facMantissaByte = variables_const().AS_FAC[offset];
     compareCarrySet = comparandMantissaByte >= facMantissaByte;
     if (comparandMantissaByte != facMantissaByte) {
       gNumericCompareResult = AS_L_FCOMP2_1(compareCarrySet);
@@ -253,8 +243,7 @@ void AS_FCOMP2() {
 
   const std::uint8_t facExtension = variables_const().AS_FAC_EXTENSION;
   const std::uint8_t comparandExtension = comparand.read(4u);
-  const std::uint8_t facMantissaLow =
-      ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u));
+  const std::uint8_t facMantissaLow = variables_const().AS_FAC[4];
   compareCarrySet =
       (0x7fu > facExtension) ||
       ((0x7fu == facExtension) && (comparandExtension >= facMantissaLow));
@@ -273,20 +262,16 @@ void AS_FRM_STACK_2(std::uint8_t signByte) {
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_FRM_STACK_2 (inclusive) .. AS_FRM_STACK_3 (exclusive)
   // Name normalization: none (assembler label AS_FRM_STACK_2 kept verbatim).
-  constexpr std::uint8_t kAS_INDEXZeroPageAddress =
-      ApplesoftVariables::ZP_AS_INDEX;
-  constexpr std::uint8_t kAS_INDEXHighByteAddress =
-      static_cast<std::uint8_t>(kAS_INDEXZeroPageAddress + 1u);
-
   const std::uint8_t returnAddressAS_Low = theStack().popByte();
   // Net effect of ROM sequence PLA / STA AS_INDEX / INC AS_INDEX:
   // store the low return-address byte plus one as an 8-bit value so AS_INDEX
   // points at the byte immediately after the JSR call-site return location.
   // The uint8_t cast intentionally truncates carry; ROM assumes no
   // page-boundary carry into AS_INDEX+1.
-  WriteZeroPageByte(kAS_INDEXZeroPageAddress,
-                    static_cast<std::uint8_t>(returnAddressAS_Low + 1u));
-  WriteZeroPageByte(kAS_INDEXHighByteAddress, theStack().popByte());
+  ApplesoftVariables::setLowByte(
+      variables().AS_INDEX,
+      static_cast<std::uint8_t>(returnAddressAS_Low + 1u));
+  ApplesoftVariables::setHighByte(variables().AS_INDEX, theStack().popByte());
 
   theStack().pushByte(signByte);
 }
@@ -296,16 +281,15 @@ void AS_FRM_STACK_3() {
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_FRM_STACK_3 (inclusive) .. AS_NOTMATH (exclusive)
   // Name normalization: none (assembler label AS_FRM_STACK_3 kept verbatim).
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
   constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
 
   AS_ROUND_FAC();
 
-  theStack().pushByte(ReadZeroPageByte(kAS_FAC + 4u));
-  theStack().pushByte(ReadZeroPageByte(kAS_FAC + 3u));
-  theStack().pushByte(ReadZeroPageByte(kAS_FAC + 2u));
-  theStack().pushByte(ReadZeroPageByte(kAS_FAC + 1u));
-  theStack().pushByte(ReadZeroPageByte(kAS_FAC));
+  theStack().pushByte(variables_const().AS_FAC[4]);
+  theStack().pushByte(variables_const().AS_FAC[3]);
+  theStack().pushByte(variables_const().AS_FAC[2]);
+  theStack().pushByte(variables_const().AS_FAC[1]);
+  theStack().pushByte(variables_const().AS_FAC[0]);
 
   const std::uint16_t branchTarget = ReadZeroPageWord(kAS_INDEX);
   if (branchTarget == kStepAS_LabelAddress) {
@@ -334,20 +318,20 @@ std::uint8_t ScanAheadOffset(std::uint8_t terminator) {
   constexpr std::uint8_t kAS_CHARAC = ApplesoftVariables::ZP_AS_CHARAC;
   constexpr std::uint8_t kAS_ENDCHR = ApplesoftVariables::ZP_AS_ENDCHR;
 
-  WriteZeroPageByte(kAS_CHARAC, terminator);
+  variables().AS_CHARAC = terminator;
   std::uint8_t offset = 0;
-  WriteZeroPageByte(kAS_ENDCHR, 0);
+  variables().AS_ENDCHR = 0;
 
   while (true) {
-    const std::uint8_t previousEnd = ReadZeroPageByte(kAS_ENDCHR);
-    const std::uint8_t previousCharac = ReadZeroPageByte(kAS_CHARAC);
-    WriteZeroPageByte(kAS_CHARAC, previousEnd);
-    WriteZeroPageByte(kAS_ENDCHR, previousCharac);
+    const std::uint8_t previousEnd = variables_const().AS_ENDCHR;
+    const std::uint8_t previousCharac = variables_const().AS_CHARAC;
+    variables().AS_CHARAC = previousEnd;
+    variables().AS_ENDCHR = previousCharac;
 
     while (true) {
       const ProgramPointer textPtr{ReadZeroPageWord(kAS_TXTPTR)};
       const std::uint8_t ch = textPtr.read(offset);
-      if (ch == 0 || ch == ReadZeroPageByte(kAS_ENDCHR)) {
+      if (ch == 0 || ch == variables_const().AS_ENDCHR) {
         return offset;
       }
 
@@ -369,26 +353,21 @@ void AS_SETFOR() {
   // AS_Labels: AS_SETFOR (inclusive) .. AS_COPY_ARG_TO_FAC (exclusive)
   // Name normalization: none (assembler label AS_SETFOR kept verbatim).
   constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-  constexpr std::uint8_t kAS_FAC_SIGN = ApplesoftVariables::ZP_AS_FAC_SIGN;
-  constexpr std::uint8_t kAS_FAC_EXTENSION =
-      ApplesoftVariables::ZP_AS_FAC_EXTENSION;
-
   AS_ROUND_FAC();
 
   const ProgramPointer forVariablePtr{ReadZeroPageWord(kAS_FORPNT)};
-  forVariablePtr.write(ReadZeroPageByte(kAS_FAC), 0u);
+  forVariablePtr.write(variables_const().AS_FAC[0], 0u);
 
-  const std::uint8_t facMantissaHigh = ReadZeroPageByte(add_u8(kAS_FAC, 1u));
-  const std::uint8_t facSign = ReadZeroPageByte(kAS_FAC_SIGN);
+  const std::uint8_t facMantissaHigh = variables_const().AS_FAC[1];
+  const std::uint8_t facSign = variables_const().AS_FAC_SIGN;
   // ROM sequence: (AS_FAC+1) is masked by (AS_FAC_SIGN | $7F), preserving
   // mantissa low 7 bits while applying sign-bit packing semantics.
   const std::uint8_t packedMantissaHigh = static_cast<std::uint8_t>(
       facMantissaHigh & static_cast<std::uint8_t>(facSign | 0x7fu));
   forVariablePtr.write(packedMantissaHigh, 1u);
-  forVariablePtr.write(ReadZeroPageByte(add_u8(kAS_FAC, 2u)), 2u);
-  forVariablePtr.write(ReadZeroPageByte(add_u8(kAS_FAC, 3u)), 3u);
-  forVariablePtr.write(ReadZeroPageByte(add_u8(kAS_FAC, 4u)), 4u);
+  forVariablePtr.write(variables_const().AS_FAC[2], 2u);
+  forVariablePtr.write(variables_const().AS_FAC[3], 3u);
+  forVariablePtr.write(variables_const().AS_FAC[4], 4u);
 
   variables().AS_FAC_EXTENSION = 0u;
 }
@@ -500,8 +479,7 @@ void AS_CONTROL_C_TYPED() {
   // AS_Labels: AS_CONTROL_C_TYPED (inclusive) .. AS_STOP (exclusive)
   // Name normalization: none (assembler label AS_CONTROL_C_TYPED kept
   // verbatim).
-  constexpr std::uint8_t kAS_ERRFLG = ApplesoftVariables::ZP_AS_ERRFLG;
-  const std::uint8_t errFlags = ReadZeroPageByte(kAS_ERRFLG);
+  const std::uint8_t errFlags = variables_const().AS_ERRFLG;
 
   // `bit AS_ERRFLG` / `bpl` in ROM: when sign bit is set, ON ERR is active and
   // AS_CONTROL-C dispatches to AS_HANDLERR with code $FF semantics.
@@ -528,13 +506,11 @@ void AS_CONT() {
   }
 
   constexpr std::uint8_t kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
-  constexpr std::uint8_t kAS_OLDTEXT_plus_1 =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_OLDTEXT + 1u);
   constexpr std::uint8_t kAS_OLDLIN = ApplesoftVariables::ZP_AS_OLDLIN;
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
   constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
 
-  if (ReadZeroPageByte(kAS_OLDTEXT_plus_1) == 0) {
+  if (ApplesoftVariables::highByte(variables_const().AS_OLDTEXT) == 0) {
     AS_ERROR(AS_ERR_CANTCONT);
     return;
   }
@@ -596,9 +572,9 @@ void AS_GOTO() {
   const std::uint8_t remnOffset = AS_REMN();
 
   const std::uint8_t currentPage =
-      ReadZeroPageByte(static_cast<std::uint8_t>(kAS_CURLIN + 1u));
+      ApplesoftVariables::highByte(variables_const().AS_CURLIN);
   const std::uint8_t targetPage =
-      ReadZeroPageByte(static_cast<std::uint8_t>(kAS_LINNUM + 1u));
+      ApplesoftVariables::highByte(variables_const().AS_LINNUM);
 
   ProgramPointer start{};
   if (currentPage >= targetPage) {
@@ -631,7 +607,7 @@ void AS_RESUME() {
 
   WriteZeroPageWord(kAS_CURLIN, ReadZeroPageWord(kAS_ERRLIN));
   WriteZeroPageWord(kAS_TXTPTR, ReadZeroPageWord(kAS_ERRPOS));
-  theStack().setStackPointer(ReadZeroPageByte(kAS_ERRSTK));
+  theStack().setStackPointer(variables_const().AS_ERRSTK);
   AS_NEWSTT();
 }
 
@@ -645,14 +621,12 @@ void AS_ONERR() {
   constexpr std::uint8_t kAS_TXTPSV = ApplesoftVariables::ZP_AS_TXTPSV;
   constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
   constexpr std::uint8_t kAS_CURLSV = ApplesoftVariables::ZP_AS_CURLSV;
-  constexpr std::uint8_t kAS_ERRFLG = ApplesoftVariables::ZP_AS_ERRFLG;
 
   AS_SYNCHR(kAS_TOKEN_GOTO);
   WriteZeroPageWord(kAS_TXTPSV, ReadZeroPageWord(kAS_TXTPTR));
 
-  const std::uint8_t errflg = ReadZeroPageByte(kAS_ERRFLG);
-  WriteZeroPageByte(kAS_ERRFLG,
-                    static_cast<std::uint8_t>((errflg >> 1u) | 0x80u));
+  const std::uint8_t errflg = variables_const().AS_ERRFLG;
+  variables().AS_ERRFLG = static_cast<std::uint8_t>((errflg >> 1u) | 0x80u);
 
   WriteZeroPageWord(kAS_CURLSV, ReadZeroPageWord(kAS_CURLIN));
   AS_ADDON(AS_REMN());
@@ -687,17 +661,15 @@ std::uint8_t AS_REMN() {
 }
 
 void PushForPntFrame() {
-  constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
-  theStack().pushByte(ReadZeroPageByte(add_u8(kAS_FORPNT, 1u)));
-  theStack().pushByte(ReadZeroPageByte(kAS_FORPNT));
+  theStack().pushByte(ApplesoftVariables::highByte(variables_const().AS_FORPNT));
+  theStack().pushByte(ApplesoftVariables::lowByte(variables_const().AS_FORPNT));
   theStack().pushToken(AS_TOKEN_FOR);
 }
 
 void AS_FOR() {
-  constexpr std::uint8_t kAS_SUBFLG = ApplesoftVariables::ZP_AS_SUBFLG;
   constexpr std::uint8_t kAS_TOKEN_TO = 0xc1u;
 
-  WriteZeroPageByte(kAS_SUBFLG, 0x80);
+  variables().AS_SUBFLG = 0x80;
   AS_LET();
 
   AS_GTFORPNTState gtforpntState{};
@@ -747,7 +719,7 @@ void AS_NEXT() {
   // d0 04 / AS_NEXT_1 jsr AS_PTRGET / AS_NEXT_2 sta AS_FORPNT, sty AS_FORPNT+1
   // No-variable AS_NEXT case is represented by AS_FORPNT+1 = 0.
   if (AS_CHRGOT() == 0u) {
-    WriteZeroPageByte(add_u8(kAS_FORPNT, 1u), 0u);
+    ApplesoftVariables::setHighByte(variables().AS_FORPNT, 0u);
   } else {
     const std::uint16_t varPtr = AS_PTRGET();
     WriteZeroPageWord(kAS_FORPNT, varPtr);
@@ -755,8 +727,10 @@ void AS_NEXT() {
 
   // jsr AS_GTFORPNT
   AS_GTFORPNTState gtforpntState{};
-  gtforpntState.forpntAS_Lo = ReadZeroPageByte(kAS_FORPNT);
-  gtforpntState.forpntHi = ReadZeroPageByte(add_u8(kAS_FORPNT, 1u));
+    gtforpntState.forpntAS_Lo =
+      ApplesoftVariables::lowByte(variables_const().AS_FORPNT);
+    gtforpntState.forpntHi =
+      ApplesoftVariables::highByte(variables_const().AS_FORPNT);
   for (std::size_t i = 0; i < gtforpntState.stackPage.size(); ++i) {
     gtforpntState.stackPage[i] =
         ReadProgramByte(static_cast<std::uint16_t>(0x0100u + i));
@@ -781,8 +755,8 @@ void AS_NEXT() {
       static_cast<std::uint16_t>(
           0x0100u + add_u8(gtforpntResult.x, kStepValueOffsetInForFrame)));
   AS_LOAD_FAC_FROM_YA();
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN,
-                    theStack().readByteAt(gtforpntResult.x, 9u)); // AS_FAC_SIGN
+  variables().AS_FAC_SIGN =
+      theStack().readByteAt(gtforpntResult.x, 9u); // AS_FAC_SIGN
   WriteZeroPageWord(kAS_FORPNT, ReadZeroPageWord(kAS_FORPNT));
   AS_FADD();
   AS_SETFOR();
@@ -824,7 +798,7 @@ void AS_POP() {
     return;
   }
 
-  WriteZeroPageByte(kAS_FORPNT, 0xffu);
+  ApplesoftVariables::setLowByte(variables().AS_FORPNT, 0xffu);
 
   AS_GTFORPNTState gtforpntState{};
   const auto gtforpntResult =
@@ -888,13 +862,13 @@ void AS_NEWSTT() {
   constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
   constexpr std::uint8_t kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
 
-  WriteZeroPageByte(kAS_REMSTK, theStack().readStackPointer());
+  variables().AS_REMSTK = theStack().readStackPointer();
 
   if (AS_ISCNTC()) {
     return;
   }
 
-  if (ReadZeroPageByte(static_cast<std::uint8_t>(kAS_CURLIN + 1u)) != 0xffu) {
+  if (ApplesoftVariables::highByte(variables_const().AS_CURLIN) != 0xffu) {
     WriteZeroPageWord(kAS_OLDTEXT, ReadZeroPageWord(kAS_TXTPTR));
   } else {
     WriteZeroPageWord(kAS_OLDTEXT, 0);
@@ -980,8 +954,7 @@ bool IsRunningMode() {
   // AS_Labels: AS_TRACE_ (inclusive) .. AS_EXECUTE_STATEMENT (exclusive)
   // Name normalization: helper name chosen for the inline AS_TRACE_ predicate.
   // AS_TRACE_ checks AS_CURLIN+1 and only traces when non-zero (running mode).
-  constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
-  return ReadZeroPageByte(static_cast<std::uint8_t>(kAS_CURLIN + 1u)) != 0u;
+  return ApplesoftVariables::highByte(variables_const().AS_CURLIN) != 0u;
 }
 
 bool IsTraceEnabled() {
@@ -991,8 +964,7 @@ bool IsTraceEnabled() {
   // Name normalization: helper name chosen for the inline AS_TRACE_ predicate.
   // `bit AS_TRCFLG` + `bpl` means tracing is enabled when AS_TRCFLG bit 7 is
   // set.
-  constexpr std::uint8_t kAS_TRCFLG = ApplesoftVariables::ZP_AS_TRCFLG;
-  return (ReadZeroPageByte(kAS_TRCFLG) & 0x80u) != 0u;
+  return (variables_const().AS_TRCFLG & 0x80u) != 0u;
 }
 
 void AS_EXECUTE_STATEMENT() {
@@ -1057,14 +1029,13 @@ void AS_IF() {
 
   constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
   constexpr std::uint8_t kAS_TOKEN_THEN = 0xc4u;
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
 
   AS_FRMEVL();
   if (AS_CHRGOT() != kAS_TOKEN_GOTO) {
     AS_SYNCHR(kAS_TOKEN_THEN);
   }
 
-  if (ReadZeroPageByte(kAS_FAC) != 0u) {
+  if (variables_const().AS_FAC[0] != 0u) {
     AS_IF_TRUE();
     return;
   }
@@ -1115,8 +1086,8 @@ void AS_ONGOTO() {
   }
 
   while (true) {
-    const std::uint8_t selector = ReadZeroPageByte(kAS_FAC_PLUS_4);
-    WriteZeroPageByte(kAS_FAC_PLUS_4, static_cast<std::uint8_t>(selector - 1u));
+    const std::uint8_t selector = variables_const().AS_FAC[4];
+    variables().AS_FAC[4] = static_cast<std::uint8_t>(selector - 1u);
 
     if (selector == 1u) {
       AS_EXECUTE_STATEMENT_1();
