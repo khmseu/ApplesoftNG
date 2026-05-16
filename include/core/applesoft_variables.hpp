@@ -404,6 +404,7 @@ public:
   std::uint8_t AS_LASTPT = 0;       // $53
   std::uint8_t AS_LASTPT_HI = 0;    // $54
   std::uint16_t AS_INDEX = 0; // $5e/$5f scratch pointer (string data address)
+  std::uint16_t AS_DEST = 0;  // $60/$61 scratch pointer (numeric descriptors)
   std::array<std::uint8_t, 4> AS_RESULT{}; // $62..$65
   std::uint16_t AS_TXTTAB = 0;             // $67/$68
   std::uint16_t AS_VARTAB = 0;             // $69/$6a
@@ -452,6 +453,8 @@ public:
   std::uint16_t AS_STRNG2 = 0; // $ad/$ae
   std::uint16_t AS_PRGEND = 0; // $af/$b0
   std::uint16_t AS_TXTPTR = 0; // $b8/$b9
+  std::uint16_t AS_ERRLIN = 0; // $da/$db
+  std::uint16_t AS_ERRPOS = 0; // $dc/$dd
   std::uint16_t AS_HGR_SHAPE = 0;      // $1a/$1b
   std::uint8_t AS_HGR_BITS = 0;        // $1c
   std::uint8_t AS_HGR_COUNT = 0;       // $1d
@@ -475,6 +478,7 @@ public:
   std::uint8_t AS_SPEEDZ = 0;          // $f1  complement of speed value
   std::uint8_t AS_TRCFLG = 0;          // $f2
   std::uint8_t AS_FLASH_BIT = 0;       // $f3  $40=flash mode, $00=normal
+  std::uint16_t AS_CURLSV = 0;         // $f6/$f7
   std::uint8_t AS_REMSTK = 0;          // $f8
   std::uint8_t AS_HGR_ROTATION = 0;    // $f9
 

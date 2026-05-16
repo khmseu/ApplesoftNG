@@ -113,7 +113,7 @@ void ApplyFacSign() {
 void SetBranchTargetToAS_STEP() {
   constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
 
-  WriteZeroPageWord(kAS_INDEX, kStepAS_LabelAddress);
+  variables().AS_INDEX = kStepAS_LabelAddress;
 }
 
 void AS_LOAD_FAC_FROM_YA() {
@@ -125,7 +125,7 @@ void AS_LOAD_FAC_FROM_YA() {
   // normalization: none (assembler label AS_LOAD_FAC_FROM_YA kept verbatim).
   constexpr std::uint8_t kAS_INDEX = ApplesoftVariables::ZP_AS_INDEX;
   // Caller precondition: AS_INDEX points to the packed 5-byte source value.
-  const ProgramPointer source{ReadZeroPageWord(kAS_INDEX)};
+  const ProgramPointer source{variables_const().AS_INDEX};
   variables().AS_FAC[4] = source.read(4u);
   variables().AS_FAC[3] = source.read(3u);
   variables().AS_FAC[2] = source.read(2u);
@@ -200,7 +200,7 @@ void AS_FCOMP2() {
   constexpr std::uint8_t kAS_FAC_EXTENSION =
       ApplesoftVariables::ZP_AS_FAC_EXTENSION;
 
-  const auto comparand = variables_const().pointer(ReadZeroPageWord(kAS_DEST));
+  const auto comparand = variables_const().pointer(variables_const().AS_DEST);
   const std::uint8_t comparandExponent = comparand.read(0u);
   if (comparandExponent == 0u) {
     gNumericCompareResult = AS_SIGN();
@@ -328,7 +328,7 @@ std::uint8_t ScanAheadOffset(std::uint8_t terminator) {
     variables().AS_ENDCHR = previousCharac;
 
     while (true) {
-      const ProgramPointer textPtr{ReadZeroPageWord(kAS_TXTPTR)};
+      const ProgramPointer textPtr{variables_const().AS_TXTPTR};
       const std::uint8_t ch = textPtr.read(offset);
       if (ch == 0 || ch == variables_const().AS_ENDCHR) {
         return offset;
@@ -354,7 +354,7 @@ void AS_SETFOR() {
   constexpr std::uint8_t kAS_FORPNT = ApplesoftVariables::ZP_AS_FORPNT;
   AS_ROUND_FAC();
 
-  const ProgramPointer forVariablePtr{ReadZeroPageWord(kAS_FORPNT)};
+  const ProgramPointer forVariablePtr{variables_const().AS_FORPNT};
   forVariablePtr.write(variables_const().AS_FAC[0], 0u);
 
   const std::uint8_t facMantissaHigh = variables_const().AS_FAC[1];
@@ -423,14 +423,14 @@ void AS_ENDX_impl(bool shouldPrintBreak) {
   constexpr std::uint8_t kAS_OLDTEXT = ApplesoftVariables::ZP_AS_OLDTEXT;
   constexpr std::uint8_t kAS_OLDLIN = ApplesoftVariables::ZP_AS_OLDLIN;
 
-  const std::uint16_t textPointer = ReadZeroPageWord(kAS_TXTPTR);
-  const std::uint16_t currentAS_Line = ReadZeroPageWord(kAS_CURLIN);
+  const std::uint16_t textPointer = variables_const().AS_TXTPTR;
+  const std::uint16_t currentAS_Line = variables_const().AS_CURLIN;
   const std::uint8_t currentPageHi =
       ApplesoftVariables::highByte(currentAS_Line);
 
   if (static_cast<std::uint8_t>(currentPageHi + 1u) != 0u) {
-    WriteZeroPageWord(kAS_OLDTEXT, textPointer);
-    WriteZeroPageWord(kAS_OLDLIN, currentAS_Line);
+    variables().AS_OLDTEXT = textPointer;
+    variables().AS_OLDLIN = currentAS_Line;
   }
 
   theStack().popReturnAddress();
@@ -514,8 +514,8 @@ void AS_CONT() {
     return;
   }
 
-  WriteZeroPageWord(kAS_TXTPTR, ReadZeroPageWord(kAS_OLDTEXT));
-  WriteZeroPageWord(kAS_CURLIN, ReadZeroPageWord(kAS_OLDLIN));
+  variables().AS_TXTPTR = variables_const().AS_OLDTEXT;
+  variables().AS_CURLIN = variables_const().AS_OLDLIN;
 }
 
 void AS_GOSUB() {
@@ -544,8 +544,8 @@ void AS_GOSUB() {
     return;
   }
 
-  const std::uint16_t textPointer = ReadZeroPageWord(kAS_TXTPTR);
-  const std::uint16_t currentAS_Line = ReadZeroPageWord(kAS_CURLIN);
+  const std::uint16_t textPointer = variables_const().AS_TXTPTR;
+  const std::uint16_t currentAS_Line = variables_const().AS_CURLIN;
 
   theStack().pushWord(textPointer);
   theStack().pushWord(currentAS_Line);
@@ -577,9 +577,9 @@ void AS_GOTO() {
 
   ProgramPointer start{};
   if (currentPage >= targetPage) {
-    start = ProgramPointer{ReadZeroPageWord(kAS_TXTTAB)};
+    start = ProgramPointer{variables_const().AS_TXTTAB};
   } else {
-    const ProgramPointer textPtr{ReadZeroPageWord(kAS_TXTPTR)};
+    const ProgramPointer textPtr{variables_const().AS_TXTPTR};
     start = textPtr.advanced(static_cast<std::uint16_t>(remnOffset) + 1u);
   }
 
@@ -589,8 +589,8 @@ void AS_GOTO() {
   }
 
   const std::uint16_t destination =
-      static_cast<std::uint16_t>(ReadZeroPageWord(kAS_LOWTR) - 1u);
-  WriteZeroPageWord(kAS_TXTPTR, destination);
+      static_cast<std::uint16_t>(variables_const().AS_LOWTR - 1u);
+  variables().AS_TXTPTR = destination;
 }
 
 void AS_RESUME() {
@@ -604,8 +604,8 @@ void AS_RESUME() {
   constexpr std::uint8_t kAS_CURLIN = ApplesoftVariables::ZP_AS_CURLIN;
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
 
-  WriteZeroPageWord(kAS_CURLIN, ReadZeroPageWord(kAS_ERRLIN));
-  WriteZeroPageWord(kAS_TXTPTR, ReadZeroPageWord(kAS_ERRPOS));
+  variables().AS_CURLIN = variables_const().AS_ERRLIN;
+  variables().AS_TXTPTR = variables_const().AS_ERRPOS;
   theStack().setStackPointer(variables_const().AS_ERRSTK);
   AS_NEWSTT();
 }
@@ -622,12 +622,12 @@ void AS_ONERR() {
   constexpr std::uint8_t kAS_CURLSV = ApplesoftVariables::ZP_AS_CURLSV;
 
   AS_SYNCHR(kAS_TOKEN_GOTO);
-  WriteZeroPageWord(kAS_TXTPSV, ReadZeroPageWord(kAS_TXTPTR));
+  variables().AS_TXPSV = variables_const().AS_TXTPTR;
 
   const std::uint8_t errflg = variables_const().AS_ERRFLG;
   variables().AS_ERRFLG = static_cast<std::uint8_t>((errflg >> 1u) | 0x80u);
 
-  WriteZeroPageWord(kAS_CURLSV, ReadZeroPageWord(kAS_CURLIN));
+  variables().AS_CURLSV = variables_const().AS_CURLIN;
   AS_ADDON(AS_REMN());
 }
 
@@ -869,9 +869,9 @@ void AS_NEWSTT() {
   }
 
   if (ApplesoftVariables::highByte(variables_const().AS_CURLIN) != 0xffu) {
-    WriteZeroPageWord(kAS_OLDTEXT, ReadZeroPageWord(kAS_TXTPTR));
+    variables().AS_OLDTEXT = variables_const().AS_TXTPTR;
   } else {
-    WriteZeroPageWord(kAS_OLDTEXT, 0);
+    variables().AS_OLDTEXT = 0;
   }
 
   if (IsEndOfAS_LineAtTextPointer()) {
@@ -881,7 +881,7 @@ void AS_NEWSTT() {
     }
   }
 
-  WriteZeroPageWord(kAS_CURLIN, ReadAS_LineNumberFromTextPointer());
+  variables().AS_CURLIN = ReadAS_LineNumberFromTextPointer();
   AdvanceTextPointerToNextAS_Line();
   AS_TRACE_();
 }

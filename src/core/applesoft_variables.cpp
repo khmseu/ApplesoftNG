@@ -163,6 +163,10 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return lowByte(AS_INDEX);
   case ZP_AS_INDEX + 1:
     return highByte(AS_INDEX);
+  case ZP_AS_DEST:
+    return lowByte(AS_DEST);
+  case ZP_AS_DEST + 1:
+    return highByte(AS_DEST);
   case ZP_AS_RESULT:
     return AS_RESULT[0];
   case ZP_AS_RESULT + 1:
@@ -317,6 +321,14 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return lowByte(AS_TXTPTR);
   case ZP_AS_TXTPTR + 1:
     return highByte(AS_TXTPTR);
+  case ZP_AS_ERRLIN:
+    return lowByte(AS_ERRLIN);
+  case ZP_AS_ERRLIN + 1:
+    return highByte(AS_ERRLIN);
+  case ZP_AS_ERRPOS:
+    return lowByte(AS_ERRPOS);
+  case ZP_AS_ERRPOS + 1:
+    return highByte(AS_ERRPOS);
   case ZP_AS_HGR_SHAPE:
     return lowByte(AS_HGR_SHAPE);
   case ZP_AS_HGR_SHAPE + 1:
@@ -373,6 +385,10 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return AS_FLASH_BIT;
   case ZP_AS_REMSTK:
     return AS_REMSTK;
+  case ZP_AS_CURLSV:
+    return lowByte(AS_CURLSV);
+  case ZP_AS_CURLSV + 1:
+    return highByte(AS_CURLSV);
   case ZP_AS_HGR_ROTATION:
     return AS_HGR_ROTATION;
   default:
@@ -560,6 +576,12 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     return;
   case ZP_AS_INDEX + 1:
     setHighByte(AS_INDEX, value);
+    return;
+  case ZP_AS_DEST:
+    setLowByte(AS_DEST, value);
+    return;
+  case ZP_AS_DEST + 1:
+    setHighByte(AS_DEST, value);
     return;
   case ZP_AS_RESULT:
     AS_RESULT[0] = value;
@@ -792,6 +814,18 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
   case ZP_AS_TXTPTR + 1:
     setHighByte(AS_TXTPTR, value);
     return;
+  case ZP_AS_ERRLIN:
+    setLowByte(AS_ERRLIN, value);
+    return;
+  case ZP_AS_ERRLIN + 1:
+    setHighByte(AS_ERRLIN, value);
+    return;
+  case ZP_AS_ERRPOS:
+    setLowByte(AS_ERRPOS, value);
+    return;
+  case ZP_AS_ERRPOS + 1:
+    setHighByte(AS_ERRPOS, value);
+    return;
   case ZP_AS_HGR_SHAPE:
     setLowByte(AS_HGR_SHAPE, value);
     return;
@@ -875,6 +909,12 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     return;
   case ZP_AS_REMSTK:
     AS_REMSTK = value;
+    return;
+  case ZP_AS_CURLSV:
+    setLowByte(AS_CURLSV, value);
+    return;
+  case ZP_AS_CURLSV + 1:
+    setHighByte(AS_CURLSV, value);
     return;
   case ZP_AS_HGR_ROTATION:
     AS_HGR_ROTATION = value;
