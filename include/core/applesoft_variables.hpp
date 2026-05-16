@@ -308,6 +308,7 @@ public:
   std::uint16_t MON_GBASL = 0;     // $26/$27  graphics base address low/high
   std::uint16_t MON_BASL = 0;      // $28/$29  text base address low/high
   std::uint8_t MON_CH = 0;         // $24
+  std::uint8_t MON_CV = 0;         // $25  cursor vertical
   std::uint8_t MON_COLOR = 0;      // $30
   std::uint8_t MON_HMASK = 0;      // $30  (shares with MON_COLOR in ROM)
   std::uint8_t MON_INVFLG = 0xffu; // $32  $ff=normal, $3f=inverse
