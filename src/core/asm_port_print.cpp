@@ -43,13 +43,12 @@ static double facToDouble() {
 // ---------------------------------------------------------------------------
 // foutImpl: core float-to-string conversion, matching Applesoft FOUT/FOUT_1.
 //
-// startOffset: byte offset within the stack page (0x0100+) where the first
-//              character of the string should be placed.  FOUT uses offset 1
-//              (string at 0x0101...), FOUT_1 uses offset 0 (string at 0x0100).
-// On return writes null-terminated string into the stack page, sets
-// AS_STRNG2 to the 1-based offset of the last byte (matches ROM behaviour).
+// startAddress: absolute destination address for the first emitted character.
+// FOUT uses 0x0101; STR$ entry (FOUT_1) uses 0x00FF.
+// On return writes null-terminated string, and updates AS_STRNG2 to the
+// address of the last non-null character.
 // ---------------------------------------------------------------------------
-static void foutImpl(std::uint8_t startOffset) {
+static void foutImpl(std::uint16_t startAddress) {
   // Each byte is written to 0x0100+index (the 6502 stack page).
   // The assembly writes to STACK-1,Y where Y is 1-based; we use 0-based index
   // into the stack page (0x0100 = index 0, 0x0101 = index 1, ...).
@@ -186,16 +185,12 @@ static void foutImpl(std::uint8_t startOffset) {
   }
   buf[len] = '\0';
 
-  // Write into stack page starting at startOffset.
+  // Write to the selected destination start address.
   for (std::uint8_t i = 0u; i <= len; ++i) {
-    WriteProgramByte(static_cast<std::uint16_t>(0x0100u + startOffset + i),
+    WriteProgramByte(static_cast<std::uint16_t>(startAddress + i),
                      static_cast<std::uint8_t>(buf[i]));
   }
-  // AS_STRNG2 = 1-based offset of last written character (null byte position).
-  // ROM: STRNG2 is the 0x0100-based offset after the last char (pointing at
-  // null).
-  variables().AS_STRNG2 =
-      static_cast<std::uint16_t>(0x0100u + startOffset + len);
+  variables().AS_STRNG2 = static_cast<std::uint16_t>(startAddress + len);
 }
 
 std::uint8_t AS_CHRGET();
@@ -246,18 +241,15 @@ void AS_STROUT(std::string_view text) {
 // ---------------------------------------------------------------------------
 
 // AS_FOUT: convert the floating-point value in AS_FAC to an AS_ASCII string
-// buffer; on return (A, Y) point to the buffer.  Used inside the AS_PRINT2
+// buffer; on return (A, Y) point to the buffer. Used inside the AS_PRINT2
 // number path.
-// TODO(asm-port): port AS_FOUT.
 // Source:
 // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
-// AS_Labels: AS_FOUT (inclusive) .. AS_FOUT_3 (exclusive)
+// AS_Labels: AS_FOUT (inclusive) .. AS_SQR (exclusive)
 // Name normalization: none (assembler label AS_FOUT kept verbatim).
 static void AS_FOUT() {
-  // FOUT entry: Y=1, string placed starting at STACK+1 (address 0x0101).
-  // The ROM stores STRNG2=Y=1 initially, then increments before first write.
-  // Result string begins at 0x0101 (index 1 in the 0x0100 page).
-  foutImpl(1u);
+  // FOUT entry: Y=1, string starts at STACK+1.
+  foutImpl(0x0101u);
 }
 
 // Source:
@@ -265,108 +257,8 @@ static void AS_FOUT() {
 // AS_Labels: AS_FOUT_1 (inclusive) .. AS_FOUT_3 (exclusive)
 // Name normalization: none (assembler label AS_FOUT_1 kept verbatim).
 void AS_FOUT_1() {
-  // FOUT_1 entry: Y=0, string placed starting at STACK-1 (address 0x00FF).
-  // Used by STR$.  AS_STRLIT(0x00ff) in AS_STR uses address 0x00FF.
-  // We write from address 0x00FF, which is offset -1 from 0x0100.
-  // Using address 0x0100 - 1 = 0x00FF as start.
-  const auto &cv = variables_const();
-  const bool isNeg = (cv.AS_FAC_SIGN != 0u);
-  const double absVal = std::abs(facToDouble());
-
-  constexpr std::uint8_t kMaxLen = 20u;
-  char buf[kMaxLen + 1u];
-  std::uint8_t len = 0u;
-  auto emit = [&](char c) {
-    if (len < kMaxLen)
-      buf[len++] = c;
-  };
-
-  if (isNeg)
-    emit('-');
-
-  if (absVal == 0.0) {
-    emit('0');
-  } else {
-    constexpr int kDigits = 9;
-    int tmpexp = static_cast<int>(std::floor(std::log10(absVal)));
-    double scaled =
-        absVal * std::pow(10.0, static_cast<double>(kDigits - 1 - tmpexp));
-    long long iVal = static_cast<long long>(scaled + 0.5);
-    if (iVal >= 1000000000LL) {
-      iVal /= 10;
-      tmpexp++;
-    }
-    if (iVal < 100000000LL && iVal > 0) {
-      iVal *= 10;
-      tmpexp--;
-    }
-    const bool decimalForm = (tmpexp >= -2 && tmpexp <= 9);
-    char digits[kDigits + 1];
-    std::snprintf(digits, sizeof(digits), "%09lld",
-                  static_cast<long long>(iVal < 0 ? 0 : iVal));
-    if (decimalForm) {
-      const int dotPos = tmpexp + 1;
-      if (dotPos <= 0) {
-        emit('0');
-        emit('.');
-        for (int z = 0; z < -dotPos; ++z)
-          emit('0');
-        for (int d = 0; d < kDigits; ++d)
-          emit(digits[d]);
-      } else {
-        for (int d = 0; d < kDigits; ++d) {
-          if (d == dotPos)
-            emit('.');
-          emit(digits[d]);
-        }
-      }
-      while (len > 0u && buf[len - 1u] == '0')
-        --len;
-      if (len > 0u && buf[len - 1u] == '.')
-        --len;
-    } else {
-      emit(digits[0]);
-      emit('.');
-      for (int d = 1; d < kDigits; ++d)
-        emit(digits[d]);
-      const int eVal = tmpexp;
-      emit('E');
-      if (eVal < 0) {
-        emit('-');
-        const int absE = -eVal;
-        emit(static_cast<char>('0' + absE / 10));
-        emit(static_cast<char>('0' + absE % 10));
-      } else {
-        emit('+');
-        emit(static_cast<char>('0' + eVal / 10));
-        emit(static_cast<char>('0' + eVal % 10));
-      }
-      std::uint8_t ePos = 0u;
-      for (std::uint8_t i = 0u; i < len; ++i) {
-        if (buf[i] == 'E') {
-          ePos = i;
-          break;
-        }
-      }
-      std::uint8_t mantEnd = ePos;
-      while (mantEnd > 0u && buf[mantEnd - 1u] == '0')
-        --mantEnd;
-      if (mantEnd > 0u && buf[mantEnd - 1u] == '.')
-        --mantEnd;
-      const std::uint8_t tailLen = static_cast<std::uint8_t>(len - ePos);
-      for (std::uint8_t i = 0u; i < tailLen; ++i)
-        buf[mantEnd + i] = buf[ePos + i];
-      len = static_cast<std::uint8_t>(mantEnd + tailLen);
-    }
-  }
-  buf[len] = '\0';
-
-  // Write to 0x00FF onward.
-  for (std::uint8_t i = 0u; i <= len; ++i) {
-    WriteProgramByte(static_cast<std::uint16_t>(0x00FFu + i),
-                     static_cast<std::uint8_t>(buf[i]));
-  }
-  variables().AS_STRNG2 = static_cast<std::uint16_t>(0x00FFu + len);
+  // FOUT_1 entry: Y=0, string starts at STACK-1 (used by STR$).
+  foutImpl(0x00ffu);
 }
 
 // AS_GTBYTC: advance AS_TXTPTR (via AS_CHRGET), evaluate a numeric expression,
