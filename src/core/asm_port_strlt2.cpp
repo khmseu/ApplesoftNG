@@ -24,6 +24,11 @@ void AS_SNGFLT(std::uint8_t value);
 void AS_FRMEVL();
 std::uint8_t AS_CHRGOT();
 std::uint8_t AS_CHRGET();
+void AS_FIN();
+bool AS_ISLETC();
+std::uint16_t AS_PTRGET();
+void AS_NEGATE_FAC();
+void AS_STRTXT();
 void AS_SYNERR();
 
 namespace {
@@ -123,6 +128,8 @@ std::uint8_t g_jerr_error = AS_ERR_FRMCPX;
 void AS_JERR();
 void AS_PUTEMP(std::uint8_t tempDescriptorAddress);
 std::uint16_t AS_GETSPA(std::uint8_t length);
+void AS_FRM_VARIABLE();
+void AS_NOT_();
 void AS_FIND_HIGHEST_STRING();
 void AS_CHECK_SIMPLE_VARIABLE();
 void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset);
@@ -135,8 +142,70 @@ void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length);
 void AS_MOVSTR_1(std::uint8_t length);
 std::uint8_t AS_FRESTR();
 
-// TODO(asm-port): port AS_FRM_ELEMENT label.
-void AS_FRM_ELEMENT() {}
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: AS_FRM_ELEMENT (inclusive) .. AS_NOT_ (exclusive)
+// Name normalization: none (assembler label AS_FRM_ELEMENT kept verbatim).
+void AS_FRM_ELEMENT() {
+  constexpr std::uint8_t kTokenMinus = 0xc9u;
+  constexpr std::uint8_t kTokenPlus = 0xc8u;
+
+  // Default to numeric until a string or typed variable path overrides it.
+  variables().AS_VALTYP = 0u;
+
+  for (;;) {
+    const std::uint8_t token = AS_CHRGET();
+
+    // 0e67 bcs L_FRM_ELEMENT_3 ; clear carry means digit path.
+    if (!variables_const().carryFlag) {
+      AS_FIN();
+      return;
+    }
+
+    if (AS_ISLETC()) {
+      // The next range starts at AS_FRM_VARIABLE; keep this jump target
+      // explicit until that slice is ported.
+      AS_FRM_VARIABLE();
+      return;
+    }
+
+    if (token == static_cast<std::uint8_t>('.' & 0x7fu)) {
+      AS_FIN();
+      return;
+    }
+
+    if (token == kTokenMinus) {
+      // MIN path in this window points at M_NEG handling; apply unary minus
+      // after parsing the following element.
+      AS_FRM_ELEMENT();
+      AS_NEGATE_FAC();
+      return;
+    }
+
+    if (token == kTokenPlus) {
+      continue;
+    }
+
+    if (token == static_cast<std::uint8_t>('"')) {
+      AS_STRTXT();
+      return;
+    }
+
+    // Range-end fall-through (no RTS/JMP at window end): transfer to AS_NOT_.
+    AS_NOT_();
+    return;
+  }
+}
+
+void AS_FRM_VARIABLE() {
+  // TODO(asm-port): source label AS_FRM_VARIABLE.
+  // Minimal dependency stub for AS_FRM_ELEMENT variable-name branch.
+  (void)AS_PTRGET();
+}
+
+void AS_NOT_() {
+  // TODO(asm-port): source label AS_NOT_.
+}
 
 void AS_FRMEVL_2() {
   // Source:
