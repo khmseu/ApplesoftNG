@@ -1045,10 +1045,7 @@ void AS_OR() {
   // AS_Labels: AS_OR (inclusive) .. AS_ANDOP (exclusive)
   // Name normalization: none (assembler label AS_OR kept verbatim).
 
-  constexpr std::uint8_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-
-  if ((ReadZeroPageByte(kAS_ARG) | ReadZeroPageByte(kAS_FAC)) != 0u) {
+  if ((variables_const().AS_ARG[0] | variables_const().AS_FAC[0]) != 0u) {
     AS_TRUE();
     return;
   }
@@ -1063,10 +1060,7 @@ void AS_ANDOP() {
   // AS_Labels: AS_ANDOP (inclusive) .. AS_FALSE (exclusive)
   // Name normalization: none (assembler label AS_ANDOP kept verbatim).
 
-  constexpr std::uint8_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
-  constexpr std::uint8_t kAS_FAC = ApplesoftVariables::ZP_AS_FAC;
-
-  if (ReadZeroPageByte(kAS_ARG) == 0u || ReadZeroPageByte(kAS_FAC) == 0u) {
+  if (variables_const().AS_ARG[0] == 0u || variables_const().AS_FAC[0] == 0u) {
     AS_FALSE();
     return;
   }
@@ -1715,13 +1709,12 @@ void AS_FNC_() {
 
   // AS_PTRGET3 leaves A=name_lo, Y=name_hi
   // Store to AS_FNCNAM
-  constexpr std::uint8_t kAS_FNCNAM = ApplesoftVariables::ZP_AS_FNCNAM;
   const std::uint8_t nameA =
       ApplesoftVariables::lowByte(variables_const().AS_STRNG1);
   const std::uint8_t nameY =
       ApplesoftVariables::highByte(variables_const().AS_STRNG1);
-  WriteZeroPageByte(kAS_FNCNAM, nameA);
-  WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FNCNAM + 1u), nameY);
+    ApplesoftVariables::setLowByte(variables().AS_FNCNAM, nameA);
+    ApplesoftVariables::setHighByte(variables().AS_FNCNAM, nameY);
 
   // Jump to AS_CHKNUM to validate numeric type
   AS_CHKNUM();
