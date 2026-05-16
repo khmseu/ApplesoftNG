@@ -132,7 +132,8 @@ void AS_RUN() {
   constexpr std::uint8_t kAS_CURLIN_hi =
       static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_CURLIN + 1u);
 
-  std::uint8_t curlinHi = ApplesoftVariables::highByte(variables_const().AS_CURLIN);
+  std::uint8_t curlinHi =
+      ApplesoftVariables::highByte(variables_const().AS_CURLIN);
   ApplesoftVariables::setHighByte(variables().AS_CURLIN,
                                   static_cast<std::uint8_t>(curlinHi - 1));
 
@@ -407,7 +408,7 @@ void AS_PUTSTR() {
   std::uint16_t descriptorPointer = ReadZeroPageWord(kAS_FAC_PLUS_3);
 
   const std::uint8_t descDataHigh = readDescriptorByte(2);
-    const std::uint8_t fretopHigh =
+  const std::uint8_t fretopHigh =
       ApplesoftVariables::highByte(variables_const().AS_FRETOP);
 
   bool useExistingDescriptor = false;
@@ -417,7 +418,8 @@ void AS_PUTSTR() {
     useExistingDescriptor = true;
   } else if (descDataHigh == fretopHigh) {
     const std::uint8_t descDataAS_Low = readDescriptorByte(1);
-    if (descDataAS_Low < ApplesoftVariables::lowByte(variables_const().AS_FRETOP)) {
+    if (descDataAS_Low <
+        ApplesoftVariables::lowByte(variables_const().AS_FRETOP)) {
       useExistingDescriptor = true;
     }
   }
@@ -684,9 +686,9 @@ bool AS_FL1(std::uint16_t startAddress) {
   constexpr std::uint8_t kAS_LOWTR = ApplesoftVariables::ZP_AS_LOWTR;
   constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
 
-    const std::uint8_t targetAS_Lo =
+  const std::uint8_t targetAS_Lo =
       ApplesoftVariables::lowByte(variables_const().AS_LINNUM);
-    const std::uint8_t targetHi =
+  const std::uint8_t targetHi =
       ApplesoftVariables::highByte(variables_const().AS_LINNUM);
 
   std::uint16_t current = startAddress;
