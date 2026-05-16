@@ -25,12 +25,10 @@ public:
 
   // Well-known monitor entry points
   static constexpr std::uint16_t ADDR_MON_KEYIN = 0xFD1Bu;
+  static constexpr std::uint16_t ADDR_MON_OLDBRK = 0xFA59u;
   static constexpr std::uint16_t ADDR_MON_COUT1 = 0xFDF0u;
-  static constexpr std::uint16_t ADDR_MON_GETLN = 0xFD6Au;
-  static constexpr std::uint16_t ADDR_MON_PRBYTE = 0xFDDau;
-  static constexpr std::uint16_t ADDR_MON_IOREST = 0xFF3Fu;
-  static constexpr std::uint16_t ADDR_MON_APPLE2_RESET =
-      0xFA62u; // One possible RESET entry
+  static constexpr std::uint16_t ADDR_AS_BASIC = 0xE000u;
+  static constexpr std::uint16_t ADDR_AS_BASIC2 = 0xE003u;
 };
 
 /**
@@ -39,16 +37,16 @@ public:
  */
 } // namespace ApplesoftNG
 
-#include "core/applesoft_variables.hpp"
-#include <concepts>
 #include <functional>
 #include <stdexcept>
 #include <string>
 
 namespace applesoft::asm_port {
-void AS_COLD_START();
+void AS_BASIC();
+void AS_BASIC2();
 std::uint8_t MON_GETLN();
 std::uint8_t MON_KEYIN();
+void MON_OLDBRK();
 void MON_COUT1(std::uint8_t a);
 } // namespace applesoft::asm_port
 
@@ -74,23 +72,34 @@ R ExternalJumpDispatcher::Jump(std::uint16_t address, Args &&...args) {
   };
 
   switch (address) {
-  case 0xE000u:
-    return invoke(AS_COLD_START);
+  case ADDR_AS_BASIC:
+    return invoke(AS_BASIC);
+
+  case ADDR_AS_BASIC2:
+    return invoke(AS_BASIC2);
 
   case ADDR_MON_KEYIN:
     return invoke(MON_KEYIN);
 
-  case ADDR_MON_GETLN:
-    return invoke(MON_GETLN);
+  case ADDR_MON_OLDBRK:
+    return invoke(MON_OLDBRK);
 
   case ADDR_MON_COUT1:
     return invoke(MON_COUT1);
 
-  default:
+  case 0x03fbu:
+    break;
+
+  case 0xc100u:
+  case 0xc200u:
+  case 0xc300u:
+  case 0xc400u:
+  case 0xc500u:
+  case 0xc600u:
+  case 0xc700u:
     // RESET slot scan (Cx00) fallback
-    if ((address & 0xFF00u) >= 0xC100u && (address & 0xFF00u) <= 0xC700u) {
-      return invoke(AS_COLD_START);
-    }
+    break;
+  default:
     break;
   }
 

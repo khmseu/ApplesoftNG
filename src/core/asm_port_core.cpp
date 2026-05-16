@@ -19,6 +19,7 @@ namespace applesoft::asm_port {
 void AS_SYNERR();
 extern std::uint8_t gJerErrorCode;
 void MON_RESET2();
+void MON_OLDBRK();
 void MON_REGDSP();
 void MON_COUT(std::uint8_t a); // Defined in asm_port_outdo.cpp
 
@@ -278,14 +279,18 @@ void MON_PRBYTE(std::uint8_t value) {
   MON_COUT(emitHexNibble(value));
 }
 
-bool MON_JumpByAddress(std::uint16_t target) {
-  ApplesoftNG::ExternalJumpDispatcher::Jump(target);
-  return true;
-}
-
 } // namespace
 
 void MON_BELL() { MON_BELL_impl(); }
+
+std::int8_t MON_INSDS1() {
+  // TODO(asm-port): Port monitor label INSDS1.
+  return 0;
+}
+
+void MON_MON() {
+  // TODO(asm-port): Port monitor label MON.
+}
 
 void MON_RESET2() {
   // Source:
@@ -299,17 +304,15 @@ void MON_RESET2() {
 
   constexpr std::uint16_t kWarmVector =
       ApplesoftVariables::ADDR_MON_DEBUG_WARM_VECTOR;
-  constexpr std::uint16_t kSentinel1 =
-      ApplesoftVariables::ADDR_MON_DEBUG_SENTINEL_1;
-  constexpr std::uint16_t kSentinel2 =
-      ApplesoftVariables::ADDR_MON_DEBUG_SENTINEL_2;
   constexpr std::uint16_t kBootstrap =
       ApplesoftVariables::ADDR_MON_DEBUG_BOOTSTRAP;
   constexpr std::uint16_t kScanPageMirror =
       ApplesoftVariables::ADDR_MON_DEBUG_SCAN_PAGE;
 
-  constexpr std::uint16_t kJumpToBasic = 0xe000u;
-  constexpr std::uint8_t kWarmEnable = 0x03u;
+  constexpr std::uint16_t kJumpToBasic =
+      ApplesoftNG::ExternalJumpDispatcher::ADDR_AS_BASIC;
+  constexpr std::uint16_t kJumpToBasic2 =
+      ApplesoftNG::ExternalJumpDispatcher::ADDR_AS_BASIC2;
   constexpr std::uint8_t kSentinelCheckMask = 0xa5u;
   constexpr std::uint8_t kSentinelExpected = 0xe0u;
 
@@ -335,65 +338,79 @@ void MON_RESET2() {
 
   MON_BELL_impl();
 
-  const std::uint8_t sentinel1 = variables_const().readByte(kSentinel1);
-  const std::uint8_t sentinel2 = variables_const().readByte(kSentinel2);
-  const std::uint8_t warmState = variables_const().readByte(kWarmVector);
+  const std::uint16_t warmVectorValue = variables_const().readWord(kWarmVector);
+  const std::uint8_t warmVectorSentinel =
+      variables_const().readByte(static_cast<std::uint16_t>(kWarmVector + 2u));
 
-  if (static_cast<std::uint8_t>(sentinel1 ^ kSentinelCheckMask) == sentinel2 &&
-      warmState == 0u && sentinel1 == kSentinelExpected) {
-    variables().writeByte(kWarmVector, kWarmEnable);
-    (void)MON_JumpByAddress(kJumpToBasic);
-    return;
-  }
-
-  // AS_LFAA3 path: jump through warm vector ($03F2/$03F3).
-  if (warmState != 0u) {
-    const std::uint16_t warmTarget = variables_const().readWord(kWarmVector);
-    (void)MON_JumpByAddress(warmTarget);
-    return;
-  }
-
-  // AS_LFAA6 path: install bootstrap bytes, then scan descending pages.
-  MON_LFB60();
-
-  // AS_LFAAB loop copies indices 5..1 from AS_LFAFC to $03F4..$03F0.
-  for (std::uint8_t x = 5u; x != 0u; --x) {
-    variables().writeByte(static_cast<std::uint16_t>(kBootstrap + x),
-                          kAS_LFAFC[x]);
-  }
-
-  // Unified pointer for $00/$01 pair used by AS_LFABA/AS_LFAC7 and jmp($00).
-  std::uint16_t scanPtr = 0xc800u;
-  while (true) {
-    scanPtr = static_cast<std::uint16_t>(scanPtr - 0x0100u);
-
-    const std::uint8_t page = ApplesoftVariables::highByte(scanPtr);
-    if (page == 0xc0u) {
-      variables().writeByte(kWarmVector, kWarmEnable);
-      (void)MON_JumpByAddress(kJumpToBasic);
+  if (static_cast<std::uint8_t>(ApplesoftVariables::highByte(warmVectorValue) ^
+                                kSentinelCheckMask) == warmVectorSentinel) {
+    if (warmVectorValue == kJumpToBasic) {
+      variables().writeWord(kWarmVector, kJumpToBasic2);
+      ApplesoftNG::ExternalJumpDispatcher::Jump(kJumpToBasic);
       return;
     }
 
-    variables().writeByte(kScanPageMirror, page);
+    // AS_LFAA3 path: jump through warm vector ($03F2/$03F3).
+    ApplesoftNG::ExternalJumpDispatcher::Jump(warmVectorValue);
+    return;
+  } else {
+    // AS_LFAA6 path: install bootstrap bytes, then scan descending pages.
+    MON_LFB60();
 
-    bool match = true;
-    for (std::int8_t y = 7; y >= 0; y -= 2) {
-      const std::uint8_t lhs = variables_const().readByte(
-          static_cast<std::uint16_t>(scanPtr + static_cast<std::uint16_t>(y)));
-      const std::uint8_t rhs = kAS_LFB01[static_cast<std::size_t>(y)];
-      if (lhs != rhs) {
-        match = false;
-        break;
+    // AS_LFAAB loop copies indices 5..1 from AS_LFAFC to $03F4..$03F0.
+    for (std::uint8_t x = 5u; x != 0u; --x) {
+      variables().writeByte(static_cast<std::uint16_t>(kBootstrap + x),
+                            kAS_LFAFC[x]);
+    }
+
+    const auto slotAddress = [](int n) constexpr -> std::uint16_t {
+      return static_cast<std::uint16_t>(IOPorts::ADDR_BASE |
+                                        (static_cast<std::uint16_t>(n) << 8u));
+    };
+
+    // Unified pointer for $00/$01 pair used by AS_LFABA/AS_LFAC7 and jmp($00).
+    for (std::uint16_t scanPtr = slotAddress(7); scanPtr > slotAddress(0);
+         scanPtr = static_cast<std::uint16_t>(scanPtr - 0x0100u)) {
+
+      const std::uint8_t page = ApplesoftVariables::highByte(scanPtr);
+      variables().writeByte(kScanPageMirror, page);
+
+      bool match = true;
+      for (std::int8_t y = 7; y >= 0; y -= 2) {
+        const std::uint8_t lhs =
+            variables_const().readByte(static_cast<std::uint16_t>(
+                scanPtr + static_cast<std::uint16_t>(y)));
+        const std::uint8_t rhs = kAS_LFB01[static_cast<std::size_t>(y)];
+        if (lhs != rhs) {
+          match = false;
+          break;
+        }
       }
-    }
 
-    if (!match) {
-      continue;
-    }
+      if (!match) {
+        continue;
+      }
 
-    (void)MON_JumpByAddress(scanPtr);
+      ApplesoftNG::ExternalJumpDispatcher::Jump(scanPtr);
+      return;
+    }
+    variables().writeWord(kWarmVector, kJumpToBasic2);
+    ApplesoftNG::ExternalJumpDispatcher::Jump(kJumpToBasic);
     return;
   }
+}
+
+void MON_OLDBRK() {
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
+  // AS_Labels: OLDBRK (inclusive) .. RESET2 (exclusive)
+  // Name normalization: OLDBRK -> MON_OLDBRK (monitor label gets MON_ prefix).
+  //
+  // OLDBRK disassembles at current PC, prints registers, then transfers to MON.
+
+  (void)MON_INSDS1();
+  MON_REGDSP();
+  MON_MON();
 }
 
 void MON_REGDSP() {
@@ -2109,7 +2126,6 @@ std::uint8_t MON_SCRN(std::uint8_t row, std::uint8_t column) {
 }
 
 void MON_IRQ();
-void MON_ADDR_03FB();
 
 class MON_M6502VEC {
 public:
@@ -2123,7 +2139,7 @@ public:
   // used by the original vector entry.
   static void NMI_VECTOR() {
     // FFFA points at $03FB.
-    MON_ADDR_03FB();
+    ApplesoftNG::ExternalJumpDispatcher::Jump(0x03fbu);
   }
 
   static void RESET_VECTOR() {
@@ -2137,26 +2153,7 @@ public:
   }
 };
 
-void MON_ADDR_03FB() {
-  // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/vectors.o65.lst
-  // AS_Labels: M6502VEC (NMI entry)
-  // Name normalization: none (address literal in label name).
-  //
-  // NMI vector typically points to $03FB. Monitor vector ($03FB) is a jump
-  // to the NMI handler.
-  constexpr std::uint16_t kNMIVector = ApplesoftVariables::ADDR_MON_NMI_VECTOR;
-  const std::uint8_t lo = ReadProgramByte(kNMIVector);
-  const std::uint8_t hi =
-      ReadProgramByte(static_cast<std::uint16_t>(kNMIVector + 1u));
-  const std::uint16_t target = static_cast<std::uint16_t>(lo | (hi << 8u));
-  // Since we don't have a 6502 JMP instruction, we must trust the vector
-  // is set or provide a sensible default if it's 0.
-  if (target != 0) {
-    (void)MON_JumpByAddress(target);
-  }
-}
-
+static void MON_BREAK() { MON_OLDBRK(); }
 void MON_IRQ() {
   // Source:
   // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
@@ -2179,16 +2176,12 @@ void MON_IRQ() {
     // Jumps to BREAK (0x000c in debug.o65.lst)
     // BREAK logic:
     // - Restore CPU state, save to monitor registers, jump through $03F0.
+    MON_BREAK();
   } else {
     constexpr std::uint16_t kIRQVector =
         ApplesoftVariables::ADDR_MON_IRQ_VECTOR;
-    const std::uint8_t lo = ReadProgramByte(kIRQVector);
-    const std::uint8_t hi =
-        ReadProgramByte(static_cast<std::uint16_t>(kIRQVector + 1u));
-    const std::uint16_t target = static_cast<std::uint16_t>(lo | (hi << 8u));
-    if (target != 0) {
-      (void)MON_JumpByAddress(target);
-    }
+    ApplesoftNG::ExternalJumpDispatcher::Jump(
+        variables_const().readWord(kIRQVector));
   }
 }
 
