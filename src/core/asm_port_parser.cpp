@@ -127,14 +127,14 @@ void AS_STORE_FACDB_YX_ROUNDED() {
   const std::uint16_t destinationAddress = ReadZeroPageWord(kAS_VARPNT);
   auto destination = variables().pointer(destinationAddress);
 
-    destination.write(variables_const().AS_FAC[0], 0u);
+  destination.write(variables_const().AS_FAC[0], 0u);
   destination.write(
-      static_cast<std::uint8_t>(
-        (variables_const().AS_FAC_SIGN | 0x7fu) & variables_const().AS_FAC[1]),
+      static_cast<std::uint8_t>((variables_const().AS_FAC_SIGN | 0x7fu) &
+                                variables_const().AS_FAC[1]),
       1u);
-    destination.write(variables_const().AS_FAC[2], 2u);
-    destination.write(variables_const().AS_FAC[3], 3u);
-    destination.write(variables_const().AS_FAC[4], 4u);
+  destination.write(variables_const().AS_FAC[2], 2u);
+  destination.write(variables_const().AS_FAC[3], 3u);
+  destination.write(variables_const().AS_FAC[4], 4u);
 
   variables().AS_FAC_EXTENSION = 0u;
 }
@@ -170,7 +170,7 @@ void AS_LINGET() {
     variables().AS_CHARAC = digit;
 
     const std::uint8_t lineHigh =
-      ApplesoftVariables::highByte(variables_const().AS_LINNUM);
+        ApplesoftVariables::highByte(variables_const().AS_LINNUM);
     ApplesoftVariables::setLowByte(variables().AS_INDEX, lineHigh);
 
     // Preserve ROM overflow guard (line number exceeds 63999).
@@ -511,8 +511,8 @@ void AS_NAMOK() {
   // AS_Labels: AS_NAMOK (inclusive) .. AS_BASIC (exclusive)
   // Name normalization: none (assembler label AS_NAMOK kept verbatim).
 
-  variables().AS_VALTYP = 0u;         // AS_VALTYP
-  variables().AS_VALTYP_PLUS_1 = 0u;  // AS_VALTYP+1
+  variables().AS_VALTYP = 0u;        // AS_VALTYP
+  variables().AS_VALTYP_PLUS_1 = 0u; // AS_VALTYP+1
   AS_PTRGET4();
 }
 
