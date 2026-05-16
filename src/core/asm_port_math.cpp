@@ -206,12 +206,10 @@ void AS_NEGATE_FAC() {
 void AS_COPY_FAC_TO_ARG_ROUNDED() {
   AS_ROUND_FAC();
   // Copy 6 bytes (exp + 4 mantissa + sign)
-  for (int i = 0; i < 6; ++i) {
-    std::uint8_t val = ReadZeroPageByte(
-        static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + i));
-    WriteZeroPageByte(
-        static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_ARG + i), val);
+  for (int i = 0; i < 5; ++i) {
+    variables().AS_ARG[i] = variables_const().AS_FAC[i];
   }
+  variables().AS_ARG[5] = variables_const().AS_FAC_SIGN;
   variables().AS_FAC_EXTENSION = 0;
 }
 
@@ -448,8 +446,9 @@ void AS_ADDACC_WITH_DIGIT(std::uint8_t digit) {
   AS_COPY_FAC_TO_ARG_ROUNDED();
   AS_FLOAT(static_cast<std::int8_t>(digit));
   // AS_SGNCPR is $AB
-  WriteZeroPageByte(0xAB, variables_const().AS_ARG[5] ^
-                              variables_const().AS_FAC_SIGN);
+  variables().AS_SGNCPR =
+      static_cast<std::uint8_t>(variables_const().AS_ARG[5] ^
+                                variables_const().AS_FAC_SIGN);
   AS_FADDT();
 }
 
