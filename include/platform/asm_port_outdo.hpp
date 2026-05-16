@@ -14,6 +14,10 @@ namespace applesoft::asm_port {
 // Returns the output character with the high bit cleared (A & $7f).
 std::uint8_t AS_OUTDO(std::uint8_t a);
 
+// Monitor output routines
+void MON_COUT(std::uint8_t a);
+void MON_COUT1(std::uint8_t a);
+
 // AS_Labels: AS_OUTSP (inclusive) .. AS_OUTQUES (exclusive)
 // Name normalization: none.
 // Prints a space ($20).  In the 6502 original a .byt $2c trick causes AS_OUTSP
