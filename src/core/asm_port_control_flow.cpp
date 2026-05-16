@@ -1014,8 +1014,6 @@ void AS_ONGOTO() {
 
   constexpr std::uint8_t kAS_TOKEN_GOSUB = 0xb0u;
   constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
-  constexpr std::uint8_t kAS_FAC_PLUS_4 =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 4u);
 
   const std::uint8_t token = AS_GETBYT();
   if (token != kAS_TOKEN_GOSUB && token != kAS_TOKEN_GOTO) {

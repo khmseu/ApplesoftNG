@@ -292,7 +292,6 @@ void MON_RESET2() {
   constexpr std::uint16_t kJumpToBasic2 =
       ApplesoftNG::ExternalJumpDispatcher::ADDR_AS_BASIC2;
   constexpr std::uint8_t kSentinelCheckMask = 0xa5u;
-  constexpr std::uint8_t kSentinelExpected = 0xe0u;
 
   // Signature bytes used by AS_LFAA6/AS_LFABA/AS_LFAC7 scan path.
   constexpr std::array<std::uint8_t, 7> kAS_LFB01 = {0x45u, 0x20u, 0xffu, 0x00u,
@@ -432,8 +431,6 @@ void MON_REGDSP() {
 // AS_Labels: AS_COLD_START (inclusive) .. AS_CALL (exclusive)
 // Name normalization: none (assembler label AS_COLD_START kept verbatim).
 void AS_COLD_START() {
-  constexpr std::uint8_t kAS_CURLIN_HI =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_CURLIN + 1u);
   constexpr std::uint8_t kJmpOpcode = 0x4cu;
   constexpr std::uint16_t kColdStartROM = 0x2128u;
   constexpr std::uint16_t kStroUTROM = 0x0b3au;
@@ -1806,8 +1803,6 @@ void AS_FRMEVL() {
   // the recursive precedence walk and the stacked-AS_LHS frame handoff to
   // AS_ARG/AS_CPRMASK.
 
-  constexpr std::uint8_t kAS_SGNCPR =
-      ApplesoftVariables::ZP_AS_STRNG1; // AS_SGNCPR shares $AB with AS_STRNG1.
   constexpr std::uint8_t kAS_STACK_ROOM_BYTES = 1u;
   constexpr std::uint8_t kAS_TOKEN_PLUS = 0xc8u;
   constexpr std::uint8_t kAS_TOKEN_GREATER = 0xcfu;
@@ -2114,9 +2109,6 @@ std::uint8_t MON_PREAD() {
   //   bne PREAD2       ; saturate at 255
   //   dey
   // RTS2D: rts
-
-  constexpr std::uint8_t kAS_FAC_LAST =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 4u);
 
   // In the original monitor, paddle index is supplied in X.
   // The current C++ calling path provides the converted operand in AS_FAC+4.

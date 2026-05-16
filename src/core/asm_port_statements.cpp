@@ -116,9 +116,6 @@ void AS_RUN() {
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
   // AS_Labels: AS_RUN (inclusive) .. AS_GOSUB (exclusive)
   // Name normalization: none (assembler label AS_RUN kept verbatim).
-  constexpr std::uint8_t kAS_CURLIN_hi =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_CURLIN + 1u);
-
   std::uint8_t curlinHi =
       ApplesoftVariables::highByte(variables_const().AS_CURLIN);
   ApplesoftVariables::setHighByte(variables().AS_CURLIN,
