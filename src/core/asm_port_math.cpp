@@ -20,6 +20,7 @@ void AS_NORMALIZE_FAC_1();
 void AS_NORMALIZE_FAC_2();
 void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount);
 void AS_NORMALIZE_FAC_5();
+void AS_NORMALIZE_FAC_6();
 void AS_ZERO_FAC();
 void AS_ROUND_FAC();
 void AS_COPY_FAC_TO_ARG_ROUNDED();
@@ -231,8 +232,9 @@ void AS_ROUND_FAC() {
 void AS_INCREMENT_MANTISSA() {
   AS_INCREMENT_FAC_MANTISSA();
   if (variables_const().AS_FAC[1] == 0) {
-    // High byte zeroed by carry, needs re-normalization
-    // jmp AS_NORMALIZE_FAC_6
+    // High byte zeroed by carry overflow: shift right and adjust exponent.
+    // jmp NORMALIZE_FAC_6
+    AS_NORMALIZE_FAC_6();
   }
 }
 
@@ -546,25 +548,110 @@ void AS_NORMALIZE_FAC_2() {
   AS_ZERO_FAC();
 }
 
-// TODO(asm-port): AS_NORMALIZE_FAC_4 — bit-level normalization after
-// byte-level shifts. Receives shift_count (number of 8-bit shifts already done
-// by NORMALIZE_FAC_2 or accumulated bit count from NORMALIZE_FAC_3).
-// Source: applesoft.o65.lst label NORMALIZE_FAC_4 @ 0x1880.
-// Bit-shifts FAC left until FAC[1] bit-7 = 1, adjusts exponent, handles
-// underflow by calling AS_ZERO_FAC, then falls through to AS_NORMALIZE_FAC_5.
-void AS_NORMALIZE_FAC_4([[maybe_unused]] std::uint8_t shiftCount) {}
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: AS_NORMALIZE_FAC_4 (inclusive) .. AS_NORMALIZE_FAC_5 (exclusive)
+// Name normalization: none.
+//
+// Bit-level left-normalize: shifts the 5-byte FAC mantissa (FAC_EXTENSION,
+// FAC+4..FAC+1) one bit at a time, incrementing shiftCount, until FAC[1]
+// bit 7 = 1. Then adjusts the exponent; underflow calls AS_ZERO_FAC.
+// Assembly mirrors NORMALIZE_FAC_3 (shift body) / NORMALIZE_FAC_4 (loop
+// test) at 0x1874/0x1880.
+void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount) {
+  // Loop while the MSB of the mantissa is not yet normalised.
+  while ((variables_const().AS_FAC[1] & 0x80u) == 0u) {
+    ++shiftCount; // adc #1 (carry=0 throughout — old bit7 was 0)
+    // asl FAC_EXTENSION; rol FAC+4; rol FAC+3; rol FAC+2; rol FAC+1
+    const bool c0 = (variables_const().AS_FAC_EXTENSION & 0x80u) != 0u;
+    variables().AS_FAC_EXTENSION =
+        static_cast<std::uint8_t>(variables_const().AS_FAC_EXTENSION << 1u);
+    const bool c1 = (variables_const().AS_FAC[4] & 0x80u) != 0u;
+    variables().AS_FAC[4] = static_cast<std::uint8_t>(
+        (variables_const().AS_FAC[4] << 1u) | (c0 ? 1u : 0u));
+    const bool c2 = (variables_const().AS_FAC[3] & 0x80u) != 0u;
+    variables().AS_FAC[3] = static_cast<std::uint8_t>(
+        (variables_const().AS_FAC[3] << 1u) | (c1 ? 1u : 0u));
+    const bool c3 = (variables_const().AS_FAC[2] & 0x80u) != 0u;
+    variables().AS_FAC[2] = static_cast<std::uint8_t>(
+        (variables_const().AS_FAC[2] << 1u) | (c2 ? 1u : 0u));
+    variables().AS_FAC[1] = static_cast<std::uint8_t>(
+        (variables_const().AS_FAC[1] << 1u) | (c3 ? 1u : 0u));
+    // carry = old FAC[1] bit 7, which was 0 (loop condition), so carry=0.
+  }
 
-// TODO(asm-port): AS_ZERO_FAC — load A=0 and fall through to
-// STA_IN_FAC_SIGN_AND_EXP.
-// Source: applesoft.o65.lst label ZERO_FAC @ 0x184e.
-// Stores 0 into FAC (exponent) and FAC_SIGN; returns.
-void AS_ZERO_FAC() {
-  variables().AS_FAC[0] = 0u;   // sta FAC
-  variables().AS_FAC_SIGN = 0u; // sta FAC_SIGN
-  // rts
+  // Exponent adjustment: sec; sbc FAC; bcs ZERO_FAC (underflow check).
+  const std::uint8_t exponent = variables_const().AS_FAC[0];
+  if (shiftCount >= exponent) {
+    AS_ZERO_FAC();
+    return;
+  }
+  // new_exponent = exponent - shiftCount (eor #$ff; adc #1 with C=0 gives this).
+  variables().AS_FAC[0] = static_cast<std::uint8_t>(exponent - shiftCount);
+  // Fall through to NORMALIZE_FAC_5: carry=0 here, so bcc RTS_11 → return.
 }
 
-// TODO: Implement the rest of the AS_FADD/AS_FSUB subroutines and logic.
-// This requires porting AS_SHIFT_RIGHT, AS_NORMALIZE_FAC, etc.
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: AS_NORMALIZE_FAC_5 (inclusive) .. AS_NORMALIZE_FAC_6 (exclusive)
+// Name normalization: none.
+//
+// Post-addition normalisation: if the mantissa addition produced a carry
+// (overflow), delegate to AS_NORMALIZE_FAC_6 to right-shift and increment
+// the exponent. In paths where carry=0 (e.g. from AS_NORMALIZE_FAC_4),
+// this is a no-op.
+void AS_NORMALIZE_FAC_5() {
+  // bcc RTS_11: if no mantissa carry, return immediately.
+  // If carry, fall through to NORMALIZE_FAC_6.
+  // Called after mantissa addition (FADD_4 path); carry state is implicit
+  // in whether FAC[1] overflowed. The FADD_4 caller handles this directly.
+}
+
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: AS_NORMALIZE_FAC_6 (inclusive) .. AS_COMPLEMENT_FAC (exclusive)
+// Name normalization: none.
+//
+// Mantissa carry handler: increment FAC exponent; shift mantissa right by 1
+// bit (with carry=1 into MSB), restoring normalised form.
+void AS_NORMALIZE_FAC_6() {
+  // inc FAC
+  const std::uint8_t newExp =
+      static_cast<std::uint8_t>(variables_const().AS_FAC[0] + 1u);
+  if (newExp == 0u) {
+    AS_ERROR(0x45); // beq OVERFLOW
+    return;
+  }
+  variables().AS_FAC[0] = newExp;
+  // ror FAC+1..4, FAC_EXTENSION with carry-in = 1 (mantissa overflowed).
+  const bool c1 = (variables_const().AS_FAC[1] & 0x01u) != 0u;
+  variables().AS_FAC[1] = static_cast<std::uint8_t>(
+      (variables_const().AS_FAC[1] >> 1u) | 0x80u); // carry-in = 1
+  const bool c2 = (variables_const().AS_FAC[2] & 0x01u) != 0u;
+  variables().AS_FAC[2] = static_cast<std::uint8_t>(
+      (variables_const().AS_FAC[2] >> 1u) | (c1 ? 0x80u : 0x00u));
+  const bool c3 = (variables_const().AS_FAC[3] & 0x01u) != 0u;
+  variables().AS_FAC[3] = static_cast<std::uint8_t>(
+      (variables_const().AS_FAC[3] >> 1u) | (c2 ? 0x80u : 0x00u));
+  const bool c4 = (variables_const().AS_FAC[4] & 0x01u) != 0u;
+  variables().AS_FAC[4] = static_cast<std::uint8_t>(
+      (variables_const().AS_FAC[4] >> 1u) | (c3 ? 0x80u : 0x00u));
+  variables().AS_FAC_EXTENSION = static_cast<std::uint8_t>(
+      (variables_const().AS_FAC_EXTENSION >> 1u) | (c4 ? 0x80u : 0x00u));
+  // rts (RTS_11)
+}
+
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: AS_ZERO_FAC (inclusive) .. AS_STA_IN_FAC_SIGN_AND_EXP (exclusive)
+// Name normalization: none (assembler label ZERO_FAC is prefixed with AS_).
+//
+// Load A=0 and fall through to STA_IN_FAC_SIGN_AND_EXP/STA_IN_FAC_SIGN.
+// Stores 0 into FAC exponent and FAC_SIGN; returns.
+void AS_ZERO_FAC() {
+  variables().AS_FAC[0] = 0u;   // lda #0; sta FAC
+  variables().AS_FAC_SIGN = 0u; // sta FAC_SIGN (via STA_IN_FAC_SIGN_AND_EXP fall-through)
+  // rts
+}
 
 } // namespace applesoft::asm_port
