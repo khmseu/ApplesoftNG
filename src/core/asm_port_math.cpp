@@ -19,7 +19,7 @@ void AS_COMPLEMENT_FAC();
 void AS_NORMALIZE_FAC_1();
 void AS_NORMALIZE_FAC_2();
 void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount);
-void AS_NORMALIZE_FAC_5();
+void AS_NORMALIZE_FAC_5(bool carry = false);
 void AS_NORMALIZE_FAC_6();
 void AS_ZERO_FAC();
 void AS_ROUND_FAC();
@@ -598,13 +598,12 @@ void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount) {
 //
 // Post-addition normalisation: if the mantissa addition produced a carry
 // (overflow), delegate to AS_NORMALIZE_FAC_6 to right-shift and increment
-// the exponent. In paths where carry=0 (e.g. from AS_NORMALIZE_FAC_4),
-// this is a no-op.
-void AS_NORMALIZE_FAC_5() {
-  // bcc RTS_11: if no mantissa carry, return immediately.
-  // If carry, fall through to NORMALIZE_FAC_6.
-  // Called after mantissa addition (FADD_4 path); carry state is implicit
-  // in whether FAC[1] overflowed. The FADD_4 caller handles this directly.
+// the exponent. If carry=false, returns immediately (bcc RTS_11 path).
+void AS_NORMALIZE_FAC_5(bool carry) {
+  // bcc RTS_11: if no carry, return.
+  if (carry) {
+    AS_NORMALIZE_FAC_6();
+  }
 }
 
 // Source:
