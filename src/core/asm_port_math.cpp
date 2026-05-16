@@ -451,9 +451,8 @@ void AS_ADDACC_WITH_DIGIT(std::uint8_t digit) {
   AS_COPY_FAC_TO_ARG_ROUNDED();
   AS_FLOAT(static_cast<std::int8_t>(digit));
   // AS_SGNCPR is $AB
-  WriteZeroPageByte(0xAB,
-                    variables_const().AS_ARG[5] ^
-                        variables_const().AS_FAC_SIGN);
+  WriteZeroPageByte(0xAB, variables_const().AS_ARG[5] ^
+                              variables_const().AS_FAC_SIGN);
   AS_FADDT();
 }
 
@@ -462,8 +461,7 @@ void AS_ADDACC_WITH_DIGIT(std::uint8_t digit) {
  */
 void AS_ADD_EXPONENTS() {
   std::uint16_t sum =
-      (std::uint16_t)variables_const().AS_FAC[0] +
-      variables_const().AS_ARG[0];
+      (std::uint16_t)variables_const().AS_FAC[0] + variables_const().AS_ARG[0];
   if (sum > 0xFF) {
     AS_ERROR(0x45); // AS_OVERFLOW
     return;
@@ -565,8 +563,8 @@ void AS_NORMALIZE_FAC_4([[maybe_unused]] std::uint8_t shiftCount) {}
 // Source: applesoft.o65.lst label ZERO_FAC @ 0x184e.
 // Stores 0 into FAC (exponent) and FAC_SIGN; returns.
 void AS_ZERO_FAC() {
-  variables().AS_FAC[0] = 0u;      // sta FAC
-  variables().AS_FAC_SIGN = 0u;    // sta FAC_SIGN
+  variables().AS_FAC[0] = 0u;   // sta FAC
+  variables().AS_FAC_SIGN = 0u; // sta FAC_SIGN
   // rts
 }
 
