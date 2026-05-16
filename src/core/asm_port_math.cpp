@@ -271,8 +271,7 @@ void AS_FLOAT_1(std::uint8_t exponent) {
  * AS_FLOAT_2: Float unsigned 16-bit value in AS_FAC_1,2 with exponent and sign
  */
 void AS_FLOAT_2(std::uint8_t exponent, bool positive) {
-  variables().AS_FAC[4] = 0;
-  variables().AS_FAC[3] = 0;
+  variables().AS_FAC_WORD_3 = 0;
   variables().AS_FAC[0] = exponent;
   variables().AS_FAC_EXTENSION = 0;
   variables().AS_FAC_SIGN = positive ? 0 : 0xFF;

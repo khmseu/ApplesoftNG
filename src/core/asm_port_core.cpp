@@ -623,8 +623,7 @@ void AS_FAE_1() {
     const std::uint8_t subscriptLow = theStack().popByte();
     const std::uint8_t subscriptHigh = theStack().popByte();
 
-    variables().AS_FAC[3] = subscriptLow;
-    variables().AS_FAC[4] = subscriptHigh;
+    variables().AS_FAC_WORD_3 = ApplesoftVariables::makeWord(subscriptLow, subscriptHigh);
 
     // Bounds check: subscript must be strictly less than descriptor extent.
     const std::uint8_t dimHigh = descriptor.read(descriptorY);
@@ -1625,8 +1624,7 @@ void AS_GIVAYF(std::int16_t value) {
   variables().AS_VALTYP = 0u;
   variables().AS_FAC[1] = ApplesoftVariables::lowByte(rawValue);
   variables().AS_FAC[2] = ApplesoftVariables::highByte(rawValue);
-  variables().AS_FAC[3] = 0u;
-  variables().AS_FAC[4] = 0u;
+  variables().AS_FAC_WORD_3 = 0u;
 
   AS_FLOAT_1(0x90u);
 }

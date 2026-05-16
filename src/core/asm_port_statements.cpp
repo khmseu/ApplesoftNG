@@ -379,15 +379,13 @@ void AS_PUTSTR() {
   constexpr std::uint8_t kAS_VARTAB = ApplesoftVariables::ZP_AS_VARTAB;
   constexpr std::uint8_t kAS_STRNG1 = ApplesoftVariables::ZP_AS_STRNG1;
 
-  const std::uint16_t facDescriptor = ApplesoftVariables::makeWord(
-      variables_const().AS_FAC[3], variables_const().AS_FAC[4]);
+  const std::uint16_t facDescriptor = variables_const().AS_FAC_WORD_3;
   const auto facDescriptorPtr = variables_const().pointer(facDescriptor);
   auto readDescriptorByte = [&](std::uint8_t offset) {
     return facDescriptorPtr.read(offset);
   };
 
-  std::uint16_t descriptorPointer = ApplesoftVariables::makeWord(
-      variables_const().AS_FAC[3], variables_const().AS_FAC[4]);
+  std::uint16_t descriptorPointer = variables_const().AS_FAC_WORD_3;
 
   const std::uint8_t descDataHigh = readDescriptorByte(2);
   const std::uint8_t fretopHigh =
