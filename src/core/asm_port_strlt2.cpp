@@ -21,6 +21,10 @@ void AS_IQERR();
 void AS_CHKCLS();
 void AS_CONINT();
 void AS_SNGFLT(std::uint8_t value);
+void AS_FRMEVL();
+std::uint8_t AS_CHRGOT();
+std::uint8_t AS_CHRGET();
+void AS_SYNERR();
 
 namespace {
 
@@ -88,6 +92,10 @@ std::uint8_t read_AS_LENGTH() { return variables_const().AS_LENGTH; }
 
 void write_AS_LENGTH(std::uint8_t value) { variables().AS_LENGTH = value; }
 
+std::uint8_t read_AS_CPRTYP() { return variables_const().AS_CPRTYP; }
+
+void write_AS_CPRTYP(std::uint8_t value) { variables().AS_CPRTYP = value; }
+
 std::uint16_t read_AS_ARYPNT() { return variables_const().AS_ARYPNT; }
 
 void write_AS_ARYPNT(std::uint16_t value) { variables().AS_ARYPNT = value; }
@@ -130,8 +138,39 @@ std::uint8_t AS_FRESTR();
 // TODO(asm-port): port AS_FRM_ELEMENT label.
 void AS_FRM_ELEMENT() {}
 
-// TODO(asm-port): port AS_FRMEVL_2 label.
-void AS_FRMEVL_2() {}
+void AS_FRMEVL_2() {
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // AS_Labels: AS_FRMEVL_2 (inclusive) .. AS_FRM_RELATIONAL (exclusive)
+  // Name normalization: none (assembler label AS_FRMEVL_2 kept verbatim).
+  //
+  // This slice scans chained relational operators and builds AS_CPRTYP bits:
+  // > => 0x01, = => 0x02, < => 0x04.
+  std::uint8_t token = AS_CHRGOT();
+  while (token >= 0xcfu && token <= 0xd1u) {
+    std::uint8_t relMask = 0u;
+    if (token == 0xcfu) {
+      relMask = 0x01u;
+    } else if (token == 0xd0u) {
+      relMask = 0x02u;
+    } else {
+      relMask = 0x04u;
+    }
+
+    const std::uint8_t existing = read_AS_CPRTYP();
+    if ((existing & relMask) != 0u) {
+      AS_SYNERR();
+      return;
+    }
+
+    write_AS_CPRTYP(static_cast<std::uint8_t>(existing | relMask));
+    token = AS_CHRGET();
+  }
+
+  // The conversion window falls through into AS_FRM_RELATIONAL and later
+  // precedence handling; AS_FRMEVL models that continuation.
+  AS_FRMEVL();
+}
 
 struct SubstringSetupResult {
   std::uint8_t firstParameter;
