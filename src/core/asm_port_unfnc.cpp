@@ -57,7 +57,7 @@ static void AS_NORMALIZE_FAC_1(std::uint8_t facSign) {
 
   if (integerValue == 0u) {
     WriteZeroPageByte(kAS_FAC, 0u);
-    WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
+    variables().AS_FAC_EXTENSION = 0u;
     return;
   }
 
@@ -67,7 +67,7 @@ static void AS_NORMALIZE_FAC_1(std::uint8_t facSign) {
     if (exponent == 0u) {
       WriteZeroPageByte(kAS_FAC, 0u);
       WriteZeroPageByte(kAS_FAC_SIGN, 0u);
-      WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
+      variables().AS_FAC_EXTENSION = 0u;
       WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u), 0u);
       WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u), 0u);
       WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u), 0u);
@@ -87,7 +87,7 @@ static void AS_NORMALIZE_FAC_1(std::uint8_t facSign) {
                     static_cast<std::uint8_t>((integerValue >> 8u) & 0xffu));
   WriteZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u),
                     static_cast<std::uint8_t>(integerValue & 0xffu));
-  WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
+  variables().AS_FAC_EXTENSION = 0u;
 }
 
 void AS_PDL() {
@@ -148,7 +148,7 @@ void AS_INT_fn() {
   // The ROM uses carry to decide whether the integer needs complementing
   // before re-normalization. Model that explicitly with the saved AS_FAC sign.
   const std::uint8_t facSign = ReadZeroPageByte(kAS_FAC_SIGN);
-  WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
+  variables().AS_FAC_EXTENSION = 0u;
   WriteZeroPageByte(kAS_FAC, 0xa0u);
   WriteZeroPageByte(kAS_CHARAC, ReadZeroPageByte(kAS_FAC_LAST));
 

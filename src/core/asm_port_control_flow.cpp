@@ -146,7 +146,7 @@ void AS_LOAD_FAC_FROM_YA() {
   WriteZeroPageByte(kAS_FAC + 1u,
                     static_cast<std::uint8_t>(signPackedMantissa | 0x80u));
   WriteZeroPageByte(kAS_FAC, source.read(0u));
-  WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
+  variables().AS_FAC_EXTENSION = 0u;
 }
 
 std::int8_t AS_SIGN2(std::uint8_t sign) {
@@ -251,7 +251,7 @@ void AS_FCOMP2() {
     }
   }
 
-  const std::uint8_t facExtension = ReadZeroPageByte(kAS_FAC_EXTENSION);
+  const std::uint8_t facExtension = variables_const().AS_FAC_EXTENSION;
   const std::uint8_t comparandExtension = comparand.read(4u);
   const std::uint8_t facMantissaLow =
       ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u));
@@ -390,7 +390,7 @@ void AS_SETFOR() {
   forVariablePtr.write(ReadZeroPageByte(add_u8(kAS_FAC, 3u)), 3u);
   forVariablePtr.write(ReadZeroPageByte(add_u8(kAS_FAC, 4u)), 4u);
 
-  WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
+  variables().AS_FAC_EXTENSION = 0u;
 }
 
 std::uint8_t ReadProgramByte(std::uint16_t address);

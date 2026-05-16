@@ -70,7 +70,7 @@ void AS_FSUBT() {
   variables().AS_FAC_SIGN = fac_sign;
 
   std::uint8_t arg_sign = variables_const().AS_ARG[5];
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_SGNCPR, fac_sign ^ arg_sign);
+  variables().AS_SGNCPR = fac_sign ^ arg_sign;
 
   AS_FADDT();
 }
@@ -98,9 +98,8 @@ void AS_FADDT() {
     return;
   }
 
-  std::uint8_t fac_ext =
-      ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC_EXTENSION);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_ARG_EXTENSION, fac_ext);
+  std::uint8_t fac_ext = variables_const().AS_FAC_EXTENSION;
+  variables().AS_ARG_EXTENSION = fac_ext;
 
   // Continue porting here...
 }
@@ -151,7 +150,7 @@ void AS_MUL10() {
 
   exp += 2; // AS_FAC * 4
   variables().AS_FAC[0] = exp;
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_SGNCPR, 0);
+  variables().AS_SGNCPR = 0;
 
   AS_FADD_2(exp); // (AS_FAC*4) + (AS_FAC*1) = AS_FAC*5
 
@@ -215,7 +214,7 @@ void AS_COPY_FAC_TO_ARG_ROUNDED() {
     WriteZeroPageByte(
         static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_ARG + i), val);
   }
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_EXTENSION, 0);
+  variables().AS_FAC_EXTENSION = 0;
 }
 
 /**
@@ -227,7 +226,7 @@ void AS_COPY_FAC_TO_ARG_ROUNDED() {
 void AS_ROUND_FAC() {
   if (variables_const().AS_FAC[0] == 0)
     return;
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC_EXTENSION) >= 0x80) {
+  if (variables_const().AS_FAC_EXTENSION >= 0x80) {
     AS_INCREMENT_MANTISSA();
   }
 }
@@ -281,7 +280,7 @@ void AS_FLOAT_2(std::uint8_t exponent, bool positive) {
   variables().AS_FAC[4] = 0;
   variables().AS_FAC[3] = 0;
   variables().AS_FAC[0] = exponent;
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_EXTENSION, 0);
+  variables().AS_FAC_EXTENSION = 0;
   variables().AS_FAC_SIGN = positive ? 0 : 0xFF;
   // jmp AS_NORMALIZE_FAC_1
 }
@@ -498,7 +497,7 @@ void AS_COPY_ARG_TO_FAC() {
   for (int i = 0; i < 5; ++i) {
     variables().AS_FAC[i] = variables_const().AS_ARG[i];
   }
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_EXTENSION, 0);
+  variables().AS_FAC_EXTENSION = 0;
 }
 
 /**
@@ -515,33 +514,23 @@ void AS_COPY_ARG_TO_FAC() {
  * - After 32 shifts with FAC[1] still zero, falls through to AS_ZERO_FAC.
  */
 void AS_NORMALIZE_FAC_2() {
-  constexpr auto kFAC1 =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 1u);
-  constexpr auto kFAC2 =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 2u);
-  constexpr auto kFAC3 =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 3u);
-  constexpr auto kFAC4 =
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 4u);
-  constexpr auto kFACExt = ApplesoftVariables::ZP_AS_FAC_EXTENSION;
-
   // ldy #0 / tya / clc: A=0, Y=0, carry clear
   std::uint8_t shiftCount = 0u;
 
   do {
-    const std::uint8_t msb = ReadZeroPageByte(kFAC1); // ldx FAC+1
-    if (msb != 0u) {                                  // bne NORMALIZE_FAC_4
+    const std::uint8_t msb = variables_const().AS_FAC[1]; // ldx FAC+1
+    if (msb != 0u) {                                       // bne NORMALIZE_FAC_4
       // Some 1-bits present; hand off to bit-level normalization.
       AS_NORMALIZE_FAC_4(shiftCount);
       return;
     }
     // FAC[1] still zero: fast 8-bit left shuffle of mantissa + extension.
-    WriteZeroPageByte(kFAC1, ReadZeroPageByte(kFAC2)); // ldx FAC+2 / stx FAC+1
-    WriteZeroPageByte(kFAC2, ReadZeroPageByte(kFAC3)); // ldx FAC+3 / stx FAC+2
-    WriteZeroPageByte(kFAC3, ReadZeroPageByte(kFAC4)); // ldx FAC+4 / stx FAC+3
-    WriteZeroPageByte(
-        kFAC4, ReadZeroPageByte(kFACExt)); // ldx FAC_EXTENSION / stx FAC+4
-    WriteZeroPageByte(kFACExt, 0u);        // sty FAC_EXTENSION (Y=0)
+    variables().AS_FAC[1] = variables_const().AS_FAC[2]; // ldx FAC+2 / stx FAC+1
+    variables().AS_FAC[2] = variables_const().AS_FAC[3]; // ldx FAC+3 / stx FAC+2
+    variables().AS_FAC[3] = variables_const().AS_FAC[4]; // ldx FAC+4 / stx FAC+3
+    variables().AS_FAC[4] =
+        variables_const().AS_FAC_EXTENSION; // ldx FAC_EXTENSION / stx FAC+4
+    variables().AS_FAC_EXTENSION = 0u;      // sty FAC_EXTENSION (Y=0)
     shiftCount = static_cast<std::uint8_t>(shiftCount + 8u); // adc #8
   } while (shiftCount != 32u); // cmp #32 / bne L_NORMALIZE_FAC_2_1
 

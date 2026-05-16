@@ -28,7 +28,77 @@ public:
     ApplesoftVariables *vars_ = nullptr;
   };
 
-  ApplesoftVariables() { AS_LENGTH.bind(this); }
+  class SGNCPRAlias {
+  public:
+    explicit SGNCPRAlias(ApplesoftVariables *vars = nullptr) : vars_(vars) {}
+
+    void bind(ApplesoftVariables *vars) { vars_ = vars; }
+
+    operator std::uint8_t() const {
+      return vars_ == nullptr ? 0u : lowByte(vars_->AS_STRNG1);
+    }
+
+    SGNCPRAlias &operator=(std::uint8_t value) {
+      if (vars_ != nullptr) {
+        setLowByte(vars_->AS_STRNG1, value);
+      }
+      return *this;
+    }
+
+  private:
+    ApplesoftVariables *vars_ = nullptr;
+  };
+
+  class FACExtensionAlias {
+  public:
+    explicit FACExtensionAlias(ApplesoftVariables *vars = nullptr)
+        : vars_(vars) {}
+
+    void bind(ApplesoftVariables *vars) { vars_ = vars; }
+
+    operator std::uint8_t() const {
+      return vars_ == nullptr ? 0u : highByte(vars_->AS_STRNG1);
+    }
+
+    FACExtensionAlias &operator=(std::uint8_t value) {
+      if (vars_ != nullptr) {
+        setHighByte(vars_->AS_STRNG1, value);
+      }
+      return *this;
+    }
+
+  private:
+    ApplesoftVariables *vars_ = nullptr;
+  };
+
+  class ARGExtensionAlias {
+  public:
+    explicit ARGExtensionAlias(ApplesoftVariables *vars = nullptr)
+        : vars_(vars) {}
+
+    void bind(ApplesoftVariables *vars) { vars_ = vars; }
+
+    operator std::uint8_t() const {
+      return vars_ == nullptr ? 0u : highByte(vars_->AS_JMPADRS);
+    }
+
+    ARGExtensionAlias &operator=(std::uint8_t value) {
+      if (vars_ != nullptr) {
+        setHighByte(vars_->AS_JMPADRS, value);
+      }
+      return *this;
+    }
+
+  private:
+    ApplesoftVariables *vars_ = nullptr;
+  };
+
+  ApplesoftVariables() {
+    AS_LENGTH.bind(this);
+    AS_SGNCPR.bind(this);
+    AS_FAC_EXTENSION.bind(this);
+    AS_ARG_EXTENSION.bind(this);
+  }
 
   // Canonical zero-page/fixed address names used by assembler ports.
   static constexpr std::uint8_t ZP_AS_GOWARM = 0x00;
@@ -281,6 +351,9 @@ public:
   std::uint8_t AS_SHIFT_SIGN_EXT = 0;   // $a4
   std::array<std::uint8_t, 6> AS_ARG{}; // $a5..$aa
   std::uint16_t AS_STRNG1 = 0;          // $ab/$ac
+  SGNCPRAlias AS_SGNCPR{};      // Virtual alias for $ab (AS_STRNG1 low byte)
+  FACExtensionAlias AS_FAC_EXTENSION{}; // Virtual alias for $ac (AS_STRNG1 high byte)
+  ARGExtensionAlias AS_ARG_EXTENSION{}; // Virtual alias for $92 (AS_JMPADRS high byte)
   std::uint16_t AS_STRNG2 = 0;          // $ad/$ae
   std::uint16_t AS_PRGEND = 0;          // $af/$b0
   std::uint16_t AS_TXTPTR = 0;          // $b8/$b9

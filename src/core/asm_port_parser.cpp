@@ -148,7 +148,7 @@ void AS_STORE_FACDB_YX_ROUNDED() {
   destination.write(ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u)),
                     4u);
 
-  WriteZeroPageByte(kAS_FAC_EXTENSION, 0u);
+  variables().AS_FAC_EXTENSION = 0u;
 }
 
 void AS_CHKCLS() {
@@ -492,9 +492,9 @@ void AS_ROUND_FAC() {
     }
 
     // asl AS_FAC_EXTENSION / bcc AS_RTS_14
-    const std::uint8_t extension = ReadZeroPageByte(kAS_FAC_EXTENSION);
+    const std::uint8_t extension = variables_const().AS_FAC_EXTENSION;
     const bool roundUp = (extension & 0x80u) != 0u;
-    WriteZeroPageByte(kAS_FAC_EXTENSION, static_cast<std::uint8_t>(extension << 1u));
+    variables().AS_FAC_EXTENSION = static_cast<std::uint8_t>(extension << 1u);
     if (!roundUp) {
         return;
     }
