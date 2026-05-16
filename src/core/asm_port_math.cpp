@@ -65,11 +65,11 @@ void AS_FSUB() {
  * AS_Labels: AS_FSUBT (inclusive) .. AS_FADD_1 (exclusive)
  */
 void AS_FSUBT() {
-  std::uint8_t fac_sign = ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN);
+  std::uint8_t fac_sign = variables_const().AS_FAC_SIGN;
   fac_sign ^= 0xFF;
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN, fac_sign);
+  variables().AS_FAC_SIGN = fac_sign;
 
-  std::uint8_t arg_sign = ReadZeroPageByte(ApplesoftVariables::ZP_AS_ARG_SIGN);
+  std::uint8_t arg_sign = variables_const().AS_ARG[5];
   WriteZeroPageByte(ApplesoftVariables::ZP_AS_SGNCPR, fac_sign ^ arg_sign);
 
   AS_FADDT();
@@ -93,7 +93,7 @@ void AS_FADD() {
  * AS_Labels: AS_FADDT (inclusive) .. AS_FADD_2 (exclusive)
  */
 void AS_FADDT() {
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC) == 0) {
+  if (variables_const().AS_FAC[0] == 0) {
     AS_COPY_ARG_TO_FAC();
     return;
   }
@@ -115,7 +115,7 @@ void AS_FADD_2(std::uint8_t exponent) {
   if (exponent == 0)
     return;
 
-  std::uint8_t fac_exp = ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC);
+  std::uint8_t fac_exp = variables_const().AS_FAC[0];
   std::int16_t diff = (std::int16_t)exponent - (std::int16_t)fac_exp;
 
   if (diff == 0) {
@@ -125,9 +125,8 @@ void AS_FADD_2(std::uint8_t exponent) {
     // AS_L_FADD_2_1 logic
   } else {
     // AS_FAC has smaller exponent
-    WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC, exponent);
-    WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN,
-                      ReadZeroPageByte(ApplesoftVariables::ZP_AS_ARG_SIGN));
+    variables().AS_FAC[0] = exponent;
+    variables().AS_FAC_SIGN = variables_const().AS_ARG[5];
     // ... (complex alignment and subtraction logic)
   }
   // This is a partial stub to satisfy AS_MUL10 for now.
@@ -141,7 +140,7 @@ void AS_FADD_2(std::uint8_t exponent) {
  */
 void AS_MUL10() {
   AS_COPY_FAC_TO_ARG_ROUNDED();
-  std::uint8_t exp = ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC);
+  std::uint8_t exp = variables_const().AS_FAC[0];
   if (exp == 0)
     return; // AS_FAC=0
 
@@ -151,18 +150,17 @@ void AS_MUL10() {
   }
 
   exp += 2; // AS_FAC * 4
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC, exp);
+  variables().AS_FAC[0] = exp;
   WriteZeroPageByte(ApplesoftVariables::ZP_AS_SGNCPR, 0);
 
   AS_FADD_2(exp); // (AS_FAC*4) + (AS_FAC*1) = AS_FAC*5
 
-  exp = ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC);
+  exp = variables_const().AS_FAC[0];
   if (exp == 255) {
     AS_ERROR(0x45); // AS_OVERFLOW
     return;
   }
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC,
-                    exp + 1); // AS_FAC*5 * 2 = AS_FAC*10
+  variables().AS_FAC[0] = exp + 1; // AS_FAC*5 * 2 = AS_FAC*10
 }
 
 /**
@@ -179,11 +177,11 @@ const std::uint8_t AS_CON_TEN[5] = {0x84, 0x20, 0x00, 0x00, 0x00};
 void AS_DIV10() {
   AS_COPY_FAC_TO_ARG_ROUNDED();
   // AS_Load AS_CON_TEN into AS_FAC (simulated AS_LOAD_FAC_FROM_YA)
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC, AS_CON_TEN[0]);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC + 1, AS_CON_TEN[1]);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC + 2, AS_CON_TEN[2]);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC + 3, AS_CON_TEN[3]);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC + 4, AS_CON_TEN[4]);
+  variables().AS_FAC[0] = AS_CON_TEN[0];
+  variables().AS_FAC[1] = AS_CON_TEN[1];
+  variables().AS_FAC[2] = AS_CON_TEN[2];
+  variables().AS_FAC[3] = AS_CON_TEN[3];
+  variables().AS_FAC[4] = AS_CON_TEN[4];
 
   // AS_FDIVT would be called here
   // AS_FDIVT(); // Divide AS_ARG by AS_FAC
@@ -196,10 +194,10 @@ void AS_DIV10() {
  * AS_Labels: AS_NEGOP (inclusive) .. AS_RTS_18 (exclusive)
  */
 void AS_NEGATE_FAC() {
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC) == 0)
+  if (variables_const().AS_FAC[0] == 0)
     return;
-  std::uint8_t sign = ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN, sign ^ 0xFF);
+  std::uint8_t sign = variables_const().AS_FAC_SIGN;
+  variables().AS_FAC_SIGN = sign ^ 0xFF;
 }
 
 /**
@@ -227,7 +225,7 @@ void AS_COPY_FAC_TO_ARG_ROUNDED() {
  * AS_Labels: AS_ROUND_FAC (inclusive) .. AS_RTS_14 (exclusive)
  */
 void AS_ROUND_FAC() {
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC) == 0)
+  if (variables_const().AS_FAC[0] == 0)
     return;
   if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC_EXTENSION) >= 0x80) {
     AS_INCREMENT_MANTISSA();
@@ -239,7 +237,7 @@ void AS_ROUND_FAC() {
  */
 void AS_INCREMENT_MANTISSA() {
   AS_INCREMENT_FAC_MANTISSA();
-  if (ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC + 1) == 0) {
+  if (variables_const().AS_FAC[1] == 0) {
     // High byte zeroed by carry, needs re-normalization
     // jmp AS_NORMALIZE_FAC_6
   }
@@ -250,10 +248,8 @@ void AS_INCREMENT_MANTISSA() {
  */
 void AS_INCREMENT_FAC_MANTISSA() {
   for (int i = 4; i >= 1; --i) {
-    std::uint8_t addr =
-        static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + i);
-    std::uint8_t val = ReadZeroPageByte(addr) + 1;
-    WriteZeroPageByte(addr, val);
+    std::uint8_t val = variables_const().AS_FAC[i] + 1;
+    variables().AS_FAC[i] = val;
     if (val != 0)
       break;
   }
@@ -263,9 +259,8 @@ void AS_INCREMENT_FAC_MANTISSA() {
  * AS_FLOAT: Convert signed byte in A to AS_FAC
  */
 void AS_FLOAT(std::int8_t value) {
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC + 1,
-                    static_cast<std::uint8_t>(value));
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC + 2, 0);
+  variables().AS_FAC[1] = static_cast<std::uint8_t>(value);
+  variables().AS_FAC[2] = 0;
   AS_FLOAT_1(0x88);
 }
 
@@ -273,7 +268,7 @@ void AS_FLOAT(std::int8_t value) {
  * AS_FLOAT_1: Float unsigned 16-bit value in AS_FAC_1,2 with exponent in X
  */
 void AS_FLOAT_1(std::uint8_t exponent) {
-  std::uint8_t hi = ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC + 1);
+  std::uint8_t hi = variables_const().AS_FAC[1];
   bool positive = (hi & 0x80) == 0;
   // ROL hi logic follows
   AS_FLOAT_2(exponent, positive);
@@ -283,11 +278,11 @@ void AS_FLOAT_1(std::uint8_t exponent) {
  * AS_FLOAT_2: Float unsigned 16-bit value in AS_FAC_1,2 with exponent and sign
  */
 void AS_FLOAT_2(std::uint8_t exponent, bool positive) {
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC + 4, 0);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC + 3, 0);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC, exponent);
+  variables().AS_FAC[4] = 0;
+  variables().AS_FAC[3] = 0;
+  variables().AS_FAC[0] = exponent;
   WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_EXTENSION, 0);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN, positive ? 0 : 0xFF);
+  variables().AS_FAC_SIGN = positive ? 0 : 0xFF;
   // jmp AS_NORMALIZE_FAC_1
 }
 
@@ -310,7 +305,7 @@ void AS_FIN() {
     WriteZeroPageByte(static_cast<std::uint8_t>(i), 0);
   }
 
-  std::uint8_t ch = ReadZeroPageByte(ApplesoftVariables::ZP_AS_CHARAC);
+  std::uint8_t ch = variables_const().AS_CHARAC;
   // Note: AS_CHRGET already populated AS_CHARAC and set C flag based on if it's
   // a digit. In our C++ port, we'll use AS_CHRGET() to get the current state.
 
@@ -457,8 +452,8 @@ void AS_ADDACC_WITH_DIGIT(std::uint8_t digit) {
   AS_FLOAT(static_cast<std::int8_t>(digit));
   // AS_SGNCPR is $AB
   WriteZeroPageByte(0xAB,
-                    ReadZeroPageByte(ApplesoftVariables::ZP_AS_ARG_SIGN) ^
-                        ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN));
+                    variables_const().AS_ARG[5] ^
+                        variables_const().AS_FAC_SIGN);
   AS_FADDT();
 }
 
@@ -467,14 +462,13 @@ void AS_ADDACC_WITH_DIGIT(std::uint8_t digit) {
  */
 void AS_ADD_EXPONENTS() {
   std::uint16_t sum =
-      (std::uint16_t)ReadZeroPageByte(ApplesoftVariables::ZP_AS_FAC) +
-      ReadZeroPageByte(ApplesoftVariables::ZP_AS_ARG);
+      (std::uint16_t)variables_const().AS_FAC[0] +
+      variables_const().AS_ARG[0];
   if (sum > 0xFF) {
     AS_ERROR(0x45); // AS_OVERFLOW
     return;
   }
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC,
-                    static_cast<std::uint8_t>(sum));
+  variables().AS_FAC[0] = static_cast<std::uint8_t>(sum);
 }
 
 /**
@@ -499,15 +493,12 @@ void AS_LOAD_ARG_FROM_YA(std::uint16_t address) {
  * AS_Labels: AS_COPY_ARG_TO_FAC (inclusive) .. AS_MFA (exclusive)
  */
 void AS_COPY_ARG_TO_FAC() {
-  std::uint8_t arg_sign = ReadZeroPageByte(ApplesoftVariables::ZP_AS_ARG_SIGN);
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN, arg_sign);
+  std::uint8_t arg_sign = variables_const().AS_ARG[5];
+  variables().AS_FAC_SIGN = arg_sign;
 
   // Copy 5 bytes from AS_ARG to AS_FAC (exponent + 4 mantissa bytes)
   for (int i = 0; i < 5; ++i) {
-    std::uint8_t val = ReadZeroPageByte(
-        static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_ARG + i));
-    WriteZeroPageByte(
-        static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + i), val);
+    variables().AS_FAC[i] = variables_const().AS_ARG[i];
   }
   WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_EXTENSION, 0);
 }
@@ -574,8 +565,8 @@ void AS_NORMALIZE_FAC_4([[maybe_unused]] std::uint8_t shiftCount) {}
 // Source: applesoft.o65.lst label ZERO_FAC @ 0x184e.
 // Stores 0 into FAC (exponent) and FAC_SIGN; returns.
 void AS_ZERO_FAC() {
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC, 0u);      // sta FAC
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_FAC_SIGN, 0u); // sta FAC_SIGN
+  variables().AS_FAC[0] = 0u;      // sta FAC
+  variables().AS_FAC_SIGN = 0u;    // sta FAC_SIGN
   // rts
 }
 
