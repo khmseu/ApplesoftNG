@@ -304,9 +304,13 @@ std::uint16_t readStackWordAt(std::uint8_t x, std::uint8_t lowOffset,
                                       theStack().readByteAt(x, highOffset));
 }
 
-// TODO(asm-port): decide branch condition after comparing AS_FOR value with end
-// value.
-bool AS_NEXT_shouldTerminateLoop() { return false; }
+// Assembly: tsx; sec; sbc STACK+9,X; beq L_NEXT_3_2
+// Terminates (returns true) when the 8-bit difference is zero, i.e. when
+// the unsigned comparison result from AS_FCOMP2 equals the step sign byte.
+bool AS_NEXT_shouldTerminateLoop(std::uint8_t forFrameX) {
+  const std::uint8_t stepSign = theStack().readByteAt(forFrameX, 9u);
+  return static_cast<std::uint8_t>(gNumericCompareResult) == stepSign;
+}
 
 std::uint8_t ScanAheadOffset(std::uint8_t terminator) {
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
@@ -753,9 +757,13 @@ void AS_NEXT() {
       theStack().readByteAt(gtforpntResult.x, 9u); // AS_FAC_SIGN
   AS_FADD();
   AS_SETFOR();
+  // Assembly: stx DEST (X = frame_x + 10) then ldy #>STACK; jsr FCOMP2.
+  // Set AS_DEST to the full 16-bit address of the end value in the FOR frame.
+  variables().AS_DEST = static_cast<std::uint16_t>(
+      0x0100u + add_u8(gtforpntResult.x, 10u));
   AS_FCOMP2();
 
-  if (!AS_NEXT_shouldTerminateLoop()) {
+  if (!AS_NEXT_shouldTerminateLoop(gtforpntResult.x)) {
     // Restore line/AS_TXTPTR from AS_FOR frame and jump AS_NEWSTT.
     const std::uint16_t restoredAS_Line =
         readStackWordAt(gtforpntResult.x, 15u, 16u);
