@@ -137,6 +137,10 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return lowByte(MON_A2);
   case ZP_MON_A2 + 1:
     return highByte(MON_A2);
+  case ZP_MON_A4:
+    return lowByte(MON_A4);
+  case ZP_MON_A4 + 1:
+    return highByte(MON_A4);
   case ZP_MON_DEBUG_REG_A:
     return MON_DEBUG_REG_A;
   case ZP_MON_DEBUG_REG_X:
@@ -555,6 +559,12 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     return;
   case ZP_MON_RNDH:
     setHighByte(MON_RND, value);
+    return;
+  case ZP_MON_A4:
+    setLowByte(MON_A4, value);
+    return;
+  case ZP_MON_A4 + 1:
+    setHighByte(MON_A4, value);
     return;
   case ZP_AS_LINNUM:
     setLowByte(AS_LINNUM, value);

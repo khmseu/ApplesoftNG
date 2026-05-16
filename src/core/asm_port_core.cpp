@@ -90,7 +90,7 @@ void ClearErrFlag() { variables().AS_ERRFLG = 0; }
 
 void MarkDirectMode() {
   auto &vars = variables();
-  ApplesoftVariables::setHighByte(vars.AS_CURLIN, 0xffu);
+  vars.AS_CURLIN = 0xff00u | (vars.AS_CURLIN & 0x00ffu);
 }
 
 std::uint8_t ReadZeroPageByte(std::uint8_t address) {
@@ -432,7 +432,7 @@ void MON_REGDSP() {
   // Unified pointer candidate from RGDSP1: $40/$41 points at the saved-register
   // block.
   const std::uint16_t regPointer = kRegBase;
-  WriteZeroPageWord(kMON_A4, regPointer);
+  variables().MON_A4 = regPointer;
 
   for (std::size_t i = 0; i < kRTBL.size(); ++i) {
     MON_COUT(kSpace);
@@ -462,12 +462,8 @@ void AS_COLD_START() {
   ApplesoftVariables::setHighByte(variables().AS_CURLIN, 0xffu);
   theStack().setStackPointer(0xfbu);
 
-  WriteZeroPageWord(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_GOWARM + 1u),
-      kColdStartROM);
-  WriteZeroPageWord(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_GOSTROUT + 1u),
-      kColdStartROM);
+  variables().AS_GOWARM_TARGET = kColdStartROM;
+  variables().AS_GOSTROUT_TARGET = kColdStartROM;
 
   AS_NORMAL();
 
@@ -475,8 +471,7 @@ void AS_COLD_START() {
   variables().AS_GOSTROUT = kJmpOpcode;
   variables().AS_JMPADRS_OPCODE = kJmpOpcode;
   variables().AS_USR = kJmpOpcode;
-  WriteZeroPageWord(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_USR + 1u), kIqErrROM);
+  variables().AS_USR_TARGET = kIqErrROM;
 
   // Preserve the ROM copy bug: the final random-seed byte is not copied.
   for (std::uint8_t x =
@@ -510,20 +505,17 @@ void AS_COLD_START() {
 
   const std::uint16_t memoryTop =
       static_cast<std::uint16_t>(ramProbe & 0xf000u);
-  WriteZeroPageWord(ApplesoftVariables::ZP_AS_MEMSIZ, memoryTop);
-  WriteZeroPageWord(ApplesoftVariables::ZP_AS_FRETOP, memoryTop);
+  variables().AS_MEMSIZ = memoryTop;
+  variables().AS_FRETOP = memoryTop;
 
-  WriteZeroPageWord(ApplesoftVariables::ZP_AS_TXTTAB, kProgramStart);
+  variables().AS_TXTTAB = kProgramStart;
   variables().AS_LOCK = 0u;
   variables().pointer(kProgramStart).write(0u);
-  WriteZeroPageWord(ApplesoftVariables::ZP_AS_TXTTAB,
-                    static_cast<std::uint16_t>(kProgramStart + 1u));
+  variables().AS_TXTTAB = static_cast<std::uint16_t>(kProgramStart + 1u);
 
   AS_REASONState reasonState{};
-  const std::uint16_t txttab =
-      ReadZeroPageWord(ApplesoftVariables::ZP_AS_TXTTAB);
-  const std::uint16_t fretop =
-      ReadZeroPageWord(ApplesoftVariables::ZP_AS_FRETOP);
+  const std::uint16_t txttab = variables_const().AS_TXTTAB;
+  const std::uint16_t fretop = variables_const().AS_FRETOP;
   reasonState.a = ApplesoftVariables::lowByte(txttab);
   reasonState.y = ApplesoftVariables::highByte(txttab);
   reasonState.fretopAS_Lo = ApplesoftVariables::lowByte(fretop);
@@ -535,12 +527,8 @@ void AS_COLD_START() {
 
   AS_SCRTCH();
 
-  WriteZeroPageWord(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_GOSTROUT + 1u),
-      kStroUTROM);
-  WriteZeroPageWord(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_GOWARM + 1u),
-      kRestartROM);
+  variables().AS_GOSTROUT_TARGET = kStroUTROM;
+  variables().AS_GOWARM_TARGET = kRestartROM;
 
   // ROM uses JMP (AS_GOWARM+1), which resolves to AS_RESTART after vectors are
   // installed.
@@ -639,7 +627,7 @@ void AS_FAE_1() {
   constexpr std::uint8_t kAS_ARYPNT = ApplesoftVariables::ZP_AS_ARYPNT;
   constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
 
-  ProgramPointer descriptor{ReadZeroPageWord(kAS_LOWTR)};
+  ProgramPointer descriptor{variables_const().AS_LOWTR};
   std::uint8_t descriptorY = 4u; // FIND_ARRAY_ELEMENT leaves descriptor[4]
                                  // (#dims) as the current slot.
   std::uint8_t remainingDims = variables_const().AS_NUMDIM;
@@ -672,7 +660,7 @@ void AS_FAE_1() {
       ++descriptorY; // Match FAE_2 path: step to the dimension low-byte slot.
     }
 
-    std::uint16_t runningOffset = ReadZeroPageWord(kAS_STRNG2);
+    std::uint16_t runningOffset = variables_const().AS_STRNG2;
     if (runningOffset != 0u) {
       runningOffset = AS_MULTIPLY_SUBSCRIPT(descriptorY);
     }
@@ -680,7 +668,7 @@ void AS_FAE_1() {
     runningOffset = static_cast<std::uint16_t>(
         runningOffset +
         ApplesoftVariables::makeWord(subscriptLow, subscriptHigh));
-    WriteZeroPageWord(kAS_STRNG2, runningOffset);
+    variables().AS_STRNG2 = runningOffset;
 
     --remainingDims;
     variables().AS_NUMDIM = remainingDims;
@@ -699,8 +687,8 @@ void AS_FAE_1() {
   variables().AS_RESULT[2] = elementSize;
   const std::uint16_t elementOffset = AS_MULTIPLY_SUBS_1(0u);
   const std::uint16_t varpnt =
-      static_cast<std::uint16_t>(ReadZeroPageWord(kAS_ARYPNT) + elementOffset);
-  WriteZeroPageWord(kAS_VARPNT, varpnt);
+      static_cast<std::uint16_t>(variables_const().AS_ARYPNT + elementOffset);
+  variables().AS_VARPNT = varpnt;
 }
 
 void AS_GETARY() {
@@ -719,11 +707,10 @@ void AS_GETARY2() {
   // Name normalization: none (assembler label AS_GETARY2 kept verbatim).
 
   const std::uint8_t numDim = variables_const().AS_NUMDIM;
-  const ProgramPointer lowtr{ReadZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR)};
+  const ProgramPointer lowtr{variables_const().AS_LOWTR};
   const std::uint16_t arypntOffset =
       static_cast<std::uint16_t>(numDim * 2u) + 5u;
-  WriteZeroPageWord(ApplesoftVariables::ZP_AS_ARYPNT,
-                    lowtr.advanced(arypntOffset).address);
+  variables().AS_ARYPNT = lowtr.advanced(arypntOffset).address;
 }
 
 void AS_C_ZERO() {
@@ -778,10 +765,8 @@ void AS_MAKE_NEW_ARRAY() {
 
   // T:11c4 – jsr AS_REASON: ensure array header fits below AS_FRETOP
   {
-    const std::uint16_t arypnt =
-        ReadZeroPageWord(ApplesoftVariables::ZP_AS_ARYPNT);
-    const std::uint16_t fretop =
-        ReadZeroPageWord(ApplesoftVariables::ZP_AS_FRETOP);
+    const std::uint16_t arypnt = variables_const().AS_ARYPNT;
+    const std::uint16_t fretop = variables_const().AS_FRETOP;
     AS_REASONState rs{};
     rs.a = static_cast<std::uint8_t>(arypnt & 0xffu);
     rs.y = static_cast<std::uint8_t>(arypnt >> 8u);
@@ -793,11 +778,11 @@ void AS_MAKE_NEW_ARRAY() {
 
   // T:11c7 – lda #0; tay; sta AS_STRNG2+1; ldx #5  (seed element-size
   // accumulator)
-  ApplesoftVariables::setHighByte(variables().AS_STRNG2, 0u);
+  variables().AS_STRNG2 = (variables_const().AS_STRNG2 & 0x00ffu);
   std::uint8_t elemSize = 5u; // X in asm: float default
 
   // T:11cd – Y=0: write AS_VARNAM byte to descriptor[0]; bit 7 → integer, dex
-  const ProgramPointer lowtr{ReadZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR)};
+  const ProgramPointer lowtr{variables_const().AS_LOWTR};
   const std::uint8_t varnam0 =
       ApplesoftVariables::lowByte(variables_const().AS_VARNAM);
   lowtr.write(varnam0, 0u);
@@ -815,7 +800,7 @@ void AS_MAKE_NEW_ARRAY() {
   } // integer→2, string→3, float→5
 
   // T:11de – stx AS_STRNG2: seed running product with element size
-  ApplesoftVariables::setLowByte(variables().AS_STRNG2, elemSize);
+  variables().AS_STRNG2 = (variables_const().AS_STRNG2 & 0xff00u) | elemSize;
 
   // T:11e0 – Y=4: write AS_NUMDIM to descriptor[4]  (three iny's advance Y past
   // size slots)
@@ -868,10 +853,8 @@ void AS_MAKE_NEW_ARRAY() {
 
   // T:120b – compute endAddr = AS_ARYPNT + totalBytes; both overflow checks
   // collapse to one.
-  const std::uint16_t totalBytes =
-      ReadZeroPageWord(ApplesoftVariables::ZP_AS_STRNG2);
-  const std::uint16_t arypnt =
-      ReadZeroPageWord(ApplesoftVariables::ZP_AS_ARYPNT);
+  const std::uint16_t totalBytes = variables_const().AS_STRNG2;
+  const std::uint16_t arypnt = variables_const().AS_ARYPNT;
   const std::uint32_t endAddr32 = static_cast<std::uint32_t>(arypnt) +
                                   static_cast<std::uint32_t>(totalBytes);
   if (endAddr32 > 0xffffu) {
@@ -886,8 +869,7 @@ void AS_MAKE_NEW_ARRAY() {
   // new AS_STREND.
   std::uint16_t strend;
   {
-    const std::uint16_t fretop =
-        ReadZeroPageWord(ApplesoftVariables::ZP_AS_FRETOP);
+    const std::uint16_t fretop = variables_const().AS_FRETOP;
     AS_REASONState rs{};
     rs.a = static_cast<std::uint8_t>(endAddr & 0xffu);
     rs.y = static_cast<std::uint8_t>(endAddr >> 8u);
@@ -901,7 +883,7 @@ void AS_MAKE_NEW_ARRAY() {
   }
 
   // T:121d – sta AS_STREND; sty AS_STREND+1
-  WriteZeroPageWord(ApplesoftVariables::ZP_AS_STREND, strend);
+  variables().AS_STREND = strend;
 
   // T:1221–1232 – zero element region [AS_ARYPNT .. AS_STREND)
   // Asm uses a page-by-page backward sweep; C++ equivalent byte loop has same
@@ -913,12 +895,11 @@ void AS_MAKE_NEW_ARRAY() {
 
   // T:1234 – inc AS_ARYPNT+1: after zeroing the asm modified AS_ARYPNT+1 for
   // the loop; restoring AS_ARYPNT to elemStart is equivalent here.
-  WriteZeroPageWord(ApplesoftVariables::ZP_AS_ARYPNT, arypnt);
+  variables().AS_ARYPNT = arypnt;
 
   // T:1236–1244 – sec; AS_STREND - AS_LOWTR → descriptor[2..3] (offset to next
   // array entry)
-  const std::uint16_t lowtrAddr =
-      ReadZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR);
+  const std::uint16_t lowtrAddr = variables_const().AS_LOWTR;
   const std::uint16_t arraySize =
       static_cast<std::uint16_t>(strend - lowtrAddr);
   lowtr.write(static_cast<std::uint8_t>(arraySize & 0xffu), 2u);
@@ -942,12 +923,11 @@ void AS_FIND_ARRAY_ELEMENT() {
   // verbatim). AS_LOWTR is the base pointer to the current array descriptor;
   // descriptor[4] stores #dims.
 
-  const ProgramPointer descriptor{
-      ReadZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR)};
+  const ProgramPointer descriptor{variables_const().AS_LOWTR};
   const std::uint8_t numDims = descriptor.read(4u);
 
   variables().AS_NUMDIM = numDims;
-  WriteZeroPageWord(ApplesoftVariables::ZP_AS_STRNG2, 0u);
+  variables().AS_STRNG2 = 0u;
 
   // The source slice falls through directly into AS_FAE_1.
   AS_FAE_1();
@@ -963,8 +943,7 @@ std::uint16_t AS_MULTIPLY_SUBSCRIPT(std::uint8_t descriptorOffset) {
 
   ApplesoftVariables::setLowByte(variables().AS_INDEX, descriptorOffset);
 
-  const ProgramPointer descriptor{
-      ReadZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR)};
+  const ProgramPointer descriptor{variables_const().AS_LOWTR};
   variables().AS_RESULT[2] = descriptor.read(descriptorOffset);
 
   return AS_MULTIPLY_SUBS_1(
@@ -985,8 +964,7 @@ std::uint16_t AS_MULTIPLY_SUBS_1(std::uint8_t multiplierHigh) {
   const std::uint16_t multiplier = ApplesoftVariables::makeWord(
       variables_const().AS_RESULT[2], multiplierHigh);
 
-  std::uint16_t multiplicand =
-      ReadZeroPageWord(ApplesoftVariables::ZP_AS_STRNG2);
+  std::uint16_t multiplicand = variables_const().AS_STRNG2;
   std::uint16_t product = 0u;
 
   for (std::uint8_t bitsRemaining = 16u; bitsRemaining > 0u; --bitsRemaining) {
@@ -999,7 +977,7 @@ std::uint16_t AS_MULTIPLY_SUBS_1(std::uint8_t multiplierHigh) {
 
     const bool nextBitSet = (multiplicand & 0x8000u) != 0u;
     multiplicand = static_cast<std::uint16_t>(multiplicand << 1u);
-    WriteZeroPageWord(ApplesoftVariables::ZP_AS_STRNG2, multiplicand);
+    variables().AS_STRNG2 = multiplicand;
 
     if (!nextBitSet) {
       continue;
@@ -1081,9 +1059,8 @@ void AS_SET_VARPNT_AND_YA() {
   // Name normalization: none (assembler label AS_SET_VARPNT_AND_YA kept
   // verbatim).
 
-  const ProgramPointer lowtr{ReadZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR)};
-  WriteZeroPageWord(ApplesoftVariables::ZP_AS_VARPNT,
-                    lowtr.advanced(2u).address); // AS_VARPNT
+  const ProgramPointer lowtr{variables_const().AS_LOWTR};
+  variables().AS_VARPNT = lowtr.advanced(2u).address; // AS_VARPNT
 }
 
 void AS_MAKE_NEW_VARIABLE() {
@@ -1105,18 +1082,17 @@ void AS_MAKE_NEW_VARIABLE() {
   constexpr std::uint8_t kAS_VARNAM = ApplesoftVariables::ZP_AS_VARNAM;
   constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
 
-  const std::uint16_t arytab = ReadZeroPageWord(kAS_ARYTAB);
-  const std::uint16_t strend = ReadZeroPageWord(kAS_STREND);
+  const std::uint16_t arytab = variables_const().AS_ARYTAB;
+  const std::uint16_t strend = variables_const().AS_STREND;
 
-  WriteZeroPageWord(kAS_LOWTR, arytab);
-  WriteZeroPageWord(kAS_HIGHTR, strend);
+  variables().AS_LOWTR = arytab;
+  variables().AS_HIGHTR = strend;
 
   const std::uint16_t newStrend = static_cast<std::uint16_t>(strend + 7u);
-  WriteZeroPageWord(kAS_ARYPNT, newStrend);
+  variables().AS_ARYPNT = newStrend;
 
   {
-    const std::uint16_t fretop =
-        ReadZeroPageWord(ApplesoftVariables::ZP_AS_FRETOP);
+    const std::uint16_t fretop = variables_const().AS_FRETOP;
     AS_REASONState rs{};
     rs.a = static_cast<std::uint8_t>(newStrend & 0xffu);
     rs.y = static_cast<std::uint8_t>(newStrend >> 8u);
@@ -1126,9 +1102,9 @@ void AS_MAKE_NEW_VARIABLE() {
     if (!rr.ok) {
       return;
     }
-    WriteZeroPageWord(kAS_STREND, static_cast<std::uint16_t>(
-                                      static_cast<std::uint16_t>(rr.y) << 8u |
-                                      static_cast<std::uint16_t>(rr.a)));
+    variables().AS_STREND =
+        static_cast<std::uint16_t>(static_cast<std::uint16_t>(rr.y) << 8u |
+                                   static_cast<std::uint16_t>(rr.a));
   }
 
   const std::uint16_t newArytab = static_cast<std::uint16_t>(arytab + 7u);
@@ -1141,7 +1117,7 @@ void AS_MAKE_NEW_VARIABLE() {
     }
   }
 
-  WriteZeroPageWord(kAS_ARYTAB, newArytab);
+  variables().AS_ARYTAB = newArytab;
 
   auto variableRecord = variables().pointer(arytab);
   variableRecord.write(ApplesoftVariables::lowByte(variables_const().AS_VARNAM),
@@ -1152,7 +1128,7 @@ void AS_MAKE_NEW_VARIABLE() {
     variableRecord.write(0u, offset);
   }
 
-  WriteZeroPageWord(kAS_VARPNT, static_cast<std::uint16_t>(arytab + 2u));
+  variables().AS_VARPNT = static_cast<std::uint16_t>(arytab + 2u);
 }
 
 void AS_NAME_NOT_FOUND() {
@@ -1222,7 +1198,7 @@ std::uint16_t AS_PTRGET() {
   AS_CHRGOT();
   variables().AS_DIMFLG = 0u; // AS_DIMFLG
   AS_PTRGET3();
-  return ReadZeroPageWord(ApplesoftVariables::ZP_AS_VARPNT); // AS_VARPNT
+  return variables_const().AS_VARPNT; // AS_VARPNT
 }
 
 void AS_ARRAY() {
@@ -1299,8 +1275,8 @@ void AS_ARRAY() {
     }
   }
 
-  std::uint16_t lowtr = ReadZeroPageWord(kAS_ARYTAB);
-  const std::uint16_t strend = ReadZeroPageWord(kAS_STREND);
+  std::uint16_t lowtr = variables_const().AS_ARYTAB;
+  const std::uint16_t strend = variables_const().AS_STREND;
   const std::uint8_t varnamLo =
       ApplesoftVariables::lowByte(variables_const().AS_VARNAM);
   const std::uint8_t varnamHi =
@@ -1308,7 +1284,7 @@ void AS_ARRAY() {
 
   for (;;) {
     // AS_LOWTR is a 16-bit running pointer through array descriptors.
-    WriteZeroPageWord(kAS_LOWTR, lowtr);
+    variables().AS_LOWTR = lowtr;
 
     if (lowtr == strend) {
       AS_MAKE_NEW_ARRAY();
@@ -1488,11 +1464,11 @@ void AS_HANDLERR() {
   variables().AS_ERRNUM = gPendingErrorCode;
   variables().AS_ERRSTK = variables_const().AS_REMSTK;
 
-  WriteZeroPageWord(kAS_ERRLIN, ReadZeroPageWord(kAS_CURLIN));
-  WriteZeroPageWord(kAS_ERRPOS, ReadZeroPageWord(kAS_OLDTEXT));
+  variables().AS_ERRLIN = variables_const().AS_CURLIN;
+  variables().AS_ERRPOS = variables_const().AS_OLDTEXT;
 
-  WriteZeroPageWord(kAS_TXTPTR, ReadZeroPageWord(kAS_TXTPSV));
-  WriteZeroPageWord(kAS_CURLIN, ReadZeroPageWord(kAS_CURLSV));
+  variables().AS_TXTPTR = variables_const().AS_TXPSV;
+  variables().AS_CURLIN = variables_const().AS_CURLSV;
 
   AS_CHRGOT();
   AS_GOTO();
@@ -1618,15 +1594,20 @@ void AS_STRCMP() {
 
   const std::uint8_t facLength = AS_FREFAC();
   variables().AS_FAC[0] = facLength;
-  WriteZeroPageWord(static_cast<std::uint8_t>(kAS_FAC + 1u),
-                    ReadZeroPageWord(kAS_INDEX));
+  variables().AS_FAC[1] =
+      static_cast<std::uint8_t>(variables_const().AS_INDEX & 0xffu);
+  variables().AS_FAC[2] =
+      static_cast<std::uint8_t>(variables_const().AS_INDEX >> 8u);
 
   const std::uint16_t argDescriptorAddress =
-      ReadZeroPageWord(static_cast<std::uint8_t>(kAS_ARG + 3u));
+      variables_const().AS_ARG[3] |
+      (static_cast<std::uint16_t>(variables_const().AS_ARG[4]) << 8u);
   const std::uint8_t argLength = AS_FRETMP(argDescriptorAddress);
   variables().AS_ARG[0] = argLength;
-  WriteZeroPageWord(static_cast<std::uint8_t>(kAS_ARG + 3u),
-                    ReadZeroPageWord(kAS_INDEX));
+  variables().AS_ARG[3] =
+      static_cast<std::uint8_t>(variables_const().AS_INDEX & 0xffu);
+  variables().AS_ARG[4] =
+      static_cast<std::uint8_t>(variables_const().AS_INDEX >> 8u);
 
   gNumericCompareResult = CompareArgAndFacStrings();
   AS_NUMCMP();
@@ -1647,10 +1628,8 @@ void AS_FRE() {
 
   AS_GARBAG();
 
-  const std::uint16_t fretop =
-      ReadZeroPageWord(ApplesoftVariables::ZP_AS_FRETOP);
-  const std::uint16_t strend =
-      ReadZeroPageWord(ApplesoftVariables::ZP_AS_STREND);
+  const std::uint16_t fretop = variables_const().AS_FRETOP;
+  const std::uint16_t strend = variables_const().AS_STREND;
   const std::uint16_t freeSpace = static_cast<std::uint16_t>(fretop - strend);
   AS_GIVAYF(static_cast<std::int16_t>(freeSpace));
 }
@@ -1745,16 +1724,11 @@ void AS_DEF() {
 
   // Stack the argument variable pointer (AS_VARPNT)
   constexpr std::uint8_t kAS_VARPNT = ApplesoftVariables::ZP_AS_VARPNT;
-  ApplesoftVariables::setHighByte(
-      variables().AS_VARPNT,
-      ApplesoftVariables::highByte(variables_const().AS_VARPNT));
-  ApplesoftVariables::setLowByte(
-      variables().AS_VARPNT,
-      ApplesoftVariables::lowByte(variables_const().AS_VARPNT));
+  variables().AS_VARPNT = variables_const().AS_VARPNT;
 
   // Stack the text pointer (AS_TXTPTR)
   constexpr std::uint8_t kAS_TXTPTR = ApplesoftVariables::ZP_AS_TXTPTR;
-  const std::uint16_t txtPtr = ReadZeroPageWord(kAS_TXTPTR);
+  const std::uint16_t txtPtr = variables_const().AS_TXTPTR;
   (void)txtPtr;
 
   // Scan to next statement
@@ -1789,7 +1763,7 @@ void AS_FUNCT() {
   AS_FNC_();
 
   // Stack function address for nested FN calls (push high byte, then low byte)
-  const std::uint16_t fncAddr = ReadZeroPageWord(kAS_FNCNAM);
+  const std::uint16_t fncAddr = variables_const().AS_FNCNAM;
   theStack().pushFnByte(ApplesoftVariables::highByte(fncAddr));
   theStack().pushFnByte(ApplesoftVariables::lowByte(fncAddr));
 
@@ -1800,16 +1774,17 @@ void AS_FUNCT() {
   AS_CHKNUM();
 
   // Pop function address back (in reverse order: low byte, then high byte)
-  std::uint16_t tempAddr = ReadZeroPageWord(kAS_FNCNAM);
-  ApplesoftVariables::setLowByte(tempAddr, theStack().peekFnByte());
+  std::uint16_t tempAddr = variables_const().AS_FNCNAM;
+  tempAddr = (tempAddr & 0xff00u) | theStack().peekFnByte();
   theStack().popFnByte();
-  ApplesoftVariables::setHighByte(tempAddr, theStack().peekFnByte());
+  tempAddr = (tempAddr & 0x00ffu) |
+             (static_cast<std::uint16_t>(theStack().peekFnByte()) << 8u);
   theStack().popFnByte();
-  WriteZeroPageWord(kAS_FNCNAM, tempAddr);
+  variables().AS_FNCNAM = tempAddr;
 
   // Get argument variable pointer from AS_FNCNAM+2,+3 (offsets within function
   // definition) Read 16-bit pointer from function definition at offset +2,+3
-  const std::uint16_t funcDefAddr = ReadZeroPageWord(kAS_FNCNAM);
+  const std::uint16_t funcDefAddr = variables_const().AS_FNCNAM;
   const std::uint8_t argVarAddrAS_Lo =
       variables_const().readByte(funcDefAddr + 2u);
   const std::uint8_t argVarAddrHi =
@@ -1824,7 +1799,7 @@ void AS_FUNCT() {
 
   const std::uint16_t argVarAddr =
       variables_const().makeWord(argVarAddrAS_Lo, argVarAddrHi);
-  WriteZeroPageWord(kAS_VARPNT, argVarAddr);
+  variables().AS_VARPNT = argVarAddr;
 
   // Save old value of argument variable (5 bytes) to stack
   // AS_Loop from Y=4 down to Y=0 (inclusive)
@@ -1841,12 +1816,12 @@ void AS_FUNCT() {
   AS_STORE_FACDB_YX_ROUNDED();
 
   // Save current AS_TXTPTR to stack (push high byte, then low byte)
-  const std::uint16_t savedTxtPtr = ReadZeroPageWord(kAS_TXTPTR);
+  const std::uint16_t savedTxtPtr = variables_const().AS_TXTPTR;
   theStack().pushFnByte(ApplesoftVariables::highByte(savedTxtPtr));
   theStack().pushFnByte(ApplesoftVariables::lowByte(savedTxtPtr));
 
   // AS_Load function definition address to AS_TXTPTR (point to function body)
-  WriteZeroPageWord(kAS_TXTPTR, funcDefAddr);
+  variables().AS_TXTPTR = funcDefAddr;
 
   // Save argument variable address to stack (push high byte, then low byte)
   theStack().pushFnByte(ApplesoftVariables::highByte(argVarAddr));
@@ -1856,12 +1831,13 @@ void AS_FUNCT() {
   AS_FRMNUM();
 
   // Pop argument variable address back and store to AS_FNCNAM
-  std::uint16_t argAddr = ReadZeroPageWord(kAS_VARPNT);
-  ApplesoftVariables::setLowByte(argAddr, theStack().peekFnByte());
+  std::uint16_t argAddr = variables_const().AS_VARPNT;
+  argAddr = (argAddr & 0xff00u) | theStack().peekFnByte();
   theStack().popFnByte();
-  ApplesoftVariables::setHighByte(argAddr, theStack().peekFnByte());
+  argAddr = (argAddr & 0x00ffu) |
+            (static_cast<std::uint16_t>(theStack().peekFnByte()) << 8u);
   theStack().popFnByte();
-  WriteZeroPageWord(kAS_FNCNAM, argAddr);
+  variables().AS_FNCNAM = argAddr;
 
   // Check for ":" or EOL
   if (AS_CHRGOT() != 0u && AS_CHRGOT() != static_cast<std::uint8_t>(':')) {
@@ -1869,12 +1845,13 @@ void AS_FUNCT() {
   }
 
   // Pop and restore AS_TXTPTR
-  std::uint16_t txtAddr = ReadZeroPageWord(kAS_TXTPTR);
-  ApplesoftVariables::setLowByte(txtAddr, theStack().peekFnByte());
+  std::uint16_t txtAddr = variables_const().AS_TXTPTR;
+  txtAddr = (txtAddr & 0xff00u) | theStack().peekFnByte();
   theStack().popFnByte();
-  ApplesoftVariables::setHighByte(txtAddr, theStack().peekFnByte());
+  txtAddr = (txtAddr & 0x00ffu) |
+            (static_cast<std::uint16_t>(theStack().peekFnByte()) << 8u);
   theStack().popFnByte();
-  WriteZeroPageWord(kAS_TXTPTR, txtAddr);
+  variables().AS_TXTPTR = txtAddr;
 
   // Stack now contains 5 saved bytes - fall through to AS_FNCDATA to restore
 }
@@ -1890,7 +1867,7 @@ void AS_FNCDATA() {
   // to 4.
 
   constexpr std::uint8_t kAS_FNCNAM = ApplesoftVariables::ZP_AS_FNCNAM;
-  const std::uint16_t fncnampnt = ReadZeroPageWord(kAS_FNCNAM);
+  const std::uint16_t fncnampnt = variables_const().AS_FNCNAM;
 
   // AS_Loop 5 times: pop stack byte and store to (AS_FNCNAM)+Y
   for (std::uint8_t y = 0u; y < 5u; ++y) {
@@ -1934,8 +1911,8 @@ void AS_FRMEVL() {
     // starts from the current token. Recursive AS_FRMEVL_1 calls skip this
     // backstep.
     if (runEntryBackstep) {
-      const std::uint16_t txtptr = ReadZeroPageWord(kAS_TXTPTR);
-      WriteZeroPageWord(kAS_TXTPTR, static_cast<std::uint16_t>(txtptr - 1u));
+      const std::uint16_t txtptr = variables_const().AS_TXTPTR;
+      variables().AS_TXTPTR = static_cast<std::uint16_t>(txtptr - 1u);
     }
 
     // AS_FRMEVL_1 prologue: AS_CHKMEM(1), AS_FRM_ELEMENT.
@@ -1985,8 +1962,8 @@ void AS_FRMEVL() {
         cprtypForFrame = static_cast<std::uint8_t>((relFlags << 1u) |
                                                    (facIsString ? 1u : 0u));
 
-        const std::uint16_t txtptr = ReadZeroPageWord(kAS_TXTPTR);
-        WriteZeroPageWord(kAS_TXTPTR, static_cast<std::uint16_t>(txtptr - 1u));
+        const std::uint16_t txtptr = variables_const().AS_TXTPTR;
+        variables().AS_TXTPTR = static_cast<std::uint16_t>(txtptr - 1u);
         pendingEntry = AS_MATHTBL(AS_M_REL_IDX);
       } else {
         // AS_NOTMATH/AS_GOEX: stop when the next token is not an infix
@@ -2159,7 +2136,7 @@ std::int8_t AS_FCOMP(std::uint16_t argAddress) {
   // Pointer candidate: DEST ($60/$61) is one unified pointer to the packed
   // comparand.
 
-  WriteZeroPageWord(ApplesoftVariables::ZP_AS_DEST, argAddress);
+  variables().AS_DEST = argAddress;
 
   // ROM falls through directly into AS_FCOMP2 after storing DEST.
   AS_FCOMP2();
@@ -2192,9 +2169,11 @@ std::int8_t CompareArgAndFacStrings() {
   variables().AS_FAC_SIGN = shorterFlag;
 
   const auto argString = variables_const().pointer(
-      ReadZeroPageWord(static_cast<std::uint8_t>(kAS_ARG + 3u)));
+      variables_const().AS_ARG[3] |
+      (static_cast<std::uint16_t>(variables_const().AS_ARG[4]) << 8u));
   const auto facString = variables_const().pointer(
-      ReadZeroPageWord(static_cast<std::uint8_t>(kAS_FAC + 1u)));
+      variables_const().AS_FAC[1] |
+      (static_cast<std::uint16_t>(variables_const().AS_FAC[2]) << 8u));
   for (std::uint16_t offset = 0u; offset < compareCount; ++offset) {
     const std::uint8_t argByte = argString.read(offset);
     const std::uint8_t facByte = facString.read(offset);

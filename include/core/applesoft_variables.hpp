@@ -399,6 +399,7 @@ public:
   std::uint16_t MON_RND = 0;        // $4e/$4f
   std::uint16_t MON_A1 = 0;         // $3c/$3d
   std::uint16_t MON_A2 = 0;         // $3e/$3f
+  std::uint16_t MON_A4 = 0;         // $40/$41
   std::uint16_t AS_LINNUM = 0;      // $50/$51
   std::uint8_t AS_TEMPPT = 0;       // $52
   std::uint8_t AS_LASTPT = 0;       // $53
