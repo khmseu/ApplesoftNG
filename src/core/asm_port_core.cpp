@@ -688,10 +688,11 @@ void AS_FAE_1() {
   }
 
   std::uint8_t elementSize = 5u;
-  if ((ReadZeroPageByte(kAS_VARNAM) & 0x80u) != 0u) {
+  if ((ApplesoftVariables::lowByte(variables_const().AS_VARNAM) & 0x80u) !=
+      0u) {
     --elementSize;
   }
-  if ((ReadZeroPageByte(static_cast<std::uint8_t>(kAS_VARNAM + 1u)) & 0x80u) !=
+  if ((ApplesoftVariables::highByte(variables_const().AS_VARNAM) & 0x80u) !=
       0u) {
     elementSize = static_cast<std::uint8_t>(elementSize - 2u);
   }
@@ -800,8 +801,8 @@ void AS_MAKE_NEW_ARRAY() {
 
   // T:11cd – Y=0: write AS_VARNAM byte to descriptor[0]; bit 7 → integer, dex
   const ProgramPointer lowtr{ReadZeroPageWord(ApplesoftVariables::ZP_AS_LOWTR)};
-  const std::uint8_t varnam0 =
-      ReadZeroPageByte(ApplesoftVariables::ZP_AS_VARNAM);
+    const std::uint8_t varnam0 =
+      ApplesoftVariables::lowByte(variables_const().AS_VARNAM);
   lowtr.write(varnam0, 0u);
   if ((varnam0 & 0x80u) != 0u) {
     --elemSize;
@@ -809,8 +810,8 @@ void AS_MAKE_NEW_ARRAY() {
 
   // T:11d5 – Y=1: write AS_VARNAM+1 to descriptor[1]; bit 7 → integer/string,
   // dex dex
-  const std::uint8_t varnam1 = ReadZeroPageByte(
-      static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_VARNAM + 1u));
+    const std::uint8_t varnam1 =
+      ApplesoftVariables::highByte(variables_const().AS_VARNAM);
   lowtr.write(varnam1, 1u);
   if ((varnam1 & 0x80u) != 0u) {
     elemSize -= 2u;
@@ -821,8 +822,7 @@ void AS_MAKE_NEW_ARRAY() {
 
   // T:11e0 – Y=4: write AS_NUMDIM to descriptor[4]  (three iny's advance Y past
   // size slots)
-  const std::uint8_t numDim =
-      ReadZeroPageByte(ApplesoftVariables::ZP_AS_NUMDIM);
+  const std::uint8_t numDim = variables_const().AS_NUMDIM;
   lowtr.write(numDim, 4u);
 
   // T:11e7 – dimension loop: write each dim to descriptor and accumulate total
@@ -1163,9 +1163,10 @@ void AS_MAKE_NEW_VARIABLE() {
   WriteZeroPageWord(kAS_ARYTAB, newArytab);
 
   auto variableRecord = variables().pointer(arytab);
-  variableRecord.write(ReadZeroPageByte(kAS_VARNAM), 0u);
-  variableRecord.write(
-      ReadZeroPageByte(static_cast<std::uint8_t>(kAS_VARNAM + 1u)), 1u);
+    variableRecord.write(
+      ApplesoftVariables::lowByte(variables_const().AS_VARNAM), 0u);
+    variableRecord.write(
+      ApplesoftVariables::highByte(variables_const().AS_VARNAM), 1u);
   for (std::uint16_t offset = 2u; offset < 7u; ++offset) {
     variableRecord.write(0u, offset);
   }
@@ -1211,8 +1212,8 @@ void AS_PTRGET3() {
   // AS_Labels: AS_PTRGET3 (inclusive) .. AS_BADNAM (exclusive)
   // Name normalization: none (assembler label AS_PTRGET3 kept verbatim).
 
-  WriteZeroPageByte(ApplesoftVariables::ZP_AS_VARNAM,
-                    AS_CHRGOT()); // AS_VARNAM low byte
+  ApplesoftVariables::setLowByte(variables().AS_VARNAM,
+                                 AS_CHRGOT()); // AS_VARNAM low byte
   AS_CHRGOT();
   if (!AS_ISLETC()) {
     AS_BADNAM();
@@ -1274,15 +1275,17 @@ void AS_ARRAY() {
       // Save loop state and variable name while AS_MAKINT evaluates next
       // subscript.
       theStack().pushByte(dimensions);
-      theStack().pushByte(
-          ReadZeroPageByte(static_cast<std::uint8_t>(kAS_VARNAM + 1u)));
-      theStack().pushByte(ReadZeroPageByte(kAS_VARNAM));
+        theStack().pushByte(
+          ApplesoftVariables::highByte(variables_const().AS_VARNAM));
+        theStack().pushByte(
+          ApplesoftVariables::lowByte(variables_const().AS_VARNAM));
 
       AS_MAKINT();
 
-      WriteZeroPageByte(kAS_VARNAM, theStack().popByte());
-      WriteZeroPageByte(static_cast<std::uint8_t>(kAS_VARNAM + 1u),
-                        theStack().popByte());
+      ApplesoftVariables::setLowByte(variables().AS_VARNAM,
+                 theStack().popByte());
+      ApplesoftVariables::setHighByte(variables().AS_VARNAM,
+                  theStack().popByte());
       dimensions = theStack().popByte();
 
       // Replace saved (AS_VALTYP, AS_DIMFLG|AS_VALTYP+1) with subscript value
@@ -1294,10 +1297,8 @@ void AS_ARRAY() {
           static_cast<std::uint16_t>(0x0100u + add_u8(x, 1u));
       theStack().pushByte(ReadProgramByte(stackPlus2));
       theStack().pushByte(ReadProgramByte(stackPlus1));
-      WriteProgramByte(stackPlus2, ReadZeroPageByte(static_cast<std::uint8_t>(
-                                       kAS_FAC + 3u)));
-      WriteProgramByte(stackPlus1, ReadZeroPageByte(static_cast<std::uint8_t>(
-                                       kAS_FAC + 4u)));
+      WriteProgramByte(stackPlus2, variables_const().AS_FAC[3]);
+      WriteProgramByte(stackPlus1, variables_const().AS_FAC[4]);
 
       ++dimensions;
       if (AS_CHRGOT() == static_cast<std::uint8_t>(',')) {
@@ -1319,9 +1320,10 @@ void AS_ARRAY() {
 
   std::uint16_t lowtr = ReadZeroPageWord(kAS_ARYTAB);
   const std::uint16_t strend = ReadZeroPageWord(kAS_STREND);
-  const std::uint8_t varnamLo = ReadZeroPageByte(kAS_VARNAM);
-  const std::uint8_t varnamHi =
-      ReadZeroPageByte(static_cast<std::uint8_t>(kAS_VARNAM + 1u));
+    const std::uint8_t varnamLo =
+      ApplesoftVariables::lowByte(variables_const().AS_VARNAM);
+    const std::uint8_t varnamHi =
+      ApplesoftVariables::highByte(variables_const().AS_VARNAM);
 
   for (;;) {
     // AS_LOWTR is a 16-bit running pointer through array descriptors.
@@ -1416,8 +1418,8 @@ void AS_PTRGET4() {
     current = AS_CHRGET();
   }
 
-  WriteZeroPageByte(add_u8(ApplesoftVariables::ZP_AS_VARNAM, 1u),
-                    secondChar); // AS_VARNAM+1
+  ApplesoftVariables::setHighByte(variables().AS_VARNAM,
+                                  secondChar); // AS_VARNAM+1
 
   const std::uint8_t subflg = variables_const().AS_SUBFLG;
   if (subflg == 0u && current == static_cast<std::uint8_t>('(')) {
@@ -2037,13 +2039,13 @@ void AS_FRMEVL() {
       // AS_FRM_RECURSE (inclusive) .. AS_FRM_STACK_1 (exclusive): recurse into
       // AS_FRMEVL_1 while carrying pending operator/precedence state.
       const std::array<std::uint8_t, 5> lhsFac = {
-          ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 0u)),
-          ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 1u)),
-          ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 2u)),
-          ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 3u)),
-          ReadZeroPageByte(static_cast<std::uint8_t>(kAS_FAC + 4u)),
+          variables_const().AS_FAC[0],
+          variables_const().AS_FAC[1],
+          variables_const().AS_FAC[2],
+          variables_const().AS_FAC[3],
+          variables_const().AS_FAC[4],
       };
-      const std::uint8_t lhsSign = ReadZeroPageByte(kAS_FAC_SIGN);
+        const std::uint8_t lhsSign = variables_const().AS_FAC_SIGN;
 
       if (!relationalPath) {
         (void)AS_CHRGET();
@@ -2055,12 +2057,11 @@ void AS_FRMEVL() {
       // stack.
       variables().AS_CPRMASK = static_cast<std::uint8_t>(cprtypForFrame >> 1u);
       for (std::uint8_t i = 0; i < lhsFac.size(); ++i) {
-        WriteZeroPageByte(static_cast<std::uint8_t>(kAS_ARG + i), lhsFac[i]);
+        variables().AS_ARG[i] = lhsFac[i];
       }
-      WriteZeroPageByte(static_cast<std::uint8_t>(kAS_ARG + 5u), lhsSign);
-      WriteZeroPageByte(
-          kAS_SGNCPR,
-          static_cast<std::uint8_t>(lhsSign ^ ReadZeroPageByte(kAS_FAC_SIGN)));
+      variables().AS_ARG[5] = lhsSign;
+      variables().AS_SGNCPR =
+          static_cast<std::uint8_t>(lhsSign ^ variables_const().AS_FAC_SIGN);
 
       if (cprtypForFrame != 0u) {
         variables().AS_CPRTYP = cprtypForFrame;
