@@ -393,7 +393,8 @@ AS_FIN_10:
 
 AS_FIN_8: {
   std::int8_t expon = static_cast<std::int8_t>(variables_const().AS_EXPON);
-  std::int8_t tmpexp = static_cast<std::int8_t>(static_cast<std::uint8_t>(variables_const().AS_TMPEXP));
+  std::int8_t tmpexp = static_cast<std::int8_t>(
+      static_cast<std::uint8_t>(variables_const().AS_TMPEXP));
   expon -= tmpexp;
   variables().AS_EXPON = static_cast<std::uint8_t>(expon);
 

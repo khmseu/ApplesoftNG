@@ -99,7 +99,9 @@ public:
 
     void bind(ApplesoftVariables *vars) { vars_ = vars; }
 
-    operator std::uint8_t() const { return vars_ == nullptr ? 0u : vars_->AS_INDX; }
+    operator std::uint8_t() const {
+      return vars_ == nullptr ? 0u : vars_->AS_INDX;
+    }
 
     TempExpAlias &operator=(std::uint8_t value) {
       if (vars_ != nullptr) {
@@ -444,9 +446,9 @@ public:
       AS_FAC_EXTENSION{}; // Virtual alias for $ac (AS_STRNG1 high byte)
   ARGExtensionAlias
       AS_ARG_EXTENSION{};      // Virtual alias for $92 (AS_JMPADRS high byte)
-    TempExpAlias AS_TMPEXP{}; // Virtual alias for $99 (AS_INDX)
-    DpFlgAlias AS_DPFLG{};    // Virtual alias for $9b (AS_LOWTR low byte)
-    ExpSignAlias AS_EXPSGN{}; // Virtual alias for $9c (AS_LOWTR high byte)
+  TempExpAlias AS_TMPEXP{};    // Virtual alias for $99 (AS_INDX)
+  DpFlgAlias AS_DPFLG{};       // Virtual alias for $9b (AS_LOWTR low byte)
+  ExpSignAlias AS_EXPSGN{};    // Virtual alias for $9c (AS_LOWTR high byte)
   std::uint16_t AS_STRNG2 = 0; // $ad/$ae
   std::uint16_t AS_PRGEND = 0; // $af/$b0
   std::uint16_t AS_TXTPTR = 0; // $b8/$b9
