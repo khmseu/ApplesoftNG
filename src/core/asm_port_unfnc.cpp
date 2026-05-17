@@ -371,7 +371,14 @@ static void AS_EXP() {
 
   doubleToFac(result);
 }
-static void AS_COS() {} // TODO(asm-port): AS_COS        $DE...222
+static void AS_COS() {
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // AS_Labels: AS_COS (inclusive) .. AS_SIN (exclusive)
+  // Name normalization: none (assembler label AS_COS kept verbatim).
+
+  doubleToFac(std::cos(facToDouble()));
+}
 static void AS_SIN() {} // TODO(asm-port): AS_SIN        $DF...223
 static void AS_TAN() {} // TODO(asm-port): AS_TAN        $E0...224
 static void AS_ATN() {} // TODO(asm-port): AS_ATN        $E1...225
