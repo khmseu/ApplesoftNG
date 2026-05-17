@@ -197,9 +197,10 @@ void write_AS_INPUT_BUFFER_minus_5(std::uint8_t index, std::uint8_t value) {
 }
 
 void SetTextPointerToInputBufferMinus1() {
-  // TODO(asm-port): compute the actual AS_INPUT_BUFFER-1 address in the runtime
-  // model.
-  SetTextPointer(0x01ffu);
+  // Sets TXTPTR to the byte just before the input buffer ($01FF), matching the
+  // ROM convention where CHRGET advances past this address to reach the first
+  // byte of INPUT_BUFFER at $0200.
+  SetTextPointer(ApplesoftVariables::ADDR_AS_INPUT_BUFFER_MINUS_1);
 }
 
 std::optional<TokenMatch> MatchToken(std::uint8_t index) {
