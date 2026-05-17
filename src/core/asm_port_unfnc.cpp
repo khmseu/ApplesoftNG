@@ -377,9 +377,30 @@ static void AS_COS() {
 
   doubleToFac(std::cos(facToDouble()));
 }
-static void AS_SIN() {} // TODO(asm-port): AS_SIN        $DF...223
-static void AS_TAN() {} // TODO(asm-port): AS_TAN        $E0...224
-static void AS_ATN() {} // TODO(asm-port): AS_ATN        $E1...225
+static void AS_SIN() {
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // AS_Labels: AS_SIN (inclusive) .. AS_TAN (exclusive)
+  // Name normalization: none (assembler label AS_SIN kept verbatim).
+
+  doubleToFac(std::sin(facToDouble()));
+}
+static void AS_TAN() {
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // AS_Labels: AS_TAN (inclusive) .. AS_ATN (exclusive)
+  // Name normalization: none (assembler label AS_TAN kept verbatim).
+
+  doubleToFac(std::tan(facToDouble()));
+}
+static void AS_ATN() {
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // AS_Labels: AS_ATN (inclusive) .. AS_PEEK (exclusive)
+  // Name normalization: none (assembler label AS_ATN kept verbatim).
+
+  doubleToFac(std::atan(facToDouble()));
+}
 static void AS_PEEK_fn() { AS_PEEK(); }
 static void AS_LEN_fn() { AS_LEN(); }
 static void AS_STR_fn() { AS_STR(); }
