@@ -262,8 +262,17 @@ void AS_ABS() {
   variables().AS_FAC_SIGN =
       static_cast<std::uint8_t>(variables_const().AS_FAC_SIGN >> 1u);
 }
-static void AS_USR() {} // TODO(asm-port): AS_USR        $D5...213 (user-defined
-                        // function via zero-page JMP at $0A)
+static void AS_USR() {
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // AS_Labels: AS_USR (inclusive) .. AS_FRE (exclusive)
+  // Name normalization: none (assembler label AS_USR kept verbatim).
+  //
+  // The original ROM dispatches through a user-supplied machine-language
+  // vector in zero page ($0A-$0C). The current runtime has no machine-code
+  // execution bridge, so USR() is treated as an undefined function.
+  AS_ERROR(AS_ERR_UNDEFFUNC);
+}
 void AS_FRE_fn() {
   // Source:
   // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
