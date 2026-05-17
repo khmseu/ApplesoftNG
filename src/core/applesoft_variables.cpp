@@ -325,6 +325,16 @@ std::uint8_t ApplesoftVariables::readByte(std::uint16_t address) const {
     return lowByte(AS_TXTPTR);
   case ZP_AS_TXTPTR + 1:
     return highByte(AS_TXTPTR);
+  case ZP_AS_RNDSEED:
+    return AS_RNDSEED[0];
+  case ZP_AS_RNDSEED + 1:
+    return AS_RNDSEED[1];
+  case ZP_AS_RNDSEED + 2:
+    return AS_RNDSEED[2];
+  case ZP_AS_RNDSEED + 3:
+    return AS_RNDSEED[3];
+  case ZP_AS_RNDSEED + 4:
+    return AS_RNDSEED[4];
   case ZP_AS_ERRLIN:
     return lowByte(AS_ERRLIN);
   case ZP_AS_ERRLIN + 1:
@@ -823,6 +833,21 @@ void ApplesoftVariables::writeByte(std::uint16_t address, std::uint8_t value) {
     return;
   case ZP_AS_TXTPTR + 1:
     setHighByte(AS_TXTPTR, value);
+    return;
+  case ZP_AS_RNDSEED:
+    AS_RNDSEED[0] = value;
+    return;
+  case ZP_AS_RNDSEED + 1:
+    AS_RNDSEED[1] = value;
+    return;
+  case ZP_AS_RNDSEED + 2:
+    AS_RNDSEED[2] = value;
+    return;
+  case ZP_AS_RNDSEED + 3:
+    AS_RNDSEED[3] = value;
+    return;
+  case ZP_AS_RNDSEED + 4:
+    AS_RNDSEED[4] = value;
     return;
   case ZP_AS_ERRLIN:
     setLowByte(AS_ERRLIN, value);

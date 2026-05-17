@@ -317,6 +317,7 @@ public:
   static constexpr std::uint8_t ZP_AS_CHRGET = 0xb1;
   static constexpr std::uint8_t ZP_AS_CHRGOT = 0xb7;
   static constexpr std::uint8_t ZP_AS_TXTPTR = 0xb8;
+  static constexpr std::uint8_t ZP_AS_RNDSEED = 0xc9;
   static constexpr std::uint8_t ZP_AS_LOCK = 0xd6;
   static constexpr std::uint8_t ZP_AS_ERRFLG = 0xd8;
   static constexpr std::uint8_t ZP_AS_ERRLIN = 0xda;
@@ -504,6 +505,7 @@ public:
   std::uint16_t AS_STRNG2 = 0; // $ad/$ae
   std::uint16_t AS_PRGEND = 0; // $af/$b0
   std::uint16_t AS_TXTPTR = 0; // $b8/$b9
+  std::array<std::uint8_t, 5> AS_RNDSEED{}; // $c9..$cd
   std::uint16_t AS_ERRLIN = 0; // $da/$db
   std::uint16_t AS_ERRPOS = 0; // $dc/$dd
   std::uint16_t AS_HGR_SHAPE = 0;      // $1a/$1b

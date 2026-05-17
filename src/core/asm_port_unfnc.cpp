@@ -95,6 +95,66 @@ static void doubleToFac(double value) {
   vars.AS_FAC_EXTENSION = 0u;
 }
 
+static double readPackedFloat(std::uint16_t address) {
+  const auto packed = variables_const().pointer(address);
+  const std::uint8_t exponent = packed.read(0u);
+  if (exponent == 0u) {
+    return 0.0;
+  }
+
+  const std::uint8_t packedHigh = packed.read(1u);
+  const std::uint32_t mantissa =
+      (static_cast<std::uint32_t>(packedHigh | 0x80u) << 24u) |
+      (static_cast<std::uint32_t>(packed.read(2u)) << 16u) |
+      (static_cast<std::uint32_t>(packed.read(3u)) << 8u) |
+      static_cast<std::uint32_t>(packed.read(4u));
+  const double fraction = static_cast<double>(mantissa) / 4294967296.0;
+  const double value =
+      std::ldexp(fraction, static_cast<int>(exponent) - 128);
+  return ((packedHigh & 0x80u) != 0u) ? -value : value;
+}
+
+static void writePackedFloat(std::uint16_t address, double value) {
+  auto packed = variables().pointer(address);
+
+  if (value == 0.0) {
+    for (std::uint8_t i = 0u; i < 5u; ++i) {
+      packed.write(0u, i);
+    }
+    return;
+  }
+
+  const bool negative = std::signbit(value);
+  value = std::fabs(value);
+
+  int exponent2 = 0;
+  const double fraction = std::frexp(value, &exponent2);
+  std::uint8_t exponent8 =
+      static_cast<std::uint8_t>(static_cast<int>(exponent2) + 128);
+
+  std::uint64_t mantissa = static_cast<std::uint64_t>(
+      std::ldexp(fraction, 32));
+  if (mantissa >= 0x1'0000'0000ull) {
+    mantissa >>= 1u;
+    ++exponent8;
+  }
+
+  if (exponent8 == 0u) {
+    for (std::uint8_t i = 0u; i < 5u; ++i) {
+      packed.write(0u, i);
+    }
+    return;
+  }
+
+  packed.write(exponent8, 0u);
+  packed.write(static_cast<std::uint8_t>(((negative ? 0x80u : 0x00u) |
+                                          ((mantissa >> 24u) & 0x7fu))),
+               1u);
+  packed.write(static_cast<std::uint8_t>((mantissa >> 16u) & 0xffu), 2u);
+  packed.write(static_cast<std::uint8_t>((mantissa >> 8u) & 0xffu), 3u);
+  packed.write(static_cast<std::uint8_t>(mantissa & 0xffu), 4u);
+}
+
 static void AS_NORMALIZE_FAC_1(std::uint8_t facSign) {
   std::uint64_t integerValue =
       (static_cast<std::uint64_t>(variables_const().AS_FAC[1]) << 24u) |
@@ -247,7 +307,41 @@ static void AS_SQR() {
 
   doubleToFac(std::sqrt(input));
 }
-static void AS_RND() {} // TODO(asm-port): AS_RND        $DB...219
+static void AS_RND() {
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // AS_Labels: AS_RND (inclusive) .. AS_LOG (exclusive)
+  // Name normalization: none (assembler label AS_RND kept verbatim).
+  //
+  // RND uses the packed FAC-format seed at zero-page RNDSEED ($c9-$cd). A
+  // zero argument returns the current seed unchanged; a negative argument
+  // reseeds the generator from the argument value; positive arguments advance
+  // the sequence.
+
+  constexpr std::uint16_t kRndSeedAddress = ApplesoftVariables::ZP_AS_RNDSEED;
+
+  const double argument = facToDouble();
+  double seed = readPackedFloat(kRndSeedAddress);
+
+  if (argument < 0.0) {
+    seed = std::fmod(std::fabs(argument), 1.0);
+    if (seed == 0.0) {
+      seed = 0.5;
+    }
+  } else if (argument == 0.0) {
+    doubleToFac(seed);
+    return;
+  } else {
+    std::uint64_t state = static_cast<std::uint64_t>(
+        std::ldexp(seed == 0.0 ? 0.5 : seed, 32));
+    state = static_cast<std::uint64_t>(state * 1664525u + 1013904223u);
+    seed = static_cast<double>(static_cast<std::uint32_t>(state & 0xffff'ffffu)) /
+           4294967296.0;
+  }
+
+  writePackedFloat(kRndSeedAddress, seed);
+  doubleToFac(seed);
+}
 static void AS_LOG() {} // TODO(asm-port): AS_LOG        $DC...220
 static void AS_EXP() {} // TODO(asm-port): AS_EXP        $DD...221
 static void AS_COS() {} // TODO(asm-port): AS_COS        $DE...222
