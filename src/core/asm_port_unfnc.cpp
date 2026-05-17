@@ -342,7 +342,20 @@ static void AS_RND() {
   writePackedFloat(kRndSeedAddress, seed);
   doubleToFac(seed);
 }
-static void AS_LOG() {} // TODO(asm-port): AS_LOG        $DC...220
+static void AS_LOG() {
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // AS_Labels: AS_LOG (inclusive) .. AS_EXP (exclusive)
+  // Name normalization: none (assembler label AS_LOG kept verbatim).
+
+  const double input = facToDouble();
+  if (input <= 0.0) {
+    AS_ERROR(AS_ERR_ILLQTY);
+    return;
+  }
+
+  doubleToFac(std::log(input));
+}
 static void AS_EXP() {} // TODO(asm-port): AS_EXP        $DD...221
 static void AS_COS() {} // TODO(asm-port): AS_COS        $DE...222
 static void AS_SIN() {} // TODO(asm-port): AS_SIN        $DF...223
