@@ -28,6 +28,8 @@ void AS_FIN();
 bool AS_ISLETC();
 std::uint16_t AS_PTRGET();
 void AS_NEGATE_FAC();
+void AS_EQUOP();
+void AS_GIVAYF(std::int16_t value);
 void AS_STRTXT();
 void AS_SYNERR();
 
@@ -198,13 +200,49 @@ void AS_FRM_ELEMENT() {
 }
 
 void AS_FRM_VARIABLE() {
-  // TODO(asm-port): source label AS_FRM_VARIABLE.
-  // Minimal dependency stub for AS_FRM_ELEMENT variable-name branch.
-  (void)AS_PTRGET();
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // AS_Labels: AS_FRM_VARIABLE (inclusive) .. AS_SCREEN (exclusive)
+  // Name normalization: none (assembler label AS_FRM_VARIABLE kept verbatim).
+  //
+  // AS_VARPNT is the logical value pointer returned by AS_PTRGET; numeric
+  // variables load through AS_LOAD_FAC_FROM_YA, while integer variables are
+  // read as a 16-bit value and floated via AS_GIVAYF.
+
+  const std::uint16_t variableValuePointer = AS_PTRGET();
+  variables().AS_VARPNT = variableValuePointer;
+
+  if (variables_const().AS_VALTYP != 0u) {
+    // String variables preserve the ROM's explicit high-byte clear.
+    ApplesoftVariables::setHighByte(variables().AS_STRNG1, 0u);
+    return;
+  }
+
+  if ((variables_const().AS_VALTYP_PLUS_1 & 0x80u) != 0u) {
+    const auto valuePtr = variables_const().pointer(variableValuePointer);
+    const std::int16_t integerValue = static_cast<std::int16_t>(
+        ApplesoftVariables::makeWord(valuePtr.read(0u), valuePtr.read(1u)));
+    AS_GIVAYF(integerValue);
+    return;
+  }
+
+  const auto valuePtr = variables_const().pointer(variableValuePointer);
+  variables().AS_FAC[0] = valuePtr.read(0u);
+  variables().AS_FAC[1] = valuePtr.read(1u);
+  variables().AS_FAC[2] = valuePtr.read(2u);
+  variables().AS_FAC[3] = valuePtr.read(3u);
+  variables().AS_FAC[4] = valuePtr.read(4u);
 }
 
 void AS_NOT_() {
-  // TODO(asm-port): source label AS_NOT_.
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // AS_Labels: AS_NOT_ (inclusive) .. AS_FN_ (exclusive)
+  // Name normalization: none (assembler label AS_NOT_ kept verbatim).
+  //
+  // Applesoft NOT returns true when FAC is zero and false otherwise; the code
+  // path is identical to the existing AS_EQUOP truth test.
+  AS_EQUOP();
 }
 
 void AS_FRMEVL_2() {
