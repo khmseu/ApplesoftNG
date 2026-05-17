@@ -10,6 +10,8 @@
 #include "core/asm_port_nxin.hpp"
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_stack.hpp"
+#include "core/asm_port_math.hpp"
+#include "core/asm_port_strlt2.hpp"
 #include "core/asm_port_strtxt.hpp"
 #include "platform/asm_port_outdo.hpp"
 
@@ -27,6 +29,8 @@ void SetPendingErrorCode(std::uint8_t errorCode);
 
 std::uint8_t AS_DATAN();
 void AS_ADDON(std::uint8_t offset);
+void AS_PUTSTR();
+void AS_LET2(std::uint8_t savedValTypPlus1);
 
 namespace {
 
@@ -48,11 +52,68 @@ std::uint8_t AS_CHRGET_INPUT() { return AS_CHRGET(); }
 // TODO(asm-port): monitor key input path used by AS_GET mode in
 // AS_PROCESS_INPUT_LIST. std::uint8_t MON_RDKEY() { return 0; }
 
-// TODO(asm-port): parse quoted/unquoted string input path.
-void parseStringInputAndStore() {}
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: L_INSTART_1 (inclusive) .. L_INSTART_5 (exclusive)
+// Name normalization: L_INSTART_1..L_INSTART_4 local labels folded into
+// parseStringInputAndStore.
+void parseStringInputAndStore() {
+  // Determine string terminators based on input mode and whether first char
+  // is a quotation mark ($22 with high-bit stripped → $22).
+  const bool isGet = (variables_const().AS_INPUTFLG & 0x40u) != 0u;
+  const std::uint8_t firstChar = AS_CHRGOT(); // current char (not advancing)
 
-// TODO(asm-port): parse numeric input and assign variable.
-void parseNumericInputAndStore() {}
+  std::uint8_t charAc = firstChar;   // CHARAC  ($0d)
+  std::uint8_t endChr = 0u;          // ENDCHR  ($0e)
+  std::uint16_t startAddr = variables_const().AS_TXTPTR;
+
+  if (isGet) {
+    // GET mode: advance past the single char just stored; no extra terminators.
+    startAddr = static_cast<std::uint16_t>(startAddr + 1u);
+    charAc = 0u;
+    endChr = 0u;
+  } else if (firstChar == 0x22u) {
+    // Quoted string: terminate on $00 or closing quote only.
+    charAc = 0x22u;
+    endChr = 0u;
+    // Skip the opening quote.
+    startAddr = static_cast<std::uint16_t>(startAddr + 1u);
+  } else {
+    // Unquoted: terminate on $00, colon ($3a & $7f = $3a), or comma ($2c).
+    charAc = static_cast<std::uint8_t>(':' & 0x7fu);
+    endChr = static_cast<std::uint8_t>(',' & 0x7fu);
+  }
+
+  variables().AS_CHARAC = charAc;
+  variables().AS_ENDCHR = endChr;
+
+  // Build string starting at startAddr; STRLT2 scans until terminator.
+  AS_STRLT2(startAddr);
+
+  // Set TXTPTR to point just past the string.
+  AS_POINT();
+
+  // Store the string descriptor into the current variable.
+  AS_PUTSTR();
+}
+
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: L_INSTART_5 (inclusive) .. INPUT_MORE (exclusive)
+// Name normalization: L_INSTART_5 local label folded into
+// parseNumericInputAndStore.
+void parseNumericInputAndStore() {
+  // Check whether the input buffer is non-empty; if empty in INPUT mode this
+  // would be an input error (INPFIN path), but by the time we are called the
+  // calling loop already handled the empty-buffer re-prompt, so we proceed.
+  const std::uint8_t savedValTypPlus1 = variables_const().AS_VALTYP_PLUS_1;
+
+  // Parse floating-point number at TXTPTR.
+  AS_FIN();
+
+  // Store parsed result into the current variable.
+  AS_LET2(savedValTypPlus1);
+}
 
 // Source:
 // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
