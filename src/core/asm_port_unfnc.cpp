@@ -14,6 +14,8 @@
 #include "core/asm_port_strlit.hpp"
 #include "core/asm_port_strlt2.hpp"
 
+#include <cmath>
+
 namespace applesoft::asm_port {
 
 std::uint8_t MON_PREAD();
@@ -26,6 +28,72 @@ void AS_FRE();
 void AS_PEEK();
 void AS_QINT();
 void AS_ERROR(std::uint8_t error_code_offset);
+
+static double facToDouble() {
+  const auto &cv = variables_const();
+  if (cv.AS_FAC[0] == 0u) {
+    return 0.0;
+  }
+
+  const std::uint32_t mantissa =
+      (static_cast<std::uint32_t>(cv.AS_FAC[1]) << 24u) |
+      (static_cast<std::uint32_t>(cv.AS_FAC[2]) << 16u) |
+      (static_cast<std::uint32_t>(cv.AS_FAC[3]) << 8u) |
+      static_cast<std::uint32_t>(cv.AS_FAC[4]);
+  const double fraction = static_cast<double>(mantissa) / 4294967296.0;
+  const double value =
+      std::ldexp(fraction, static_cast<int>(cv.AS_FAC[0]) - 128);
+  return (cv.AS_FAC_SIGN != 0u) ? -value : value;
+}
+
+static void doubleToFac(double value) {
+  auto &vars = variables();
+
+  if (value == 0.0) {
+    vars.AS_FAC[0] = 0u;
+    vars.AS_FAC[1] = 0u;
+    vars.AS_FAC[2] = 0u;
+    vars.AS_FAC[3] = 0u;
+    vars.AS_FAC[4] = 0u;
+    vars.AS_FAC_SIGN = 0u;
+    vars.AS_FAC_EXTENSION = 0u;
+    return;
+  }
+
+  const bool negative = std::signbit(value);
+  value = std::fabs(value);
+
+  int exponent2 = 0;
+  const double fraction = std::frexp(value, &exponent2);
+  std::uint8_t exponent8 =
+      static_cast<std::uint8_t>(static_cast<int>(exponent2) + 128);
+
+  std::uint64_t mantissa = static_cast<std::uint64_t>(
+      std::ldexp(fraction, 32));
+  if (mantissa >= 0x1'0000'0000ull) {
+    mantissa >>= 1u;
+    ++exponent8;
+  }
+
+  if (exponent8 == 0u) {
+    vars.AS_FAC[0] = 0u;
+    vars.AS_FAC[1] = 0u;
+    vars.AS_FAC[2] = 0u;
+    vars.AS_FAC[3] = 0u;
+    vars.AS_FAC[4] = 0u;
+    vars.AS_FAC_SIGN = 0u;
+    vars.AS_FAC_EXTENSION = 0u;
+    return;
+  }
+
+  vars.AS_FAC[0] = exponent8;
+  vars.AS_FAC[1] = static_cast<std::uint8_t>((mantissa >> 24u) & 0xffu);
+  vars.AS_FAC[2] = static_cast<std::uint8_t>((mantissa >> 16u) & 0xffu);
+  vars.AS_FAC[3] = static_cast<std::uint8_t>((mantissa >> 8u) & 0xffu);
+  vars.AS_FAC[4] = static_cast<std::uint8_t>(mantissa & 0xffu);
+  vars.AS_FAC_SIGN = negative ? 0xffu : 0u;
+  vars.AS_FAC_EXTENSION = 0u;
+}
 
 static void AS_NORMALIZE_FAC_1(std::uint8_t facSign) {
   std::uint64_t integerValue =
@@ -165,7 +233,20 @@ void AS_POS() {
 
   AS_SNGFLT(variables_const().MON_CH);
 }
-static void AS_SQR() {} // TODO(asm-port): AS_SQR        $DA...218
+static void AS_SQR() {
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // AS_Labels: AS_SQR (inclusive) .. AS_RND (exclusive)
+  // Name normalization: none (assembler label AS_SQR kept verbatim).
+
+  const double input = facToDouble();
+  if (input < 0.0) {
+    AS_ERROR(AS_ERR_ILLQTY);
+    return;
+  }
+
+  doubleToFac(std::sqrt(input));
+}
 static void AS_RND() {} // TODO(asm-port): AS_RND        $DB...219
 static void AS_LOG() {} // TODO(asm-port): AS_LOG        $DC...220
 static void AS_EXP() {} // TODO(asm-port): AS_EXP        $DD...221
