@@ -16,6 +16,9 @@
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_math.hpp"
 
+#include <cmath>
+#include <cstdint>
+
 namespace applesoft::asm_port {
 
 void AS_OR();
@@ -23,6 +26,7 @@ void AS_RELOPS();
 void AS_SNGFLT(std::uint8_t value);
 void AS_ANDOP();
 void AS_NORMALIZE_FAC_2();
+static void AS_COPY_RESULT_INTO_FAC(); // forward declaration (defined below)
 
 // ---------------------------------------------------------------------------
 // Stub implementations for math operator handlers not yet ported.
@@ -31,8 +35,153 @@ void AS_NORMALIZE_FAC_2();
 namespace {
 // static void AS_FADDT()  {} // Removed to avoid conflict with
 // asm_port_math.cpp
+
+// ---------------------------------------------------------------------------
+// Local helpers: convert AS_FAC / AS_ARG to/from double.
+// The packed-float format: byte[0] = biased exponent (0 = zero), byte[1..4] =
+// mantissa with implied leading 1 in bit 7 of byte[1], sign = separate byte.
+// ---------------------------------------------------------------------------
+static double facToDouble() {
+  const auto &cv = variables_const();
+  const std::uint8_t exponent = cv.AS_FAC[0];
+  if (exponent == 0u) {
+    return 0.0;
+  }
+  const std::uint32_t mantissa =
+      (static_cast<std::uint32_t>(cv.AS_FAC[1]) << 24u) |
+      (static_cast<std::uint32_t>(cv.AS_FAC[2]) << 16u) |
+      (static_cast<std::uint32_t>(cv.AS_FAC[3]) << 8u) |
+      static_cast<std::uint32_t>(cv.AS_FAC[4]);
+  const double fraction = static_cast<double>(mantissa) / 4294967296.0;
+  const double value =
+      std::ldexp(fraction, static_cast<int>(exponent) - 128);
+  return (cv.AS_FAC_SIGN != 0u) ? -value : value;
+}
+
+static double argToDouble() {
+  const auto &cv = variables_const();
+  const std::uint8_t exponent = cv.AS_ARG[0];
+  if (exponent == 0u) {
+    return 0.0;
+  }
+  const std::uint32_t mantissa =
+      (static_cast<std::uint32_t>(cv.AS_ARG[1]) << 24u) |
+      (static_cast<std::uint32_t>(cv.AS_ARG[2]) << 16u) |
+      (static_cast<std::uint32_t>(cv.AS_ARG[3]) << 8u) |
+      static_cast<std::uint32_t>(cv.AS_ARG[4]);
+  const double fraction = static_cast<double>(mantissa) / 4294967296.0;
+  const double value =
+      std::ldexp(fraction, static_cast<int>(exponent) - 128);
+  return (cv.AS_ARG[5] != 0u) ? -value : value;
+}
+
+static void doubleToFac(double value) {
+  auto &vars = variables();
+  if (value == 0.0) {
+    vars.AS_FAC[0] = 0u;
+    vars.AS_FAC_SIGN = 0u;
+    return;
+  }
+  const bool negative = value < 0.0;
+  value = std::fabs(value);
+  int exponent2 = 0;
+  const double fraction = std::frexp(value, &exponent2);
+  std::uint8_t exponent8 =
+      static_cast<std::uint8_t>(static_cast<int>(exponent2) + 128);
+  std::uint64_t mantissa =
+      static_cast<std::uint64_t>(std::ldexp(fraction, 32));
+  if (mantissa >= 0x1'0000'0000ull) {
+    mantissa >>= 1u;
+    ++exponent8;
+  }
+  vars.AS_FAC[0] = exponent8;
+  vars.AS_FAC[1] = static_cast<std::uint8_t>((mantissa >> 24u) & 0xffu);
+  vars.AS_FAC[2] = static_cast<std::uint8_t>((mantissa >> 16u) & 0xffu);
+  vars.AS_FAC[3] = static_cast<std::uint8_t>((mantissa >> 8u) & 0xffu);
+  vars.AS_FAC[4] = static_cast<std::uint8_t>(mantissa & 0xffu);
+  vars.AS_FAC_SIGN = negative ? 0xffu : 0x00u;
+}
+
 } // namespace
-static void AS_FMULTT() {} // TODO(asm-port): AS_FMULTT $CA...202...*
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: FMULTT (inclusive) .. LOAD_ARG_FROM_YA (exclusive)
+// Name normalization: FMULTT -> AS_FMULTT (AS_ prefix convention).
+//
+// Multiplies FAC by ARG, storing the result in FAC.  Computes the biased
+// result exponent as FAC_exp + ARG_exp - 128, handles zero/overflow/underflow,
+// then multiplies the two mantissas using 128-bit integer arithmetic and
+// stores the high 40 bits into RESULT/FAC_EXTENSION before calling
+// AS_COPY_RESULT_INTO_FAC for normalization.
+static void AS_FMULTT() {
+  const auto &cvars = variables_const();
+  auto &vars = variables();
+
+  // If FAC == 0, result is 0 (FAC already holds 0).
+  if (cvars.AS_FAC[0] == 0u) {
+    return;
+  }
+
+  // If ARG == 0, set FAC to 0 and return.
+  if (cvars.AS_ARG[0] == 0u) {
+    vars.AS_FAC[0] = 0u;
+    return;
+  }
+
+  // Compute result exponent: arg_exp + fac_exp - 128 (re-biased).
+  const std::int16_t new_exp = static_cast<std::int16_t>(cvars.AS_ARG[0]) +
+                               static_cast<std::int16_t>(cvars.AS_FAC[0]) -
+                               128;
+  if (new_exp > 255) {
+    AS_ERROR(AS_ERR_OVERFLOW);
+    return;
+  }
+  if (new_exp <= 0) {
+    // Underflow: result is 0.
+    vars.AS_FAC[0] = 0u;
+    return;
+  }
+  vars.AS_FAC[0] = static_cast<std::uint8_t>(new_exp);
+
+  // Set combined sign for the product.
+  vars.AS_FAC_SIGN =
+      static_cast<std::uint8_t>(cvars.AS_FAC_SIGN ^ cvars.AS_ARG[5]);
+
+  // Compute product of FAC mantissa (40-bit) × ARG mantissa (32-bit).
+  // FAC mantissa: bytes [1..4] MSB..LSB, plus FAC_EXTENSION as guard byte.
+  const std::uint64_t fac_m =
+      (static_cast<std::uint64_t>(cvars.AS_FAC[1]) << 32u) |
+      (static_cast<std::uint64_t>(cvars.AS_FAC[2]) << 24u) |
+      (static_cast<std::uint64_t>(cvars.AS_FAC[3]) << 16u) |
+      (static_cast<std::uint64_t>(cvars.AS_FAC[4]) << 8u) |
+      static_cast<std::uint64_t>(cvars.AS_FAC_EXTENSION);
+  // ARG mantissa: bytes [1..4] MSB..LSB.
+  const std::uint64_t arg_m =
+      (static_cast<std::uint64_t>(cvars.AS_ARG[1]) << 24u) |
+      (static_cast<std::uint64_t>(cvars.AS_ARG[2]) << 16u) |
+      (static_cast<std::uint64_t>(cvars.AS_ARG[3]) << 8u) |
+      static_cast<std::uint64_t>(cvars.AS_ARG[4]);
+
+  // 40-bit × 32-bit = 72-bit product; keep high 40 bits (product >> 32).
+  // RESULT[0..3] = bits [39..8], FAC_EXTENSION = bits [7..0].
+  // NOLINTNEXTLINE(misc-include-cleaner) — __int128 is a builtin extension
+  const unsigned __int128 product =
+      static_cast<unsigned __int128>(fac_m) * arg_m;
+  const std::uint64_t result_40 = static_cast<std::uint64_t>(product >> 32u);
+
+  vars.AS_RESULT[0] =
+      static_cast<std::uint8_t>((result_40 >> 32u) & 0xffu);
+  vars.AS_RESULT[1] =
+      static_cast<std::uint8_t>((result_40 >> 24u) & 0xffu);
+  vars.AS_RESULT[2] =
+      static_cast<std::uint8_t>((result_40 >> 16u) & 0xffu);
+  vars.AS_RESULT[3] =
+      static_cast<std::uint8_t>((result_40 >> 8u) & 0xffu);
+  vars.AS_FAC_EXTENSION =
+      static_cast<std::uint8_t>(result_40 & 0xffu);
+
+  AS_COPY_RESULT_INTO_FAC();
+}
 
 // Source:
 // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
@@ -158,7 +307,56 @@ static void AS_FDIVT() {
     }
   }
 }
-static void AS_FPWRT() {} // TODO(asm-port): AS_FPWRT  $CC...204...^
+// Source:
+// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// AS_Labels: FPWRT (inclusive) .. NEGOP (exclusive)
+// Name normalization: FPWRT -> AS_FPWRT (AS_ prefix convention).
+//
+// Computes AS_FAC = AS_ARG ^ AS_FAC (ARG raised to the FAC power).  Uses the
+// ROM identity: ARG ^ FAC = exp(FAC * log(ARG)), with special cases for zero
+// operands, negative ARG with integral exponent, and non-finite results.
+static void AS_FPWRT() {
+  const double exponent = facToDouble();
+  const double base = argToDouble();
+
+  // If exponent is 0, result is 1 regardless of base.
+  if (exponent == 0.0) {
+    doubleToFac(1.0);
+    return;
+  }
+
+  // If base is 0, result is 0 (0 ^ positive = 0; ROM maps to EXP(0)=1 for
+  // zero exponent which was handled above).
+  if (base == 0.0) {
+    doubleToFac(0.0);
+    return;
+  }
+
+  // Negative base is only valid for integral exponents.
+  if (base < 0.0) {
+    const double exp_int = std::floor(exponent);
+    if (exponent != exp_int) {
+      AS_ERROR(AS_ERR_ILLQTY);
+      return;
+    }
+    // Compute |base|^exponent and negate if exponent is odd.
+    const double result = std::pow(-base, exponent);
+    if (!std::isfinite(result)) {
+      AS_ERROR(AS_ERR_OVERFLOW);
+      return;
+    }
+    const bool odd = (static_cast<long long>(exp_int) & 1LL) != 0LL;
+    doubleToFac(odd ? -result : result);
+    return;
+  }
+
+  const double result = std::pow(base, exponent);
+  if (!std::isfinite(result)) {
+    AS_ERROR(AS_ERR_OVERFLOW);
+    return;
+  }
+  doubleToFac(result);
+}
 
 void AS_OR_op() {
   // Source:
