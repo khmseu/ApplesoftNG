@@ -5,6 +5,8 @@
 
 #include "core/asm_port_token_address_table.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_error.hpp"
+#include "core/asm_port_error_messages.hpp"
 
 namespace applesoft::asm_port {
 
@@ -121,11 +123,22 @@ static void AS_HIMEM_Handler() { AS_HIMEM(); }
 static void AS_LOMEM_Handler() { AS_LOMEM(); }
 static void AS_ONERR_Handler() { AS_ONERR(); }
 static void AS_RESUME_Handler() { AS_RESUME(); }
-static void AS_RECALL() {} // TODO(asm-port): AS_RECALL
-static void AS_STORE() {}  // TODO(asm-port): AS_STORE
+static void AS_RECALL() {
+  // RECALL/STORE are cassette-tape monitor integrations in ROM. The current
+  // runtime does not model cassette I/O, so report an unsupported statement.
+  AS_ERROR(AS_ERR_UNDEFSTAT);
+}
+static void AS_STORE() {
+  // RECALL/STORE are cassette-tape monitor integrations in ROM. The current
+  // runtime does not model cassette I/O, so report an unsupported statement.
+  AS_ERROR(AS_ERR_UNDEFSTAT);
+}
 static void AS_SPEED_Handler() { AS_SPEED(); }
 static void AS_AMPERSAND_VECTOR() {
-} // TODO(asm-port): & dispatch (JMP vector at $03F5)
+  // '&' dispatch uses a machine-language vector at $03F5 in the ROM model.
+  // No machine-code bridge exists in this runtime, so treat it as unsupported.
+  AS_ERROR(AS_ERR_UNDEFSTAT);
+}
 static void AS_WAIT_Handler() { AS_WAIT(); }
 static void AS_DEF_Handler() { AS_DEF(); }
 static void AS_POKE_Handler() { AS_POKE(); }
