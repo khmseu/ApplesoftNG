@@ -262,12 +262,38 @@ void MON_PRBYTE(std::uint8_t value) {
 void MON_BELL() { MON_BELL_impl(); }
 
 std::int8_t MON_INSDS1() {
-  // TODO(asm-port): Port monitor label INSDS1.
-  return 0;
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
+  // AS_Labels: INSDS1 (inclusive) .. REGDSP (exclusive)
+  // Name normalization: INSDS1 -> MON_INSDS1 (monitor label gets MON_ prefix).
+  //
+  // Full monitor disassembly formatting is not modeled yet. Emit a compact
+  // address/opcode trace at MON_A1 and advance MON_A1 by one byte.
+  constexpr std::uint8_t kSpace = static_cast<std::uint8_t>(' ' | 0x80u);
+
+  const std::uint16_t pc = variables_const().MON_A1;
+  const std::uint8_t opcode = variables_const().readByte(pc);
+
+  MON_PRBYTE(ApplesoftVariables::highByte(pc));
+  MON_PRBYTE(ApplesoftVariables::lowByte(pc));
+  MON_COUT(kSpace);
+  MON_PRBYTE(opcode);
+
+  variables().MON_A1 = static_cast<std::uint16_t>(pc + 1u);
+  return static_cast<std::int8_t>(opcode);
 }
 
 void MON_MON() {
-  // TODO(asm-port): Port monitor label MON.
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+  // AS_Labels: MON (inclusive) .. REGZ (exclusive)
+  // Name normalization: MON -> MON_MON (monitor label gets MON_ prefix).
+  //
+  // The interactive monitor command loop is not hosted in this runtime.
+  // Emit a minimal monitor prompt marker and return to the caller.
+  constexpr std::uint8_t kPrompt = static_cast<std::uint8_t>('>' | 0x80u);
+  MON_CROUT();
+  MON_COUT(kPrompt);
 }
 
 void MON_RESET2() {
