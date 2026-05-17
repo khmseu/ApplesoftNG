@@ -356,7 +356,21 @@ static void AS_LOG() {
 
   doubleToFac(std::log(input));
 }
-static void AS_EXP() {} // TODO(asm-port): AS_EXP        $DD...221
+static void AS_EXP() {
+  // Source:
+  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // AS_Labels: AS_EXP (inclusive) .. AS_COS (exclusive)
+  // Name normalization: none (assembler label AS_EXP kept verbatim).
+
+  const double input = facToDouble();
+  const double result = std::exp(input);
+  if (!std::isfinite(result)) {
+    AS_ERROR(AS_ERR_OVERFLOW);
+    return;
+  }
+
+  doubleToFac(result);
+}
 static void AS_COS() {} // TODO(asm-port): AS_COS        $DE...222
 static void AS_SIN() {} // TODO(asm-port): AS_SIN        $DF...223
 static void AS_TAN() {} // TODO(asm-port): AS_TAN        $E0...224
