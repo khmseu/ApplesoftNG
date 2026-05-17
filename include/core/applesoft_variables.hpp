@@ -506,34 +506,34 @@ public:
   std::uint16_t AS_PRGEND = 0; // $af/$b0
   std::uint16_t AS_TXTPTR = 0; // $b8/$b9
   std::array<std::uint8_t, 5> AS_RNDSEED{}; // $c9..$cd
-  std::uint16_t AS_ERRLIN = 0; // $da/$db
-  std::uint16_t AS_ERRPOS = 0; // $dc/$dd
-  std::uint16_t AS_HGR_SHAPE = 0;      // $1a/$1b
-  std::uint8_t AS_HGR_BITS = 0;        // $1c
-  std::uint8_t AS_HGR_COUNT = 0;       // $1d
-  std::uint16_t AS_HGR_DX = 0;         // $d0/$d1
-  std::uint8_t AS_HGR_DY = 0;          // $d2
-  std::uint8_t AS_HGR_QUADRANT = 0;    // $d3
-  std::uint8_t AS_HGR_E = 0;           // $d4
-  std::uint16_t AS_HGR_X = 0;          // $e0/$e1
-  std::uint8_t AS_HGR_Y = 0;           // $e2
-  std::uint8_t AS_HGR_COLOR = 0;       // $e4
-  std::uint8_t AS_HGR_HORIZ = 0;       // $e5
-  std::uint8_t AS_HGR_PAGE = 0;        // $e6
-  std::uint8_t AS_HGR_SCALE = 0;       // $e7
-  std::uint16_t AS_HGR_SHAPE_PNTR = 0; // $e8/$e9
-  std::uint8_t AS_HGR_COLLISIONS = 0;  // $ea
-  std::uint8_t AS_LOCK = 0;            // $d6
-  std::uint8_t AS_ERRNUM = 0;          // $de
-  std::uint8_t AS_ERRSTK = 0;          // $df
-  std::uint8_t AS_ERRFLG = 0;          // $d8
-  std::uint8_t AS_FIRST = 0;           // $f0
-  std::uint8_t AS_SPEEDZ = 0;          // $f1  complement of speed value
-  std::uint8_t AS_TRCFLG = 0;          // $f2
-  std::uint8_t AS_FLASH_BIT = 0;       // $f3  $40=flash mode, $00=normal
-  std::uint16_t AS_CURLSV = 0;         // $f6/$f7
-  std::uint8_t AS_REMSTK = 0;          // $f8
-  std::uint8_t AS_HGR_ROTATION = 0;    // $f9
+  std::uint16_t AS_ERRLIN = 0;              // $da/$db
+  std::uint16_t AS_ERRPOS = 0;              // $dc/$dd
+  std::uint16_t AS_HGR_SHAPE = 0;           // $1a/$1b
+  std::uint8_t AS_HGR_BITS = 0;             // $1c
+  std::uint8_t AS_HGR_COUNT = 0;            // $1d
+  std::uint16_t AS_HGR_DX = 0;              // $d0/$d1
+  std::uint8_t AS_HGR_DY = 0;               // $d2
+  std::uint8_t AS_HGR_QUADRANT = 0;         // $d3
+  std::uint8_t AS_HGR_E = 0;                // $d4
+  std::uint16_t AS_HGR_X = 0;               // $e0/$e1
+  std::uint8_t AS_HGR_Y = 0;                // $e2
+  std::uint8_t AS_HGR_COLOR = 0;            // $e4
+  std::uint8_t AS_HGR_HORIZ = 0;            // $e5
+  std::uint8_t AS_HGR_PAGE = 0;             // $e6
+  std::uint8_t AS_HGR_SCALE = 0;            // $e7
+  std::uint16_t AS_HGR_SHAPE_PNTR = 0;      // $e8/$e9
+  std::uint8_t AS_HGR_COLLISIONS = 0;       // $ea
+  std::uint8_t AS_LOCK = 0;                 // $d6
+  std::uint8_t AS_ERRNUM = 0;               // $de
+  std::uint8_t AS_ERRSTK = 0;               // $df
+  std::uint8_t AS_ERRFLG = 0;               // $d8
+  std::uint8_t AS_FIRST = 0;                // $f0
+  std::uint8_t AS_SPEEDZ = 0;               // $f1  complement of speed value
+  std::uint8_t AS_TRCFLG = 0;               // $f2
+  std::uint8_t AS_FLASH_BIT = 0;            // $f3  $40=flash mode, $00=normal
+  std::uint16_t AS_CURLSV = 0;              // $f6/$f7
+  std::uint8_t AS_REMSTK = 0;               // $f8
+  std::uint8_t AS_HGR_ROTATION = 0;         // $f9
 
   // Non-zero-page fixed addresses currently used.
   std::uint8_t AS_INPUT_BUFFER_MINUS_1 = 0;             // $01ff

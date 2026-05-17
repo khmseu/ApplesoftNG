@@ -68,8 +68,7 @@ static void doubleToFac(double value) {
   std::uint8_t exponent8 =
       static_cast<std::uint8_t>(static_cast<int>(exponent2) + 128);
 
-  std::uint64_t mantissa = static_cast<std::uint64_t>(
-      std::ldexp(fraction, 32));
+  std::uint64_t mantissa = static_cast<std::uint64_t>(std::ldexp(fraction, 32));
   if (mantissa >= 0x1'0000'0000ull) {
     mantissa >>= 1u;
     ++exponent8;
@@ -109,8 +108,7 @@ static double readPackedFloat(std::uint16_t address) {
       (static_cast<std::uint32_t>(packed.read(3u)) << 8u) |
       static_cast<std::uint32_t>(packed.read(4u));
   const double fraction = static_cast<double>(mantissa) / 4294967296.0;
-  const double value =
-      std::ldexp(fraction, static_cast<int>(exponent) - 128);
+  const double value = std::ldexp(fraction, static_cast<int>(exponent) - 128);
   return ((packedHigh & 0x80u) != 0u) ? -value : value;
 }
 
@@ -132,8 +130,7 @@ static void writePackedFloat(std::uint16_t address, double value) {
   std::uint8_t exponent8 =
       static_cast<std::uint8_t>(static_cast<int>(exponent2) + 128);
 
-  std::uint64_t mantissa = static_cast<std::uint64_t>(
-      std::ldexp(fraction, 32));
+  std::uint64_t mantissa = static_cast<std::uint64_t>(std::ldexp(fraction, 32));
   if (mantissa >= 0x1'0000'0000ull) {
     mantissa >>= 1u;
     ++exponent8;
@@ -147,8 +144,8 @@ static void writePackedFloat(std::uint16_t address, double value) {
   }
 
   packed.write(exponent8, 0u);
-  packed.write(static_cast<std::uint8_t>(((negative ? 0x80u : 0x00u) |
-                                          ((mantissa >> 24u) & 0x7fu))),
+  packed.write(static_cast<std::uint8_t>(
+                   ((negative ? 0x80u : 0x00u) | ((mantissa >> 24u) & 0x7fu))),
                1u);
   packed.write(static_cast<std::uint8_t>((mantissa >> 16u) & 0xffu), 2u);
   packed.write(static_cast<std::uint8_t>((mantissa >> 8u) & 0xffu), 3u);
@@ -332,11 +329,12 @@ static void AS_RND() {
     doubleToFac(seed);
     return;
   } else {
-    std::uint64_t state = static_cast<std::uint64_t>(
-        std::ldexp(seed == 0.0 ? 0.5 : seed, 32));
+    std::uint64_t state =
+        static_cast<std::uint64_t>(std::ldexp(seed == 0.0 ? 0.5 : seed, 32));
     state = static_cast<std::uint64_t>(state * 1664525u + 1013904223u);
-    seed = static_cast<double>(static_cast<std::uint32_t>(state & 0xffff'ffffu)) /
-           4294967296.0;
+    seed =
+        static_cast<double>(static_cast<std::uint32_t>(state & 0xffff'ffffu)) /
+        4294967296.0;
   }
 
   writePackedFloat(kRndSeedAddress, seed);
