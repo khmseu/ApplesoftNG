@@ -471,7 +471,7 @@
 | MON_PLOT                            | real   | 19   | 5       | src/core/asm_port_graphics.cpp            | 155  |
 | MON_PRBYTE                          | real   | 9    | 2       | src/core/asm_port_core.cpp                | 241  |
 | MON_PREAD                           | real   | 15   | 3       | src/core/asm_port_core.cpp                | 2096 |
-| MON_PRERR                           | real   | 4    | 2       | src/core/asm_port_statements.cpp          | 1103 |
+| MON_PRERR                           | real   | 4    | 2       | src/core/asm_port_statements.cpp          | 1101 |
 | MON_RD2                             | real   | 12   | 2       | src/core/asm_port_statements.cpp          | 957  |
 | MON_RD2BIT                          | real   | 9    | 3       | src/core/asm_port_statements.cpp          | 983  |
 | MON_RD3                             | real   | 22   | 2       | src/core/asm_port_statements.cpp          | 1006 |
@@ -481,7 +481,7 @@
 | MON_READ                            | real   | 5    | 4       | src/core/asm_port_statements.cpp          | 900  |
 | MON_REGDSP                          | real   | 21   | 3       | src/core/asm_port_core.cpp                | 393  |
 | MON_RESET2                          | real   | 73   | 3       | src/core/asm_port_core.cpp                | 273  |
-| MON_RESTORE                         | stub   | 8    | 1       | src/core/asm_port_statements.cpp          | 1071 |
+| MON_RESTORE                         | real   | 8    | 1       | src/core/asm_port_statements.cpp          | 1071 |
 | MON_SCRN                            | real   | 18   | 3       | src/core/asm_port_core.cpp                | 1940 |
 | MON_SETCOL                          | real   | 4    | 3       | src/core/asm_port_graphics.cpp            | 49   |
 | MON_SETGR                           | real   | 7    | 3       | src/core/asm_port_graphics.cpp            | 302  |

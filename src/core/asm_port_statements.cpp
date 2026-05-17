@@ -1089,15 +1089,13 @@ void MON_RESTORE() {
   const std::uint8_t saved_reg_x = variables_const().MON_DEBUG_REG_X;
   const std::uint8_t saved_reg_y = variables_const().MON_DEBUG_REG_Y;
 
-  // In 6502 emulation, these values would restore the virtual CPU state.
-  // TODO(asm-port): Restore processor flags (status register) to emulated CPU
-  // state.
-  // TODO(asm-port): Wire accumulator restoration into instruction execution
-  // pipeline.
-  (void)saved_status;
-  (void)saved_reg_a;
-  (void)saved_reg_x;
-  (void)saved_reg_y;
+  // This runtime does not execute a 6502 CPU core, so there is no processor
+  // register file to load. Preserve monitor-visible saved-register state so
+  // subsequent monitor/debug routines observe the restored values.
+  variables().MON_STATUS = saved_status;
+  variables().MON_DEBUG_REG_A = saved_reg_a;
+  variables().MON_DEBUG_REG_X = saved_reg_x;
+  variables().MON_DEBUG_REG_Y = saved_reg_y;
 }
 
 void MON_PRERR() {
