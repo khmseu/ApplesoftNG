@@ -7,10 +7,10 @@
 #include "core/asm_port_inlin.hpp"
 #include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_input.hpp"
+#include "core/asm_port_math.hpp"
 #include "core/asm_port_nxin.hpp"
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_stack.hpp"
-#include "core/asm_port_math.hpp"
 #include "core/asm_port_strlt2.hpp"
 #include "core/asm_port_strtxt.hpp"
 #include "platform/asm_port_outdo.hpp"
@@ -63,8 +63,8 @@ void parseStringInputAndStore() {
   const bool isGet = (variables_const().AS_INPUTFLG & 0x40u) != 0u;
   const std::uint8_t firstChar = AS_CHRGOT(); // current char (not advancing)
 
-  std::uint8_t charAc = firstChar;   // CHARAC  ($0d)
-  std::uint8_t endChr = 0u;          // ENDCHR  ($0e)
+  std::uint8_t charAc = firstChar; // CHARAC  ($0d)
+  std::uint8_t endChr = 0u;        // ENDCHR  ($0e)
   std::uint16_t startAddr = variables_const().AS_TXTPTR;
 
   if (isGet) {

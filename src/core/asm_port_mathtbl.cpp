@@ -53,8 +53,7 @@ static double facToDouble() {
       (static_cast<std::uint32_t>(cv.AS_FAC[3]) << 8u) |
       static_cast<std::uint32_t>(cv.AS_FAC[4]);
   const double fraction = static_cast<double>(mantissa) / 4294967296.0;
-  const double value =
-      std::ldexp(fraction, static_cast<int>(exponent) - 128);
+  const double value = std::ldexp(fraction, static_cast<int>(exponent) - 128);
   return (cv.AS_FAC_SIGN != 0u) ? -value : value;
 }
 
@@ -70,8 +69,7 @@ static double argToDouble() {
       (static_cast<std::uint32_t>(cv.AS_ARG[3]) << 8u) |
       static_cast<std::uint32_t>(cv.AS_ARG[4]);
   const double fraction = static_cast<double>(mantissa) / 4294967296.0;
-  const double value =
-      std::ldexp(fraction, static_cast<int>(exponent) - 128);
+  const double value = std::ldexp(fraction, static_cast<int>(exponent) - 128);
   return (cv.AS_ARG[5] != 0u) ? -value : value;
 }
 
@@ -88,8 +86,7 @@ static void doubleToFac(double value) {
   const double fraction = std::frexp(value, &exponent2);
   std::uint8_t exponent8 =
       static_cast<std::uint8_t>(static_cast<int>(exponent2) + 128);
-  std::uint64_t mantissa =
-      static_cast<std::uint64_t>(std::ldexp(fraction, 32));
+  std::uint64_t mantissa = static_cast<std::uint64_t>(std::ldexp(fraction, 32));
   if (mantissa >= 0x1'0000'0000ull) {
     mantissa >>= 1u;
     ++exponent8;
@@ -130,8 +127,7 @@ static void AS_FMULTT() {
 
   // Compute result exponent: arg_exp + fac_exp - 128 (re-biased).
   const std::int16_t new_exp = static_cast<std::int16_t>(cvars.AS_ARG[0]) +
-                               static_cast<std::int16_t>(cvars.AS_FAC[0]) -
-                               128;
+                               static_cast<std::int16_t>(cvars.AS_FAC[0]) - 128;
   if (new_exp > 255) {
     AS_ERROR(AS_ERR_OVERFLOW);
     return;
@@ -169,16 +165,11 @@ static void AS_FMULTT() {
       static_cast<unsigned __int128>(fac_m) * arg_m;
   const std::uint64_t result_40 = static_cast<std::uint64_t>(product >> 32u);
 
-  vars.AS_RESULT[0] =
-      static_cast<std::uint8_t>((result_40 >> 32u) & 0xffu);
-  vars.AS_RESULT[1] =
-      static_cast<std::uint8_t>((result_40 >> 24u) & 0xffu);
-  vars.AS_RESULT[2] =
-      static_cast<std::uint8_t>((result_40 >> 16u) & 0xffu);
-  vars.AS_RESULT[3] =
-      static_cast<std::uint8_t>((result_40 >> 8u) & 0xffu);
-  vars.AS_FAC_EXTENSION =
-      static_cast<std::uint8_t>(result_40 & 0xffu);
+  vars.AS_RESULT[0] = static_cast<std::uint8_t>((result_40 >> 32u) & 0xffu);
+  vars.AS_RESULT[1] = static_cast<std::uint8_t>((result_40 >> 24u) & 0xffu);
+  vars.AS_RESULT[2] = static_cast<std::uint8_t>((result_40 >> 16u) & 0xffu);
+  vars.AS_RESULT[3] = static_cast<std::uint8_t>((result_40 >> 8u) & 0xffu);
+  vars.AS_FAC_EXTENSION = static_cast<std::uint8_t>(result_40 & 0xffu);
 
   AS_COPY_RESULT_INTO_FAC();
 }
