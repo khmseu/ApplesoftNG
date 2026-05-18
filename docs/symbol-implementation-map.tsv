@@ -1,9 +1,9 @@
 module	symbol	value	implemented_by
-asrom	AS_ERR_NOFOR	0x0000	
-asrom	AS_GOWARM	0x0000	
-asrom	[start]	0x0000	
-asrom	AS_GOSTROUT	0x0003	
-asrom	MON_TEXTBOTTOMLINES	0x0004	
+asrom	AS_ERR_NOFOR	0x0000	-
+asrom	AS_GOWARM	0x0000	-
+asrom	[start]	0x0000	-
+asrom	AS_GOSTROUT	0x0003	-
+asrom	MON_TEXTBOTTOMLINES	0x0004	-
 asrom	AS_USR	0x000a	AS_USR
 asrom	AS_CHARAC	0x000d	AS_USR
 asrom	AS_ENDCHR	0x000e	AS_USR
@@ -125,91 +125,91 @@ asrom	AS_STRNG2	0x00ad	AS_USR
 asrom	AS_PRGEND	0x00af	AS_USR
 asrom	AS_ERR_STRLONG	0x00b0	AS_USR
 asrom	AS_TOKEN_GOSUB	0x00b0	AS_USR
-asrom	AS_CHRGET	0x00b1	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_REM	0x00b2	AS_CHRGET, AS_USR
-asrom	AS_CHRGOT	0x00b7	AS_CHRGET, AS_USR
-asrom	AS_TXTPTR	0x00b8	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_PRINT	0x00ba	AS_CHRGET, AS_USR
-asrom	AS_ERR_FRMCPX	0x00bf	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_TAB	0x00c0	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_TO	0x00c1	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_FN	0x00c2	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_SPC	0x00c3	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_THEN	0x00c4	AS_CHRGET, AS_USR
-asrom	AS_TOKENDB	0x00c5	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_NOT	0x00c6	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_STEP	0x00c7	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_PLUS	0x00c8	AS_CHRGET, AS_USR
-asrom	AS_RNDSEED	0x00c9	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_MINUS	0x00c9	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_GREATER	0x00cf	AS_CHRGET, AS_USR
-asrom	AS_HGR_DX	0x00d0	AS_CHRGET, AS_USR
-asrom	AS_TOKENEQUUAL	0x00d0	AS_CHRGET, AS_USR
-asrom	AS_ERR_CANTCONT	0x00d2	AS_CHRGET, AS_USR
-asrom	AS_HGR_DY	0x00d2	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_SGN	0x00d2	AS_CHRGET, AS_USR
-asrom	AS_HGR_QUADRANT	0x00d3	AS_CHRGET, AS_USR
-asrom	AS_HGR_E	0x00d4	AS_CHRGET, AS_USR
-asrom	AS_LOCK	0x00d6	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_SCRN	0x00d7	AS_CHRGET, AS_USR
-asrom	AS_ERRFLG	0x00d8	AS_CHRGET, AS_USR
-asrom	AS_ERRLIN	0x00da	AS_CHRGET, AS_USR
-asrom	AS_ERRPOS	0x00dc	AS_CHRGET, AS_USR
-asrom	AS_ERRNUM	0x00de	AS_CHRGET, AS_USR
-asrom	AS_ERRSTK	0x00df	AS_CHRGET, AS_USR
-asrom	AS_ERR_UNDEFFUNC	0x00e0	AS_CHRGET, AS_USR
-asrom	AS_HGR_X	0x00e0	AS_CHRGET, AS_USR
-asrom	AS_HGR_Y	0x00e2	AS_CHRGET, AS_USR
-asrom	AS_HGR_COLOR	0x00e4	AS_CHRGET, AS_USR
-asrom	AS_HGR_HORIZ	0x00e5	AS_CHRGET, AS_USR
-asrom	AS_HGR_PAGE	0x00e6	AS_CHRGET, AS_USR
-asrom	AS_HGR_SCALE	0x00e7	AS_CHRGET, AS_USR
-asrom	AS_HGR_SHAPE_PNTR	0x00e8	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_LEFTSTR	0x00e8	AS_CHRGET, AS_USR
-asrom	AS_HGR_COLLISIONS	0x00ea	AS_CHRGET, AS_USR
-asrom	AS_FIRST	0x00f0	AS_CHRGET, AS_USR
-asrom	AS_SPEEDZ	0x00f1	AS_CHRGET, AS_USR
-asrom	AS_TRCFLG	0x00f2	AS_CHRGET, AS_USR
-asrom	AS_FLASH_BIT	0x00f3	AS_CHRGET, AS_USR
-asrom	AS_TXTPSV	0x00f4	AS_CHRGET, AS_USR
-asrom	AS_CURLSV	0x00f6	AS_CHRGET, AS_USR
-asrom	AS_REMSTK	0x00f8	AS_CHRGET, AS_USR
-asrom	AS_HGR_ROTATION	0x00f9	AS_CHRGET, AS_USR
-asrom	AS_STACK	0x0100	AS_CHRGET, AS_USR
-asrom	AS_INPUT_BUFFER	0x0200	AS_CHRGET, AS_USR
-asrom	AS_AMPERSAND_VECTOR	0x03f5	AS_CHRGET, AS_USR
-asrom	AS_KEYBOARD	0xc000	AS_CHRGET, AS_USR
-asrom	MON_IOADR	0xc000	AS_CHRGET, AS_USR
-asrom	MON_KBD	0xc000	AS_CHRGET, AS_USR
-asrom	MON_KBDSTRB	0xc010	AS_CHRGET, AS_USR
-asrom	MON_TAPEOUT	0xc020	AS_CHRGET, AS_USR
-asrom	MON_SPKR	0xc030	AS_CHRGET, AS_USR
-asrom	AS_SW_TXTCLR	0xc050	AS_CHRGET, AS_USR
-asrom	MON_TXTCLR	0xc050	AS_CHRGET, AS_USR
-asrom	MON_TXTSET	0xc051	AS_CHRGET, AS_USR
-asrom	AS_SW_MIXCLR	0xc052	AS_CHRGET, AS_USR
-asrom	AS_SW_MIXSET	0xc053	AS_CHRGET, AS_USR
-asrom	MON_MIXSET	0xc053	AS_CHRGET, AS_USR
-asrom	AS_SW_LOWSCR	0xc054	AS_CHRGET, AS_USR
-asrom	MON_LOWSCR	0xc054	AS_CHRGET, AS_USR
-asrom	AS_SW_HISCR	0xc055	AS_CHRGET, AS_USR
-asrom	AS_SW_LORES	0xc056	AS_CHRGET, AS_USR
-asrom	MON_LORES	0xc056	AS_CHRGET, AS_USR
-asrom	AS_SW_HIRES	0xc057	AS_CHRGET, AS_USR
-asrom	MON_TAPEIN	0xc060	AS_CHRGET, AS_USR
-asrom	MON_PADDL0	0xc064	AS_CHRGET, AS_USR
-asrom	MON_PTRIG	0xc070	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_ADDRESS_TABLE	0xd000	AS_CHRGET, AS_NEXT_Handler, AS_USR
-asrom	AS_UNFNC	0xd080	AS_CHRGET, AS_USR
-asrom	AS_MATHTBL	0xd0b2	AS_CHRGET, AS_USR
-asrom	AS_M_NEG	0xd0c7	AS_CHRGET, AS_USR
-asrom	AS_MEQUU	0xd0ca	AS_CHRGET, AS_USR
-asrom	AS_M_REL	0xd0cd	AS_CHRGET, AS_USR
-asrom	AS_TOKEN_NAME_TABLE	0xd0d0	AS_CHRGET, AS_TOKEN_NAME_TABLE, AS_USR
-asrom	AS_ERROR_MESSAGES	0xd260	AS_CHRGET, AS_ERROR_MESSAGES, AS_USR
-asrom	AS_QT_ERROR	0xd350	AS_CHRGET, AS_QT_ERROR, AS_USR
-asrom	AS_QT_IN	0xd358	AS_CHRGET, AS_QT_ERROR, AS_USR
-asrom	AS_QT_BREAK	0xd35d	AS_CHRGET, AS_QT_ERROR, AS_USR
+asrom	AS_CHRGET	0x00b1	AS_USR
+asrom	AS_TOKEN_REM	0x00b2	AS_USR
+asrom	AS_CHRGOT	0x00b7	AS_USR
+asrom	AS_TXTPTR	0x00b8	AS_USR
+asrom	AS_TOKEN_PRINT	0x00ba	AS_USR
+asrom	AS_ERR_FRMCPX	0x00bf	AS_USR
+asrom	AS_TOKEN_TAB	0x00c0	AS_USR
+asrom	AS_TOKEN_TO	0x00c1	AS_USR
+asrom	AS_TOKEN_FN	0x00c2	AS_USR
+asrom	AS_TOKEN_SPC	0x00c3	AS_USR
+asrom	AS_TOKEN_THEN	0x00c4	AS_USR
+asrom	AS_TOKENDB	0x00c5	AS_USR
+asrom	AS_TOKEN_NOT	0x00c6	AS_USR
+asrom	AS_TOKEN_STEP	0x00c7	AS_USR
+asrom	AS_TOKEN_PLUS	0x00c8	AS_USR
+asrom	AS_RNDSEED	0x00c9	AS_USR
+asrom	AS_TOKEN_MINUS	0x00c9	AS_USR
+asrom	AS_TOKEN_GREATER	0x00cf	AS_USR
+asrom	AS_HGR_DX	0x00d0	AS_USR
+asrom	AS_TOKENEQUUAL	0x00d0	AS_USR
+asrom	AS_ERR_CANTCONT	0x00d2	AS_USR
+asrom	AS_HGR_DY	0x00d2	AS_USR
+asrom	AS_TOKEN_SGN	0x00d2	AS_USR
+asrom	AS_HGR_QUADRANT	0x00d3	AS_USR
+asrom	AS_HGR_E	0x00d4	AS_USR
+asrom	AS_LOCK	0x00d6	AS_USR
+asrom	AS_TOKEN_SCRN	0x00d7	AS_USR
+asrom	AS_ERRFLG	0x00d8	AS_USR
+asrom	AS_ERRLIN	0x00da	AS_USR
+asrom	AS_ERRPOS	0x00dc	AS_USR
+asrom	AS_ERRNUM	0x00de	AS_USR
+asrom	AS_ERRSTK	0x00df	AS_USR
+asrom	AS_ERR_UNDEFFUNC	0x00e0	AS_USR
+asrom	AS_HGR_X	0x00e0	AS_USR
+asrom	AS_HGR_Y	0x00e2	AS_USR
+asrom	AS_HGR_COLOR	0x00e4	AS_USR
+asrom	AS_HGR_HORIZ	0x00e5	AS_USR
+asrom	AS_HGR_PAGE	0x00e6	AS_USR
+asrom	AS_HGR_SCALE	0x00e7	AS_USR
+asrom	AS_HGR_SHAPE_PNTR	0x00e8	AS_USR
+asrom	AS_TOKEN_LEFTSTR	0x00e8	AS_USR
+asrom	AS_HGR_COLLISIONS	0x00ea	AS_USR
+asrom	AS_FIRST	0x00f0	AS_USR
+asrom	AS_SPEEDZ	0x00f1	AS_USR
+asrom	AS_TRCFLG	0x00f2	AS_USR
+asrom	AS_FLASH_BIT	0x00f3	AS_USR
+asrom	AS_TXTPSV	0x00f4	AS_USR
+asrom	AS_CURLSV	0x00f6	AS_USR
+asrom	AS_REMSTK	0x00f8	AS_USR
+asrom	AS_HGR_ROTATION	0x00f9	AS_USR
+asrom	AS_STACK	0x0100	AS_USR
+asrom	AS_INPUT_BUFFER	0x0200	AS_USR
+asrom	AS_AMPERSAND_VECTOR	0x03f5	AS_USR
+asrom	AS_KEYBOARD	0xc000	AS_USR
+asrom	MON_IOADR	0xc000	AS_USR
+asrom	MON_KBD	0xc000	AS_USR
+asrom	MON_KBDSTRB	0xc010	AS_USR
+asrom	MON_TAPEOUT	0xc020	AS_USR
+asrom	MON_SPKR	0xc030	AS_USR
+asrom	AS_SW_TXTCLR	0xc050	AS_USR
+asrom	MON_TXTCLR	0xc050	AS_USR
+asrom	MON_TXTSET	0xc051	AS_USR
+asrom	AS_SW_MIXCLR	0xc052	AS_USR
+asrom	AS_SW_MIXSET	0xc053	AS_USR
+asrom	MON_MIXSET	0xc053	AS_USR
+asrom	AS_SW_LOWSCR	0xc054	AS_USR
+asrom	MON_LOWSCR	0xc054	AS_USR
+asrom	AS_SW_HISCR	0xc055	AS_USR
+asrom	AS_SW_LORES	0xc056	AS_USR
+asrom	MON_LORES	0xc056	AS_USR
+asrom	AS_SW_HIRES	0xc057	AS_USR
+asrom	MON_TAPEIN	0xc060	AS_USR
+asrom	MON_PADDL0	0xc064	AS_USR
+asrom	MON_PTRIG	0xc070	AS_USR
+asrom	AS_TOKEN_ADDRESS_TABLE	0xd000	AS_NEXT_Handler, AS_USR
+asrom	AS_UNFNC	0xd080	AS_USR
+asrom	AS_MATHTBL	0xd0b2	AS_USR
+asrom	AS_M_NEG	0xd0c7	AS_USR
+asrom	AS_MEQUU	0xd0ca	AS_USR
+asrom	AS_M_REL	0xd0cd	AS_USR
+asrom	AS_TOKEN_NAME_TABLE	0xd0d0	AS_TOKEN_NAME_TABLE, AS_USR
+asrom	AS_ERROR_MESSAGES	0xd260	AS_ERROR_MESSAGES, AS_USR
+asrom	AS_QT_ERROR	0xd350	AS_QT_ERROR, AS_USR
+asrom	AS_QT_IN	0xd358	AS_QT_ERROR, AS_USR
+asrom	AS_QT_BREAK	0xd35d	AS_QT_ERROR, AS_USR
 asrom	AS_GTFORPNT	0xd365	AS_USR
 asrom	AS_L_GTFORPNT_1	0xd36a	AS_USR
 asrom	AS_L_GTFORPNT_2	0xd37f	AS_USR
@@ -601,134 +601,134 @@ asrom	AS_FUNCT	0xe354	AS_FUNCT
 asrom	AS_L_FUNCT_1	0xe378	AS_FUNCT
 asrom	AS_L_FUNCT_2	0xe3a9	AS_FUNCT
 asrom	AS_FNCDATA	0xe3af	AS_FNCDATA
-asrom	AS_STR	0xe3c5	
+asrom	AS_STR	0xe3c5	-
 asrom	AS_STRINI	0xe3d5	AS_CAT
-asrom	AS_STRSPA	0xe3dd	
-asrom	AS_STRLIT	0xe3e7	
-asrom	AS_STRLT2	0xe3ed	
-asrom	AS_L_STRLT2_1	0xe3f7	
-asrom	AS_L_STRLT2_2	0xe404	
-asrom	AS_L_STRLT2_3	0xe408	
-asrom	AS_L_STRLT2_4	0xe409	
-asrom	AS_L_STRLT2_5	0xe415	
-asrom	AS_L_STRLT2_6	0xe41f	
-asrom	AS_PUTNEW	0xe42a	
+asrom	AS_STRSPA	0xe3dd	-
+asrom	AS_STRLIT	0xe3e7	-
+asrom	AS_STRLT2	0xe3ed	-
+asrom	AS_L_STRLT2_1	0xe3f7	-
+asrom	AS_L_STRLT2_2	0xe404	-
+asrom	AS_L_STRLT2_3	0xe408	-
+asrom	AS_L_STRLT2_4	0xe409	-
+asrom	AS_L_STRLT2_5	0xe415	-
+asrom	AS_L_STRLT2_6	0xe41f	-
+asrom	AS_PUTNEW	0xe42a	-
 asrom	AS_JERR	0xe432	AS_JERR
-asrom	AS_PUTEMP	0xe435	
-asrom	AS_GETSPA	0xe452	
-asrom	AS_L_GETSPA_1	0xe454	
-asrom	AS_L_GETSPA_2	0xe45f	
-asrom	AS_L_GETSPA_3	0xe469	
-asrom	AS_L_GETSPA_4	0xe474	
-asrom	AS_GARBAG	0xe484	
-asrom	AS_FIND_HIGHEST_STRING	0xe488	
-asrom	AS_L_FIND_HIGHEST_STRING_1	0xe4a0	
-asrom	AS_L_FIND_HIGHEST_STRING_2	0xe4a9	
-asrom	AS_L_FIND_HIGHEST_STRING_3	0xe4b5	
-asrom	AS_L_FIND_HIGHEST_STRING_4	0xe4bd	
-asrom	AS_L_FIND_HIGHEST_STRING_5	0xe4c2	
-asrom	AS_L_FIND_HIGHEST_STRING_6	0xe4ca	
-asrom	AS_L_FIND_HIGHEST_STRING_7	0xe4ce	
-asrom	AS_L_FIND_HIGHEST_STRING_8	0xe4d9	
-asrom	AS_L_FIND_HIGHEST_STRING_9	0xe50a	
-asrom	AS_L_FIND_HIGHEST_STRING_10	0xe50c	
-asrom	AS_L_FIND_HIGHEST_STRING_11	0xe514	
-asrom	AS_CHECK_SIMPLE_VARIABLE	0xe519	
-asrom	AS_CHECK_VARIABLE	0xe523	
-asrom	AS_L_CHECK_VARIABLE_1	0xe538	
-asrom	AS_L_CHECK_VARIABLE_2	0xe542	
-asrom	AS_CHECK_BUMP	0xe552	
-asrom	AS_CHECK_EXIT	0xe55d	
-asrom	AS_MOVE_HIGHEST_STRING_TO_TOP	0xe562	
-asrom	AS_CAT	0xe597	
-asrom	AS_L_CAT_1	0xe5b7	
-asrom	AS_MOVINS	0xe5d4	
-asrom	AS_MOVSTR	0xe5e2	
-asrom	AS_MOVSTR_1	0xe5e6	
-asrom	AS_L_MOVSTR_1_1	0xe5ea	
-asrom	AS_L_MOVSTR_1_2	0xe5f3	
-asrom	AS_L_MOVSTR_1_3	0xe5fc	
-asrom	AS_FRESTR	0xe5fd	
+asrom	AS_PUTEMP	0xe435	-
+asrom	AS_GETSPA	0xe452	-
+asrom	AS_L_GETSPA_1	0xe454	-
+asrom	AS_L_GETSPA_2	0xe45f	-
+asrom	AS_L_GETSPA_3	0xe469	-
+asrom	AS_L_GETSPA_4	0xe474	-
+asrom	AS_GARBAG	0xe484	-
+asrom	AS_FIND_HIGHEST_STRING	0xe488	-
+asrom	AS_L_FIND_HIGHEST_STRING_1	0xe4a0	-
+asrom	AS_L_FIND_HIGHEST_STRING_2	0xe4a9	-
+asrom	AS_L_FIND_HIGHEST_STRING_3	0xe4b5	-
+asrom	AS_L_FIND_HIGHEST_STRING_4	0xe4bd	-
+asrom	AS_L_FIND_HIGHEST_STRING_5	0xe4c2	-
+asrom	AS_L_FIND_HIGHEST_STRING_6	0xe4ca	-
+asrom	AS_L_FIND_HIGHEST_STRING_7	0xe4ce	-
+asrom	AS_L_FIND_HIGHEST_STRING_8	0xe4d9	-
+asrom	AS_L_FIND_HIGHEST_STRING_9	0xe50a	-
+asrom	AS_L_FIND_HIGHEST_STRING_10	0xe50c	-
+asrom	AS_L_FIND_HIGHEST_STRING_11	0xe514	-
+asrom	AS_CHECK_SIMPLE_VARIABLE	0xe519	-
+asrom	AS_CHECK_VARIABLE	0xe523	-
+asrom	AS_L_CHECK_VARIABLE_1	0xe538	-
+asrom	AS_L_CHECK_VARIABLE_2	0xe542	-
+asrom	AS_CHECK_BUMP	0xe552	-
+asrom	AS_CHECK_EXIT	0xe55d	-
+asrom	AS_MOVE_HIGHEST_STRING_TO_TOP	0xe562	-
+asrom	AS_CAT	0xe597	-
+asrom	AS_L_CAT_1	0xe5b7	-
+asrom	AS_MOVINS	0xe5d4	-
+asrom	AS_MOVSTR	0xe5e2	-
+asrom	AS_MOVSTR_1	0xe5e6	-
+asrom	AS_L_MOVSTR_1_1	0xe5ea	-
+asrom	AS_L_MOVSTR_1_2	0xe5f3	-
+asrom	AS_L_MOVSTR_1_3	0xe5fc	-
+asrom	AS_FRESTR	0xe5fd	-
 asrom	AS_FREFAC	0xe600	AS_FREFAC
-asrom	AS_FRETMP	0xe604	
-asrom	AS_L_FRETMP_1	0xe62f	
-asrom	AS_L_FRETMP_2	0xe630	
-asrom	AS_FRETMS	0xe635	
-asrom	AS_L_FRETMS_1	0xe645	
-asrom	AS_CHRSTR	0xe646	
-asrom	AS_LEFTSTR	0xe65a	
-asrom	AS_SUBSTRING_1	0xe660	
-asrom	AS_L_SUBSTRING_1_1	0xe666	
-asrom	AS_SUBSTRING_2	0xe667	
-asrom	AS_SUBSTRING_3	0xe668	
-asrom	AS_L_SUBSTRING_3_1	0xe67f	
-asrom	AS_RIGHTSTR	0xe686	
-asrom	AS_MIDSTR	0xe691	
-asrom	AS_L_MIDSTR_1	0xe6a2	
+asrom	AS_FRETMP	0xe604	-
+asrom	AS_L_FRETMP_1	0xe62f	-
+asrom	AS_L_FRETMP_2	0xe630	-
+asrom	AS_FRETMS	0xe635	-
+asrom	AS_L_FRETMS_1	0xe645	-
+asrom	AS_CHRSTR	0xe646	-
+asrom	AS_LEFTSTR	0xe65a	-
+asrom	AS_SUBSTRING_1	0xe660	-
+asrom	AS_L_SUBSTRING_1_1	0xe666	-
+asrom	AS_SUBSTRING_2	0xe667	-
+asrom	AS_SUBSTRING_3	0xe668	-
+asrom	AS_L_SUBSTRING_3_1	0xe67f	-
+asrom	AS_RIGHTSTR	0xe686	-
+asrom	AS_MIDSTR	0xe691	-
+asrom	AS_L_MIDSTR_1	0xe6a2	-
 asrom	AS_SUBSTRING_SETUP	0xe6b9	AS_SUBSTRING_SETUP
-asrom	AS_LEN	0xe6d6	
-asrom	AS_GETSTR	0xe6dc	
-asrom	AS_ASC	0xe6e5	
-asrom	AS_GOIQ	0xe6f2	
+asrom	AS_LEN	0xe6d6	-
+asrom	AS_GETSTR	0xe6dc	-
+asrom	AS_ASC	0xe6e5	-
+asrom	AS_GOIQ	0xe6f2	-
 asrom	AS_GTBYTC	0xe6f5	AS_GTBYTC_PRINT
-asrom	AS_GETBYT	0xe6f8	
-asrom	AS_CONINT	0xe6fb	
+asrom	AS_GETBYT	0xe6f8	-
+asrom	AS_CONINT	0xe6fb	-
 asrom	AS_VAL	0xe707	AS_ASC_fn
-asrom	AS_L_VAL_1	0xe70f	
-asrom	AS_L_VAL_2	0xe727	
-asrom	AS_POINT	0xe73d	
-asrom	AS_GTNUM	0xe746	
-asrom	AS_COMBYTE	0xe74c	
+asrom	AS_L_VAL_1	0xe70f	-
+asrom	AS_L_VAL_2	0xe727	-
+asrom	AS_POINT	0xe73d	-
+asrom	AS_GTNUM	0xe746	-
+asrom	AS_COMBYTE	0xe74c	-
 asrom	AS_GETADR	0xe752	AS_GETADR
-asrom	AS_PEEK	0xe764	
-asrom	AS_POKE	0xe77b	
-asrom	AS_WAIT	0xe784	
-asrom	AS_L_WAIT_1	0xe793	
-asrom	AS_L_WAIT_2	0xe797	
+asrom	AS_PEEK	0xe764	-
+asrom	AS_POKE	0xe77b	-
+asrom	AS_WAIT	0xe784	-
+asrom	AS_L_WAIT_1	0xe793	-
+asrom	AS_L_WAIT_2	0xe797	-
 asrom	AS_RTS_10	0xe79f	AS_RTS_10
-asrom	AS_FADDH	0xe7a0	
-asrom	AS_FSUB	0xe7a7	
-asrom	AS_FSUBT	0xe7aa	
-asrom	AS_FADD_1	0xe7b9	
-asrom	AS_FADD	0xe7be	
+asrom	AS_FADDH	0xe7a0	-
+asrom	AS_FSUB	0xe7a7	-
+asrom	AS_FSUBT	0xe7aa	-
+asrom	AS_FADD_1	0xe7b9	-
+asrom	AS_FADD	0xe7be	-
 asrom	AS_FADDT	0xe7c1	AS_FADDT
 asrom	AS_L_FADDT_1	0xe7c6	AS_FADDT
-asrom	AS_FADD_2	0xe7ce	
-asrom	AS_L_FADD_2_1	0xe7ea	
-asrom	AS_L_FADD_2_2	0xe7ee	
-asrom	AS_FADD_3	0xe7fa	
-asrom	AS_L_FADD_3_1	0xe806	
-asrom	AS_NORMALIZE_FAC_1	0xe829	
-asrom	AS_NORMALIZE_FAC_2	0xe82e	
-asrom	AS_L_NORMALIZE_FAC_2_1	0xe832	
-asrom	AS_ZERO_FAC	0xe84e	
-asrom	AS_STA_IN_FAC_SIGN_AND_EXP	0xe850	
-asrom	AS_STA_IN_FAC_SIGN	0xe852	
-asrom	AS_FADD_4	0xe855	
-asrom	AS_NORMALIZE_FAC_3	0xe874	
+asrom	AS_FADD_2	0xe7ce	-
+asrom	AS_L_FADD_2_1	0xe7ea	-
+asrom	AS_L_FADD_2_2	0xe7ee	-
+asrom	AS_FADD_3	0xe7fa	-
+asrom	AS_L_FADD_3_1	0xe806	-
+asrom	AS_NORMALIZE_FAC_1	0xe829	-
+asrom	AS_NORMALIZE_FAC_2	0xe82e	-
+asrom	AS_L_NORMALIZE_FAC_2_1	0xe832	-
+asrom	AS_ZERO_FAC	0xe84e	-
+asrom	AS_STA_IN_FAC_SIGN_AND_EXP	0xe850	-
+asrom	AS_STA_IN_FAC_SIGN	0xe852	-
+asrom	AS_FADD_4	0xe855	-
+asrom	AS_NORMALIZE_FAC_3	0xe874	-
 asrom	AS_NORMALIZE_FAC_4	0xe880	AS_NORMALIZE_FAC_4
 asrom	AS_NORMALIZE_FAC_5	0xe88d	AS_NORMALIZE_FAC_5
-asrom	AS_NORMALIZE_FAC_6	0xe88f	
-asrom	AS_RTS_11	0xe89d	
-asrom	AS_COMPLEMENT_FAC	0xe89e	
-asrom	AS_COMPLEMENT_FAC_MANTISSA	0xe8a4	
-asrom	AS_INCREMENT_FAC_MANTISSA	0xe8c6	
-asrom	AS_RTS_12	0xe8d4	
-asrom	AS_OVERFLOW	0xe8d5	
-asrom	AS_SHIFT_RIGHT_1	0xe8da	
-asrom	AS_SHIFT_RIGHT_2	0xe8dc	
-asrom	AS_SHIFT_RIGHT	0xe8f0	
-asrom	AS_L	0xe8fd	
-asrom	AS_SHIFT_RIGHT_3	0xe8fd	
-asrom	AS_L_L_1	0xe903	
-asrom	AS_SHIFT_RIGHT_4	0xe907	
-asrom	AS_SHIFT_RIGHT_5	0xe911	
-asrom	AS_CON_ONE	0xe913	
-asrom	AS_POLY_LOG	0xe918	
-asrom	AS_CON_SQR_HALF	0xe92d	
-asrom	AS_CON_SQR_TWO	0xe932	
-asrom	AS_CON_NEG_HALF	0xe937	
-asrom	AS_CON_LOG_TWO	0xe93c	
+asrom	AS_NORMALIZE_FAC_6	0xe88f	-
+asrom	AS_RTS_11	0xe89d	-
+asrom	AS_COMPLEMENT_FAC	0xe89e	-
+asrom	AS_COMPLEMENT_FAC_MANTISSA	0xe8a4	-
+asrom	AS_INCREMENT_FAC_MANTISSA	0xe8c6	-
+asrom	AS_RTS_12	0xe8d4	-
+asrom	AS_OVERFLOW	0xe8d5	-
+asrom	AS_SHIFT_RIGHT_1	0xe8da	-
+asrom	AS_SHIFT_RIGHT_2	0xe8dc	-
+asrom	AS_SHIFT_RIGHT	0xe8f0	-
+asrom	AS_L	0xe8fd	-
+asrom	AS_SHIFT_RIGHT_3	0xe8fd	-
+asrom	AS_L_L_1	0xe903	-
+asrom	AS_SHIFT_RIGHT_4	0xe907	-
+asrom	AS_SHIFT_RIGHT_5	0xe911	-
+asrom	AS_CON_ONE	0xe913	-
+asrom	AS_POLY_LOG	0xe918	-
+asrom	AS_CON_SQR_HALF	0xe92d	-
+asrom	AS_CON_SQR_TWO	0xe932	-
+asrom	AS_CON_NEG_HALF	0xe937	-
+asrom	AS_CON_LOG_TWO	0xe93c	-
 asrom	AS_LOG	0xe941	AS_LOG
 asrom	AS_GIQ	0xe948	AS_LOG
 asrom	AS_LOG_2	0xe94b	AS_LOG
@@ -899,15 +899,15 @@ asrom	AS_CON_PI_HALF	0xf066	AS_TAN
 asrom	AS_CON_PI_DOUB	0xf06b	AS_TAN
 asrom	AS_QUARTER	0xf070	AS_TAN
 asrom	AS_POLY_SIN	0xf075	AS_TAN
-asrom	AS_ATN	0xf09e	
-asrom	AS_L_ATN_1	0xf0a6	
-asrom	AS_L_ATN_2	0xf0b4	
-asrom	AS_L_ATN_3	0xf0c7	
-asrom	AS_RTS_20	0xf0cd	
-asrom	AS_POLY_ATN	0xf0ce	
-asrom	AS_GENERIC_CHRGET	0xf10b	
-asrom	AS_L_GENERIC_CHRGET_1	0xf111	
-asrom	AS_L_GENERIC_CHRGET_2	0xf122	
+asrom	AS_ATN	0xf09e	-
+asrom	AS_L_ATN_1	0xf0a6	-
+asrom	AS_L_ATN_2	0xf0b4	-
+asrom	AS_L_ATN_3	0xf0c7	-
+asrom	AS_RTS_20	0xf0cd	-
+asrom	AS_POLY_ATN	0xf0ce	-
+asrom	AS_GENERIC_CHRGET	0xf10b	AS_CHRGET
+asrom	AS_L_GENERIC_CHRGET_1	0xf111	AS_CHRGET
+asrom	AS_L_GENERIC_CHRGET_2	0xf122	AS_CHRGET
 asrom	AS_COLD_START	0xf128	AS_ERRDIR
 asrom	AS_GENERIC_END	0xf128	AS_ERRDIR
 asrom	AS_L_COLD_START_1	0xf152	AS_ERRDIR
@@ -918,7 +918,7 @@ asrom	AS_CALL	0xf1d5	AS_CALL
 asrom	AS_IN_NUMBER	0xf1de	AS_IN_NUMBER
 asrom	AS_PR_NUMBER	0xf1e5	AS_PR_NUMBER
 asrom	AS_PLOTFNS	0xf1ec	AS_PLOTFNS
-asrom	AS_GOERR	0xf206	
+asrom	AS_GOERR	0xf206	-
 asrom	AS_LINCOOR	0xf209	AS_LINCOOR
 asrom	AS_L_LINCOOR_1	0xf218	AS_LINCOOR
 asrom	AS_PLOT	0xf225	AS_PLOT
@@ -933,7 +933,7 @@ asrom	AS_NORMAL	0xf273	AS_NORMAL
 asrom	AS_INVERSE	0xf277	AS_INVERSE
 asrom	AS_N_I_	0xf279	AS_INVERSE
 asrom	AS_N_I_F_	0xf27b	AS_INVERSE
-asrom	AS_FLASH	0xf280	
+asrom	AS_FLASH	0xf280	-
 asrom	AS_HIMEM	0xf286	AS_HIMEM
 asrom	AS_JMM	0xf296	AS_HIMEM
 asrom	AS_SETHI	0xf299	AS_HIMEM
@@ -941,7 +941,7 @@ asrom	AS_LOMEM	0xf2a6	AS_LOMEM
 asrom	AS_ONERR	0xf2cb	AS_ONERR
 asrom	AS_HANDLERR	0xf2e9	AS_HANDLERR
 asrom	AS_RESUME	0xf318	AS_RESUME
-asrom	AS_JSYN	0xf32e	
+asrom	AS_JSYN	0xf32e	-
 asrom	AS_DEL	0xf331	AS_LIST
 asrom	AS_L_DEL_1	0xf357	AS_LIST
 asrom	AS_L_DEL_2	0xf365	AS_LIST
@@ -951,326 +951,326 @@ asrom	AS_L_DEL_5	0xf377	AS_LIST
 asrom	AS_L_DEL_6	0xf388	AS_LIST
 asrom	AS_GR	0xf390	AS_GR
 asrom	AS_TEXT	0xf399	AS_TEXT
-asrom	AS_STORE	0xf39f	
-asrom	AS_L_STORE_1	0xf3af	
-asrom	AS_RECALL	0xf3bc	
-asrom	AS_L_RECALL_1	0xf3d2	
+asrom	AS_STORE	0xf39f	-
+asrom	AS_L_STORE_1	0xf3af	-
+asrom	AS_RECALL	0xf3bc	-
+asrom	AS_L_RECALL_1	0xf3d2	-
 asrom	AS_HGR2	0xf3d8	AS_HGR2
 asrom	AS_HGR	0xf3e2	AS_HGR, AS_HGR2
 asrom	AS_SETHPG	0xf3ea	AS_HCOLOR
-asrom	AS_HCLR	0xf3f2	
-asrom	AS_BKGND	0xf3f6	
-asrom	AS_L_BKGND_1	0xf3fe	
-asrom	AS_HPOSN	0xf411	
-asrom	AS_L_HPOSN_1	0xf441	
-asrom	AS_L_HPOSN_2	0xf442	
-asrom	AS_HPLOT0	0xf457	
-asrom	AS_MOVE_LEFT_OR_RIGHT	0xf465	
-asrom	AS_LR_1	0xf46e	
-asrom	AS_LR_2	0xf471	
-asrom	AS_LR_3	0xf476	
-asrom	AS_LR_4	0xf478	
-asrom	AS_COLOR_SHIFT	0xf47e	
-asrom	AS_L_COLOR_SHIFT_1	0xf489	
-asrom	AS_MOVE_RIGHT	0xf48a	
-asrom	AS_LRUDX1	0xf49c	
-asrom	AS_LRUDX2	0xf49d	
-asrom	AS_LRUD1	0xf4b3	
-asrom	AS_LRUD2	0xf4b4	
-asrom	AS_LRUD3	0xf4c4	
-asrom	AS_LRUD4	0xf4c8	
-asrom	AS_CON_03	0xf4cd	
-asrom	AS_MOVE_UP_OR_DOWN	0xf4d3	
-asrom	AS_L_MOVE_UP_OR_DOWN_1	0xf4eb	
-asrom	AS_L_MOVE_UP_OR_DOWN_2	0xf4f6	
-asrom	AS_L_MOVE_UP_OR_DOWN_3	0xf4fb	
-asrom	AS_L_MOVE_UP_OR_DOWN_4	0xf4fd	
-asrom	AS_L_MOVE_UP_OR_DOWN_5	0xf4ff	
-asrom	AS_UD_1	0xf501	
-asrom	AS_MOVE_DOWN	0xf505	
-asrom	AS_CON_04	0xf508	
-asrom	AS_L_CON_04_1	0xf524	
-asrom	AS_L_CON_04_2	0xf52a	
-asrom	AS_L_CON_04_3	0xf52c	
-asrom	AS_HLINRL	0xf530	
-asrom	AS_HGLIN	0xf53a	
-asrom	AS_L_HGLIN_1	0xf550	
-asrom	AS_L_HGLIN_2	0xf568	
-asrom	AS_MOVEX	0xf57c	
-asrom	AS_MOVEX2	0xf581	
-asrom	AS_L_MOVEX2_1	0xf58b	
-asrom	AS_L_MOVEX2_2	0xf59e	
-asrom	AS_MSKTBL	0xf5b2	
-asrom	AS_CON_1C	0xf5b9	
-asrom	AS_COSINE_TABLE	0xf5ba	
-asrom	AS_HFIND	0xf5cb	
-asrom	AS_L_HFIND_1	0xf5f0	
-asrom	AS_L_HFIND_2	0xf5fe	
-asrom	AS_RTS_22	0xf600	
-asrom	AS_DRAW0	0xf601	
-asrom	AS_DRAW1	0xf605	
-asrom	AS_L_DRAW1_1	0xf626	
-asrom	AS_L_DRAW1_2	0xf630	
-asrom	AS_L_DRAW1_3	0xf63d	
-asrom	AS_L_DRAW1_4	0xf648	
-asrom	AS_L_DRAW1_5	0xf658	
-asrom	AS_XDRAW0	0xf65d	
-asrom	AS_XDRAW1	0xf661	
-asrom	AS_L_XDRAW1_1	0xf682	
-asrom	AS_L_XDRAW1_2	0xf68c	
-asrom	AS_L_XDRAW1_3	0xf699	
-asrom	AS_L_XDRAW1_4	0xf6a4	
-asrom	AS_L_XDRAW1_5	0xf6b4	
-asrom	AS_HFNS	0xf6b9	
-asrom	AS_L_HFNS_1	0xf6cd	
-asrom	AS_GGERR	0xf6e6	
+asrom	AS_HCLR	0xf3f2	-
+asrom	AS_BKGND	0xf3f6	-
+asrom	AS_L_BKGND_1	0xf3fe	-
+asrom	AS_HPOSN	0xf411	-
+asrom	AS_L_HPOSN_1	0xf441	-
+asrom	AS_L_HPOSN_2	0xf442	-
+asrom	AS_HPLOT0	0xf457	-
+asrom	AS_MOVE_LEFT_OR_RIGHT	0xf465	-
+asrom	AS_LR_1	0xf46e	-
+asrom	AS_LR_2	0xf471	-
+asrom	AS_LR_3	0xf476	-
+asrom	AS_LR_4	0xf478	-
+asrom	AS_COLOR_SHIFT	0xf47e	-
+asrom	AS_L_COLOR_SHIFT_1	0xf489	-
+asrom	AS_MOVE_RIGHT	0xf48a	-
+asrom	AS_LRUDX1	0xf49c	-
+asrom	AS_LRUDX2	0xf49d	-
+asrom	AS_LRUD1	0xf4b3	-
+asrom	AS_LRUD2	0xf4b4	-
+asrom	AS_LRUD3	0xf4c4	-
+asrom	AS_LRUD4	0xf4c8	-
+asrom	AS_CON_03	0xf4cd	-
+asrom	AS_MOVE_UP_OR_DOWN	0xf4d3	-
+asrom	AS_L_MOVE_UP_OR_DOWN_1	0xf4eb	-
+asrom	AS_L_MOVE_UP_OR_DOWN_2	0xf4f6	-
+asrom	AS_L_MOVE_UP_OR_DOWN_3	0xf4fb	-
+asrom	AS_L_MOVE_UP_OR_DOWN_4	0xf4fd	-
+asrom	AS_L_MOVE_UP_OR_DOWN_5	0xf4ff	-
+asrom	AS_UD_1	0xf501	-
+asrom	AS_MOVE_DOWN	0xf505	-
+asrom	AS_CON_04	0xf508	-
+asrom	AS_L_CON_04_1	0xf524	-
+asrom	AS_L_CON_04_2	0xf52a	-
+asrom	AS_L_CON_04_3	0xf52c	-
+asrom	AS_HLINRL	0xf530	-
+asrom	AS_HGLIN	0xf53a	-
+asrom	AS_L_HGLIN_1	0xf550	-
+asrom	AS_L_HGLIN_2	0xf568	-
+asrom	AS_MOVEX	0xf57c	-
+asrom	AS_MOVEX2	0xf581	-
+asrom	AS_L_MOVEX2_1	0xf58b	-
+asrom	AS_L_MOVEX2_2	0xf59e	-
+asrom	AS_MSKTBL	0xf5b2	-
+asrom	AS_CON_1C	0xf5b9	-
+asrom	AS_COSINE_TABLE	0xf5ba	-
+asrom	AS_HFIND	0xf5cb	-
+asrom	AS_L_HFIND_1	0xf5f0	-
+asrom	AS_L_HFIND_2	0xf5fe	-
+asrom	AS_RTS_22	0xf600	-
+asrom	AS_DRAW0	0xf601	-
+asrom	AS_DRAW1	0xf605	-
+asrom	AS_L_DRAW1_1	0xf626	-
+asrom	AS_L_DRAW1_2	0xf630	-
+asrom	AS_L_DRAW1_3	0xf63d	-
+asrom	AS_L_DRAW1_4	0xf648	-
+asrom	AS_L_DRAW1_5	0xf658	-
+asrom	AS_XDRAW0	0xf65d	-
+asrom	AS_XDRAW1	0xf661	-
+asrom	AS_L_XDRAW1_1	0xf682	-
+asrom	AS_L_XDRAW1_2	0xf68c	-
+asrom	AS_L_XDRAW1_3	0xf699	-
+asrom	AS_L_XDRAW1_4	0xf6a4	-
+asrom	AS_L_XDRAW1_5	0xf6b4	-
+asrom	AS_HFNS	0xf6b9	-
+asrom	AS_L_HFNS_1	0xf6cd	-
+asrom	AS_GGERR	0xf6e6	-
 asrom	AS_HCOLOR	0xf6e9	AS_HCOLOR
 asrom	AS_RTS_23	0xf6f5	AS_HCOLOR
 asrom	AS_COLORTBL	0xf6f6	AS_HCOLOR
-asrom	AS_HPLOT	0xf6fe	
-asrom	AS_L_HPLOT_1	0xf708	
-asrom	AS_L_HPLOT_2	0xf70f	
+asrom	AS_HPLOT	0xf6fe	-
+asrom	AS_L_HPLOT_1	0xf708	-
+asrom	AS_L_HPLOT_2	0xf70f	-
 asrom	AS_ROT	0xf721	AS_ROT
 asrom	AS_SCALE	0xf727	AS_HPOSN
-asrom	AS_DRWPNT	0xf72d	
-asrom	AS_L_DRWPNT_1	0xf741	
-asrom	AS_L_DRWPNT_2	0xf747	
-asrom	AS_L_DRWPNT_3	0xf766	
+asrom	AS_DRWPNT	0xf72d	-
+asrom	AS_L_DRWPNT_1	0xf741	-
+asrom	AS_L_DRWPNT_2	0xf747	-
+asrom	AS_L_DRWPNT_3	0xf766	-
 asrom	AS_DRAW	0xf769	AS_DRAW
 asrom	AS_XDRAW	0xf76f	AS_XDRAW
-asrom	AS_SHLOAD	0xf775	
-asrom	AS_L_SHLOAD_1	0xf796	
-asrom	AS_L_SHLOAD_2	0xf7a0	
-asrom	AS_L_SHLOAD_3	0xf7a3	
-asrom	AS_TAPEPNT	0xf7bc	
-asrom	AS_GETARYPT	0xf7d9	
-asrom	AS_HTAB	0xf7e7	
-asrom	AS_L_HTAB_1	0xf7ec	
-asrom	AS_L_HTAB_2	0xf7fa	
-asrom	MON_PLOT	0xf800	
-asrom	MON_RTMASK	0xf80c	
-asrom	MON_PLOT1	0xf80e	
-asrom	MON_HLINE	0xf819	
-asrom	MON_HLINE1	0xf81c	
-asrom	MON_VLINEZ	0xf826	
-asrom	MON_VLINE	0xf828	
-asrom	MON_RTS1	0xf831	
-asrom	MON_CLRSCR	0xf832	
-asrom	MON_CLRTOP	0xf836	
-asrom	MON_CLRSC2	0xf838	
-asrom	MON_CLRSC3	0xf83c	
-asrom	MON_GBASCALC	0xf847	
-asrom	MON_GBCALC	0xf856	
-asrom	MON_NXTCOL	0xf85f	
-asrom	MON_SETCOL	0xf864	
-asrom	MON_SCRN	0xf871	
-asrom	MON_SCRN2	0xf879	
-asrom	MON_RTMSKZ	0xf87f	
-asrom	MON_INSDS1	0xf882	
-asrom	MON_INSDS2	0xf88e	
-asrom	MON_IEVEN	0xf89b	
-asrom	MON_ERR	0xf8a5	
-asrom	MON_GETFMT	0xf8a9	
-asrom	MON_MNNDX1	0xf8be	
-asrom	MON_MNNDX2	0xf8c2	
-asrom	MON_MNNDX3	0xf8c9	
-asrom	MON_INSTDSP	0xf8d0	
-asrom	MON_PRNTOP	0xf8d4	
-asrom	MON_PRNTBL	0xf8db	
-asrom	MON_PRMN1	0xf8f5	
-asrom	MON_PRMN2	0xf8f9	
-asrom	MON_PRADR1	0xf910	
-asrom	MON_PRADR2	0xf914	
-asrom	MON_PRADR3	0xf926	
-asrom	MON_PRADR4	0xf92a	
-asrom	MON_PRADR5	0xf930	
-asrom	MON_RELADR	0xf938	
-asrom	MON_PRNTYX	0xf940	
-asrom	MON_PRNTAX	0xf941	
-asrom	MON_PRNTX	0xf944	
-asrom	MON_PRBLNK	0xf948	
-asrom	MON_PRBL2	0xf94a	
-asrom	MON_PCADJ	0xf953	
-asrom	MON_PCADJ2	0xf954	
-asrom	MON_PCADJ3	0xf956	
-asrom	MON_PCADJ4	0xf95c	
-asrom	MON_RTS2	0xf961	
-asrom	MON_FMT1	0xf962	
-asrom	MON_FMT2	0xf9a6	
-asrom	MON_CHAR1	0xf9b4	
-asrom	MON_CHAR2	0xf9ba	
-asrom	MON_MNEML	0xf9c0	
-asrom	MON_MNEMR	0xfa00	
-asrom	MON_IRQ	0xfa40	
-asrom	MON_BREAK	0xfa4c	
-asrom	MON_OLDBRK	0xfa59	
-asrom	MON_RESET2	0xfa62	
-asrom	MON_LFA9B	0xfa9b	
-asrom	MON_LFAA3	0xfaa3	
-asrom	MON_LFAA6	0xfaa6	
-asrom	MON_LFAAB	0xfaab	
-asrom	MON_LFABA	0xfaba	
-asrom	MON_LFAC7	0xfac7	
-asrom	MON_REGDSP	0xfad7	
-asrom	MON_RGDSP1	0xfada	
-asrom	MON_RDSP1	0xfae4	
-asrom	MON_LFAFC	0xfafc	
-asrom	MON_LFB01	0xfb01	
-asrom	MON_LFB08	0xfb08	
-asrom	MON_RTBL	0xfb19	
-asrom	MON_PREAD	0xfb1e	
-asrom	MON_PREAD2	0xfb25	
-asrom	MON_RTS2D	0xfb2e	
-asrom	MON_INIT	0xfb2f	
-asrom	MON_SETTXT	0xfb39	
-asrom	MON_SETGR	0xfb40	
-asrom	MON_SETWND	0xfb4b	
-asrom	MON_TABV	0xfb5b	
-asrom	MON_LFB60	0xfb60	
-asrom	MON_LFB65	0xfb65	
-asrom	MON_LFB78	0xfb78	
-asrom	MON_LFB88	0xfb88	
-asrom	MON_LFB94	0xfb94	
-asrom	MON_LFB97	0xfb97	
-asrom	MON_LFB9B	0xfb9b	
-asrom	MON_LFBA5	0xfba5	
-asrom	MON_BASCALC	0xfbc1	
-asrom	MON_BSCLC2	0xfbd0	
-asrom	MON_BELL1	0xfbd9	
-asrom	MON_BELL2	0xfbe4	
-asrom	MON_RTS2B	0xfbef	
-asrom	MON_STOADV	0xfbf0	
-asrom	MON_ADVANCE	0xfbf4	
-asrom	MON_RTS3	0xfbfc	
-asrom	MON_VIDOUT	0xfbfd	
-asrom	MON_BS	0xfc10	
-asrom	MON_UP	0xfc1a	
-asrom	MON_VTAB	0xfc22	
-asrom	MON_VTABZ	0xfc24	
-asrom	MON_RTS4	0xfc2b	
-asrom	MON_ESC1	0xfc2c	
-asrom	MON_CLREOP	0xfc42	
-asrom	MON_CLEOP1	0xfc46	
-asrom	MON_HOME	0xfc58	
-asrom	MON_CR	0xfc62	
-asrom	MON_LF	0xfc66	
-asrom	MON_SCROLL	0xfc70	
-asrom	MON_SCRL1	0xfc76	
-asrom	MON_SCRL2	0xfc8c	
-asrom	MON_SCRL3	0xfc95	
-asrom	MON_CLREOL	0xfc9c	
-asrom	MON_CLEOLZ	0xfc9e	
-asrom	MON_CLEOL2	0xfca0	
-asrom	MON_WAIT	0xfca8	
-asrom	MON_WAIT2	0xfca9	
-asrom	MON_WAIT3	0xfcaa	
-asrom	MON_NXTA4	0xfcb4	
-asrom	MON_NXTA1	0xfcba	
-asrom	MON_RTS4B	0xfcc8	
-asrom	MON_HEADR	0xfcc9	
-asrom	MON_WRBIT	0xfcd6	
-asrom	MON_ZERDLY	0xfcdb	
-asrom	MON_ONEDLY	0xfce2	
-asrom	MON_WRTAPE	0xfce5	
-asrom	MON_RDBYTE	0xfcec	
-asrom	MON_RDBYT2	0xfcee	
-asrom	MON_RD2BIT	0xfcfa	
-asrom	MON_RDBIT	0xfcfd	
-asrom	MON_RDKEY	0xfd0c	
-asrom	MON_KEYIN	0xfd1b	
-asrom	MON_KEYIN2	0xfd21	
-asrom	MON_ESC	0xfd2f	
-asrom	MON_RDCHAR	0xfd35	
-asrom	MON_NOTCR	0xfd3d	
-asrom	MON_NOTCR1	0xfd5f	
-asrom	MON_CANCEL	0xfd62	
-asrom	MON_GETLNZ	0xfd67	
-asrom	MON_GETLN	0xfd6a	
-asrom	MON_BCKSPC	0xfd71	
-asrom	MON_NXTCHAR	0xfd75	
-asrom	MON_NXTCHAR1	0xfd78	
-asrom	MON_CAPTST	0xfd7e	
-asrom	MON_ADDINP	0xfd84	
-asrom	MON_CROUT	0xfd8e	
-asrom	MON_PRA1	0xfd92	
-asrom	MON_PRYX2	0xfd96	
-asrom	MON_XAM8	0xfda3	
-asrom	MON_MODSCHK	0xfdad	
-asrom	MON_XAM	0xfdb3	
-asrom	MON_DATAOUT	0xfdb6	
-asrom	MON_RTS4C	0xfdc5	
-asrom	MON_XAMPM	0xfdc6	
-asrom	MON_ADD	0xfdd1	
-asrom	MON_PRBYTE	0xfdda	
-asrom	MON_PRHEX	0xfde3	
-asrom	MON_PRHEXZ	0xfde5	
-asrom	MON_COUT	0xfded	
-asrom	MON_COUT1	0xfdf0	
-asrom	MON_COUTZ	0xfdf6	
-asrom	MON_BL1	0xfe00	
-asrom	MON_BLANK	0xfe04	
-asrom	MON_STOR	0xfe0b	
-asrom	MON_RTS5	0xfe17	
-asrom	MON_SETMODE	0xfe18	
-asrom	MON_SETMDZ	0xfe1d	
-asrom	MON_LT	0xfe20	
-asrom	MON_LT2	0xfe22	
-asrom	MON_MOVE	0xfe2c	
-asrom	MON_VFY	0xfe36	
-asrom	MON_VFYOK	0xfe58	
-asrom	MON_LIST1	0xfe5e	
-asrom	MON_LIST2	0xfe63	
-asrom	MON_A1PC	0xfe75	
-asrom	MON_A1PCLP	0xfe78	
-asrom	MON_A1PCRTS	0xfe7f	
-asrom	MON_SETINV	0xfe80	
-asrom	MON_SETNORM	0xfe84	
-asrom	MON_SETIFLG	0xfe86	
-asrom	MON_SETKBD	0xfe89	
-asrom	MON_INPORT	0xfe8b	
-asrom	MON_INPRT	0xfe8d	
-asrom	MON_SETVID	0xfe93	
-asrom	MON_OUTPORT	0xfe95	
-asrom	MON_OUTPRT	0xfe97	
-asrom	MON_IOPRT	0xfe9b	
-asrom	MON_IOPRT1	0xfea7	
-asrom	MON_IOPRT2	0xfea9	
-asrom	MON_XBASIC	0xfeb0	
-asrom	MON_BASCONT	0xfeb3	
-asrom	MON_GO	0xfeb6	
-asrom	MON_REGZ	0xfebf	
-asrom	MON_TRACE	0xfec2	
-asrom	MON_STEPZ	0xfec5	
-asrom	MON_USR	0xfeca	
-asrom	MON_WRITE	0xfecd	
-asrom	MON_WR1	0xfed4	
-asrom	MON_WRBYTE	0xfeed	
-asrom	MON_WRBYT2	0xfeef	
-asrom	MON_CRMON	0xfef6	
-asrom	MON_READ	0xfefd	
-asrom	MON_READ2	0xff02	
-asrom	MON_RD2	0xff0a	
-asrom	MON_RD3	0xff16	
-asrom	MON_PRERR	0xff2d	
-asrom	MON_BELL	0xff3a	
-asrom	MON_RESTORE	0xff3f	
-asrom	MON_RESTR1	0xff44	
-asrom	MON_SAVE	0xff4a	
-asrom	MON_SAV1	0xff4c	
-asrom	MON_RESET	0xff59	
-asrom	MON_MON	0xff65	
-asrom	MON_MONZ	0xff69	
-asrom	MON_NXTITM	0xff73	
-asrom	MON_CHRSRCH	0xff7a	
-asrom	MON_DIG	0xff8a	
-asrom	MON_NXTBIT	0xff90	
-asrom	MON_NXTBAS	0xff98	
-asrom	MON_NXTBS2	0xffa2	
-asrom	MON_GETNUM	0xffa7	
-asrom	MON_NXTCHR	0xffad	
-asrom	MON_TOSUB	0xffbe	
-asrom	MON_ZMODE	0xffc7	
-asrom	MON_CHRTBL	0xffcc	
-asrom	MON_SUBTBL	0xffe3	
-asrom	MON_M6502VEC	0xfffa	
-asrom	[end]	0xffff	
+asrom	AS_SHLOAD	0xf775	-
+asrom	AS_L_SHLOAD_1	0xf796	-
+asrom	AS_L_SHLOAD_2	0xf7a0	-
+asrom	AS_L_SHLOAD_3	0xf7a3	-
+asrom	AS_TAPEPNT	0xf7bc	-
+asrom	AS_GETARYPT	0xf7d9	-
+asrom	AS_HTAB	0xf7e7	-
+asrom	AS_L_HTAB_1	0xf7ec	-
+asrom	AS_L_HTAB_2	0xf7fa	-
+asrom	MON_PLOT	0xf800	-
+asrom	MON_RTMASK	0xf80c	-
+asrom	MON_PLOT1	0xf80e	-
+asrom	MON_HLINE	0xf819	-
+asrom	MON_HLINE1	0xf81c	-
+asrom	MON_VLINEZ	0xf826	-
+asrom	MON_VLINE	0xf828	-
+asrom	MON_RTS1	0xf831	-
+asrom	MON_CLRSCR	0xf832	-
+asrom	MON_CLRTOP	0xf836	-
+asrom	MON_CLRSC2	0xf838	-
+asrom	MON_CLRSC3	0xf83c	-
+asrom	MON_GBASCALC	0xf847	-
+asrom	MON_GBCALC	0xf856	-
+asrom	MON_NXTCOL	0xf85f	-
+asrom	MON_SETCOL	0xf864	-
+asrom	MON_SCRN	0xf871	-
+asrom	MON_SCRN2	0xf879	-
+asrom	MON_RTMSKZ	0xf87f	-
+asrom	MON_INSDS1	0xf882	-
+asrom	MON_INSDS2	0xf88e	-
+asrom	MON_IEVEN	0xf89b	-
+asrom	MON_ERR	0xf8a5	-
+asrom	MON_GETFMT	0xf8a9	-
+asrom	MON_MNNDX1	0xf8be	-
+asrom	MON_MNNDX2	0xf8c2	-
+asrom	MON_MNNDX3	0xf8c9	-
+asrom	MON_INSTDSP	0xf8d0	-
+asrom	MON_PRNTOP	0xf8d4	-
+asrom	MON_PRNTBL	0xf8db	-
+asrom	MON_PRMN1	0xf8f5	-
+asrom	MON_PRMN2	0xf8f9	-
+asrom	MON_PRADR1	0xf910	-
+asrom	MON_PRADR2	0xf914	-
+asrom	MON_PRADR3	0xf926	-
+asrom	MON_PRADR4	0xf92a	-
+asrom	MON_PRADR5	0xf930	-
+asrom	MON_RELADR	0xf938	-
+asrom	MON_PRNTYX	0xf940	-
+asrom	MON_PRNTAX	0xf941	-
+asrom	MON_PRNTX	0xf944	-
+asrom	MON_PRBLNK	0xf948	-
+asrom	MON_PRBL2	0xf94a	-
+asrom	MON_PCADJ	0xf953	-
+asrom	MON_PCADJ2	0xf954	-
+asrom	MON_PCADJ3	0xf956	-
+asrom	MON_PCADJ4	0xf95c	-
+asrom	MON_RTS2	0xf961	-
+asrom	MON_FMT1	0xf962	-
+asrom	MON_FMT2	0xf9a6	-
+asrom	MON_CHAR1	0xf9b4	-
+asrom	MON_CHAR2	0xf9ba	-
+asrom	MON_MNEML	0xf9c0	-
+asrom	MON_MNEMR	0xfa00	-
+asrom	MON_IRQ	0xfa40	-
+asrom	MON_BREAK	0xfa4c	-
+asrom	MON_OLDBRK	0xfa59	-
+asrom	MON_RESET2	0xfa62	-
+asrom	MON_LFA9B	0xfa9b	-
+asrom	MON_LFAA3	0xfaa3	-
+asrom	MON_LFAA6	0xfaa6	-
+asrom	MON_LFAAB	0xfaab	-
+asrom	MON_LFABA	0xfaba	-
+asrom	MON_LFAC7	0xfac7	-
+asrom	MON_REGDSP	0xfad7	-
+asrom	MON_RGDSP1	0xfada	-
+asrom	MON_RDSP1	0xfae4	-
+asrom	MON_LFAFC	0xfafc	-
+asrom	MON_LFB01	0xfb01	-
+asrom	MON_LFB08	0xfb08	-
+asrom	MON_RTBL	0xfb19	-
+asrom	MON_PREAD	0xfb1e	-
+asrom	MON_PREAD2	0xfb25	-
+asrom	MON_RTS2D	0xfb2e	-
+asrom	MON_INIT	0xfb2f	-
+asrom	MON_SETTXT	0xfb39	-
+asrom	MON_SETGR	0xfb40	-
+asrom	MON_SETWND	0xfb4b	-
+asrom	MON_TABV	0xfb5b	-
+asrom	MON_LFB60	0xfb60	-
+asrom	MON_LFB65	0xfb65	-
+asrom	MON_LFB78	0xfb78	-
+asrom	MON_LFB88	0xfb88	-
+asrom	MON_LFB94	0xfb94	-
+asrom	MON_LFB97	0xfb97	-
+asrom	MON_LFB9B	0xfb9b	-
+asrom	MON_LFBA5	0xfba5	-
+asrom	MON_BASCALC	0xfbc1	-
+asrom	MON_BSCLC2	0xfbd0	-
+asrom	MON_BELL1	0xfbd9	-
+asrom	MON_BELL2	0xfbe4	-
+asrom	MON_RTS2B	0xfbef	-
+asrom	MON_STOADV	0xfbf0	-
+asrom	MON_ADVANCE	0xfbf4	-
+asrom	MON_RTS3	0xfbfc	-
+asrom	MON_VIDOUT	0xfbfd	-
+asrom	MON_BS	0xfc10	-
+asrom	MON_UP	0xfc1a	-
+asrom	MON_VTAB	0xfc22	-
+asrom	MON_VTABZ	0xfc24	-
+asrom	MON_RTS4	0xfc2b	-
+asrom	MON_ESC1	0xfc2c	-
+asrom	MON_CLREOP	0xfc42	-
+asrom	MON_CLEOP1	0xfc46	-
+asrom	MON_HOME	0xfc58	-
+asrom	MON_CR	0xfc62	-
+asrom	MON_LF	0xfc66	-
+asrom	MON_SCROLL	0xfc70	-
+asrom	MON_SCRL1	0xfc76	-
+asrom	MON_SCRL2	0xfc8c	-
+asrom	MON_SCRL3	0xfc95	-
+asrom	MON_CLREOL	0xfc9c	-
+asrom	MON_CLEOLZ	0xfc9e	-
+asrom	MON_CLEOL2	0xfca0	-
+asrom	MON_WAIT	0xfca8	-
+asrom	MON_WAIT2	0xfca9	-
+asrom	MON_WAIT3	0xfcaa	-
+asrom	MON_NXTA4	0xfcb4	-
+asrom	MON_NXTA1	0xfcba	-
+asrom	MON_RTS4B	0xfcc8	-
+asrom	MON_HEADR	0xfcc9	-
+asrom	MON_WRBIT	0xfcd6	-
+asrom	MON_ZERDLY	0xfcdb	-
+asrom	MON_ONEDLY	0xfce2	-
+asrom	MON_WRTAPE	0xfce5	-
+asrom	MON_RDBYTE	0xfcec	-
+asrom	MON_RDBYT2	0xfcee	-
+asrom	MON_RD2BIT	0xfcfa	-
+asrom	MON_RDBIT	0xfcfd	-
+asrom	MON_RDKEY	0xfd0c	-
+asrom	MON_KEYIN	0xfd1b	-
+asrom	MON_KEYIN2	0xfd21	-
+asrom	MON_ESC	0xfd2f	-
+asrom	MON_RDCHAR	0xfd35	-
+asrom	MON_NOTCR	0xfd3d	-
+asrom	MON_NOTCR1	0xfd5f	-
+asrom	MON_CANCEL	0xfd62	-
+asrom	MON_GETLNZ	0xfd67	-
+asrom	MON_GETLN	0xfd6a	-
+asrom	MON_BCKSPC	0xfd71	-
+asrom	MON_NXTCHAR	0xfd75	-
+asrom	MON_NXTCHAR1	0xfd78	-
+asrom	MON_CAPTST	0xfd7e	-
+asrom	MON_ADDINP	0xfd84	-
+asrom	MON_CROUT	0xfd8e	-
+asrom	MON_PRA1	0xfd92	-
+asrom	MON_PRYX2	0xfd96	-
+asrom	MON_XAM8	0xfda3	-
+asrom	MON_MODSCHK	0xfdad	-
+asrom	MON_XAM	0xfdb3	-
+asrom	MON_DATAOUT	0xfdb6	-
+asrom	MON_RTS4C	0xfdc5	-
+asrom	MON_XAMPM	0xfdc6	-
+asrom	MON_ADD	0xfdd1	-
+asrom	MON_PRBYTE	0xfdda	-
+asrom	MON_PRHEX	0xfde3	-
+asrom	MON_PRHEXZ	0xfde5	-
+asrom	MON_COUT	0xfded	-
+asrom	MON_COUT1	0xfdf0	-
+asrom	MON_COUTZ	0xfdf6	-
+asrom	MON_BL1	0xfe00	-
+asrom	MON_BLANK	0xfe04	-
+asrom	MON_STOR	0xfe0b	-
+asrom	MON_RTS5	0xfe17	-
+asrom	MON_SETMODE	0xfe18	-
+asrom	MON_SETMDZ	0xfe1d	-
+asrom	MON_LT	0xfe20	-
+asrom	MON_LT2	0xfe22	-
+asrom	MON_MOVE	0xfe2c	-
+asrom	MON_VFY	0xfe36	-
+asrom	MON_VFYOK	0xfe58	-
+asrom	MON_LIST1	0xfe5e	-
+asrom	MON_LIST2	0xfe63	-
+asrom	MON_A1PC	0xfe75	-
+asrom	MON_A1PCLP	0xfe78	-
+asrom	MON_A1PCRTS	0xfe7f	-
+asrom	MON_SETINV	0xfe80	-
+asrom	MON_SETNORM	0xfe84	-
+asrom	MON_SETIFLG	0xfe86	-
+asrom	MON_SETKBD	0xfe89	-
+asrom	MON_INPORT	0xfe8b	-
+asrom	MON_INPRT	0xfe8d	-
+asrom	MON_SETVID	0xfe93	-
+asrom	MON_OUTPORT	0xfe95	-
+asrom	MON_OUTPRT	0xfe97	-
+asrom	MON_IOPRT	0xfe9b	-
+asrom	MON_IOPRT1	0xfea7	-
+asrom	MON_IOPRT2	0xfea9	-
+asrom	MON_XBASIC	0xfeb0	-
+asrom	MON_BASCONT	0xfeb3	-
+asrom	MON_GO	0xfeb6	-
+asrom	MON_REGZ	0xfebf	-
+asrom	MON_TRACE	0xfec2	-
+asrom	MON_STEPZ	0xfec5	-
+asrom	MON_USR	0xfeca	-
+asrom	MON_WRITE	0xfecd	-
+asrom	MON_WR1	0xfed4	-
+asrom	MON_WRBYTE	0xfeed	-
+asrom	MON_WRBYT2	0xfeef	-
+asrom	MON_CRMON	0xfef6	-
+asrom	MON_READ	0xfefd	-
+asrom	MON_READ2	0xff02	-
+asrom	MON_RD2	0xff0a	-
+asrom	MON_RD3	0xff16	-
+asrom	MON_PRERR	0xff2d	-
+asrom	MON_BELL	0xff3a	-
+asrom	MON_RESTORE	0xff3f	-
+asrom	MON_RESTR1	0xff44	-
+asrom	MON_SAVE	0xff4a	-
+asrom	MON_SAV1	0xff4c	-
+asrom	MON_RESET	0xff59	-
+asrom	MON_MON	0xff65	-
+asrom	MON_MONZ	0xff69	-
+asrom	MON_NXTITM	0xff73	-
+asrom	MON_CHRSRCH	0xff7a	-
+asrom	MON_DIG	0xff8a	-
+asrom	MON_NXTBIT	0xff90	-
+asrom	MON_NXTBAS	0xff98	-
+asrom	MON_NXTBS2	0xffa2	-
+asrom	MON_GETNUM	0xffa7	-
+asrom	MON_NXTCHR	0xffad	-
+asrom	MON_TOSUB	0xffbe	-
+asrom	MON_ZMODE	0xffc7	-
+asrom	MON_CHRTBL	0xffcc	-
+asrom	MON_SUBTBL	0xffe3	-
+asrom	MON_M6502VEC	0xfffa	-
+asrom	[end]	0xffff	-

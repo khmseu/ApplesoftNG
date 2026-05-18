@@ -459,6 +459,10 @@ def apply_claims(
     return implementations, resolutions
 
 
+def _serialize_row(row: Iterable[object]) -> list[str]:
+    return [str(value).rstrip() for value in row]
+
+
 def write_output(
     out_path: Path,
     symbols_by_module: dict[str, list[Symbol]],
@@ -466,37 +470,42 @@ def write_output(
 ) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.writer(f, delimiter="\t")
-        writer.writerow(["module", "symbol", "value", "implemented_by"])
+        writer = csv.writer(f, delimiter="\t", lineterminator="\n")
+        writer.writerow(_serialize_row(["module", "symbol", "value", "implemented_by"]))
         for module in sorted(symbols_by_module.keys()):
             for sym in symbols_by_module[module]:
                 key = (sym.module, sym.name, sym.value)
                 funcs = sorted(implementations.get(key, set()))
+                implemented_by = ", ".join(funcs) if funcs else "-"
                 writer.writerow(
-                    [module, sym.name, f"0x{sym.value:04x}", ", ".join(funcs)]
+                    _serialize_row(
+                        [module, sym.name, f"0x{sym.value:04x}", implemented_by]
+                    )
                 )
 
 
 def write_claim_log(out_path: Path, resolutions: list[ClaimResolution]) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.writer(f, delimiter="\t")
+        writer = csv.writer(f, delimiter="\t", lineterminator="\n")
         writer.writerow(
-            [
-                "function",
-                "file",
-                "line",
-                "claim_raw",
-                "claim_start_label",
-                "claim_end_label",
-                "mapped_module",
-                "mapped_start_label",
-                "mapped_start_value",
-                "mapped_end_label",
-                "mapped_end_value",
-                "status",
-                "note",
-            ]
+            _serialize_row(
+                [
+                    "function",
+                    "file",
+                    "line",
+                    "claim_raw",
+                    "claim_start_label",
+                    "claim_end_label",
+                    "mapped_module",
+                    "mapped_start_label",
+                    "mapped_start_value",
+                    "mapped_end_label",
+                    "mapped_end_value",
+                    "status",
+                    "note",
+                ]
+            )
         )
 
         for res in resolutions:
@@ -510,21 +519,23 @@ def write_claim_log(out_path: Path, resolutions: list[ClaimResolution]) -> None:
             mapped_end_label = res.end_match.matched_label if res.end_match else ""
             mapped_end_value = f"0x{res.end_match.value:04x}" if res.end_match else ""
             writer.writerow(
-                [
-                    claim.function_name,
-                    str(claim.file_path.relative_to(REPO_ROOT)).replace("\\", "/"),
-                    claim.line_number,
-                    claim.raw_claim,
-                    claim.start_label,
-                    claim.end_label or "",
-                    res.module or "",
-                    mapped_start_label,
-                    mapped_start_value,
-                    mapped_end_label,
-                    mapped_end_value,
-                    res.status,
-                    res.note,
-                ]
+                _serialize_row(
+                    [
+                        claim.function_name,
+                        str(claim.file_path.relative_to(REPO_ROOT)).replace("\\", "/"),
+                        claim.line_number,
+                        claim.raw_claim,
+                        claim.start_label,
+                        claim.end_label or "",
+                        res.module or "",
+                        mapped_start_label,
+                        mapped_start_value,
+                        mapped_end_label,
+                        mapped_end_value,
+                        res.status,
+                        res.note,
+                    ]
+                )
             )
 
 

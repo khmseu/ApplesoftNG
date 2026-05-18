@@ -1,7 +1,7 @@
 function	file	line	claim_raw	claim_start_label	claim_end_label	mapped_module	mapped_start_label	mapped_start_value	mapped_end_label	mapped_end_value	status	note
 AS_BLTU2	src/core/asm_port_bltu.cpp	39	AS_BLTU2 (inclusive) .. AS_CHKMEM (exclusive)	AS_BLTU2	AS_CHKMEM	asrom	AS_BLTU2	0xd39a	AS_CHKMEM	0xd3d6	resolved-range	ok
 AS_CHKMEM	src/core/asm_port_chkmem.cpp	9	AS_CHKMEM (inclusive) .. AS_REASON (exclusive)	AS_CHKMEM	AS_REASON	asrom	AS_CHKMEM	0xd3d6	AS_REASON	0xd3e3	resolved-range	ok
-AS_CHRGET	src/core/asm_port_chrget.cpp	14	AS_CHRGET (inclusive) .. AS_GTFORPNT (exclusive)	AS_CHRGET	AS_GTFORPNT	asrom	AS_CHRGET	0x00b1	AS_GTFORPNT	0xd365	resolved-range	ok
+AS_CHRGET	src/core/asm_port_chrget.cpp	14	AS_GENERIC_CHRGET (inclusive) .. AS_GENERIC_END (exclusive)	AS_GENERIC_CHRGET	AS_GENERIC_END	asrom	AS_GENERIC_CHRGET	0xf10b	AS_GENERIC_END	0xf128	resolved-range	ok
 AS_SIGN2	src/core/asm_port_control_flow.cpp	114	AS_LOAD_FAC_FROM_YA (inclusive) .. AS_STORE_FAC_IN_TEMP2_ROUNDED	AS_LOAD_FAC_FROM_YA	AS_STORE_FAC_IN_TEMP2_ROUNDED	asrom	AS_LOAD_FAC_FROM_YA	0xeaf9	AS_STORE_FAC_IN_TEMP2_ROUNDED	0xeb1e	resolved-range	ok
 AS_SIGN2	src/core/asm_port_control_flow.cpp	135	AS_SIGN2 (inclusive) .. AS_SGN (exclusive)	AS_SIGN2	AS_SGN	asrom	AS_SIGN2	0xeb88	AS_SGN	0xeb90	resolved-range	ok
 AS_SIGN	src/core/asm_port_control_flow.cpp	144	AS_SIGN1 (inclusive) .. AS_SIGN2 (exclusive)	AS_SIGN1	AS_SIGN2	asrom	AS_SIGN1	0xeb86	AS_SIGN2	0xeb88	resolved-range	ok
