@@ -5,7 +5,7 @@
 namespace applesoft::asm_port {
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_CHRGET ($B1) and AS_CHRGOT ($B7)
 // These routines scan the next character (AS_CHRGET) or re-scan the current
 // character (AS_CHRGOT) from the program text pointed to by AS_TXTPTR.

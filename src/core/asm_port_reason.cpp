@@ -22,7 +22,7 @@ void invokeGarbageCollector(AS_REASONState &state) {
 
 AS_REASONResult AS_REASON(AS_REASONState &state) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_REASON (inclusive) .. AS_MEMERR (exclusive)
   // Name normalization: none (assembler label AS_REASON kept verbatim).
 

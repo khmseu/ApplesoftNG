@@ -110,7 +110,7 @@ void SetBranchTargetToAS_STEP() { variables().AS_INDEX = kStepAS_LabelAddress; }
 
 void AS_LOAD_FAC_FROM_YA() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_LOAD_FAC_FROM_YA (inclusive) .. AS_STORE_FAC_IN_TEMP2_ROUNDED
   // (exclusive) This function ports only AS_LOAD_FAC_FROM_YA;
   // AS_STORE_FAC_IN_TEMP2_ROUNDED starts at the exclusive end label. Name
@@ -155,7 +155,7 @@ std::int8_t AS_SIGN() {
 
 std::int8_t AS_L_FCOMP2_2(std::uint8_t signByte) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_L_FCOMP2_2 (inclusive) .. AS_QINT (exclusive)
   // Name normalization: none (assembler label AS_L_FCOMP2_2 kept verbatim).
 
@@ -164,7 +164,7 @@ std::int8_t AS_L_FCOMP2_2(std::uint8_t signByte) {
 
 std::int8_t AS_L_FCOMP2_1(bool compareCarrySet) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_L_FCOMP2_1 (inclusive) .. AS_L_FCOMP2_2 (exclusive)
   // Name normalization: none (assembler label AS_L_FCOMP2_1 kept verbatim).
 
@@ -179,7 +179,7 @@ std::int8_t AS_L_FCOMP2_1(bool compareCarrySet) {
 
 void AS_FCOMP2() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FCOMP2 (inclusive) .. AS_L_FCOMP2_1 (exclusive)
   // Name normalization: none (assembler label AS_FCOMP2 kept verbatim).
   // Pointer candidate: DEST ($60/$61) is one unified pointer to the packed
@@ -243,7 +243,7 @@ namespace {
 
 void AS_FRM_STACK_2(std::uint8_t signByte) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FRM_STACK_2 (inclusive) .. AS_FRM_STACK_3 (exclusive)
   // Name normalization: none (assembler label AS_FRM_STACK_2 kept verbatim).
   const std::uint8_t returnAddressAS_Low = theStack().popByte();
@@ -262,7 +262,7 @@ void AS_FRM_STACK_2(std::uint8_t signByte) {
 
 void AS_FRM_STACK_3() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FRM_STACK_3 (inclusive) .. AS_NOTMATH (exclusive)
   // Name normalization: none (assembler label AS_FRM_STACK_3 kept verbatim).
   AS_ROUND_FAC();
@@ -331,7 +331,7 @@ bool isDigit(std::uint8_t ch) { return ch >= '0' && ch <= '9'; }
 
 void AS_SETFOR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SETFOR (inclusive) .. AS_COPY_ARG_TO_FAC (exclusive)
   // Name normalization: none (assembler label AS_SETFOR kept verbatim).
   AS_ROUND_FAC();
@@ -423,7 +423,7 @@ void AS_ENDX_impl(bool shouldPrintBreak) {
 
 void AS_RESTART() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_RESTART (inclusive)
   // Name normalization: none (assembler label AS_RESTART kept verbatim).
 
@@ -451,7 +451,7 @@ void AS_RESTART() {
 
 void AS_CONTROL_C_TYPED() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_CONTROL_C_TYPED (inclusive) .. AS_STOP (exclusive)
   // Name normalization: none (assembler label AS_CONTROL_C_TYPED kept
   // verbatim).
@@ -472,7 +472,7 @@ void AS_CONTROL_C_TYPED() {
 
 void AS_CONT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_CONT (inclusive) .. AS_SAVE (exclusive)
   // Name normalization: none (assembler label AS_CONT kept verbatim).
   // Internal label mapping: "bne AS_RTS_4" is modeled as an early return.
@@ -492,7 +492,7 @@ void AS_CONT() {
 
 void AS_GOSUB() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_GOSUB (inclusive) .. AS_GO_TO_LINE (exclusive)
   // Name normalization: none (assembler label AS_GOSUB kept verbatim).
   //
@@ -559,7 +559,7 @@ void AS_GOTO() {
 
 void AS_RESUME() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_RESUME (inclusive) .. AS_JSYN (exclusive)
   // Name normalization: none (assembler label AS_RESUME kept verbatim).
   variables().AS_CURLIN = variables_const().AS_ERRLIN;
@@ -570,7 +570,7 @@ void AS_RESUME() {
 
 void AS_ONERR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_ONERR (inclusive) .. AS_HANDLERR (exclusive)
   // Name normalization: none (assembler label AS_ONERR kept verbatim).
   constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
@@ -587,7 +587,7 @@ void AS_ONERR() {
 
 void AS_RTS_5() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_RTS_5 (inclusive) .. AS_RETURN (exclusive)
   // Name normalization: RTS_5 -> AS_RTS_5 virtual Applesoft prefix only.
   // ROM label RTS_5 is a shared return target for AS_GOTO and AS_POP.
@@ -596,7 +596,7 @@ void AS_RTS_5() {
 
 void AS_PULL3() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_PULL3 (inclusive) .. AS_IF (exclusive)
   // Name normalization: none (assembler label AS_PULL3 kept verbatim).
   [[maybe_unused]] const std::uint8_t pulled1 = theStack().popByte();
@@ -606,7 +606,7 @@ void AS_PULL3() {
 
 std::uint8_t AS_REMN() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_REMN (inclusive) .. AS_PULL3 (exclusive)
   // Name normalization: none (assembler label AS_REMN kept verbatim).
 
@@ -662,7 +662,7 @@ void AS_FOR() {
 
 void AS_NEXT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_NEXT (inclusive) .. AS_FRMNUM (exclusive)
   // Name normalization: none (assembler label AS_NEXT kept verbatim).
 
@@ -844,7 +844,7 @@ void AS_TRACE_() {
 
 void AS_GOEND() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_GOEND (inclusive) .. AS_EXECUTE_STATEMENT (exclusive)
   // Name normalization: none (assembler label AS_GOEND kept verbatim).
   // End-of-program path in AS_NEWSTT jumps into AS_END4 with carry clear, which
@@ -888,7 +888,7 @@ void AdvanceTextPointerToNextAS_Line() {
 
 bool IsRunningMode() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_TRACE_ (inclusive) .. AS_EXECUTE_STATEMENT (exclusive)
   // Name normalization: helper name chosen for the inline AS_TRACE_ predicate.
   // AS_TRACE_ checks AS_CURLIN+1 and only traces when non-zero (running mode).
@@ -897,7 +897,7 @@ bool IsRunningMode() {
 
 bool IsTraceEnabled() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_TRACE_ (inclusive) .. AS_EXECUTE_STATEMENT (exclusive)
   // Name normalization: helper name chosen for the inline AS_TRACE_ predicate.
   // `bit AS_TRCFLG` + `bpl` means tracing is enabled when AS_TRCFLG bit 7 is
@@ -907,7 +907,7 @@ bool IsTraceEnabled() {
 
 void AS_EXECUTE_STATEMENT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_EXECUTE_STATEMENT (inclusive) .. AS_EXECUTE_STATEMENT_1
   // (exclusive) Name normalization: none (assembler label AS_EXECUTE_STATEMENT
   // kept verbatim).
@@ -922,7 +922,7 @@ void AS_EXECUTE_STATEMENT() {
 
 void AS_EXECUTE_STATEMENT_1() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_EXECUTE_STATEMENT_1 (inclusive) .. AS_COLON_ (exclusive)
   // Name normalization: none (assembler label AS_EXECUTE_STATEMENT_1 kept
   // verbatim).
@@ -947,7 +947,7 @@ void AS_EXECUTE_STATEMENT_1() {
 
 void AS_COLON_() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_COLON_ (inclusive) .. AS_RESTORE (exclusive)
   // Name normalization: none (assembler label AS_COLON_ kept verbatim).
 
@@ -961,7 +961,7 @@ void AS_COLON_() {
 
 void AS_IF() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_IF (inclusive) .. AS_REM (exclusive)
   // Name normalization: none (assembler label AS_IF kept verbatim).
 
@@ -984,7 +984,7 @@ void AS_IF() {
 
 void AS_REM() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_REM (inclusive) .. AS_IF_TRUE (exclusive)
   // Name normalization: none (assembler label AS_REM kept verbatim).
 
@@ -994,7 +994,7 @@ void AS_REM() {
 
 void AS_IF_TRUE() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_IF_TRUE (inclusive) .. AS_ONGOTO (exclusive)
   // Name normalization: none (assembler label AS_IF_TRUE kept verbatim).
 
@@ -1008,7 +1008,7 @@ void AS_IF_TRUE() {
 
 void AS_ONGOTO() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_ONGOTO (inclusive) .. AS_LINGET (exclusive)
   // Name normalization: none (assembler label AS_ONGOTO kept verbatim).
 

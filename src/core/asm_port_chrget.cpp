@@ -9,8 +9,11 @@ namespace applesoft::asm_port {
 std::uint8_t ReadProgramByte(std::uint16_t address);
 
 /**
- * @brief AS_Logic for AS_CHRGOT and AS_CHRGET.
+ * @brief AS_CHRGET_INTERNAL
  *
+ * AS_Labels: AS_GENERIC_CHRGET (inclusive) .. AS_GENERIC_END (exclusive)
+ *
+ * Source: SourceMaterial/Combo/asrom.lst
  * Historical implementation (AS_GENERIC_CHRGET):
  * 210b: e6 b8     inc AS_TXTPTR
  * 210d: d0 02     bne +2

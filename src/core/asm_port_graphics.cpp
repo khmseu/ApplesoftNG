@@ -18,7 +18,7 @@ void AS_SYNCHR(std::uint8_t expected);
 
 void AS_NORMAL() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_NORMAL (inclusive) .. AS_INVERSE (exclusive)
   // Name normalization: none (assembler label AS_NORMAL kept verbatim).
 
@@ -28,7 +28,7 @@ void AS_NORMAL() {
 
 void AS_INVERSE() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_INVERSE (inclusive) .. AS_FLASH (exclusive)
   // Name normalization: none (assembler label AS_INVERSE kept verbatim).
 
@@ -38,7 +38,7 @@ void AS_INVERSE() {
 
 void AS_FLASH() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FLASH (inclusive) .. AS_COLOR (exclusive)
   // Name normalization: none (assembler label AS_FLASH kept verbatim).
 
@@ -48,7 +48,7 @@ void AS_FLASH() {
 
 void MON_SETCOL(std::uint8_t color) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/lores.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: SETCOL (inclusive) .. SCRN (exclusive)
   // Name normalization: SETCOL -> MON_SETCOL (monitor label gets MON_ prefix).
 
@@ -62,12 +62,12 @@ void MON_SETCOL(std::uint8_t color) {
 
 void MON_TABV(std::uint8_t row_zero_based) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: TABV (inclusive) .. external AS_VTAB jump target (exclusive)
   // Name normalization: TABV -> MON_TABV (monitor label gets MON_ prefix).
   //
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_VTAB (inclusive) .. ESC1 (exclusive)
   // Name normalization: AS_VTAB logic inlined into MON_TABV.
 
@@ -97,7 +97,7 @@ namespace {
 void MON_IOPRT(std::uint8_t slot, std::uint8_t vectorBase,
                std::uint8_t defaultVectorAS_Low) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: IOPRT (inclusive) .. XBASIC (exclusive)
   // Name normalization: helper name chosen for shared I/O-vector setup body.
 
@@ -125,7 +125,7 @@ void MON_IOPRT(std::uint8_t slot, std::uint8_t vectorBase,
 
 void MON_INPORT(std::uint8_t slot) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: INPORT (inclusive) .. SETVID (exclusive)
   // Name normalization: INPORT -> MON_INPORT (monitor label gets MON_ prefix).
 
@@ -139,7 +139,7 @@ void MON_INPORT(std::uint8_t slot) {
 
 void MON_OUTPORT(std::uint8_t slot) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: OUTPORT (inclusive) .. IOPRT (exclusive)
   // Name normalization: OUTPORT -> MON_OUTPORT (monitor label gets MON_
   // prefix).
@@ -154,7 +154,7 @@ void MON_OUTPORT(std::uint8_t slot) {
 
 void MON_PLOT(std::uint8_t y, std::uint8_t x) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/lores.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_PLOT (inclusive) .. AS_HLINE (exclusive)
   // Name normalization: AS_PLOT -> MON_PLOT (monitor label gets MON_ prefix).
   //
@@ -189,7 +189,7 @@ void MON_PLOT(std::uint8_t y, std::uint8_t x) {
 
 void MON_HLINE(std::uint8_t y, std::uint8_t right, std::uint8_t left) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/lores.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_HLINE (inclusive) .. AS_VLINEZ (exclusive)
   // Name normalization: AS_HLINE -> MON_HLINE (monitor label gets MON_ prefix).
   //
@@ -207,7 +207,7 @@ void MON_HLINE(std::uint8_t y, std::uint8_t right, std::uint8_t left) {
 
 void MON_VLINE(std::uint8_t x, std::uint8_t top) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/lores.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_VLINEZ (inclusive) .. RTS1 (exclusive)
   // Name normalization: AS_VLINE -> MON_VLINE (monitor label gets MON_ prefix).
   //
@@ -227,7 +227,7 @@ void MON_VLINE(std::uint8_t x, std::uint8_t top) {
 
 void MON_HOME() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: HOME (inclusive) .. CR (exclusive)
   // Name normalization: HOME -> MON_HOME (monitor label gets MON_ prefix).
   //
@@ -260,7 +260,7 @@ void MON_HOME() {
 
 void MON_CLREOL() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: CLREOL (inclusive) .. RTS (exclusive)
   // Name normalization: CLREOL -> MON_CLREOL (monitor label gets MON_ prefix).
   //
@@ -281,7 +281,7 @@ void MON_CLREOL() {
 
 void MON_SETTXT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: SETTXT (inclusive) .. SETGR (exclusive)
   // Name normalization: SETTXT -> MON_SETTXT (monitor label gets MON_ prefix).
   //
@@ -301,7 +301,7 @@ void MON_SETTXT() {
 
 void MON_SETGR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: SETGR (inclusive) .. SETWND (exclusive)
   // Name normalization: SETGR -> MON_SETGR (monitor label gets MON_ prefix).
   //
@@ -323,7 +323,7 @@ void MON_SETGR() {
 
 void HOME() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: MON_HOME (inclusive) .. AS_ROT (exclusive)
   // Name normalization: HOME statement maps to MON_HOME monitor routine
   // ($FC58).
@@ -333,7 +333,7 @@ void HOME() {
 
 void AS_GR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_GR (inclusive) .. AS_TEXT (exclusive)
   // Name normalization: none (assembler label AS_GR kept verbatim).
   //
@@ -347,7 +347,7 @@ void AS_GR() {
 
 void AS_TEXT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_TEXT (inclusive) .. AS_STORE (exclusive)
   // Name normalization: none (assembler label AS_TEXT kept verbatim).
   //
@@ -359,7 +359,7 @@ void AS_TEXT() {
 
 void AS_HTAB() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_HTAB (inclusive) .. end of label range (exclusive)
   // Name normalization: none (assembler label AS_HTAB kept verbatim).
   //
@@ -382,7 +382,7 @@ void STHPG();
 
 void AS_HGR2() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_HGR2 (inclusive) .. AS_SETHPG (exclusive)
   // Name normalization: none (assembler label AS_HGR2 kept verbatim).
 
@@ -395,7 +395,7 @@ void AS_HGR2() {
 
 void AS_HGR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_HGR (inclusive) .. AS_SETHPG (exclusive)
   // Name normalization: none (assembler label AS_HGR kept verbatim).
 
@@ -408,7 +408,7 @@ void AS_HGR() {
 
 void STHPG() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SETHPG (inclusive) .. AS_HCLR (exclusive)
   // Name normalization: AS_SETHPG -> STHPG (normalize based on typical 5-char
   // limit or SET.. prefix).
@@ -436,7 +436,7 @@ void STHPG() {
 
 void AS_HCOLOR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_HCOLOR (inclusive) .. AS_HPLOT (exclusive)
   // Name normalization: none (assembler label AS_HCOLOR kept verbatim).
 
@@ -456,7 +456,7 @@ void AS_HCOLOR() {
 
 void AS_ROT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_ROT (inclusive) .. AS_SCALE (exclusive)
   // Name normalization: none (assembler label AS_ROT kept verbatim).
 
@@ -466,7 +466,7 @@ void AS_ROT() {
 
 void AS_SCALE() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SCALE (inclusive) .. AS_DRWPNT (exclusive)
   // Name normalization: none (assembler label AS_SCALE kept verbatim).
 
@@ -484,7 +484,7 @@ struct HiResCoordinates {
 
 void AS_HPOSN(const HiResCoordinates &point) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: HPOSN (inclusive) .. HPLOT0 (exclusive)
   // Computes hi-res cursor address and bit state for the given coordinate.
 
@@ -528,7 +528,7 @@ void AS_HPOSN(const HiResCoordinates &point) {
 
 HiResCoordinates AS_HFNS() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: HFNS (inclusive) .. GGERR (exclusive)
   // Parses hi-res coordinates from TXTPTR and validates range X<280, Y<192.
 
@@ -558,7 +558,7 @@ HiResCoordinates AS_HFNS() {
 
 void AS_HPLOT0(const HiResCoordinates &point) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: HPLOT0 (inclusive) .. MOVE_LEFT_OR_RIGHT (exclusive)
   // Plots one hi-res pixel using current HGR bit pattern.
 
@@ -580,7 +580,7 @@ void AS_HPLOT0(const HiResCoordinates &point) {
 
 void AS_HGLIN(const HiResCoordinates &start, const HiResCoordinates &target) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: HGLIN (inclusive) .. COSINE_TABLE (exclusive)
   // Draws a line from current point to target point.
   // Mirrors key ROM line-state bookkeeping in
@@ -638,7 +638,7 @@ void AS_HGLIN(const HiResCoordinates &start, const HiResCoordinates &target) {
 
 void AS_HPLOT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_HPLOT (inclusive) .. AS_HCOLOR (exclusive)
   // Plots a hi-res point or line for HPLOT forms, including repeated TO
   // clauses.
@@ -672,7 +672,7 @@ namespace {
 
 void AS_DRWPNT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: DRWPNT (inclusive) .. DRAW (exclusive)
   // Name normalization: none (assembler label DRWPNT is prefixed with AS_ in
   // C++).
@@ -923,7 +923,7 @@ void AS_XDRAW1() { AS_DRAW1_Internal(true); }
 
 void AS_DRAW() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_DRAW (inclusive) .. AS_XDRAW (exclusive)
   // Name normalization: DRAW -> AS_DRAW (applesoft virtual prefix).
   // DRAW statement: parse/prepare shape draw point, then dispatch to DRAW1.
@@ -934,7 +934,7 @@ void AS_DRAW() {
 
 void AS_XDRAW() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_XDRAW (inclusive) .. AS_SHLOAD (exclusive)
   // Name normalization: XDRAW -> AS_XDRAW (applesoft virtual prefix).
   // XDRAW statement: parse/prepare shape draw point, then dispatch to XDRAW1.
@@ -945,7 +945,7 @@ void AS_XDRAW() {
 
 void AS_COLOR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_COLOR (inclusive) .. AS_VTAB (exclusive)
   // Name normalization: none (assembler label AS_COLOR kept verbatim).
 
@@ -955,7 +955,7 @@ void AS_COLOR() {
 
 void AS_VTAB() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_VTAB (inclusive) .. AS_SPEED (exclusive)
   // Name normalization: none (assembler label AS_VTAB kept verbatim).
 
@@ -971,7 +971,7 @@ void AS_VTAB() {
 
 void AS_HIMEM() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_HIMEM (inclusive) .. AS_LOMEM (exclusive)
   // Name normalization: none (assembler label AS_HIMEM kept verbatim).
 
@@ -1002,7 +1002,7 @@ void AS_HIMEM() {
 
 void AS_LOMEM() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_LOMEM (inclusive) .. AS_ONERR (exclusive)
   // Name normalization: none (assembler label AS_LOMEM kept verbatim).
 
@@ -1047,7 +1047,7 @@ void AS_LOMEM() {
 
 void AS_SPEED() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SPEED (inclusive) .. AS_TRACE (exclusive)
   // Name normalization: none (assembler label AS_SPEED kept verbatim).
 
@@ -1059,7 +1059,7 @@ void AS_SPEED() {
 
 std::uint8_t AS_PLOTFNS() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_PLOTFNS (inclusive) .. AS_GOERR (exclusive)
   // Name normalization: none (assembler label AS_PLOTFNS kept verbatim).
   //
@@ -1091,7 +1091,7 @@ std::uint8_t AS_PLOTFNS() {
 
 std::uint8_t AS_LINCOOR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_LINCOOR (inclusive) .. AS_PLOT (exclusive)
   // Name normalization: none (assembler label AS_LINCOOR kept verbatim).
   //
@@ -1125,7 +1125,7 @@ std::uint8_t AS_LINCOOR() {
 
 void AS_PLOT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_PLOT (inclusive) .. AS_HLIN (exclusive)
   // Name normalization: none (assembler label AS_PLOT kept verbatim).
 
@@ -1144,7 +1144,7 @@ void AS_PLOT() {
 
 void AS_HLIN() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_HLIN (inclusive) .. AS_VLIN (exclusive)
   // Name normalization: none (assembler label AS_HLIN kept verbatim).
 
@@ -1163,7 +1163,7 @@ void AS_HLIN() {
 
 void AS_VLIN() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_VLIN (inclusive) .. AS_COLOR (exclusive)
   // Name normalization: none (assembler label AS_VLIN kept verbatim).
 

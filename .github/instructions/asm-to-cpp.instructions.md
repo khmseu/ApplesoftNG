@@ -1,5 +1,5 @@
 ---
-applyTo: "SourceMaterial/Apple-II-Source-slim/**/*.lst,SourceMaterial/Apple-II-Source-slim/**/*.sym,src/**/*.cpp,include/**/*.hpp"
+applyTo: "SourceMaterial/Combo/asrom.lst,SourceMaterial/Combo/asrom.sym,src/**/*.cpp,include/**/*.hpp"
 ---
 
 # Incremental Assembler To C++ Conversion
@@ -11,11 +11,11 @@ Use these instructions when converting a bounded assembler segment into C++.
 - `start_label`: first label of the conversion window, inclusive.
 - `end_label`: last label of the conversion window, exclusive.
 
-Treat only labels declared as assembler labels in the historical listings within the conversion window as valid symbols from [SourceMaterial/Apple-II-Source-slim](../../SourceMaterial/Apple-II-Source-slim) (exclude comments, prose, and metadata headings).
+Treat only labels declared as assembler labels in the authoritative listing [SourceMaterial/Combo/asrom.lst](../../SourceMaterial/Combo/asrom.lst) as valid symbols (exclude comments, prose, and metadata headings).
 
 ## Mandatory Workflow
 
-1. Locate both labels and confirm they are in the same source listing region. If either label is not found in the listings, stop and report which label is missing before proceeding.
+1. Locate both labels in the authoritative listing. If either label is not found, stop and report which label is missing before proceeding.
 2. Extract the range that starts at `start_label` and stops immediately before `end_label`.
 3. Identify 16-bit pointer candidates in the extracted range before coding using this checklist:
    - indirect addressing operands such as `($NN),Y` and `($NN,X)`
@@ -30,9 +30,7 @@ Treat only labels declared as assembler labels in the historical listings within
 7. Infer the behavior and data flow from opcodes, branch patterns, and comments.
    - If the source slice does not end in an unconditional transfer (`RTS`, `JMP`, or unconditional branch), it falls through into the next label. Model that fall-through in C++ by calling the following function at that point, or by returning state that the caller uses to invoke the next label.
 
-   - All symbols defined in monitor source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/monitor`](../../SourceMaterial/Apple-II-Source-slim/src/system/monitor)) carry a virtual `MON_` prefix. A label `xyz` in a monitor listing is always named `MON_xyz` in C++. When the conversion window references `MON_xyz`, look up label `xyz` in the monitor listings and implement or forward to a C++ function named `MON_xyz`.
-
-   - All symbols defined in applesoft source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/applesoft`](../../SourceMaterial/Apple-II-Source-slim/src/system/applesoft)) carry a virtual `AS_` prefix. A label `xyz` in an applesoft listing is always named `AS_xyz` in C++. When the conversion window references `AS_xyz`, look up label `xyz` in the applesoft listings and implement the C++ function as `AS_xyz`.
+   - All symbols in the authoritative sources already include context-appropriate prefixes (`AS_` or `MON_`). Use these exact labels verbatim in C++.
 
 8. Implement one primary C++ function that preserves the original assembler name as much as possible.
 9. Place the function in the appropriate runtime area:
@@ -64,8 +62,7 @@ Treat only labels declared as assembler labels in the historical listings within
 - Keep assembler symbol names verbatim when valid in C++.
 - If a symbol is not a valid C++ identifier, minimally normalize it (for example `.` to `_`) and document original symbol in a comment.
 - Prefer keeping capitalization consistent with source labels.
-- All symbols defined in monitor source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/monitor`](../../SourceMaterial/Apple-II-Source-slim/src/system/monitor)) carry a virtual `MON_` prefix. A label `xyz` in a monitor listing is always named `MON_xyz` in C++. When porting any code that calls `MON_xyz`, look up label `xyz` in the monitor listings and name the C++ function `MON_xyz`.
-- All symbols defined in applesoft source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/applesoft`](../../SourceMaterial/Apple-II-Source-slim/src/system/applesoft)) carry a virtual `AS_` prefix. A label `xyz` in an applesoft listing is always named `AS_xyz` in C++. When porting any code that calls `AS_xyz`, look up label `xyz` in the applesoft listings and name the C++ function `AS_xyz`.
+- Use the exact literal labels from the `SourceMaterial/Combo` files (e.g., `AS_CHRGET`, `MON_COUT`).
 
 ### Fixed-Address Variables
 

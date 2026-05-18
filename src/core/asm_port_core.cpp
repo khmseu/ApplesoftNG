@@ -105,7 +105,7 @@ void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
 
 bool IsOnErr() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_ERROR (inclusive) .. AS_L_ERROR_1 (exclusive)
   // Name normalization: helper name chosen for the inline AS_ERROR predicate.
   // `bit AS_ERRFLG` + `bpl` means ON ERR is active when AS_ERRFLG bit 7 is set.
@@ -142,7 +142,7 @@ namespace {
 
 void MON_SETNORM() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: SETNORM (inclusive) .. SETKBD (exclusive)
   // Name normalization: SETNORM -> MON_SETNORM (monitor label gets MON_
   // prefix).
@@ -152,7 +152,7 @@ void MON_SETNORM() {
 
 void MON_INIT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display1.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: INIT (inclusive) .. SETTXT (exclusive)
   // Name normalization: INIT -> MON_INIT (monitor label gets MON_ prefix).
   //
@@ -167,7 +167,7 @@ void MON_INIT() {
 
 void MON_SETVID() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: SETVID (inclusive) .. OUTPORT (exclusive)
   // Name normalization: SETVID -> MON_SETVID (monitor label gets MON_ prefix).
 
@@ -176,7 +176,7 @@ void MON_SETVID() {
 
 void MON_SETKBD() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: SETKBD (inclusive) .. INPORT (exclusive)
   // Name normalization: SETKBD -> MON_SETKBD (monitor label gets MON_ prefix).
 
@@ -185,7 +185,7 @@ void MON_SETKBD() {
 
 void MON_BELL_impl() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: BELL (inclusive) .. AS_RESTORE (exclusive)
   // Name normalization: BELL -> MON_BELL (monitor label gets MON_ prefix).
 
@@ -195,7 +195,7 @@ void MON_BELL_impl() {
 
 void MON_LFB60() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/math.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_LFB60 (inclusive) .. AS_LFB78 (exclusive)
   // Name normalization: AS_LFB60 -> MON_LFB60 (monitor label gets MON_ prefix).
   //
@@ -229,7 +229,7 @@ void MON_LFB60() {
 
 void MON_CROUT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: CROUT (inclusive) .. PRA1 (exclusive)
   // Name normalization: CROUT -> MON_CROUT (monitor label gets MON_ prefix).
   //
@@ -240,7 +240,7 @@ void MON_CROUT() {
 
 void MON_PRBYTE(std::uint8_t value) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: PRBYTE (inclusive) .. COUT (exclusive)
   // Name normalization: PRBYTE -> MON_PRBYTE (monitor label gets MON_ prefix).
 
@@ -263,7 +263,7 @@ void MON_BELL() { MON_BELL_impl(); }
 
 std::int8_t MON_INSDS1() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: INSDS1 (inclusive) .. REGDSP (exclusive)
   // Name normalization: INSDS1 -> MON_INSDS1 (monitor label gets MON_ prefix).
   //
@@ -285,7 +285,7 @@ std::int8_t MON_INSDS1() {
 
 void MON_MON() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: MON (inclusive) .. REGZ (exclusive)
   // Name normalization: MON -> MON_MON (monitor label gets MON_ prefix).
   //
@@ -298,7 +298,7 @@ void MON_MON() {
 
 void MON_RESET2() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: RESET2 (inclusive) .. REGDSP (exclusive)
   // Name normalization: RESET2 -> MON_RESET2 (monitor label gets MON_ prefix).
   //
@@ -405,7 +405,7 @@ void MON_RESET2() {
 
 void MON_OLDBRK() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: OLDBRK (inclusive) .. RESET2 (exclusive)
   // Name normalization: OLDBRK -> MON_OLDBRK (monitor label gets MON_ prefix).
   //
@@ -418,7 +418,7 @@ void MON_OLDBRK() {
 
 void MON_REGDSP() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: REGDSP (inclusive) .. AS_LFB01 (exclusive)
   // Name normalization: REGDSP -> MON_REGDSP (monitor label gets MON_ prefix).
   //
@@ -453,7 +453,7 @@ void MON_REGDSP() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_COLD_START (inclusive) .. AS_CALL (exclusive)
 // Name normalization: none (assembler label AS_COLD_START kept verbatim).
 void AS_COLD_START() {
@@ -543,7 +543,7 @@ void AS_COLD_START() {
 
 void AS_ERRDIR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_ERRDIR (inclusive) .. AS_DEF (exclusive)
   // Name normalization: none (assembler label AS_ERRDIR kept verbatim).
 
@@ -556,7 +556,7 @@ void AS_ERRDIR() {
 
 void AS_UNDFNC() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_UNDFNC (inclusive) .. AS_DEF (exclusive)
   // Name normalization: none (assembler label AS_UNDFNC kept verbatim).
 
@@ -565,7 +565,7 @@ void AS_UNDFNC() {
 
 void AS_BADNAM() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_BADNAM (inclusive) .. AS_NAMOK (exclusive)
   // Name normalization: none (assembler label AS_BADNAM kept verbatim).
 
@@ -574,7 +574,7 @@ void AS_BADNAM() {
 
 void AS_BASIC() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_BASIC (inclusive) .. AS_BASIC2 (exclusive)
   // Name normalization: none (assembler label AS_BASIC kept verbatim).
 
@@ -583,7 +583,7 @@ void AS_BASIC() {
 
 void AS_BASIC2() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_BASIC2 (inclusive) .. AS_PTRGET4 (exclusive)
   // Name normalization: none (assembler label AS_BASIC2 kept verbatim).
 
@@ -592,7 +592,7 @@ void AS_BASIC2() {
 
 void AS_GME() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_GME (inclusive) .. AS_MULTIPLY_SUBSCRIPT (exclusive)
   // Name normalization: none (assembler label AS_GME kept verbatim).
 
@@ -601,7 +601,7 @@ void AS_GME() {
 
 void AS_SUBERR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SUBERR (inclusive) .. AS_IQERR (exclusive)
   // Name normalization: none (assembler label AS_SUBERR kept verbatim).
 
@@ -611,7 +611,7 @@ void AS_SUBERR() {
 
 void AS_GSE() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_GSE (inclusive) .. AS_GME (exclusive)
   // Name normalization: none (assembler label AS_GSE kept verbatim).
 
@@ -620,7 +620,7 @@ void AS_GSE() {
 
 void AS_FAE_1() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FAE_1 (inclusive) .. AS_MULTIPLY_SUBSCRIPT (exclusive)
   // Name normalization: none (assembler label AS_FAE_1 kept verbatim).
 
@@ -690,7 +690,7 @@ void AS_FAE_1() {
 
 void AS_GETARY() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_GETARY (inclusive) .. AS_GETARY2 (exclusive)
   // Name normalization: none (assembler label AS_GETARY kept verbatim).
 
@@ -699,7 +699,7 @@ void AS_GETARY() {
 
 void AS_GETARY2() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_GETARY2 (inclusive) .. AS_NEG32768 (exclusive)
   // Name normalization: none (assembler label AS_GETARY2 kept verbatim).
 
@@ -712,7 +712,7 @@ void AS_GETARY2() {
 
 void AS_C_ZERO() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_C_ZERO (inclusive) .. AS_MAKE_NEW_VARIABLE (exclusive)
   // Name normalization: none (assembler label AS_C_ZERO kept verbatim).
 
@@ -722,7 +722,7 @@ void AS_C_ZERO() {
 
 void AS_USE_OLD_ARRAY() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_USE_OLD_ARRAY (inclusive) .. AS_MAKE_NEW_ARRAY (exclusive)
   // Name normalization: none (assembler label AS_USE_OLD_ARRAY kept verbatim).
 
@@ -740,7 +740,7 @@ void AS_USE_OLD_ARRAY() {
 
 void AS_MAKE_NEW_ARRAY() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_MAKE_NEW_ARRAY (T:11b8, inclusive) .. AS_FIND_ARRAY_ELEMENT
   // (T:124b, exclusive) Name normalization: none (assembler label
   // AS_MAKE_NEW_ARRAY kept verbatim).
@@ -914,7 +914,7 @@ void AS_MAKE_NEW_ARRAY() {
 
 void AS_FIND_ARRAY_ELEMENT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FIND_ARRAY_ELEMENT (inclusive) .. AS_FAE_1 (exclusive)
   // Name normalization: none (assembler label AS_FIND_ARRAY_ELEMENT kept
   // verbatim). AS_LOWTR is the base pointer to the current array descriptor;
@@ -932,7 +932,7 @@ void AS_FIND_ARRAY_ELEMENT() {
 
 std::uint16_t AS_MULTIPLY_SUBSCRIPT(std::uint8_t descriptorOffset) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_MULTIPLY_SUBSCRIPT (inclusive) .. AS_MULTIPLY_SUBS_1
   // (exclusive) Name normalization: none (assembler label AS_MULTIPLY_SUBSCRIPT
   // kept verbatim). AS_Load the 16-bit array-dimension multiplier from the
@@ -949,7 +949,7 @@ std::uint16_t AS_MULTIPLY_SUBSCRIPT(std::uint8_t descriptorOffset) {
 
 std::uint16_t AS_MULTIPLY_SUBS_1(std::uint8_t multiplierHigh) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_MULTIPLY_SUBS_1 (inclusive) .. AS_FRE (exclusive)
   // Name normalization: none (assembler label AS_MULTIPLY_SUBS_1 kept
   // verbatim). AS_STRNG2 is dual-use elsewhere, but in this slice it is the
@@ -994,7 +994,7 @@ std::uint16_t AS_MULTIPLY_SUBS_1(std::uint8_t multiplierHigh) {
 
 void AS_SNGFLT(std::uint8_t value) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SNGFLT (inclusive) .. AS_ERRDIR (exclusive)
   // Name normalization: none (assembler label AS_SNGFLT kept verbatim).
 
@@ -1003,7 +1003,7 @@ void AS_SNGFLT(std::uint8_t value) {
 
 void AS_OR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_OR (inclusive) .. AS_ANDOP (exclusive)
   // Name normalization: none (assembler label AS_OR kept verbatim).
 
@@ -1018,7 +1018,7 @@ void AS_OR() {
 
 void AS_ANDOP() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_ANDOP (inclusive) .. AS_FALSE (exclusive)
   // Name normalization: none (assembler label AS_ANDOP kept verbatim).
 
@@ -1033,7 +1033,7 @@ void AS_ANDOP() {
 
 void AS_FALSE() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FALSE (inclusive) .. AS_TRUE (exclusive)
   // Name normalization: none (assembler label AS_FALSE kept verbatim).
 
@@ -1042,7 +1042,7 @@ void AS_FALSE() {
 
 void AS_TRUE() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_TRUE (inclusive) .. AS_RELOPS (exclusive)
   // Name normalization: none (assembler label AS_TRUE kept verbatim).
 
@@ -1051,7 +1051,7 @@ void AS_TRUE() {
 
 void AS_SET_VARPNT_AND_YA() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SET_VARPNT_AND_YA (inclusive) .. AS_GETARY (exclusive)
   // Name normalization: none (assembler label AS_SET_VARPNT_AND_YA kept
   // verbatim).
@@ -1062,7 +1062,7 @@ void AS_SET_VARPNT_AND_YA() {
 
 void AS_MAKE_NEW_VARIABLE() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: MAKE_NEW_VARIABLE (inclusive) .. GETARY (exclusive)
   // Name normalization: none (assembler label MAKE_NEW_VARIABLE prefixed with
   // AS_ in C++).
@@ -1122,7 +1122,7 @@ void AS_MAKE_NEW_VARIABLE() {
 
 void AS_NAME_NOT_FOUND() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_NAME_NOT_FOUND (inclusive) .. AS_C_ZERO (exclusive)
   // Name normalization: none (assembler label AS_NAME_NOT_FOUND kept verbatim).
   //
@@ -1154,7 +1154,7 @@ void AS_NAME_NOT_FOUND() {
 
 void AS_PTRGET3() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_PTRGET3 (inclusive) .. AS_BADNAM (exclusive)
   // Name normalization: none (assembler label AS_PTRGET3 kept verbatim).
 
@@ -1171,7 +1171,7 @@ void AS_PTRGET3() {
 
 void AS_PTRGET2() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_PTRGET2 (inclusive) .. AS_PTRGET3 (exclusive)
   // Name normalization: none (assembler label AS_PTRGET2 kept verbatim).
 
@@ -1180,7 +1180,7 @@ void AS_PTRGET2() {
 
 std::uint16_t AS_PTRGET() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_PTRGET (inclusive) .. AS_PTRGET2 (exclusive)
   // Name normalization: none (assembler label AS_PTRGET kept verbatim).
 
@@ -1192,7 +1192,7 @@ std::uint16_t AS_PTRGET() {
 
 void AS_ARRAY() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_ARRAY (inclusive) .. AS_MAKE_NEW_ARRAY (exclusive)
   // Name normalization: none (assembler label AS_ARRAY kept verbatim).
   // Parse subscripts (if present), then search AS_ARYTAB for matching array
@@ -1289,7 +1289,7 @@ void AS_ARRAY() {
 
 void AS_DIM() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_DIM (inclusive) .. AS_PTRGET (exclusive)
   // Name normalization: none (assembler label AS_DIM kept verbatim).
 
@@ -1303,7 +1303,7 @@ void AS_DIM() {
 
 void AS_NXDIM() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_NXDIM (inclusive) .. AS_DIM (exclusive)
   // Name normalization: none (assembler label AS_NXDIM kept verbatim).
 
@@ -1313,7 +1313,7 @@ void AS_NXDIM() {
 
 void AS_PTRGET4() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_PTRGET4 (inclusive) .. AS_ISLETC (exclusive)
   // Name normalization: none (assembler label AS_PTRGET4 kept verbatim).
 
@@ -1371,7 +1371,7 @@ void SetPendingErrorCode(std::uint8_t errorCode) {
 
 void AS_NUMCMP() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_NUMCMP (inclusive) .. AS_CMPDONE (exclusive)
   // Name normalization: none (assembler label AS_NUMCMP kept verbatim).
 
@@ -1382,7 +1382,7 @@ void AS_NUMCMP() {
 
 void AS_CMPDONE() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_CMPDONE (inclusive) .. AS_PDL (exclusive)
   // Name normalization: none (assembler label AS_CMPDONE kept verbatim).
 
@@ -1402,7 +1402,7 @@ void AS_CMPDONE() {
 
 void AS_AYINT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_AYINT (inclusive) .. AS_MI1 (exclusive)
   // Name normalization: none (assembler label AS_AYINT kept verbatim).
 
@@ -1422,7 +1422,7 @@ void AS_AYINT() {
 
 void AS_HANDLERR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_HANDLERR (inclusive) .. AS_RESUME (exclusive)
   // Name normalization: none (assembler label AS_HANDLERR kept verbatim).
   variables().AS_ERRNUM = gPendingErrorCode;
@@ -1441,7 +1441,7 @@ void AS_HANDLERR() {
 
 void AS_SCREEN() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SCREEN (inclusive) .. AS_UNARY (exclusive)
   // Name normalization: none (assembler label AS_SCREEN kept verbatim).
 
@@ -1459,7 +1459,7 @@ void AS_SCREEN() {
 
 void AS_UNARY() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_UNARY (inclusive) .. AS_OR (exclusive)
   // Name normalization: none (assembler label AS_UNARY kept verbatim).
   //
@@ -1516,7 +1516,7 @@ void AS_UNARY() {
 
 void AS_RELOPS() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_RELOPS (inclusive) .. AS_STRCMP (exclusive)
   // Name normalization: none (assembler label AS_RELOPS kept verbatim).
 
@@ -1536,7 +1536,7 @@ void AS_RELOPS() {
 
 void AS_STRCMP() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_STRCMP (inclusive) .. AS_NUMCMP (exclusive)
   // Name normalization: none (assembler label AS_STRCMP kept verbatim).
   // Pointer candidates lifted: FAC+1/+2 and ARG+3/+4 are unified string-data
@@ -1564,7 +1564,7 @@ void AS_STRCMP() {
 
 void AS_FRE() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FRE (inclusive) .. AS_GIVAYF (exclusive)
   // Name normalization: none (assembler label AS_FRE kept verbatim).
   // AS_FRETOP and AS_STREND are one logical address pair each; model the
@@ -1585,7 +1585,7 @@ void AS_FRE() {
 
 void AS_GIVAYF(std::int16_t value) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_GIVAYF (inclusive) .. AS_POS (exclusive)
   // Name normalization: none (assembler label AS_GIVAYF kept verbatim).
   // The A/Y pair is one signed 16-bit integer on entry; represent it as one
@@ -1603,7 +1603,7 @@ void AS_GIVAYF(std::int16_t value) {
 
 void AS_FNC_() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FNC_ (inclusive) .. AS_FUNCT (exclusive)
   // Name normalization: none (assembler label AS_FNC_ kept verbatim).
   //
@@ -1635,7 +1635,7 @@ void AS_FNC_() {
 
 void AS_DEF() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_DEF (inclusive) .. AS_FNC_ (exclusive)
   // Name normalization: none (assembler label AS_DEF kept verbatim).
   //
@@ -1688,7 +1688,7 @@ void AS_DEF() {
 
 void AS_FUNCT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FUNCT (inclusive) .. AS_FNCDATA (exclusive)
   // Name normalization: none (assembler label AS_FUNCT kept verbatim).
   //
@@ -1798,7 +1798,7 @@ void AS_FUNCT() {
 
 void AS_FNCDATA() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FNCDATA (inclusive) .. AS_STR (exclusive)
   // Name normalization: none (assembler label AS_FNCDATA kept verbatim).
   //
@@ -1820,7 +1820,7 @@ void AS_FNCDATA() {
 
 void AS_FRMEVL() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FRMEVL (inclusive) .. AS_FRM_STACK_1 (exclusive)
   // Name normalization: AS_FRMEVL_1/2 and related sublabels are modeled inline.
   //
@@ -1965,7 +1965,7 @@ void AS_FRMEVL() {
 
 std::uint8_t MON_SCRN(std::uint8_t row, std::uint8_t column) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/lores.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: SCRN (inclusive) .. end of SCRN routine (exclusive)
   // Name normalization: SCRN -> MON_SCRN (monitor label gets MON_ prefix).
   //
@@ -2002,7 +2002,7 @@ void MON_IRQ();
 class MON_M6502VEC {
 public:
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/vectors.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: M6502VEC (inclusive) .. end of listing (exclusive)
   // Name normalization: M6502VEC -> MON_M6502VEC (monitor label gets MON_
   // prefix).
@@ -2028,7 +2028,7 @@ public:
 static void MON_BREAK() { MON_OLDBRK(); }
 void MON_IRQ() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/debug.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: IRQ (inclusive) .. BREAK (exclusive)
   // Name normalization: IRQ -> MON_IRQ (monitor label gets MON_ prefix).
   //
@@ -2060,7 +2060,7 @@ void MON_IRQ() {
 
 std::int8_t AS_FCOMP(std::uint16_t argAddress) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FCOMP (inclusive) .. AS_FCOMP2 (exclusive)
   // Name normalization: none (assembler label AS_FCOMP kept verbatim).
   // Pointer candidate: DEST ($60/$61) is one unified pointer to the packed
@@ -2075,7 +2075,7 @@ std::int8_t AS_FCOMP(std::uint16_t argAddress) {
 
 std::int8_t CompareArgAndFacStrings() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: STRCMP_1 (inclusive) .. PDL (exclusive)
   // Name normalization: CompareArgAndFacStrings is the C++ helper name for the
   // STRCMP_1/STRCMP_2 loop. Pointer candidates lifted: ARG+3/+4 and FAC+1/+2
@@ -2121,7 +2121,7 @@ std::int8_t CompareArgAndFacStrings() {
 
 std::uint8_t MON_PREAD() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/paddles.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: PREAD (inclusive) .. end of listing routine (exclusive)
   // Name normalization: PREAD -> MON_PREAD (monitor label gets MON_ prefix).
   //

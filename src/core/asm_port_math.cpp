@@ -47,7 +47,7 @@ void AS_FLOAT() { AS_FLOAT(static_cast<std::int8_t>(gFloatInput)); }
 /**
  * AS_FSUB: AS_FAC = (Y,A) - AS_FAC
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_FSUB (inclusive) .. AS_FSUBT (exclusive)
  */
 void AS_FSUB() {
@@ -58,7 +58,7 @@ void AS_FSUB() {
 /**
  * AS_FSUBT: AS_FAC = AS_ARG - AS_FAC
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_FSUBT (inclusive) .. AS_FADD_1 (exclusive)
  */
 void AS_FSUBT() {
@@ -75,7 +75,7 @@ void AS_FSUBT() {
 /**
  * AS_FADD: AS_FAC = (Y,A) + AS_FAC
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_FADD (inclusive) .. AS_FADDT (exclusive)
  */
 void AS_FADD() {
@@ -86,7 +86,7 @@ void AS_FADD() {
 /**
  * AS_FADDT: AS_FAC = AS_ARG + AS_FAC
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_FADDT (inclusive) .. AS_FADD_2 (exclusive)
  */
 void AS_FADDT() {
@@ -104,7 +104,7 @@ void AS_FADDT() {
 /**
  * AS_FADD_2: Entry point for adding A to AS_FAC (used by AS_MUL10)
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_FADD_2 (inclusive) .. AS_FADD_3 (exclusive)
  */
 void AS_FADD_2(std::uint8_t exponent) {
@@ -131,7 +131,7 @@ void AS_FADD_2(std::uint8_t exponent) {
 /**
  * AS_MUL10: Multiply AS_FAC by 10
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_MUL10 (inclusive) .. AS_L_MUL10_1 (exclusive)
  */
 void AS_MUL10() {
@@ -167,7 +167,7 @@ const std::uint8_t AS_CON_TEN[5] = {0x84, 0x20, 0x00, 0x00, 0x00};
 /**
  * AS_DIV10: Divide AS_FAC by 10
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_DIV10 (inclusive) .. AS_DIV (exclusive)
  */
 void AS_DIV10() {
@@ -186,7 +186,7 @@ void AS_DIV10() {
 /**
  * AS_NEGATE_FAC (AS_NEGOP): Negate the value in AS_FAC
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_NEGOP (inclusive) .. AS_RTS_18 (exclusive)
  */
 void AS_NEGATE_FAC() {
@@ -199,7 +199,7 @@ void AS_NEGATE_FAC() {
 /**
  * AS_COPY_FAC_TO_ARG_ROUNDED: Round AS_FAC and copy to AS_ARG
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_COPY_FAC_TO_ARG_ROUNDED (inclusive) .. AS_RTS_14 (exclusive)
  */
 void AS_COPY_FAC_TO_ARG_ROUNDED() {
@@ -215,7 +215,7 @@ void AS_COPY_FAC_TO_ARG_ROUNDED() {
 /**
  * AS_ROUND_FAC: Round AS_FAC using extension byte
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_ROUND_FAC (inclusive) .. AS_RTS_14 (exclusive)
  */
 void AS_ROUND_FAC() {
@@ -477,7 +477,7 @@ void AS_ADD_EXPONENTS() {
 /**
  * AS_LOAD_ARG_FROM_YA: Unpack number at Y,A into AS_ARG
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_LOAD_ARG_FROM_YA (inclusive) .. AS_FMULT (exclusive)
  */
 void AS_LOAD_ARG_FROM_YA(std::uint16_t address) {
@@ -492,7 +492,7 @@ void AS_LOAD_ARG_FROM_YA(std::uint16_t address) {
 /**
  * AS_COPY_ARG_TO_FAC: Copy AS_ARG into AS_FAC
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_COPY_ARG_TO_FAC (inclusive) .. AS_MFA (exclusive)
  */
 void AS_COPY_ARG_TO_FAC() {
@@ -509,7 +509,7 @@ void AS_COPY_ARG_TO_FAC() {
 /**
  * AS_NORMALIZE_FAC_2: Left-normalize FAC by whole-byte shifts.
  * Source:
- * SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+ * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_NORMALIZE_FAC_2 (inclusive) .. AS_ZERO_FAC (exclusive)
  *
  * - Entry: FAC mantissa may have leading zero bytes in FAC[1..4]+extension.
@@ -549,7 +549,7 @@ void AS_NORMALIZE_FAC_2() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_NORMALIZE_FAC_4 (inclusive) .. AS_NORMALIZE_FAC_5 (exclusive)
 // Name normalization: none.
 //
@@ -593,7 +593,7 @@ void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_NORMALIZE_FAC_5 (inclusive) .. AS_NORMALIZE_FAC_6 (exclusive)
 // Name normalization: none.
 //
@@ -608,7 +608,7 @@ void AS_NORMALIZE_FAC_5(bool carry) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_NORMALIZE_FAC_6 (inclusive) .. AS_COMPLEMENT_FAC (exclusive)
 // Name normalization: none.
 //
@@ -642,7 +642,7 @@ void AS_NORMALIZE_FAC_6() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_ZERO_FAC (inclusive) .. AS_STA_IN_FAC_SIGN_AND_EXP (exclusive)
 // Name normalization: none (assembler label ZERO_FAC is prefixed with AS_).
 //

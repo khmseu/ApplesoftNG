@@ -27,7 +27,7 @@ void AS_CHKOPN();
 
 void AS_SYNCHR(std::uint8_t expected) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SYNCHR (inclusive) .. AS_CHKNUM (exclusive)
   // Name normalization: none (assembler label AS_SYNCHR kept verbatim).
   //
@@ -48,7 +48,7 @@ void AS_SYNCHR(std::uint8_t expected) {
 
 void AS_CHKNUM() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_CHKNUM (inclusive) .. AS_CHKSTR (exclusive)
   // Name normalization: none (assembler label AS_CHKNUM kept verbatim).
 
@@ -60,7 +60,7 @@ void AS_CHKNUM() {
 
 void AS_CHKSTR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_CHKSTR (inclusive) .. AS_CHKVAL (exclusive)
   // Name normalization: none (assembler label AS_CHKSTR kept verbatim).
 
@@ -72,7 +72,7 @@ void AS_CHKSTR() {
 
 void AS_CHKCOM() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_CHKCOM (inclusive) .. AS_SYNCHR (exclusive)
   // Name normalization: none (assembler label AS_CHKCOM kept verbatim).
 
@@ -81,7 +81,7 @@ void AS_CHKCOM() {
 
 void AS_FRMNUM() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FRMNUM (inclusive) .. AS_FRMEVL (exclusive)
   // Name normalization: none (assembler label AS_FRMNUM kept verbatim).
   //
@@ -93,7 +93,7 @@ void AS_FRMNUM() {
 
 void AS_PARCHK() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_PARCHK (inclusive) .. AS_CHKCLS (exclusive)
   // Name normalization: none (assembler label AS_PARCHK kept verbatim).
   //
@@ -109,7 +109,7 @@ void AS_PARCHK() {
 
 void AS_STORE_FACDB_YX_ROUNDED() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_STORE_FACDB_YX_ROUNDED (inclusive) .. AS_COPY_ARG_TO_FAC
   // (exclusive) Name normalization: STORE_FACDB_YX_ROUNDED ->
   // AS_STORE_FACDB_YX_ROUNDED virtual Applesoft prefix only. Pointer candidate
@@ -144,7 +144,7 @@ void AS_CHKOPN() {
 
 void AS_LINGET() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_LINGET (inclusive) .. AS_LET (exclusive)
   // Name normalization: none (assembler label AS_LINGET kept verbatim).
 
@@ -179,7 +179,7 @@ void AS_LINGET() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GTBYTC (inclusive) .. AS_GETBYT (exclusive)
 // Name normalization: none (assembler label AS_GTBYTC kept verbatim).
 //
@@ -193,7 +193,7 @@ void AS_GTBYTC() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GETBYT (inclusive) .. AS_CONINT (exclusive)
 // Name normalization: none (assembler label AS_GETBYT kept verbatim).
 //
@@ -208,7 +208,7 @@ std::uint8_t AS_GETBYT() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_CONINT (inclusive) .. AS_VAL (exclusive)
 // Name normalization: none (assembler label AS_CONINT kept verbatim).
 //
@@ -230,7 +230,7 @@ void AS_CONINT() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GTNUM (inclusive) .. AS_COMBYTE (exclusive)
 // Name normalization: none (assembler label AS_GTNUM kept verbatim).
 std::uint8_t AS_GTNUM() {
@@ -240,7 +240,7 @@ std::uint8_t AS_GTNUM() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_COMBYTE (inclusive) .. AS_GETADR (exclusive)
 // Name normalization: none (assembler label AS_COMBYTE kept verbatim).
 std::uint8_t AS_COMBYTE() {
@@ -250,7 +250,7 @@ std::uint8_t AS_COMBYTE() {
 
 void AS_QINT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_QINT (inclusive) .. AS_INT (exclusive)
   // Name normalization: none (assembler label AS_QINT kept verbatim).
   //
@@ -300,7 +300,7 @@ void AS_QINT() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GETADR (inclusive) .. AS_PEEK (exclusive)
 // Name normalization: none (assembler label AS_GETADR kept verbatim).
 void AS_GETADR() {
@@ -319,7 +319,7 @@ void AS_GETADR() {
 
 std::uint8_t CurrentStatementChar() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_EXECUTE_STATEMENT (inclusive) .. AS_EXECUTE_STATEMENT_1
   // (exclusive) Name normalization: helper name chosen for the inline
   // AS_EXECUTE_STATEMENT load. AS_EXECUTE_STATEMENT uses `ldy #0` then `lda
@@ -329,7 +329,7 @@ std::uint8_t CurrentStatementChar() {
 
 bool IsStatementEndOfParsedInput() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_END2 (inclusive) .. AS_SAVE (exclusive)
   // Name normalization: helper name chosen for the inline `bne AS_RTS_4` guard.
   // AS_STOP/END/AS_CONT continue only when parser is at end-of-statement; model
@@ -339,7 +339,7 @@ bool IsStatementEndOfParsedInput() {
 
 bool AS_CHKVAL(std::uint8_t savedValTyp) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_CHKVAL (inclusive) .. AS_FRMEVL (exclusive)
   // Name normalization: none (assembler label AS_CHKVAL kept verbatim).
 
@@ -356,7 +356,7 @@ bool AS_CHKVAL(std::uint8_t savedValTyp) {
 
 void AS_NEG32768() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_NEG32768 (inclusive) .. AS_MAKINT (exclusive)
   // Name normalization: none (assembler label AS_NEG32768 kept verbatim).
 
@@ -368,7 +368,7 @@ void AS_NEG32768() {
 
 void AS_MAKINT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_MAKINT (inclusive) .. AS_MKINT (exclusive)
   // Name normalization: none (assembler label AS_MAKINT kept verbatim).
 
@@ -379,7 +379,7 @@ void AS_MAKINT() {
 
 void AS_MI1() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_MI1 (inclusive) .. AS_MI2 (exclusive)
   // Name normalization: none (assembler label AS_MI1 kept verbatim).
 
@@ -388,7 +388,7 @@ void AS_MI1() {
 
 void AS_MI2() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_MI2 (inclusive) .. AS_ARRAY (exclusive)
   // Name normalization: none (assembler label AS_MI2 kept verbatim).
 
@@ -397,7 +397,7 @@ void AS_MI2() {
 
 bool AS_ISLETC() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_ISLETC (inclusive) .. AS_NAME_NOT_FOUND (exclusive)
   // Name normalization: none (assembler label AS_ISLETC kept verbatim).
 
@@ -408,7 +408,7 @@ bool AS_ISLETC() {
 
 void AS_MKINT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_MKINT (inclusive) .. AS_AYINT (exclusive)
   // Name normalization: none (assembler label AS_MKINT kept verbatim).
 
@@ -422,7 +422,7 @@ void AS_MKINT() {
 
 void AS_NAMOK() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_NAMOK (inclusive) .. AS_BASIC (exclusive)
   // Name normalization: none (assembler label AS_NAMOK kept verbatim).
 

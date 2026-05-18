@@ -201,7 +201,7 @@ std::uint8_t gJerErrorCode = AS_ERR_SYNTAX;
 // }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_PEEK (inclusive) .. AS_POKE (exclusive)
 // Name normalization: none (assembler label AS_PEEK kept verbatim).
 } // namespace applesoft::asm_port

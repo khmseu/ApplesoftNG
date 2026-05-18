@@ -6,7 +6,7 @@
 namespace applesoft::asm_port {
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_ERROR_MESSAGES (inclusive) .. AS_QT_ERROR (exclusive)
 // Name normalization: none (assembler label AS_ERROR_MESSAGES kept verbatim).
 

@@ -1,5 +1,5 @@
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)
 // Name normalization: AS_OR -> AS_OR_op (AS_OR is a C++ keyword).
 //
@@ -101,7 +101,7 @@ static void doubleToFac(double value) {
 
 } // namespace
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: FMULTT (inclusive) .. LOAD_ARG_FROM_YA (exclusive)
 // Name normalization: FMULTT -> AS_FMULTT (AS_ prefix convention).
 //
@@ -175,7 +175,7 @@ static void AS_FMULTT() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: COPY_RESULT_INTO_FAC (inclusive, 0x1ae6)
 //            .. LOAD_FAC_FROM_YA (exclusive, 0x1af9)
 // Intent:
@@ -197,7 +197,7 @@ static void AS_COPY_RESULT_INTO_FAC() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FDIVT (inclusive) .. AS_COPY_RESULT_INTO_FAC (exclusive)
 // Name normalization: none (assembler label AS_FDIVT kept verbatim).
 static void AS_FDIVT() {
@@ -299,7 +299,7 @@ static void AS_FDIVT() {
   }
 }
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: FPWRT (inclusive) .. NEGOP (exclusive)
 // Name normalization: FPWRT -> AS_FPWRT (AS_ prefix convention).
 //
@@ -351,7 +351,7 @@ static void AS_FPWRT() {
 
 void AS_OR_op() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_OR (inclusive) .. AS_ANDOP (exclusive)
   // Name normalization: AS_OR -> AS_OR_op in AS_MATHTBL dispatch (AS_OR is
   // table label).
@@ -361,7 +361,7 @@ void AS_OR_op() {
 
 void AS_NEGOP() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_NEGOP (inclusive) .. AS_CON_LOG_E (exclusive)
   // Name normalization: none (assembler label AS_NEGOP kept verbatim).
 
@@ -379,7 +379,7 @@ void AS_NEGOP() {
 
 void AS_EQUOP() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_EQUOP (inclusive) .. AS_FN_ (exclusive)
   // Name normalization: none (assembler label AS_EQUOP kept verbatim).
   //

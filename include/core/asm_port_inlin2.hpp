@@ -23,7 +23,7 @@ struct Inlin2Result {
 std::uint8_t MON_RDKEY();
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_INLIN2 (inclusive) .. AS_INCHR (exclusive)
 // Name normalization: none (assembler label AS_INLIN2 kept verbatim).
 Inlin2Result AS_INLIN2(std::uint8_t x);

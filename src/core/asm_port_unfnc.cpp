@@ -1,5 +1,5 @@
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_UNFNC (inclusive) .. AS_MATHTBL (exclusive)
 // Name normalization: none
 //
@@ -202,7 +202,7 @@ static void AS_NORMALIZE_FAC_1(std::uint8_t facSign) {
 
 void AS_PDL() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_PDL (inclusive) .. AS_NXDIM (exclusive)
   // Name normalization: none (assembler label AS_PDL kept verbatim).
 
@@ -216,7 +216,7 @@ void AS_PDL() {
 
 void AS_SGN() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SGN (inclusive) .. AS_ABS (exclusive)
   // Name normalization: none (assembler label AS_SGN kept verbatim).
 
@@ -231,7 +231,7 @@ void AS_SGN() {
 }
 void AS_INT_fn() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_INT (inclusive) .. AS_QINT_3 (exclusive)
   // Name normalization: AS_INT -> AS_INT_fn (AS_INT is a C++ keyword).
 
@@ -255,7 +255,7 @@ void AS_INT_fn() {
 }
 void AS_ABS() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_ABS (inclusive) .. AS_FCOMP (exclusive)
   // Name normalization: none (assembler label AS_ABS kept verbatim).
 
@@ -264,7 +264,7 @@ void AS_ABS() {
 }
 static void AS_USR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_USR (inclusive) .. AS_FRE (exclusive)
   // Name normalization: none (assembler label AS_USR kept verbatim).
   //
@@ -275,7 +275,7 @@ static void AS_USR() {
 }
 void AS_FRE_fn() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FRE (inclusive) .. AS_ERROR (exclusive)
   // Name normalization: wrapper name AS_FRE_fn used to avoid clashing with the
   // existing AS_FRE implementation in core.
@@ -284,7 +284,7 @@ void AS_FRE_fn() {
 }
 void AS_ERROR_fn() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_UNDFNC (inclusive) .. AS_DEF (exclusive)
   // Name normalization: AS_ERROR_fn used for AS_UNFNC table entry $D7 (SCRN().
 
@@ -293,7 +293,7 @@ void AS_ERROR_fn() {
 static void AS_PDL_fn() { AS_PDL(); }
 void AS_POS() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_POS (inclusive) .. AS_SNGFLT (exclusive)
   // Name normalization: none (assembler label AS_POS kept verbatim).
 
@@ -301,7 +301,7 @@ void AS_POS() {
 }
 static void AS_SQR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SQR (inclusive) .. AS_RND (exclusive)
   // Name normalization: none (assembler label AS_SQR kept verbatim).
 
@@ -315,7 +315,7 @@ static void AS_SQR() {
 }
 static void AS_RND() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_RND (inclusive) .. AS_LOG (exclusive)
   // Name normalization: none (assembler label AS_RND kept verbatim).
   //
@@ -351,7 +351,7 @@ static void AS_RND() {
 }
 static void AS_LOG() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_LOG (inclusive) .. AS_EXP (exclusive)
   // Name normalization: none (assembler label AS_LOG kept verbatim).
 
@@ -365,7 +365,7 @@ static void AS_LOG() {
 }
 static void AS_EXP() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_EXP (inclusive) .. AS_COS (exclusive)
   // Name normalization: none (assembler label AS_EXP kept verbatim).
 
@@ -380,7 +380,7 @@ static void AS_EXP() {
 }
 static void AS_COS() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_COS (inclusive) .. AS_SIN (exclusive)
   // Name normalization: none (assembler label AS_COS kept verbatim).
 
@@ -388,7 +388,7 @@ static void AS_COS() {
 }
 static void AS_SIN() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SIN (inclusive) .. AS_TAN (exclusive)
   // Name normalization: none (assembler label AS_SIN kept verbatim).
 
@@ -396,7 +396,7 @@ static void AS_SIN() {
 }
 static void AS_TAN() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_TAN (inclusive) .. AS_ATN (exclusive)
   // Name normalization: none (assembler label AS_TAN kept verbatim).
 
@@ -404,7 +404,7 @@ static void AS_TAN() {
 }
 static void AS_ATN() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_ATN (inclusive) .. AS_PEEK (exclusive)
   // Name normalization: none (assembler label AS_ATN kept verbatim).
 

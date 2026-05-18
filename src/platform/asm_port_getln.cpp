@@ -31,13 +31,13 @@ std::uint8_t read_screen_char_via_28_y() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: COUT (inclusive) .. COUT1 (exclusive)
 // Name normalization: none (assembler label COUT kept verbatim).
 void COUT(std::uint8_t value) { MON_COUT(value); }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/keyin.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: RDCHAR (inclusive) .. NOTCR (exclusive)
 // Name normalization: none (assembler label RDCHAR kept verbatim).
 std::uint8_t RDCHAR() {
@@ -52,7 +52,7 @@ std::uint8_t RDCHAR() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/display2.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: CLREOL (inclusive) .. AS_WAIT (exclusive)
 // Name normalization: none (assembler label CLREOL kept verbatim).
 void CLREOL() {
@@ -67,13 +67,13 @@ void CLREOL() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/cmd.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: CROUT (inclusive) .. PRA1 (exclusive)
 // Name normalization: none (assembler label CROUT kept verbatim).
 void CROUT() { COUT(0x8du); }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/keyin.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GETLNZ (inclusive) .. BCKSPC (exclusive)
 // Name normalization: none (assembler label AS_GETLNZ kept verbatim).
 std::uint8_t AS_GETLNZ() {
@@ -86,7 +86,7 @@ std::uint8_t AS_GETLNZ() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/keyin.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: NOTCR (inclusive) .. AS_GETLNZ (exclusive)
 // Name normalization: none (assembler label NOTCR kept verbatim).
 void NOTCR(std::uint8_t &x) {
@@ -128,7 +128,7 @@ void NOTCR(std::uint8_t &x) {
 
 std::uint8_t MON_GETLN() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/keyin.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_GETLN (inclusive) .. CROUT (exclusive)
   // Name normalization: AS_GETLN -> MON_GETLN (monitor label gets MON_ prefix).
   constexpr std::uint8_t kCtrlU = 0x95u;

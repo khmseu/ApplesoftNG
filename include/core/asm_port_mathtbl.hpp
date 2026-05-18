@@ -6,7 +6,7 @@
 namespace applesoft::asm_port {
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)
 // Name normalization: AS_OR -> AS_OR_op (AS_OR is a C++ keyword).
 

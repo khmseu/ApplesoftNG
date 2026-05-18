@@ -145,7 +145,7 @@ void AS_MOVSTR_1(std::uint8_t length);
 std::uint8_t AS_FRESTR();
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FRM_ELEMENT (inclusive) .. AS_NOT_ (exclusive)
 // Name normalization: none (assembler label AS_FRM_ELEMENT kept verbatim).
 void AS_FRM_ELEMENT() {
@@ -201,7 +201,7 @@ void AS_FRM_ELEMENT() {
 
 void AS_FRM_VARIABLE() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FRM_VARIABLE (inclusive) .. AS_SCREEN (exclusive)
   // Name normalization: none (assembler label AS_FRM_VARIABLE kept verbatim).
   //
@@ -236,7 +236,7 @@ void AS_FRM_VARIABLE() {
 
 void AS_NOT_() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_NOT_ (inclusive) .. AS_FN_ (exclusive)
   // Name normalization: none (assembler label AS_NOT_ kept verbatim).
   //
@@ -247,7 +247,7 @@ void AS_NOT_() {
 
 void AS_FRMEVL_2() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_FRMEVL_2 (inclusive) .. AS_FRM_RELATIONAL (exclusive)
   // Name normalization: none (assembler label AS_FRMEVL_2 kept verbatim).
   //
@@ -286,7 +286,7 @@ struct SubstringSetupResult {
 
 bool AS_SUBSTRING_SETUP(SubstringSetupResult &out) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_SUBSTRING_SETUP (inclusive) .. AS_LEN (exclusive)
   // Name normalization: none (assembler label AS_SUBSTRING_SETUP kept
   // verbatim).
@@ -321,7 +321,7 @@ void SUBSTRING_BUILD(std::uint8_t leftStart, std::uint8_t copyAS_Length) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GETSPA (inclusive) .. AS_GARBAG (exclusive)
 // Name normalization: none (assembler label AS_GETSPA kept verbatim).
 std::uint16_t AS_GETSPA(std::uint8_t length) {
@@ -354,7 +354,7 @@ std::uint16_t AS_GETSPA(std::uint8_t length) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FIND_HIGHEST_STRING (inclusive) .. AS_CHECK_SIMPLE_VARIABLE
 // (exclusive) Name normalization: none (assembler label AS_FIND_HIGHEST_STRING
 // kept verbatim).
@@ -411,7 +411,7 @@ void AS_FIND_HIGHEST_STRING() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_CHECK_SIMPLE_VARIABLE (inclusive) .. AS_CHECK_VARIABLE
 // (exclusive) Name normalization: none (assembler label
 // AS_CHECK_SIMPLE_VARIABLE kept verbatim).
@@ -433,7 +433,7 @@ void AS_CHECK_SIMPLE_VARIABLE() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_CHECK_VARIABLE (inclusive) .. AS_CHECK_BUMP (exclusive)
 // Name normalization: none (assembler label AS_CHECK_VARIABLE kept verbatim).
 void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset) {
@@ -468,7 +468,7 @@ void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_CHECK_BUMP (inclusive) .. AS_CHECK_EXIT (exclusive)
 // Name normalization: none (assembler label AS_CHECK_BUMP kept verbatim).
 void AS_CHECK_BUMP() {
@@ -478,7 +478,7 @@ void AS_CHECK_BUMP() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_CHECK_EXIT (inclusive) .. AS_MOVE_HIGHEST_STRING_TO_TOP
 // (exclusive) Name normalization: none (assembler label AS_CHECK_EXIT kept
 // verbatim).
@@ -492,7 +492,7 @@ void AS_CHECK_EXIT() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_MOVE_HIGHEST_STRING_TO_TOP (inclusive) .. AS_CAT (exclusive)
 // Name normalization: none (assembler label AS_MOVE_HIGHEST_STRING_TO_TOP kept
 // verbatim).
@@ -542,7 +542,7 @@ void AS_MOVE_HIGHEST_STRING_TO_TOP() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_CAT (inclusive) .. AS_MOVINS (exclusive)
 // Name normalization: none (assembler label AS_CAT kept verbatim).
 static void AS_CAT_impl() {
@@ -575,7 +575,7 @@ static void AS_CAT_impl() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_MOVSTR (inclusive) .. AS_MOVSTR_1 (exclusive)
 // Name normalization: none (assembler label AS_MOVSTR kept verbatim).
 void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length) {
@@ -586,7 +586,7 @@ void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_MOVSTR_1 (inclusive) .. AS_FRESTR (exclusive)
 // Name normalization: none (assembler label AS_MOVSTR_1 kept verbatim).
 void AS_MOVSTR_1(std::uint8_t length) {
@@ -605,7 +605,7 @@ void AS_MOVSTR_1(std::uint8_t length) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FRESTR (inclusive) .. AS_FREFAC (exclusive)
 // Name normalization: none (assembler label AS_FRESTR kept verbatim).
 std::uint8_t AS_FRESTR() {
@@ -614,7 +614,7 @@ std::uint8_t AS_FRESTR() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FREFAC (inclusive) .. AS_FRETMP (exclusive)
 // Name normalization: none (assembler label AS_FREFAC kept verbatim).
 std::uint8_t AS_FREFAC_impl() {
@@ -622,7 +622,7 @@ std::uint8_t AS_FREFAC_impl() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_PUTNEW (inclusive) .. AS_JERR (exclusive)
 // Name normalization: none (assembler label AS_PUTNEW kept verbatim).
 void AS_PUTNEW() {
@@ -640,13 +640,13 @@ void AS_PUTNEW() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_JERR (inclusive) .. AS_PUTEMP (exclusive)
 // Name normalization: none (assembler label AS_JERR kept verbatim).
 void AS_JERR() { AS_ERROR(g_jerr_error); }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_PUTEMP (inclusive) .. AS_GETSPA (exclusive)
 // Name normalization: none (assembler label AS_PUTEMP kept verbatim).
 void AS_PUTEMP(std::uint8_t tempDescriptorAddress) {
@@ -671,7 +671,7 @@ void AS_STRLIT(std::uint16_t address);
 } // namespace
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FREFAC (inclusive) .. AS_FRETMP (exclusive)
 // Name normalization: none (assembler label AS_FREFAC kept verbatim).
 std::uint8_t AS_FREFAC() { return AS_FREFAC_impl(); }
@@ -702,7 +702,7 @@ void AS_STRSPA(std::uint8_t length) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_LEN (inclusive) .. AS_GETSTR (exclusive)
 // Name normalization: none (assembler label AS_LEN kept verbatim).
 //
@@ -713,7 +713,7 @@ void AS_LEN() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GETSTR (inclusive) .. AS_ASC (exclusive)
 // Name normalization: none (assembler label AS_GETSTR kept verbatim).
 //
@@ -726,7 +726,7 @@ std::uint8_t AS_GETSTR() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_ASC (inclusive) .. AS_GOIQ (exclusive)
 // Name normalization: none (assembler label AS_ASC kept verbatim).
 //
@@ -744,7 +744,7 @@ void AS_ASC() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GARBAG (inclusive) .. AS_FIND_HIGHEST_STRING (exclusive)
 // Name normalization: none (assembler label AS_GARBAG kept verbatim).
 void AS_GARBAG() {
@@ -755,7 +755,7 @@ void AS_GARBAG() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_MOVINS (inclusive) .. AS_MOVSTR (exclusive)
 // Name normalization: none (assembler label AS_MOVINS kept verbatim).
 void AS_MOVINS() {
@@ -767,7 +767,7 @@ void AS_MOVINS() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FRETMP (inclusive) .. AS_FRETMS (exclusive)
 // Name normalization: none (assembler label AS_FRETMP kept verbatim).
 std::uint8_t AS_FRETMP(std::uint16_t descriptorAddress) {
@@ -788,7 +788,7 @@ std::uint8_t AS_FRETMP(std::uint16_t descriptorAddress) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FRETMS (inclusive) .. AS_CHRSTR (exclusive)
 // Name normalization: none (assembler label AS_FRETMS kept verbatim).
 bool AS_FRETMS(std::uint16_t descriptorAddress) {
@@ -808,7 +808,7 @@ bool AS_FRETMS(std::uint16_t descriptorAddress) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_CHRSTR (inclusive) .. AS_LEFTSTR (exclusive)
 // Name normalization: none (assembler label AS_CHRSTR kept verbatim).
 //
@@ -843,7 +843,7 @@ void AS_CHRSTR() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_LEFTSTR (inclusive) .. AS_RIGHTSTR (exclusive)
 // Name normalization: none (assembler label AS_LEFTSTR kept verbatim).
 void AS_LEFTSTR() {
@@ -858,7 +858,7 @@ void AS_LEFTSTR() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_RIGHTSTR (inclusive) .. AS_MIDSTR (exclusive)
 // Name normalization: none (assembler label AS_RIGHTSTR kept verbatim).
 void AS_RIGHTSTR() {
@@ -875,7 +875,7 @@ void AS_RIGHTSTR() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_MIDSTR (inclusive) .. AS_SUBSTRING_SETUP (exclusive)
 // Name normalization: none (assembler label AS_MIDSTR kept verbatim).
 void AS_MIDSTR() {

@@ -53,7 +53,7 @@ std::uint8_t AS_CHRGET_INPUT() { return AS_CHRGET(); }
 // AS_PROCESS_INPUT_LIST. std::uint8_t MON_RDKEY() { return 0; }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: L_INSTART_1 (inclusive) .. L_INSTART_5 (exclusive)
 // Name normalization: L_INSTART_1..L_INSTART_4 local labels folded into
 // parseStringInputAndStore.
@@ -98,7 +98,7 @@ void parseStringInputAndStore() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: L_INSTART_5 (inclusive) .. INPUT_MORE (exclusive)
 // Name normalization: L_INSTART_5 local label folded into
 // parseNumericInputAndStore.
@@ -116,7 +116,7 @@ void parseNumericInputAndStore() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FINDATA (inclusive) .. AS_INPDONE (exclusive)
 // Name normalization: none (assembler label AS_FINDATA kept verbatim).
 // Scans forward from AS_TXTPTR through program lines looking for a DATA
@@ -188,7 +188,7 @@ void AS_FINDATA() {
 } // namespace
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_INPUT (inclusive) .. AS_NXIN (exclusive)
 // Name normalization: none (assembler label AS_INPUT kept verbatim).
 void AS_INPUT() {
@@ -220,7 +220,7 @@ void AS_INPUT() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_READ (inclusive) .. AS_INPUT_FLAG_ZERO (exclusive)
 // Name normalization: none (assembler label AS_READ kept verbatim).
 void AS_READ() {
@@ -232,7 +232,7 @@ void AS_READ() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_INPUT_FLAG_ZERO (inclusive) .. AS_PROCESS_INPUT_LIST
 // (exclusive) Name normalization: none (assembler label AS_INPUT_FLAG_ZERO kept
 // verbatim).
@@ -241,7 +241,7 @@ void AS_INPUT_FLAG_ZERO(std::uint16_t input_ptr) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_PROCESS_INPUT_LIST (inclusive) .. AS_NEXT (exclusive)
 // Name normalization: none (assembler label AS_PROCESS_INPUT_LIST kept
 // verbatim).
@@ -324,7 +324,7 @@ void AS_PROCESS_INPUT_LIST(std::uint16_t input_ptr, std::uint8_t input_flag) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_ERLIN (inclusive) .. AS_INPERR (exclusive)
 // Name normalization: none (assembler label AS_ERLIN kept verbatim).
 void AS_ERLIN(std::uint16_t lineNumber) {
@@ -333,13 +333,13 @@ void AS_ERLIN(std::uint16_t lineNumber) {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_READERR (inclusive) .. AS_ERLIN (exclusive)
 // Name normalization: none (assembler label AS_READERR kept verbatim).
 void AS_READERR() { AS_ERLIN(variables_const().AS_DATLIN); }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_RESPERR (inclusive) .. AS_GET (exclusive)
 // Name normalization: none (assembler label AS_RESPERR kept verbatim).
 void AS_RESPERR() {
@@ -355,7 +355,7 @@ void AS_RESPERR() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_INPERR (inclusive) .. AS_RESPERR (exclusive)
 // Name normalization: none (assembler label AS_INPERR kept verbatim).
 void AS_INPERR() {
@@ -364,7 +364,7 @@ void AS_INPERR() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_INPUTERR (inclusive) .. AS_READERR (exclusive)
 // Name normalization: none (assembler label AS_INPUTERR kept verbatim).
 void AS_INPUTERR() {
@@ -383,7 +383,7 @@ void AS_INPUTERR() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GET (inclusive) .. AS_INPUT (exclusive)
 // Name normalization: none (assembler label AS_GET kept verbatim).
 void AS_GET() {

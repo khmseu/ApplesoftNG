@@ -35,7 +35,7 @@ AS_BLTUResult AS_BLTU(AS_BLTUState &state) {
 
 AS_BLTU2Result AS_BLTU2(AS_BLTU2State &state) {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_BLTU2 (inclusive) .. AS_CHKMEM (exclusive)
   // Name normalization: none (assembler label AS_BLTU2 kept verbatim).
 

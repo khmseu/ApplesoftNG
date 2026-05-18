@@ -6,12 +6,10 @@ This project is a clone of the original Applesoft BASIC interpreter, implemented
 
 - **SourceMaterial/**: Reference corpus from original Apple II sources and project analysis.
   - **report.txt**: Notes and analysis used during reconstruction work.
-  - **Apple-II-Source-slim/**: Curated source snapshot used as historical reference.
-    - **modules.md**: Module-level overview of the imported source set.
-    - **project-description.md**: High-level description of the source bundle.
-    - **src/system/applesoft/**: Applesoft listings and symbols (for example, applesoft.o65.lst and applesoft.o65.sym).
-    - **src/system/monitor/apple2plus/**: Apple II monitor component listings and symbols (cmd, debug, disasm, display, keyin, math, vectors, and more).
-    - **src/system/monitor/common/**: Shared monitor area (currently empty in this snapshot).
+  - **Combo/**: Authoritative combined ROM assembly artifacts (`asrom.lst`, `asrom.s`, `asrom.sym`). These use absolute ROM addresses and include native `AS_`/`MON_` prefixes for all symbols.
+  - **Apple-II-Source-slim/**: Curated source snapshot (historical context only).
+    - **src/system/applesoft/**: Applesoft listings and symbols.
+    - **src/system/monitor/apple2plus/**: Apple II monitor component listings and symbols.
 
 - **include/**: Contains header files for the project.
   - **core/**: Core components of the interpreter.

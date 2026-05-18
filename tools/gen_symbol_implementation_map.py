@@ -23,15 +23,13 @@ from pathlib import Path
 from typing import Iterable
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_SYM_ROOT = (
-    REPO_ROOT / "SourceMaterial" / "Apple-II-Source-slim" / "src" / "system"
-)
+DEFAULT_SYM_ROOT = REPO_ROOT / "SourceMaterial" / "Combo"
 DEFAULT_SRC_ROOT = REPO_ROOT / "src"
 DEFAULT_OUT = REPO_ROOT / "docs" / "symbol-implementation-map.tsv"
 DEFAULT_LOG_OUT = REPO_ROOT / "docs" / "symbol-implementation-map-claims.tsv"
 
-# A symbol declaration line in a .sym file looks like:
-#   SYMBOL, 0x1234, 0, 0x0002
+# A symbol declaration line in a ca65/xa65 .sym file looks like:
+#   SYMBOL, 0x1234, 0, 0x0000
 SYM_DECL_RE = re.compile(
     r"^\s*([^,\s][^,]*)\s*,\s*(0x[0-9a-fA-F]+)\s*,\s*[^,]*\s*,\s*(0x[0-9a-fA-F]+)\s*$"
 )
@@ -106,7 +104,8 @@ def parse_sym_files(sym_root: Path) -> dict[str, list[Symbol]]:
             name = m.group(1).strip()
             value = int(m.group(2), 16)
             sym_type = int(m.group(3), 16)
-            if sym_type != 0x0002:
+            # Combo asrom.sym uses 0x0000 for standard labels.
+            if sym_type not in (0x0002, 0x0000):
                 continue
             by_module[module].append(Symbol(module=module, name=name, value=value))
 

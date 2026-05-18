@@ -219,7 +219,7 @@ void PrintDecimalUnsigned(std::uint16_t value) {
 void AS_LINPRT() { PrintDecimalUnsigned(variables_const().AS_CURLIN); }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_INPRT (inclusive) .. AS_GO_STROUT (exclusive)
 // Name normalization: none (assembler label AS_INPRT kept verbatim).
 void AS_INPRT() {
@@ -244,7 +244,7 @@ void AS_STROUT(std::string_view text) {
 // buffer; on return (A, Y) point to the buffer. Used inside the AS_PRINT2
 // number path.
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FOUT (inclusive) .. AS_SQR (exclusive)
 // Name normalization: none (assembler label AS_FOUT kept verbatim).
 static void AS_FOUT() {
@@ -253,7 +253,7 @@ static void AS_FOUT() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FOUT_1 (inclusive) .. AS_FOUT_3 (exclusive)
 // Name normalization: none (assembler label AS_FOUT_1 kept verbatim).
 void AS_FOUT_1() {
@@ -267,7 +267,7 @@ void AS_FOUT_1() {
 // expression (expected to be ')' by the callers in this file).
 static std::uint8_t AS_GTBYTC_PRINT() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_GTBYTC (inclusive) .. AS_GETBYT (exclusive)
   // Name normalization: none (assembler label AS_GTBYTC kept verbatim).
 
@@ -290,7 +290,7 @@ constexpr std::uint8_t AS_TOKEN_SPC = 0xc3u; // SPC(
 // ---------------------------------------------------------------------------
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_STRPRT (inclusive) .. AS_OUTSP (exclusive)
 // Name normalization: none (assembler label AS_STRPRT kept verbatim).
 void AS_STRPRT() {
@@ -316,7 +316,7 @@ void AS_STRPRT() {
 // ---------------------------------------------------------------------------
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_STROUT (inclusive) .. AS_STRPRT (exclusive)
 // Name normalization: none (assembler label AS_STROUT kept verbatim).
 void AS_STROUT(std::uint16_t address) {
@@ -402,7 +402,7 @@ static void print_list_loop(std::uint8_t a, bool expr_cr) {
 // ---------------------------------------------------------------------------
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_PR_STRING (inclusive) .. AS_PRINT (exclusive)
 // Name normalization: none (assembler label AS_PR_STRING kept verbatim).
 void AS_PR_STRING() {
@@ -424,7 +424,7 @@ void AS_PR_STRING() {
 // ---------------------------------------------------------------------------
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_PRINT (inclusive) .. AS_PRINT2 (exclusive)
 // Name normalization: none (assembler label AS_PRINT kept verbatim).
 void AS_PRINT(std::uint8_t a) {
@@ -442,7 +442,7 @@ void AS_PRINT(std::uint8_t a) {
 // ---------------------------------------------------------------------------
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_PRINT2 (inclusive) .. AS_CRDO (exclusive)
 // Name normalization: none (assembler label AS_PRINT2 kept verbatim).
 void AS_PRINT2(std::uint8_t a) {
@@ -458,7 +458,7 @@ void AS_PRINT2(std::uint8_t a) {
 // ---------------------------------------------------------------------------
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_CRDO (inclusive) .. AS_NEGATE (exclusive)
 // Name normalization: none (assembler label AS_CRDO kept verbatim).
 void AS_CRDO() {
@@ -475,7 +475,7 @@ void AS_CRDO() {
 // ---------------------------------------------------------------------------
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_NEGATE (inclusive) .. AS_PR_COMMA (exclusive)
 // Name normalization: none (assembler label AS_NEGATE kept verbatim).
 // The source listing comments this entry "<<< WHY??? >>>".
@@ -491,7 +491,7 @@ std::uint8_t AS_NEGATE(std::uint8_t a) {
 // ---------------------------------------------------------------------------
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_PR_COMMA (inclusive) .. AS_PR_TAB_OR_SPC (exclusive)
 // Name normalization: none (assembler label AS_PR_COMMA kept verbatim).
 // Note: The original uses 24 ($18) as the zone-change threshold; the source
@@ -521,7 +521,7 @@ void AS_PR_COMMA() {
 // ---------------------------------------------------------------------------
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_PR_TAB_OR_SPC (inclusive) .. AS_STROUT (exclusive)
 // Name normalization: none (assembler label AS_PR_TAB_OR_SPC kept verbatim).
 // This range also contains AS_PR_NEXT_CHAR (T:db2f) and AS_DOSPC/AS_NXSPC

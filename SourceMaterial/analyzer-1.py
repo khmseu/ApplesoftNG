@@ -49,8 +49,7 @@ DIRECTIVES: Set[str] = {
 
 # Default ROM bases for Apple II
 DEFAULT_PARENT_BASES = {
-    "Applesoft": 0xD000,
-    "Autostart-Monitor": 0xF800,
+    "asrom": 0xD000,
 }
 
 

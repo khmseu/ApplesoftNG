@@ -17,7 +17,7 @@ void write_AS_ENDCHR(std::uint8_t v) { variables().AS_ENDCHR = v; }
 } // namespace
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_STR (inclusive) .. AS_STRINI (exclusive)
 // Name normalization: none (assembler label AS_STR kept verbatim).
 void AS_STR() {
@@ -31,7 +31,7 @@ void AS_STR() {
 }
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_STRLIT (inclusive) .. AS_STRLT2 (exclusive)
 // Name normalization: none (assembler label AS_STRLIT kept verbatim).
 void AS_STRLIT(std::uint16_t address) {

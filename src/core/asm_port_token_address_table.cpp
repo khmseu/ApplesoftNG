@@ -1,5 +1,5 @@
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_TOKEN_ADDRESS_TABLE (inclusive) .. AS_UNFNC (exclusive)
 // Name normalization: none
 
@@ -100,7 +100,7 @@ static void AS_ROT_Handler() { AS_ROT(); }
 static void AS_SCALE_Handler() { AS_SCALE(); }
 static void AS_SHLOAD_Handler() { /* AS_SHLOAD stub */ }
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_TRACE (inclusive) .. AS_NORMAL (exclusive)
 // Name normalization: none. AS_TRACE: sec; ror AS_TRCFLG → bit 7 set (trace
 // on).

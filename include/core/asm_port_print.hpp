@@ -6,7 +6,7 @@
 namespace applesoft::asm_port {
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 
 // AS_FREFAC: dereference the string descriptor at AS_FAC[3]/AS_FAC[4],
 // optionally release the temporary descriptor, store the data pointer in

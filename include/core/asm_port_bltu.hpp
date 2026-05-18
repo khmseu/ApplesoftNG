@@ -9,7 +9,7 @@
 namespace applesoft::asm_port {
 
 // Source:
-// SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+// SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_BLTU (inclusive) .. AS_BLTU2 (exclusive)
 // Name normalization: none (assembler label AS_BLTU kept verbatim).
 

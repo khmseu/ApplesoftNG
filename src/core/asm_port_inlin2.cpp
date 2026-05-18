@@ -39,7 +39,7 @@ std::uint16_t readZeroPageWord(std::uint8_t address) {
 
 std::uint8_t MON_KEYIN() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/keyin.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: KEYIN (inclusive) .. ESC (exclusive)
   // Name normalization: KEYIN helper target kept internal; public entry is
   // useMonitorInputVector.
@@ -72,7 +72,7 @@ std::uint8_t MON_KEYIN() {
 // All monitor labels carry a virtual MON_ prefix in C++; RDKEY -> MON_RDKEY.
 std::uint8_t MON_RDKEY() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/monitor/apple2plus/keyin.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: RDKEY (inclusive) .. RDCHAR (exclusive)
   // Name normalization: monitor label RDKEY mapped to MON_RDKEY in C++.
 
@@ -129,7 +129,7 @@ Inlin2Result AS_INLIN2(std::uint8_t x) {
 
 std::uint8_t AS_INCHR() {
   // Source:
-  // SourceMaterial/Apple-II-Source-slim/src/system/applesoft/applesoft.o65.lst
+  // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_INCHR (inclusive) .. AS_PARSE_INPUT_LINE (exclusive)
   // name normalization: none (assembler label AS_INCHR kept verbatim).
 
