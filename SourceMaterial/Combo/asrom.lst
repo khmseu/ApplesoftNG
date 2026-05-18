@@ -6343,12 +6343,12 @@ asrom.s
  6378 A:f140  85 00                              sta AS_GOWARM                ; WARM START
  6379 A:f142  85 03                              sta AS_GOSTROUT                ; ANYONE EVER USE THIS ONE?
  6380 A:f144  85 90                              sta AS_JMPADRS                ; USED BY FUNCTIONS (JSR JMPADRS)
- 6381 A:f146  85 0a                              sta AS_USR                ; "USR" FUNCTION VECTOR
+ 6381 A:f146  85 0a                    AS_L_USR1 sta AS_USR             ; "USR" FUNCTION VECTOR
  6382 A:f148  a9 99                              lda #<AS_IQERR              ; POINT "USR" TO ILLEGAL QUANTITY
  6383 A:f14a  a0 e1                              ldy #>AS_IQERR              ; ERROR, UNTIL USER SETS IT UP
  6384 A:f14c  85 0b                              sta AS_USR+1
  6385 A:f14e  84 0c                              sty AS_USR+2
- 6386 A:f150                                    ; --------------------------------
+ 6386 A:f150                           AS_L_USR2                  ; --------------------------------
  6387 A:f150                                    ; MOVE GENERIC CHRGET AND RANDOM SEED INTO PLACE
  6388 A:f150                                    ; 
  6389 A:f150                                    ; <<< NOTE THAT LOOP VALUE IS WRONG!          >>>

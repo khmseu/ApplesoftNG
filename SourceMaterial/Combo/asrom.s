@@ -6378,12 +6378,12 @@ AS_COLD_START
                     STA AS_GOWARM                      ; WARM START
                     STA AS_GOSTROUT                    ; ANYONE EVER USE THIS ONE?
                     STA AS_JMPADRS                     ; USED BY FUNCTIONS (JSR JMPADRS)
-                    STA AS_USR                         ; "USR" FUNCTION VECTOR
+AS_L_USR1                    STA AS_USR                         ; "USR" FUNCTION VECTOR
                     LDA #<AS_IQERR                     ; POINT "USR" TO ILLEGAL QUANTITY
                     LDY #>AS_IQERR                     ; ERROR, UNTIL USER SETS IT UP
                     STA AS_USR+1
                     STY AS_USR+2
-                                                    ; --------------------------------
+AS_L_USR2                                                    ; --------------------------------
                                                     ; MOVE GENERIC CHRGET AND RANDOM SEED INTO PLACE
                                                     ; 
                                                     ; <<< NOTE THAT LOOP VALUE IS WRONG!          >>>

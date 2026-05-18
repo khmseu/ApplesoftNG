@@ -228,7 +228,7 @@ AS_PDL	src/core/asm_port_unfnc.cpp	206	AS_PDL (inclusive) .. AS_NXDIM (exclusive
 AS_SGN	src/core/asm_port_unfnc.cpp	220	AS_SGN (inclusive) .. AS_ABS (exclusive)	AS_SGN	AS_ABS	asrom	AS_SGN	0xeb90	AS_ABS	0xebaf	resolved-range	ok
 AS_INT_fn	src/core/asm_port_unfnc.cpp	235	AS_INT (inclusive) .. AS_QINT_3 (exclusive)	AS_INT	AS_QINT_3	asrom	AS_INT	0xec23	AS_QINT_3	0xec40	resolved-range	ok
 AS_ABS	src/core/asm_port_unfnc.cpp	259	AS_ABS (inclusive) .. AS_FCOMP (exclusive)	AS_ABS	AS_FCOMP	asrom	AS_ABS	0xebaf	AS_FCOMP	0xebb2	resolved-range	ok
-AS_USR	src/core/asm_port_unfnc.cpp	268	AS_USR (inclusive) .. AS_FRE (exclusive)	AS_USR	AS_FRE	asrom	AS_USR	0x000a	AS_FRE	0xe2de	resolved-range	ok
+AS_USR	src/core/asm_port_unfnc.cpp	268	AS_L_USR1 (inclusive) .. AS_L_USR2 (exclusive)	AS_L_USR1	AS_L_USR2	asrom	AS_L_USR1	0xf146	AS_L_USR2	0xf150	resolved-range	ok
 AS_FRE_fn	src/core/asm_port_unfnc.cpp	279	AS_FRE (inclusive) .. AS_ERROR (exclusive)	AS_FRE	AS_ERROR	asrom	AS_FRE	0xe2de	AS_ERROR	0xd412	skipped-ambiguous-range	end-not-greater-than-start
 AS_PDL_fn	src/core/asm_port_unfnc.cpp	288	AS_UNDFNC (inclusive) .. AS_DEF (exclusive)	AS_UNDFNC	AS_DEF	asrom	AS_UNDFNC	0xe30e	AS_DEF	0xe313	resolved-range	ok
 AS_POS	src/core/asm_port_unfnc.cpp	297	AS_POS (inclusive) .. AS_SNGFLT (exclusive)	AS_POS	AS_SNGFLT	asrom	AS_POS	0xe2ff	AS_SNGFLT	0xe301	resolved-range	ok

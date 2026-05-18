@@ -265,7 +265,7 @@ void AS_ABS() {
 static void AS_USR() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_USR (inclusive) .. AS_FRE (exclusive)
+  // AS_Labels: AS_L_USR1 (inclusive) .. AS_L_USR2 (exclusive)
   // Name normalization: none (assembler label AS_USR kept verbatim).
   //
   // The original ROM dispatches through a user-supplied machine-language
