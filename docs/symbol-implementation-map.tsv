@@ -1,0 +1,1094 @@
+module	symbol	value	implemented_by
+applesoft/applesoft	TOKEN_ADDRESS_TABLE	0x0000	AS_NEXT_Handler
+applesoft/applesoft	[start]	0x0000	AS_NEXT_Handler
+applesoft/applesoft	UNFNC	0x0080	
+applesoft/applesoft	MATHTBL	0x00b2	
+applesoft/applesoft	M_NEG	0x00c7	
+applesoft/applesoft	MEQUU	0x00ca	
+applesoft/applesoft	M_REL	0x00cd	
+applesoft/applesoft	TOKEN_NAME_TABLE	0x00d0	AS_TOKEN_NAME_TABLE
+applesoft/applesoft	ERROR_MESSAGES	0x0260	AS_ERROR_MESSAGES
+applesoft/applesoft	QT_ERROR	0x0350	AS_QT_ERROR
+applesoft/applesoft	QT_IN	0x0358	AS_QT_ERROR
+applesoft/applesoft	QT_BREAK	0x035d	AS_QT_ERROR
+applesoft/applesoft	GTFORPNT	0x0365	
+applesoft/applesoft	L_GTFORPNT_1	0x036a	
+applesoft/applesoft	L_GTFORPNT_2	0x037f	
+applesoft/applesoft	L_GTFORPNT_3	0x038b	
+applesoft/applesoft	L_GTFORPNT_4	0x0392	
+applesoft/applesoft	BLTU	0x0393	
+applesoft/applesoft	BLTU2	0x039a	AS_BLTU2
+applesoft/applesoft	L_BLTU2_1	0x03b7	AS_BLTU2
+applesoft/applesoft	L_BLTU2_2	0x03c3	AS_BLTU2
+applesoft/applesoft	L_BLTU2_3	0x03c7	AS_BLTU2
+applesoft/applesoft	L_BLTU2_4	0x03ce	AS_BLTU2
+applesoft/applesoft	CHKMEM	0x03d6	AS_CHKMEM
+applesoft/applesoft	REASON	0x03e3	AS_REASON
+applesoft/applesoft	L_REASON_1	0x03ed	AS_REASON
+applesoft/applesoft	L_REASON_2	0x03f1	AS_REASON
+applesoft/applesoft	L_REASON_3	0x03fc	AS_REASON
+applesoft/applesoft	L_REASON_4	0x040f	AS_REASON
+applesoft/applesoft	MEMERR	0x0410	
+applesoft/applesoft	ERROR	0x0412	IsOnErr
+applesoft/applesoft	L_ERROR_1	0x0419	
+applesoft/applesoft	L_ERROR_2	0x041f	
+applesoft/applesoft	PRINT_ERROR_LINNUM	0x0431	
+applesoft/applesoft	RESTART	0x043c	AS_RESTART
+applesoft/applesoft	NUMBERED_LINE	0x045c	
+applesoft/applesoft	L_NUMBERED_LINE_1	0x049f	
+applesoft/applesoft	L_NUMBERED_LINE_2	0x04a7	
+applesoft/applesoft	PUT_NEW_LINE	0x04b5	InsertNewAS_Line
+applesoft/applesoft	L_PUT_NEW_LINE_1	0x04d1	InsertNewAS_Line
+applesoft/applesoft	L_PUT_NEW_LINE_2	0x04ea	InsertNewAS_Line
+applesoft/applesoft	FIX_LINKS	0x04f2	AS_FIX_LINKS
+applesoft/applesoft	L_FIX_LINKS_1	0x04fe	AS_FIX_LINKS
+applesoft/applesoft	L_FIX_LINKS_2	0x050f	AS_FIX_LINKS
+applesoft/applesoft	L_FIX_LINKS_3	0x0511	AS_FIX_LINKS
+applesoft/applesoft	INLIN	0x052c	
+applesoft/applesoft	INLIN2	0x052e	
+applesoft/applesoft	L_INLIN2_1	0x0539	
+applesoft/applesoft	L_INLIN2_2	0x0541	
+applesoft/applesoft	L_INLIN2_3	0x054c	
+applesoft/applesoft	INCHR	0x0553	AS_INCHR
+applesoft/applesoft	PARSE_INPUT_LINE	0x0559	GetTextTablePointer
+applesoft/applesoft	PARSE	0x056c	GetTextTablePointer
+applesoft/applesoft	L_PARSE_1	0x056d	GetTextTablePointer
+applesoft/applesoft	L_PARSE_2	0x0578	GetTextTablePointer
+applesoft/applesoft	L_PARSE_3	0x0588	GetTextTablePointer
+applesoft/applesoft	L_PARSE_4	0x0590	GetTextTablePointer
+applesoft/applesoft	L_PARSE_5	0x05a2	GetTextTablePointer
+applesoft/applesoft	L_PARSE_6	0x05a7	GetTextTablePointer
+applesoft/applesoft	L_PARSE_7	0x05a8	GetTextTablePointer
+applesoft/applesoft	L_PARSE_8	0x05cb	GetTextTablePointer
+applesoft/applesoft	L_PARSE_9	0x05cd	GetTextTablePointer
+applesoft/applesoft	L_PARSE_10	0x05e0	GetTextTablePointer
+applesoft/applesoft	L_PARSE_11	0x05e2	GetTextTablePointer
+applesoft/applesoft	L_PARSE_12	0x05e9	GetTextTablePointer
+applesoft/applesoft	L_PARSE_13	0x05f2	GetTextTablePointer
+applesoft/applesoft	L_PARSE_14	0x05f9	GetTextTablePointer
+applesoft/applesoft	L_PARSE_15	0x05fd	GetTextTablePointer
+applesoft/applesoft	L_PARSE_16	0x0604	GetTextTablePointer
+applesoft/applesoft	L_PARSE_17	0x0610	GetTextTablePointer
+applesoft/applesoft	FNDLIN	0x061a	AS_FNDLIN
+applesoft/applesoft	FL1	0x061e	AS_FL1
+applesoft/applesoft	L_FL1_1	0x0635	AS_FL1
+applesoft/applesoft	L_FL1_2	0x063e	AS_FL1
+applesoft/applesoft	L_FL1_3	0x0647	AS_FL1
+applesoft/applesoft	RTS_1	0x0648	AS_FL1
+applesoft/applesoft	NEW	0x0649	
+applesoft/applesoft	SCRTCH	0x064b	
+applesoft/applesoft	SETPTRS	0x0665	
+applesoft/applesoft	CLEAR	0x066a	
+applesoft/applesoft	CLEARC	0x066c	
+applesoft/applesoft	STKINI	0x0683	
+applesoft/applesoft	RTS_2	0x0696	
+applesoft/applesoft	STXTPT	0x0697	
+applesoft/applesoft	LIST	0x06a5	
+applesoft/applesoft	L_LIST_1	0x06b1	
+applesoft/applesoft	L_LIST_2	0x06c4	
+applesoft/applesoft	L_LIST_3	0x06cc	
+applesoft/applesoft	LIST_0	0x06da	
+applesoft/applesoft	L_LIST_0_5	0x06f5	
+applesoft/applesoft	L_LIST_0_6	0x06f7	
+applesoft/applesoft	LIST_1	0x06fe	
+applesoft/applesoft	LIST_2	0x0702	
+applesoft/applesoft	L_LIST_2_1	0x0712	
+applesoft/applesoft	LIST_3	0x0724	
+applesoft/applesoft	GETCHR	0x072c	
+applesoft/applesoft	L_GETCHR_1	0x0731	
+applesoft/applesoft	LIST_4	0x0734	
+applesoft/applesoft	L_LIST_4_1	0x0746	
+applesoft/applesoft	L_LIST_4_2	0x0749	
+applesoft/applesoft	L_LIST_4_3	0x0750	
+applesoft/applesoft	L_LIST_4_4	0x0755	
+applesoft/applesoft	L_LIST_4_5	0x075f	
+applesoft/applesoft	FOR	0x0766	
+applesoft/applesoft	L_FOR_1	0x0777	
+applesoft/applesoft	STEP	0x07af	
+applesoft/applesoft	L_STEP_1	0x07c3	
+applesoft/applesoft	NEWSTT	0x07d2	
+applesoft/applesoft	L_NEWSTT_1	0x07e5	
+applesoft/applesoft	L_NEWSTT_2	0x0805	AS_EXECUTE_STATEMENT, IsRunningMode
+applesoft/applesoft	TRACE_	0x0805	AS_EXECUTE_STATEMENT, IsRunningMode
+applesoft/applesoft	L_TRACE__1	0x081d	AS_EXECUTE_STATEMENT, IsRunningMode
+applesoft/applesoft	GOEND	0x0826	AS_EXECUTE_STATEMENT, AS_GOEND, IsRunningMode
+applesoft/applesoft	EXECUTE_STATEMENT	0x0828	AS_EXECUTE_STATEMENT, CurrentStatementChar
+applesoft/applesoft	EXECUTE_STATEMENT_1	0x082a	AS_COLON_
+applesoft/applesoft	L_EXECUTE_STATEMENT_1_1	0x083f	AS_COLON_
+applesoft/applesoft	COLON_	0x0842	AS_COLON_
+applesoft/applesoft	SYNERR_1	0x0846	AS_COLON_
+applesoft/applesoft	RESTORE	0x0849	MON_RESTORE
+applesoft/applesoft	SETDA	0x0853	MON_RESTORE
+applesoft/applesoft	RTS_3	0x0857	MON_RESTORE
+applesoft/applesoft	ISCNTC	0x0858	MON_RESTORE
+applesoft/applesoft	L_ISCNTC_1	0x0860	MON_RESTORE
+applesoft/applesoft	CONTROL_C_TYPED	0x0863	AS_CONT, MON_RESTORE
+applesoft/applesoft	L_CONTROL_C_TYPED_2	0x086c	AS_CONT, MON_RESTORE
+applesoft/applesoft	STOP	0x086e	MON_RESTORE
+applesoft/applesoft	ENDX	0x0870	MON_RESTORE
+applesoft/applesoft	END2	0x0871	IsStatementEndOfParsedInput, MON_RESTORE
+applesoft/applesoft	L_END2_1	0x0888	IsStatementEndOfParsedInput, MON_RESTORE
+applesoft/applesoft	END4	0x088a	IsStatementEndOfParsedInput, MON_RESTORE
+applesoft/applesoft	L_END4_1	0x0893	IsStatementEndOfParsedInput, MON_RESTORE
+applesoft/applesoft	CONT	0x0896	AS_CONT, IsStatementEndOfParsedInput, MON_RESTORE
+applesoft/applesoft	L_CONT_1	0x08a1	AS_CONT, IsStatementEndOfParsedInput, MON_RESTORE
+applesoft/applesoft	RTS_4	0x08af	AS_CONT, IsStatementEndOfParsedInput, MON_RESTORE
+applesoft/applesoft	SAVE	0x08b0	AS_SAVE
+applesoft/applesoft	LOAD	0x08c9	AS_LOAD
+applesoft/applesoft	L_LOAD_1	0x08ed	AS_LOAD
+applesoft/applesoft	VARTIO	0x08f0	AS_VARTIO
+applesoft/applesoft	PROGIO	0x0901	AS_PROGIO
+applesoft/applesoft	RUN	0x0912	AS_RUN
+applesoft/applesoft	L_RUN_1	0x091b	AS_RUN
+applesoft/applesoft	GOSUB	0x0921	AS_GOSUB
+applesoft/applesoft	GO_TO_LINE	0x0935	
+applesoft/applesoft	GOTO	0x093e	
+applesoft/applesoft	L_GOTO_1	0x0955	
+applesoft/applesoft	L_GOTO_2	0x0959	
+applesoft/applesoft	RTS_5	0x096a	AS_RTS_5
+applesoft/applesoft	POP	0x096b	AS_RTS_5
+applesoft/applesoft	UNDERR	0x097c	AS_RTS_5
+applesoft/applesoft	SYNERR_2	0x0981	AS_RTS_5
+applesoft/applesoft	RETURN	0x0984	
+applesoft/applesoft	DATA	0x0995	AS_DATA
+applesoft/applesoft	ADDON	0x0998	AS_ADDON
+applesoft/applesoft	L_ADDON_1	0x09a2	AS_ADDON
+applesoft/applesoft	RTS_6	0x09a2	AS_ADDON
+applesoft/applesoft	DATAN	0x09a3	AS_DATAN
+applesoft/applesoft	REMN	0x09a6	AS_REMN
+applesoft/applesoft	L_REMN_1	0x09ae	AS_REMN
+applesoft/applesoft	L_REMN_2	0x09b6	AS_REMN
+applesoft/applesoft	PULL3	0x09c5	AS_PULL3
+applesoft/applesoft	IF	0x09c9	AS_IF
+applesoft/applesoft	L_IF_1	0x09d8	AS_IF
+applesoft/applesoft	REM	0x09dc	AS_IF_TRUE
+applesoft/applesoft	IF_TRUE	0x09e1	AS_IF_TRUE
+applesoft/applesoft	L_IF_TRUE_1	0x09e9	AS_IF_TRUE
+applesoft/applesoft	ONGOTO	0x09ec	AS_ONGOTO
+applesoft/applesoft	ON_1	0x09f4	AS_ONGOTO
+applesoft/applesoft	ON_2	0x09f8	AS_ONGOTO
+applesoft/applesoft	L_ON_2_3	0x0a00	AS_ONGOTO
+applesoft/applesoft	RTS_7	0x0a0b	AS_ONGOTO
+applesoft/applesoft	LINGET	0x0a0c	AS_LINGET
+applesoft/applesoft	L_LINGET_1	0x0a12	AS_LINGET
+applesoft/applesoft	L_LINGET_2	0x0a40	AS_LINGET
+applesoft/applesoft	LET	0x0a46	AS_LET2
+applesoft/applesoft	LET2	0x0a63	AS_LET2
+applesoft/applesoft	L_LET2_1	0x0a77	AS_LET2
+applesoft/applesoft	LET_STRING	0x0a7a	AS_LET2
+applesoft/applesoft	PUTSTR	0x0a7b	AS_PUTSTR
+applesoft/applesoft	L_PUTSTR_1	0x0a8c	AS_PUTSTR
+applesoft/applesoft	L_PUTSTR_2	0x0a9a	AS_PUTSTR
+applesoft/applesoft	L_PUTSTR_3	0x0aa1	AS_PUTSTR
+applesoft/applesoft	L_PUTSTR_4	0x0ab7	AS_PUTSTR
+applesoft/applesoft	PR_STRING	0x0acf	
+applesoft/applesoft	PRINT	0x0ad5	AS_PRINT
+applesoft/applesoft	PRINT2	0x0ad7	AS_PRINT2
+applesoft/applesoft	CRDO	0x0afb	
+applesoft/applesoft	NEGATE	0x0b00	
+applesoft/applesoft	RTS_8	0x0b02	
+applesoft/applesoft	PR_COMMA	0x0b03	
+applesoft/applesoft	L_PR_COMMA_1	0x0b0e	
+applesoft/applesoft	PR_TAB_OR_SPC	0x0b16	
+applesoft/applesoft	L_PR_TAB_OR_SPC_1	0x0b21	
+applesoft/applesoft	L_PR_TAB_OR_SPC_2	0x0b2b	
+applesoft/applesoft	NXSPC	0x0b2c	
+applesoft/applesoft	PR_NEXT_CHAR	0x0b2f	
+applesoft/applesoft	DOSPC	0x0b35	
+applesoft/applesoft	STROUT	0x0b3a	print_list_loop
+applesoft/applesoft	STRPRT	0x0b3d	
+applesoft/applesoft	L_STRPRT_1	0x0b44	
+applesoft/applesoft	OUTSP	0x0b57	
+applesoft/applesoft	OUTQUES	0x0b5a	
+applesoft/applesoft	OUTDO	0x0b5c	
+applesoft/applesoft	L_OUTDO_1	0x0b64	
+applesoft/applesoft	INPUTERR	0x0b71	
+applesoft/applesoft	READERR	0x0b7b	AS_READERR
+applesoft/applesoft	ERLIN	0x0b7f	
+applesoft/applesoft	INPERR	0x0b86	
+applesoft/applesoft	RESPERR	0x0b87	AS_RESPERR
+applesoft/applesoft	L_RESPERR_1	0x0b90	AS_RESPERR
+applesoft/applesoft	GET	0x0ba0	
+applesoft/applesoft	INPUT	0x0bb2	AS_INPUT
+applesoft/applesoft	L_INPUT_1	0x0bc4	AS_INPUT
+applesoft/applesoft	L_INPUT_2	0x0bc7	AS_INPUT
+applesoft/applesoft	NXIN	0x0bdc	
+applesoft/applesoft	READ	0x0be2	
+applesoft/applesoft	INPUT_FLAG_ZERO	0x0be9	
+applesoft/applesoft	PROCESS_INPUT_LIST	0x0beb	
+applesoft/applesoft	PROCESS_INPUT_ITEM	0x0bf1	
+applesoft/applesoft	L_PROCESS_INPUT_ITEM_1	0x0c1f	
+applesoft/applesoft	L_PROCESS_INPUT_ITEM_2	0x0c27	
+applesoft/applesoft	INSTART	0x0c2b	
+applesoft/applesoft	L_INSTART_1	0x0c3f	
+applesoft/applesoft	L_INSTART_2	0x0c4b	
+applesoft/applesoft	L_INSTART_3	0x0c4c	
+applesoft/applesoft	L_INSTART_4	0x0c57	
+applesoft/applesoft	L_INSTART_5	0x0c63	
+applesoft/applesoft	INPUTDWTA	0x0c69	
+applesoft/applesoft	INPUT_MORE	0x0c72	
+applesoft/applesoft	L_INPUT_MORE_1	0x0c7e	
+applesoft/applesoft	INPFIN	0x0c99	
+applesoft/applesoft	FINDATA	0x0ca0	
+applesoft/applesoft	L_FINDATA_1	0x0cb9	
+applesoft/applesoft	INPDONE	0x0cc6	
+applesoft/applesoft	L_INPDONE_1	0x0cd1	
+applesoft/applesoft	L_INPDONE_2	0x0cde	
+applesoft/applesoft	ERR_EXTRA	0x0cdf	
+applesoft/applesoft	ERR_REENTRY	0x0cef	
+applesoft/applesoft	NEXT	0x0cf9	AS_TRACE_
+applesoft/applesoft	NEXT_1	0x0cff	AS_TRACE_
+applesoft/applesoft	NEXT_2	0x0d02	AS_TRACE_
+applesoft/applesoft	GERR	0x0d0d	AS_TRACE_
+applesoft/applesoft	NEXT_3	0x0d0f	AS_TRACE_
+applesoft/applesoft	L_NEXT_3_1	0x0d52	AS_TRACE_
+applesoft/applesoft	L_NEXT_3_2	0x0d55	AS_TRACE_
+applesoft/applesoft	FRMNUM	0x0d67	AS_FRMNUM
+applesoft/applesoft	CHKNUM	0x0d6a	AS_CHKNUM, AS_FRMNUM
+applesoft/applesoft	CHKSTR	0x0d6c	AS_CHKSTR, AS_FRMNUM
+applesoft/applesoft	CHKVAL	0x0d6d	AS_CHKVAL, AS_FRMNUM
+applesoft/applesoft	L_CHKVAL_1	0x0d73	AS_CHKVAL, AS_FRMNUM
+applesoft/applesoft	L_CHKVAL_2	0x0d74	AS_CHKVAL, AS_FRMNUM
+applesoft/applesoft	L_CHKVAL_3	0x0d76	AS_CHKVAL, AS_FRMNUM
+applesoft/applesoft	JERROR	0x0d78	AS_CHKVAL, AS_FRMNUM
+applesoft/applesoft	FRMEVL	0x0d7b	AS_FRMEVL
+applesoft/applesoft	L_FRMEVL_1	0x0d81	AS_FRMEVL
+applesoft/applesoft	FRMEVL_1	0x0d86	AS_FRMEVL
+applesoft/applesoft	FRMEVL_2	0x0d95	AS_FRMEVL, AS_FRMEVL_2
+applesoft/applesoft	L_FRMEVL_2_1	0x0d98	AS_FRMEVL, AS_FRMEVL_2
+applesoft/applesoft	L_FRMEVL_2_2	0x0db4	AS_FRMEVL, AS_FRMEVL_2
+applesoft/applesoft	L_FRMEVL_2_3	0x0dc5	AS_FRMEVL, AS_FRMEVL_2
+applesoft/applesoft	FRM_PRECEDENCE_TEST	0x0dcd	AS_FRMEVL, AS_FRMEVL_2
+applesoft/applesoft	NXOP	0x0dd6	AS_FRMEVL, AS_FRMEVL_2
+applesoft/applesoft	SAVOP	0x0dd7	AS_FRMEVL, AS_FRMEVL_2
+applesoft/applesoft	FRM_RELATIONAL	0x0de4	AS_FRMEVL
+applesoft/applesoft	L_FRM_RELATIONAL_1	0x0dee	AS_FRMEVL
+applesoft/applesoft	PREFNC	0x0df6	AS_FRMEVL
+applesoft/applesoft	FRM_RECURSE	0x0dfd	AS_FRMEVL
+applesoft/applesoft	SNTXERR	0x0e0d	AS_FRMEVL
+applesoft/applesoft	FRM_STACK_1	0x0e10	
+applesoft/applesoft	FRM_STACK_2	0x0e15	AS_FRM_STACK_2
+applesoft/applesoft	FRM_STACK_3	0x0e20	AS_FRM_STACK_3
+applesoft/applesoft	NOTMATH	0x0e35	
+applesoft/applesoft	GOEX	0x0e38	
+applesoft/applesoft	FRM_PERFORM_1	0x0e3a	
+applesoft/applesoft	L_FRM_PERFORM_1_1	0x0e41	
+applesoft/applesoft	FRM_PERFORM_2	0x0e43	
+applesoft/applesoft	EXIT	0x0e5d	
+applesoft/applesoft	FRM_ELEMENT	0x0e60	
+applesoft/applesoft	L_FRM_ELEMENT_1	0x0e64	
+applesoft/applesoft	L_FRM_ELEMENT_2	0x0e69	
+applesoft/applesoft	L_FRM_ELEMENT_3	0x0e6c	
+applesoft/applesoft	STRTXT	0x0e81	
+applesoft/applesoft	L_STRTXT_1	0x0e8a	
+applesoft/applesoft	NOT_	0x0e90	AS_NOT_
+applesoft/applesoft	EQUOP	0x0e98	AS_MATHTBL, AS_NOT_
+applesoft/applesoft	L_EQUOP_1	0x0e9f	AS_MATHTBL, AS_NOT_
+applesoft/applesoft	FN_	0x0ea4	
+applesoft/applesoft	SGN_	0x0eab	
+applesoft/applesoft	PARCHK	0x0eb2	AS_PARCHK
+applesoft/applesoft	CHKCLS	0x0eb8	
+applesoft/applesoft	CHKOPN	0x0ebb	
+applesoft/applesoft	CHKCOM	0x0ebe	AS_CHKCOM
+applesoft/applesoft	SYNCHR	0x0ec0	
+applesoft/applesoft	SYNERR	0x0ec9	
+applesoft/applesoft	MIN	0x0ece	
+applesoft/applesoft	EQUL	0x0ed0	
+applesoft/applesoft	FRM_VARIABLE	0x0ed5	AS_FRM_VARIABLE
+applesoft/applesoft	L_FRM_VARIABLE_CALL_1	0x0ee5	AS_FRM_VARIABLE
+applesoft/applesoft	L_FRM_VARIABLE_CALL_2	0x0ef6	AS_FRM_VARIABLE
+applesoft/applesoft	SCREEN	0x0ef9	AS_SCREEN
+applesoft/applesoft	UNARY	0x0f0c	AS_UNARY
+applesoft/applesoft	L_UNARY_1	0x0f3a	AS_UNARY
+applesoft/applesoft	L_UNARY_2	0x0f3f	AS_UNARY
+applesoft/applesoft	OR	0x0f4f	AS_ANDOP, AS_OR_op
+applesoft/applesoft	ANDOP	0x0f55	AS_ANDOP
+applesoft/applesoft	FALSE	0x0f5d	AS_FALSE
+applesoft/applesoft	TRUE	0x0f60	AS_TRUE
+applesoft/applesoft	RELOPS	0x0f65	AS_RELOPS
+applesoft/applesoft	STRCMP	0x0f7d	AS_STRCMP
+applesoft/applesoft	L_STRCMP_1	0x0fa5	AS_STRCMP
+applesoft/applesoft	STRCMP_1	0x0faa	AS_STRCMP, CompareArgAndFacStrings
+applesoft/applesoft	NUMCMP	0x0fb0	AS_NUMCMP, CompareArgAndFacStrings
+applesoft/applesoft	STRCMP_2	0x0fb5	AS_NUMCMP, CompareArgAndFacStrings
+applesoft/applesoft	CMPDONE	0x0fc1	AS_AYINT, CompareArgAndFacStrings
+applesoft/applesoft	L_CMPDONE_1	0x0fca	AS_AYINT, CompareArgAndFacStrings
+applesoft/applesoft	PDL	0x0fcd	AS_PDL
+applesoft/applesoft	NXDIM	0x0fd6	AS_NXDIM
+applesoft/applesoft	DIM	0x0fd9	AS_DIM
+applesoft/applesoft	PTRGET	0x0fe3	AS_PTRGET
+applesoft/applesoft	PTRGET2	0x0fe8	AS_PTRGET2
+applesoft/applesoft	PTRGET3	0x0fea	AS_PTRGET3
+applesoft/applesoft	BADNAM	0x0ff4	AS_BADNAM
+applesoft/applesoft	NAMOK	0x0ff7	AS_NAMOK
+applesoft/applesoft	BASIC	0x1000	AS_BASIC
+applesoft/applesoft	BASIC2	0x1003	AS_BASIC2
+applesoft/applesoft	PTRGET4	0x1007	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_1	0x1011	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_2	0x1012	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_3	0x101c	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_4	0x1026	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_5	0x1036	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_6	0x103d	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_7	0x1046	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_8	0x1049	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_9	0x104f	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_10	0x1059	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_11	0x105b	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_12	0x1065	AS_PTRGET4
+applesoft/applesoft	L_PTRGET4_13	0x1073	AS_PTRGET4
+applesoft/applesoft	ISLETC	0x107d	AS_MKINT
+applesoft/applesoft	L_ISLETC_1	0x1086	AS_MKINT
+applesoft/applesoft	NAME_NOT_FOUND	0x1087	AS_NAME_NOT_FOUND
+applesoft/applesoft	C_ZERO	0x109a	AS_USE_OLD_ARRAY
+applesoft/applesoft	MAKE_NEW_VARIABLE	0x109c	AS_MAKE_NEW_VARIABLE
+applesoft/applesoft	L_MAKE_NEW_VARIABLE_1	0x10b2	AS_MAKE_NEW_VARIABLE
+applesoft/applesoft	SET_VARPNT_AND_YA	0x10de	AS_MAKE_NEW_VARIABLE, AS_SET_VARPNT_AND_YA
+applesoft/applesoft	L_SET_VARPNT_AND_YA_1	0x10e8	AS_MAKE_NEW_VARIABLE, AS_SET_VARPNT_AND_YA
+applesoft/applesoft	GETARY	0x10ed	AS_GETARY
+applesoft/applesoft	GETARY2	0x10ef	AS_GETARY2
+applesoft/applesoft	L_GETARY2_1	0x10f9	AS_GETARY2
+applesoft/applesoft	NEG32768	0x10fe	AS_NEG32768
+applesoft/applesoft	MAKINT	0x1102	AS_MAKINT
+applesoft/applesoft	MKINT	0x1108	AS_MKINT
+applesoft/applesoft	AYINT	0x110c	AS_AYINT
+applesoft/applesoft	MI1	0x1119	AS_MI1
+applesoft/applesoft	MI2	0x111b	AS_MI2
+applesoft/applesoft	ARRAY	0x111e	AS_ARRAY
+applesoft/applesoft	L_ARRAY_1	0x112c	AS_ARRAY
+applesoft/applesoft	L_ARRAY_2	0x1169	AS_ARRAY
+applesoft/applesoft	L_ARRAY_3	0x116d	AS_ARRAY
+applesoft/applesoft	L_ARRAY_4	0x1179	AS_ARRAY
+applesoft/applesoft	L_ARRAY_5	0x1188	AS_ARRAY
+applesoft/applesoft	SUBERR	0x1196	AS_ARRAY, AS_SUBERR
+applesoft/applesoft	IQERR	0x1199	AS_ARRAY
+applesoft/applesoft	JER	0x119b	AS_ARRAY
+applesoft/applesoft	USE_OLD_ARRAY	0x119e	AS_ARRAY, AS_USE_OLD_ARRAY
+applesoft/applesoft	L_USE_OLD_ARRAY_1	0x11aa	AS_ARRAY, AS_USE_OLD_ARRAY
+applesoft/applesoft	MAKE_NEW_ARRAY	0x11b8	
+applesoft/applesoft	L_MAKE_NEW_ARRAY_1	0x11c1	
+applesoft/applesoft	L_MAKE_NEW_ARRAY_2	0x11d5	
+applesoft/applesoft	L_MAKE_NEW_ARRAY_3	0x11de	
+applesoft/applesoft	L_MAKE_NEW_ARRAY_4	0x11e7	
+applesoft/applesoft	L_MAKE_NEW_ARRAY_5	0x11f7	
+applesoft/applesoft	L_MAKE_NEW_ARRAY_6	0x121a	
+applesoft/applesoft	L_MAKE_NEW_ARRAY_7	0x1229	
+applesoft/applesoft	L_MAKE_NEW_ARRAY_8	0x122e	
+applesoft/applesoft	FIND_ARRAY_ELEMENT	0x124b	AS_FIND_ARRAY_ELEMENT
+applesoft/applesoft	FAE_1	0x1253	AS_FAE_1
+applesoft/applesoft	GSE	0x1269	AS_FAE_1, AS_GSE
+applesoft/applesoft	GME	0x126c	AS_FAE_1, AS_GME
+applesoft/applesoft	FAE_2	0x126f	AS_FAE_1, AS_GME
+applesoft/applesoft	FAE_3	0x1270	AS_FAE_1, AS_GME
+applesoft/applesoft	L_FAE_3_1	0x1281	AS_FAE_1, AS_GME
+applesoft/applesoft	L_FAE_3_2	0x1292	AS_FAE_1, AS_GME
+applesoft/applesoft	L_FAE_3_3	0x1298	AS_FAE_1, AS_GME
+applesoft/applesoft	RTS_9	0x12ac	AS_FAE_1, AS_GME
+applesoft/applesoft	MULTIPLY_SUBSCRIPT	0x12ad	AS_MULTIPLY_SUBSCRIPT
+applesoft/applesoft	MULTIPLY_SUBS_1	0x12b6	AS_MULTIPLY_SUBS_1
+applesoft/applesoft	L_MULTIPLY_SUBS_1_1	0x12c0	AS_MULTIPLY_SUBS_1
+applesoft/applesoft	L_MULTIPLY_SUBS_1_2	0x12d9	AS_MULTIPLY_SUBS_1
+applesoft/applesoft	FRE	0x12de	AS_FRE
+applesoft/applesoft	L_FRE_1	0x12e5	AS_FRE
+applesoft/applesoft	GIVAYF	0x12f2	AS_GIVAYF
+applesoft/applesoft	POS	0x12ff	AS_POS
+applesoft/applesoft	SNGFLT	0x1301	AS_OR
+applesoft/applesoft	ERRDIR	0x1306	AS_ERRDIR
+applesoft/applesoft	UNDFNC	0x130e	AS_ERRDIR, AS_PDL_fn, AS_UNDFNC
+applesoft/applesoft	DEF	0x1313	AS_DEF
+applesoft/applesoft	FNC_	0x1341	AS_FNC_
+applesoft/applesoft	FUNCT	0x1354	AS_FUNCT
+applesoft/applesoft	L_FUNCT_1	0x1378	AS_FUNCT
+applesoft/applesoft	L_FUNCT_2	0x13a9	AS_FUNCT
+applesoft/applesoft	FNCDATA	0x13af	AS_FNCDATA
+applesoft/applesoft	STR	0x13c5	
+applesoft/applesoft	STRINI	0x13d5	AS_CAT
+applesoft/applesoft	STRSPA	0x13dd	
+applesoft/applesoft	STRLIT	0x13e7	
+applesoft/applesoft	STRLT2	0x13ed	
+applesoft/applesoft	L_STRLT2_1	0x13f7	
+applesoft/applesoft	L_STRLT2_2	0x1404	
+applesoft/applesoft	L_STRLT2_3	0x1408	
+applesoft/applesoft	L_STRLT2_4	0x1409	
+applesoft/applesoft	L_STRLT2_5	0x1415	
+applesoft/applesoft	L_STRLT2_6	0x141f	
+applesoft/applesoft	PUTNEW	0x142a	
+applesoft/applesoft	JERR	0x1432	AS_JERR
+applesoft/applesoft	PUTEMP	0x1435	
+applesoft/applesoft	GETSPA	0x1452	
+applesoft/applesoft	L_GETSPA_1	0x1454	
+applesoft/applesoft	L_GETSPA_2	0x145f	
+applesoft/applesoft	L_GETSPA_3	0x1469	
+applesoft/applesoft	L_GETSPA_4	0x1474	
+applesoft/applesoft	GARBAG	0x1484	
+applesoft/applesoft	FIND_HIGHEST_STRING	0x1488	
+applesoft/applesoft	L_FIND_HIGHEST_STRING_1	0x14a0	
+applesoft/applesoft	L_FIND_HIGHEST_STRING_2	0x14a9	
+applesoft/applesoft	L_FIND_HIGHEST_STRING_3	0x14b5	
+applesoft/applesoft	L_FIND_HIGHEST_STRING_4	0x14bd	
+applesoft/applesoft	L_FIND_HIGHEST_STRING_5	0x14c2	
+applesoft/applesoft	L_FIND_HIGHEST_STRING_6	0x14ca	
+applesoft/applesoft	L_FIND_HIGHEST_STRING_7	0x14ce	
+applesoft/applesoft	L_FIND_HIGHEST_STRING_8	0x14d9	
+applesoft/applesoft	L_FIND_HIGHEST_STRING_9	0x150a	
+applesoft/applesoft	L_FIND_HIGHEST_STRING_10	0x150c	
+applesoft/applesoft	L_FIND_HIGHEST_STRING_11	0x1514	
+applesoft/applesoft	CHECK_SIMPLE_VARIABLE	0x1519	
+applesoft/applesoft	CHECK_VARIABLE	0x1523	
+applesoft/applesoft	L_CHECK_VARIABLE_1	0x1538	
+applesoft/applesoft	L_CHECK_VARIABLE_2	0x1542	
+applesoft/applesoft	CHECK_BUMP	0x1552	
+applesoft/applesoft	CHECK_EXIT	0x155d	
+applesoft/applesoft	MOVE_HIGHEST_STRING_TO_TOP	0x1562	
+applesoft/applesoft	CAT	0x1597	
+applesoft/applesoft	L_CAT_1	0x15b7	
+applesoft/applesoft	MOVINS	0x15d4	
+applesoft/applesoft	MOVSTR	0x15e2	
+applesoft/applesoft	MOVSTR_1	0x15e6	
+applesoft/applesoft	L_MOVSTR_1_1	0x15ea	
+applesoft/applesoft	L_MOVSTR_1_2	0x15f3	
+applesoft/applesoft	L_MOVSTR_1_3	0x15fc	
+applesoft/applesoft	FRESTR	0x15fd	
+applesoft/applesoft	FREFAC	0x1600	AS_FREFAC
+applesoft/applesoft	FRETMP	0x1604	
+applesoft/applesoft	L_FRETMP_1	0x162f	
+applesoft/applesoft	L_FRETMP_2	0x1630	
+applesoft/applesoft	FRETMS	0x1635	
+applesoft/applesoft	L_FRETMS_1	0x1645	
+applesoft/applesoft	CHRSTR	0x1646	
+applesoft/applesoft	LEFTSTR	0x165a	
+applesoft/applesoft	SUBSTRING_1	0x1660	
+applesoft/applesoft	L_SUBSTRING_1_1	0x1666	
+applesoft/applesoft	SUBSTRING_2	0x1667	
+applesoft/applesoft	SUBSTRING_3	0x1668	
+applesoft/applesoft	L_SUBSTRING_3_1	0x167f	
+applesoft/applesoft	RIGHTSTR	0x1686	
+applesoft/applesoft	MIDSTR	0x1691	
+applesoft/applesoft	L_MIDSTR_1	0x16a2	
+applesoft/applesoft	SUBSTRING_SETUP	0x16b9	AS_SUBSTRING_SETUP
+applesoft/applesoft	LEN	0x16d6	
+applesoft/applesoft	GETSTR	0x16dc	
+applesoft/applesoft	ASC	0x16e5	
+applesoft/applesoft	GOIQ	0x16f2	
+applesoft/applesoft	GTBYTC	0x16f5	AS_GTBYTC_PRINT
+applesoft/applesoft	GETBYT	0x16f8	
+applesoft/applesoft	CONINT	0x16fb	
+applesoft/applesoft	VAL	0x1707	AS_ASC_fn
+applesoft/applesoft	L_VAL_1	0x170f	
+applesoft/applesoft	L_VAL_2	0x1727	
+applesoft/applesoft	POINT	0x173d	
+applesoft/applesoft	GTNUM	0x1746	
+applesoft/applesoft	COMBYTE	0x174c	
+applesoft/applesoft	GETADR	0x1752	AS_GETADR
+applesoft/applesoft	PEEK	0x1764	
+applesoft/applesoft	POKE	0x177b	
+applesoft/applesoft	WAIT	0x1784	
+applesoft/applesoft	L_WAIT_1	0x1793	
+applesoft/applesoft	L_WAIT_2	0x1797	
+applesoft/applesoft	RTS_10	0x179f	AS_RTS_10
+applesoft/applesoft	FADDH	0x17a0	
+applesoft/applesoft	FSUB	0x17a7	
+applesoft/applesoft	FSUBT	0x17aa	
+applesoft/applesoft	FADD_1	0x17b9	
+applesoft/applesoft	FADD	0x17be	
+applesoft/applesoft	FADDT	0x17c1	AS_FADDT
+applesoft/applesoft	L_FADDT_1	0x17c6	AS_FADDT
+applesoft/applesoft	FADD_2	0x17ce	
+applesoft/applesoft	L_FADD_2_1	0x17ea	
+applesoft/applesoft	L_FADD_2_2	0x17ee	
+applesoft/applesoft	FADD_3	0x17fa	
+applesoft/applesoft	L_FADD_3_1	0x1806	
+applesoft/applesoft	NORMALIZE_FAC_1	0x1829	
+applesoft/applesoft	NORMALIZE_FAC_2	0x182e	
+applesoft/applesoft	L_NORMALIZE_FAC_2_1	0x1832	
+applesoft/applesoft	ZERO_FAC	0x184e	
+applesoft/applesoft	STA_IN_FAC_SIGN_AND_EXP	0x1850	
+applesoft/applesoft	STA_IN_FAC_SIGN	0x1852	
+applesoft/applesoft	FADD_4	0x1855	
+applesoft/applesoft	NORMALIZE_FAC_3	0x1874	
+applesoft/applesoft	NORMALIZE_FAC_4	0x1880	AS_NORMALIZE_FAC_4
+applesoft/applesoft	NORMALIZE_FAC_5	0x188d	AS_NORMALIZE_FAC_5
+applesoft/applesoft	NORMALIZE_FAC_6	0x188f	
+applesoft/applesoft	RTS_11	0x189d	
+applesoft/applesoft	COMPLEMENT_FAC	0x189e	
+applesoft/applesoft	COMPLEMENT_FAC_MANTISSA	0x18a4	
+applesoft/applesoft	INCREMENT_FAC_MANTISSA	0x18c6	
+applesoft/applesoft	RTS_12	0x18d4	
+applesoft/applesoft	OVERFLOW	0x18d5	
+applesoft/applesoft	SHIFT_RIGHT_1	0x18da	
+applesoft/applesoft	SHIFT_RIGHT_2	0x18dc	
+applesoft/applesoft	SHIFT_RIGHT	0x18f0	
+applesoft/applesoft	L	0x18fd	
+applesoft/applesoft	SHIFT_RIGHT_3	0x18fd	
+applesoft/applesoft	L_L_1	0x1903	
+applesoft/applesoft	SHIFT_RIGHT_4	0x1907	
+applesoft/applesoft	SHIFT_RIGHT_5	0x1911	
+applesoft/applesoft	CON_ONE	0x1913	
+applesoft/applesoft	POLY_LOG	0x1918	
+applesoft/applesoft	CON_SQR_HALF	0x192d	
+applesoft/applesoft	CON_SQR_TWO	0x1932	
+applesoft/applesoft	CON_NEG_HALF	0x1937	
+applesoft/applesoft	CON_LOG_TWO	0x193c	
+applesoft/applesoft	LOG	0x1941	AS_LOG
+applesoft/applesoft	GIQ	0x1948	AS_LOG
+applesoft/applesoft	LOG_2	0x194b	AS_LOG
+applesoft/applesoft	FMULT	0x197f	AS_LOG
+applesoft/applesoft	FMULTT	0x1982	AS_LOG
+applesoft/applesoft	L_FMULTT_1	0x1987	AS_LOG
+applesoft/applesoft	MULTIPLY_1	0x19b0	AS_LOG
+applesoft/applesoft	MULTIPLY_2	0x19b5	AS_LOG
+applesoft/applesoft	L_MULTIPLY_2_1	0x19b8	AS_LOG
+applesoft/applesoft	L_MULTIPLY_2_2	0x19d4	AS_LOG
+applesoft/applesoft	RTS_13	0x19e2	AS_LOG
+applesoft/applesoft	LOAD_ARG_FROM_YA	0x19e3	AS_LOG
+applesoft/applesoft	ADD_EXPONENTS	0x1a0e	AS_LOG
+applesoft/applesoft	ADD_EXPONENTS_1	0x1a10	AS_LOG
+applesoft/applesoft	L_ADD_EXPONENTS_1_1	0x1a1b	AS_LOG
+applesoft/applesoft	L_ADD_EXPONENTS_1_2	0x1a26	AS_LOG
+applesoft/applesoft	L_ADD_EXPONENTS_1_3	0x1a28	AS_LOG
+applesoft/applesoft	OUTOFRNG	0x1a2b	AS_LOG
+applesoft/applesoft	ZERO	0x1a31	AS_LOG
+applesoft/applesoft	JOV	0x1a36	AS_LOG
+applesoft/applesoft	MUL10	0x1a39	AS_LOG
+applesoft/applesoft	L_MUL10_1	0x1a4f	AS_LOG
+applesoft/applesoft	CON_TEN	0x1a50	AS_LOG
+applesoft/applesoft	DIV10	0x1a55	AS_LOG
+applesoft/applesoft	DIV	0x1a5e	AS_LOG
+applesoft/applesoft	FDIV	0x1a66	AS_LOG
+applesoft/applesoft	FDIVT	0x1a69	AS_LOG
+applesoft/applesoft	L_FDIVT_1	0x1a80	AS_LOG
+applesoft/applesoft	L_FDIVT_2	0x1a96	AS_LOG
+applesoft/applesoft	L_FDIVT_3	0x1aa3	AS_LOG
+applesoft/applesoft	L_FDIVT_4	0x1aa6	AS_LOG
+applesoft/applesoft	L_FDIVT_5	0x1ab4	AS_LOG
+applesoft/applesoft	L_FDIVT_6	0x1ad1	AS_LOG
+applesoft/applesoft	L_FDIVT_7	0x1ad5	AS_LOG
+applesoft/applesoft	L_FDIVT_8	0x1ae1	AS_LOG
+applesoft/applesoft	COPY_RESULT_INTO_FAC	0x1ae6	AS_LOG
+applesoft/applesoft	LOAD_FAC_FROM_YA	0x1af9	AS_LOG, AS_SIGN2
+applesoft/applesoft	STORE_FAC_IN_TEMP2_ROUNDED	0x1b1e	AS_LOG
+applesoft/applesoft	STORE_FAC_IN_TEMP1_ROUNDED	0x1b21	AS_LOG
+applesoft/applesoft	SETFOR	0x1b27	AS_LOG, ReturnWasFromAS_POPContext
+applesoft/applesoft	STORE_FACDB_YX_ROUNDED	0x1b2b	AS_LINGET, AS_LOG, ReturnWasFromAS_POPContext
+applesoft/applesoft	COPY_ARG_TO_FAC	0x1b53	AS_LOG
+applesoft/applesoft	MFA	0x1b55	AS_LOG
+applesoft/applesoft	L_MFA_1	0x1b59	AS_LOG
+applesoft/applesoft	COPY_FAC_TO_ARG_ROUNDED	0x1b63	AS_LOG
+applesoft/applesoft	MAF	0x1b66	AS_LOG
+applesoft/applesoft	L_MAF_1	0x1b68	AS_LOG
+applesoft/applesoft	RTS_14	0x1b71	AS_LOG
+applesoft/applesoft	ROUND_FAC	0x1b72	AS_LOG
+applesoft/applesoft	INCREMENT_MANTISSA	0x1b7a	AS_LOG
+applesoft/applesoft	SIGN	0x1b82	AS_LOG, AS_SIGN
+applesoft/applesoft	SIGN1	0x1b86	AS_LOG, AS_SIGN
+applesoft/applesoft	SIGN2	0x1b88	AS_LOG, AS_SIGN2
+applesoft/applesoft	RTS_15	0x1b8f	AS_LOG, AS_SIGN2
+applesoft/applesoft	SGN	0x1b90	AS_LOG, AS_SGN
+applesoft/applesoft	FLOAT	0x1b93	AS_LOG, AS_SGN
+applesoft/applesoft	FLOAT_1	0x1b9b	AS_LOG, AS_SGN
+applesoft/applesoft	FLOAT_2	0x1ba0	AS_LOG, AS_SGN
+applesoft/applesoft	ABS	0x1baf	AS_ABS, AS_LOG
+applesoft/applesoft	FCOMP	0x1bb2	AS_FCOMP, AS_LOG
+applesoft/applesoft	FCOMP2	0x1bb4	AS_FCOMP2, AS_LOG
+applesoft/applesoft	L_FCOMP2_1	0x1be9	AS_LOG, AS_L_FCOMP2_1
+applesoft/applesoft	L_FCOMP2_2	0x1bef	AS_LOG, AS_L_FCOMP2_2
+applesoft/applesoft	QINT	0x1bf2	AS_LOG, AS_QINT
+applesoft/applesoft	L_QINT_1	0x1c06	AS_LOG, AS_QINT
+applesoft/applesoft	RTS_16	0x1c11	AS_LOG, AS_QINT
+applesoft/applesoft	QINT_2	0x1c12	AS_LOG, AS_QINT
+applesoft/applesoft	INT	0x1c23	AS_INT_fn, AS_LOG
+applesoft/applesoft	QINT_3	0x1c40	AS_LOG
+applesoft/applesoft	RTS_17	0x1c49	AS_LOG
+applesoft/applesoft	FIN	0x1c4a	AS_LOG
+applesoft/applesoft	L_FIN_1	0x1c4e	AS_LOG
+applesoft/applesoft	L_FIN_2	0x1c5d	AS_LOG
+applesoft/applesoft	FIN_1	0x1c61	AS_LOG
+applesoft/applesoft	FIN_2	0x1c64	AS_LOG
+applesoft/applesoft	FIN_3	0x1c66	AS_LOG
+applesoft/applesoft	L_FIN_3_1	0x1c85	AS_LOG
+applesoft/applesoft	FIN_4	0x1c87	AS_LOG
+applesoft/applesoft	FIN_5	0x1c8a	AS_LOG
+applesoft/applesoft	FIN_6	0x1c8c	AS_LOG
+applesoft/applesoft	FIN_10	0x1c98	AS_LOG
+applesoft/applesoft	FIN_7	0x1c9e	AS_LOG
+applesoft/applesoft	FIN_8	0x1ca0	AS_LOG
+applesoft/applesoft	L_FIN_8_13	0x1ca9	AS_LOG
+applesoft/applesoft	L_FIN_8_14	0x1cb2	AS_LOG
+applesoft/applesoft	L_FIN_8_15	0x1cb9	AS_LOG
+applesoft/applesoft	L_FIN_8_16	0x1cbe	AS_LOG
+applesoft/applesoft	FIN_9	0x1cc1	AS_LOG
+applesoft/applesoft	L_FIN_9_1	0x1cc8	AS_LOG
+applesoft/applesoft	ADDACC	0x1cd5	AS_LOG
+applesoft/applesoft	GETEXP	0x1ce8	AS_LOG
+applesoft/applesoft	L_GETEXP_1	0x1cf7	AS_LOG
+applesoft/applesoft	L_GETEXP_2	0x1d05	AS_LOG
+applesoft/applesoft	CON_99999999P9	0x1d0a	AS_LOG
+applesoft/applesoft	CON_999999999	0x1d0f	AS_LOG
+applesoft/applesoft	CON_BILLION	0x1d14	AS_LOG
+applesoft/applesoft	INPRT	0x1d19	AS_LOG, AS_STROUT
+applesoft/applesoft	LINPRT	0x1d24	AS_LOG, AS_STROUT
+applesoft/applesoft	PRINT_FAC	0x1d2e	AS_LOG, AS_STROUT
+applesoft/applesoft	GO_STROUT	0x1d31	AS_LOG
+applesoft/applesoft	FOUT	0x1d34	AS_LOG
+applesoft/applesoft	FOUT_1	0x1d36	AS_LOG
+applesoft/applesoft	L_FOUT_1_1	0x1d41	AS_LOG
+applesoft/applesoft	L_FOUT_1_2	0x1d4f	AS_LOG
+applesoft/applesoft	L_FOUT_1_3	0x1d57	AS_LOG
+applesoft/applesoft	L_FOUT_1_4	0x1d60	AS_LOG
+applesoft/applesoft	L_FOUT_1_5	0x1d62	AS_LOG
+applesoft/applesoft	L_FOUT_1_6	0x1d6d	AS_LOG
+applesoft/applesoft	L_FOUT_1_7	0x1d78	AS_LOG
+applesoft/applesoft	L_FOUT_1_8	0x1d7f	AS_LOG
+applesoft/applesoft	L_FOUT_1_9	0x1d86	AS_LOG
+applesoft/applesoft	L_FOUT_1_10	0x1d89	AS_LOG
+applesoft/applesoft	FOUT_2	0x1d8c	AS_LOG
+applesoft/applesoft	L_FOUT_2_1	0x1d9e	AS_LOG
+applesoft/applesoft	L_FOUT_2_2	0x1d9f	AS_LOG
+applesoft/applesoft	L_FOUT_2_3	0x1daa	AS_LOG
+applesoft/applesoft	L_FOUT_2_4	0x1dbb	AS_LOG
+applesoft/applesoft	L_FOUT_2_5	0x1dbd	AS_LOG
+applesoft/applesoft	L_FOUT_2_6	0x1dc1	AS_LOG
+applesoft/applesoft	L_FOUT_2_7	0x1de5	AS_LOG
+applesoft/applesoft	L_FOUT_2_8	0x1de7	AS_LOG
+applesoft/applesoft	L_FOUT_2_9	0x1dee	AS_LOG
+applesoft/applesoft	L_FOUT_2_10	0x1e09	AS_LOG
+applesoft/applesoft	FOUT_3	0x1e17	AS_LOG
+applesoft/applesoft	L_FOUT_3_1	0x1e19	AS_LOG
+applesoft/applesoft	L_FOUT_3_2	0x1e26	AS_LOG
+applesoft/applesoft	L_FOUT_3_3	0x1e36	AS_LOG
+applesoft/applesoft	L_FOUT_3_4	0x1e42	AS_LOG
+applesoft/applesoft	FOUT_4	0x1e57	AS_LOG
+applesoft/applesoft	FOUT_5	0x1e5a	AS_LOG
+applesoft/applesoft	FOUT_6	0x1e5f	AS_LOG
+applesoft/applesoft	CON_HALF	0x1e64	AS_LOG
+applesoft/applesoft	DECTBL	0x1e69	AS_LOG
+applesoft/applesoft	DECTBL_END	0x1e8d	AS_LOG, AS_SQR
+applesoft/applesoft	SQR	0x1e8d	AS_LOG, AS_SQR
+applesoft/applesoft	FPWRT	0x1e97	AS_LOG, AS_SQR
+applesoft/applesoft	L_FPWRT_1	0x1ea0	AS_LOG, AS_SQR
+applesoft/applesoft	L_FPWRT_2	0x1eba	AS_LOG, AS_SQR
+applesoft/applesoft	NEGOP	0x1ed0	AS_LOG, AS_NEGOP, AS_SQR
+applesoft/applesoft	RTS_18	0x1eda	AS_LOG, AS_NEGOP, AS_SQR
+applesoft/applesoft	CON_LOG_E	0x1edb	AS_LOG, AS_SQR
+applesoft/applesoft	POLY_EXP	0x1ee0	AS_LOG, AS_SQR
+applesoft/applesoft	EXP	0x1f09	AS_EXP, AS_SQR
+applesoft/applesoft	L_EXP_1	0x1f19	AS_EXP, AS_SQR
+applesoft/applesoft	L_EXP_2	0x1f24	AS_EXP, AS_SQR
+applesoft/applesoft	L_EXP_3	0x1f27	AS_EXP, AS_SQR
+applesoft/applesoft	L_EXP_4	0x1f37	AS_EXP, AS_SQR
+applesoft/applesoft	POLYNOMIAL_ODD	0x1f5c	AS_EXP, AS_SQR
+applesoft/applesoft	POLYNOMIAL	0x1f72	AS_EXP, AS_SQR
+applesoft/applesoft	SERMAIN	0x1f76	AS_EXP, AS_SQR
+applesoft/applesoft	L_SERMAIN_1	0x1f85	AS_EXP, AS_SQR
+applesoft/applesoft	L_SERMAIN_2	0x1f89	AS_EXP, AS_SQR
+applesoft/applesoft	L_SERMAIN_3	0x1f96	AS_EXP, AS_SQR
+applesoft/applesoft	RTS_19	0x1fa5	AS_EXP, AS_SQR
+applesoft/applesoft	CON_RND_1	0x1fa6	AS_EXP, AS_SQR
+applesoft/applesoft	CON_RND_2	0x1faa	AS_EXP, AS_SQR
+applesoft/applesoft	RND	0x1fae	AS_EXP
+applesoft/applesoft	L_RND_1	0x1fcc	AS_EXP
+applesoft/applesoft	GO_MOVMF	0x1fe7	AS_EXP
+applesoft/applesoft	COS	0x1fea	AS_COS
+applesoft/applesoft	SIN	0x1ff1	AS_SIN
+applesoft/applesoft	SIN_1	0x2023	AS_SIN
+applesoft/applesoft	SIN_2	0x2026	AS_SIN
+applesoft/applesoft	L_SIN_2_1	0x2033	AS_SIN
+applesoft/applesoft	TAN	0x203a	AS_TAN
+applesoft/applesoft	TAN_1	0x2062	AS_TAN
+applesoft/applesoft	CON_PI_HALF	0x2066	AS_TAN
+applesoft/applesoft	CON_PI_DOUB	0x206b	AS_TAN
+applesoft/applesoft	QUARTER	0x2070	AS_TAN
+applesoft/applesoft	POLY_SIN	0x2075	AS_TAN
+applesoft/applesoft	ATN	0x209e	
+applesoft/applesoft	L_ATN_1	0x20a6	
+applesoft/applesoft	L_ATN_2	0x20b4	
+applesoft/applesoft	L_ATN_3	0x20c7	
+applesoft/applesoft	RTS_20	0x20cd	
+applesoft/applesoft	POLY_ATN	0x20ce	
+applesoft/applesoft	GENERIC_CHRGET	0x210b	
+applesoft/applesoft	L_GENERIC_CHRGET_1	0x2111	
+applesoft/applesoft	L_GENERIC_CHRGET_2	0x2122	
+applesoft/applesoft	COLD_START	0x2128	AS_ERRDIR
+applesoft/applesoft	GENERIC_END	0x2128	AS_ERRDIR
+applesoft/applesoft	L_COLD_START_1	0x2152	AS_ERRDIR
+applesoft/applesoft	L_COLD_START_2	0x2181	AS_ERRDIR
+applesoft/applesoft	L_COLD_START_3	0x2195	AS_ERRDIR
+applesoft/applesoft	L_COLD_START_4	0x21b8	AS_ERRDIR
+applesoft/applesoft	CALL	0x21d5	AS_CALL
+applesoft/applesoft	IN_NUMBER	0x21de	AS_IN_NUMBER
+applesoft/applesoft	PR_NUMBER	0x21e5	AS_PR_NUMBER
+applesoft/applesoft	PLOTFNS	0x21ec	AS_PLOTFNS
+applesoft/applesoft	GOERR	0x2206	
+applesoft/applesoft	LINCOOR	0x2209	AS_LINCOOR
+applesoft/applesoft	L_LINCOOR_1	0x2218	AS_LINCOOR
+applesoft/applesoft	PLOT	0x2225	AS_PLOT
+applesoft/applesoft	HLIN	0x2232	AS_HLIN
+applesoft/applesoft	VLIN	0x2241	AS_VLIN
+applesoft/applesoft	COLOR	0x224f	AS_COLOR
+applesoft/applesoft	VTAB	0x2256	AS_VTAB
+applesoft/applesoft	SPEED	0x2262	AS_SPEED
+applesoft/applesoft	TRACE	0x226d	AS_NORMAL_Handler
+applesoft/applesoft	NOTRACE	0x226f	AS_NORMAL_Handler
+applesoft/applesoft	NORMAL	0x2273	AS_NORMAL
+applesoft/applesoft	INVERSE	0x2277	AS_INVERSE
+applesoft/applesoft	N_I_	0x2279	AS_INVERSE
+applesoft/applesoft	N_I_F_	0x227b	AS_INVERSE
+applesoft/applesoft	FLASH	0x2280	
+applesoft/applesoft	HIMEM	0x2286	AS_HIMEM
+applesoft/applesoft	JMM	0x2296	AS_HIMEM
+applesoft/applesoft	SETHI	0x2299	AS_HIMEM
+applesoft/applesoft	LOMEM	0x22a6	AS_LOMEM
+applesoft/applesoft	ONERR	0x22cb	AS_ONERR
+applesoft/applesoft	HANDLERR	0x22e9	AS_HANDLERR
+applesoft/applesoft	RESUME	0x2318	AS_RESUME
+applesoft/applesoft	JSYN	0x232e	
+applesoft/applesoft	DEL	0x2331	AS_LIST
+applesoft/applesoft	L_DEL_1	0x2357	AS_LIST
+applesoft/applesoft	L_DEL_2	0x2365	AS_LIST
+applesoft/applesoft	L_DEL_3	0x2367	AS_LIST
+applesoft/applesoft	L_DEL_4	0x2371	AS_LIST
+applesoft/applesoft	L_DEL_5	0x2377	AS_LIST
+applesoft/applesoft	L_DEL_6	0x2388	AS_LIST
+applesoft/applesoft	GR	0x2390	AS_GR
+applesoft/applesoft	TEXT	0x2399	AS_TEXT
+applesoft/applesoft	STORE	0x239f	
+applesoft/applesoft	L_STORE_1	0x23af	
+applesoft/applesoft	RECALL	0x23bc	
+applesoft/applesoft	L_RECALL_1	0x23d2	
+applesoft/applesoft	HGR2	0x23d8	AS_HGR2
+applesoft/applesoft	HGR	0x23e2	AS_HGR, AS_HGR2
+applesoft/applesoft	SETHPG	0x23ea	AS_HCOLOR
+applesoft/applesoft	HCLR	0x23f2	
+applesoft/applesoft	BKGND	0x23f6	
+applesoft/applesoft	L_BKGND_1	0x23fe	
+applesoft/applesoft	HPOSN	0x2411	AS_HPOSN
+applesoft/applesoft	L_HPOSN_1	0x2441	AS_HPOSN
+applesoft/applesoft	L_HPOSN_2	0x2442	AS_HPOSN
+applesoft/applesoft	HPLOT0	0x2457	AS_HPLOT0
+applesoft/applesoft	MOVE_LEFT_OR_RIGHT	0x2465	
+applesoft/applesoft	LR_1	0x246e	
+applesoft/applesoft	LR_2	0x2471	
+applesoft/applesoft	LR_3	0x2476	
+applesoft/applesoft	LR_4	0x2478	
+applesoft/applesoft	COLOR_SHIFT	0x247e	
+applesoft/applesoft	L_COLOR_SHIFT_1	0x2489	
+applesoft/applesoft	MOVE_RIGHT	0x248a	
+applesoft/applesoft	LRUDX1	0x249c	
+applesoft/applesoft	LRUDX2	0x249d	
+applesoft/applesoft	LRUD1	0x24b3	
+applesoft/applesoft	LRUD2	0x24b4	
+applesoft/applesoft	LRUD3	0x24c4	
+applesoft/applesoft	LRUD4	0x24c8	
+applesoft/applesoft	MOVE_UP_OR_DOWN	0x24d3	
+applesoft/applesoft	L_MOVE_UP_OR_DOWN_1	0x24eb	
+applesoft/applesoft	L_MOVE_UP_OR_DOWN_2	0x24f6	
+applesoft/applesoft	L_MOVE_UP_OR_DOWN_3	0x24fb	
+applesoft/applesoft	L_MOVE_UP_OR_DOWN_4	0x24fd	
+applesoft/applesoft	L_MOVE_UP_OR_DOWN_5	0x24ff	
+applesoft/applesoft	UD_1	0x2501	
+applesoft/applesoft	MOVE_DOWN	0x2505	
+applesoft/applesoft	L_CON_04_1	0x2524	
+applesoft/applesoft	L_CON_04_2	0x252a	
+applesoft/applesoft	L_CON_04_3	0x252c	
+applesoft/applesoft	HLINRL	0x2530	
+applesoft/applesoft	HGLIN	0x253a	AS_HGLIN
+applesoft/applesoft	L_HGLIN_1	0x2550	AS_HGLIN
+applesoft/applesoft	L_HGLIN_2	0x2568	AS_HGLIN
+applesoft/applesoft	MOVEX	0x257c	AS_HGLIN
+applesoft/applesoft	MOVEX2	0x2581	AS_HGLIN
+applesoft/applesoft	L_MOVEX2_1	0x258b	AS_HGLIN
+applesoft/applesoft	L_MOVEX2_2	0x259e	AS_HGLIN
+applesoft/applesoft	MSKTBL	0x25b2	AS_HGLIN
+applesoft/applesoft	CON_1C	0x25b9	AS_HGLIN
+applesoft/applesoft	COSINE_TABLE	0x25ba	
+applesoft/applesoft	HFIND	0x25cb	
+applesoft/applesoft	L_HFIND_1	0x25f0	
+applesoft/applesoft	L_HFIND_2	0x25fe	
+applesoft/applesoft	RTS_22	0x2600	
+applesoft/applesoft	DRAW0	0x2601	
+applesoft/applesoft	DRAW1	0x2605	
+applesoft/applesoft	L_DRAW1_1	0x2626	
+applesoft/applesoft	L_DRAW1_2	0x2630	
+applesoft/applesoft	L_DRAW1_3	0x263d	
+applesoft/applesoft	L_DRAW1_4	0x2648	
+applesoft/applesoft	L_DRAW1_5	0x2658	
+applesoft/applesoft	XDRAW0	0x265d	
+applesoft/applesoft	XDRAW1	0x2661	
+applesoft/applesoft	L_XDRAW1_1	0x2682	
+applesoft/applesoft	L_XDRAW1_2	0x268c	
+applesoft/applesoft	L_XDRAW1_3	0x2699	
+applesoft/applesoft	L_XDRAW1_4	0x26a4	
+applesoft/applesoft	L_XDRAW1_5	0x26b4	
+applesoft/applesoft	HFNS	0x26b9	AS_HFNS
+applesoft/applesoft	L_HFNS_1	0x26cd	AS_HFNS
+applesoft/applesoft	GGERR	0x26e6	
+applesoft/applesoft	HCOLOR	0x26e9	AS_HCOLOR
+applesoft/applesoft	RTS_23	0x26f5	AS_HCOLOR
+applesoft/applesoft	COLORTBL	0x26f6	AS_HCOLOR
+applesoft/applesoft	HPLOT	0x26fe	
+applesoft/applesoft	L_HPLOT_1	0x2708	
+applesoft/applesoft	L_HPLOT_2	0x270f	
+applesoft/applesoft	ROT	0x2721	AS_ROT
+applesoft/applesoft	SCALE	0x2727	AS_HPOSN
+applesoft/applesoft	DRWPNT	0x272d	AS_LRUD1
+applesoft/applesoft	L_DRWPNT_1	0x2741	AS_LRUD1
+applesoft/applesoft	L_DRWPNT_2	0x2747	AS_LRUD1
+applesoft/applesoft	L_DRWPNT_3	0x2766	AS_LRUD1
+applesoft/applesoft	DRAW	0x2769	AS_DRAW
+applesoft/applesoft	XDRAW	0x276f	AS_XDRAW
+applesoft/applesoft	SHLOAD	0x2775	
+applesoft/applesoft	L_SHLOAD_1	0x2796	
+applesoft/applesoft	L_SHLOAD_2	0x27a0	
+applesoft/applesoft	L_SHLOAD_3	0x27a3	
+applesoft/applesoft	TAPEPNT	0x27bc	
+applesoft/applesoft	GETARYPT	0x27d9	
+applesoft/applesoft	HTAB	0x27e7	
+applesoft/applesoft	L_HTAB_1	0x27ec	
+applesoft/applesoft	L_HTAB_2	0x27fa	
+applesoft/applesoft	[end]	0xffff	
+monitor/apple2plus/cassette	HEADR	0x0000	
+monitor/apple2plus/cassette	[start]	0x0000	
+monitor/apple2plus/cassette	WRBIT	0x000d	
+monitor/apple2plus/cassette	ZERDLY	0x0012	
+monitor/apple2plus/cassette	ONEDLY	0x0019	
+monitor/apple2plus/cassette	WRTAPE	0x001c	
+monitor/apple2plus/cassette	RDBYTE	0x0023	
+monitor/apple2plus/cassette	RDBYT2	0x0025	
+monitor/apple2plus/cassette	RD2BIT	0x0031	
+monitor/apple2plus/cassette	RDBIT	0x0034	
+monitor/apple2plus/cassette	[end]	0xffff	
+monitor/apple2plus/cmd	CROUT	0x0000	CROUT, MON_PRBYTE
+monitor/apple2plus/cmd	[start]	0x0000	CROUT, MON_PRBYTE
+monitor/apple2plus/cmd	PRA1	0x0004	
+monitor/apple2plus/cmd	PRYX2	0x0008	
+monitor/apple2plus/cmd	XAM8	0x0015	
+monitor/apple2plus/cmd	MODSCHK	0x001f	
+monitor/apple2plus/cmd	XAM	0x0025	
+monitor/apple2plus/cmd	DATAOUT	0x0028	
+monitor/apple2plus/cmd	RTS4C	0x0037	
+monitor/apple2plus/cmd	XAMPM	0x0038	
+monitor/apple2plus/cmd	ADD	0x0043	
+monitor/apple2plus/cmd	PRBYTE	0x004c	MON_BELL
+monitor/apple2plus/cmd	PRHEX	0x0055	MON_BELL
+monitor/apple2plus/cmd	PRHEXZ	0x0057	MON_BELL
+monitor/apple2plus/cmd	COUT	0x005f	COUT
+monitor/apple2plus/cmd	COUT1	0x0062	
+monitor/apple2plus/cmd	COUTZ	0x0068	
+monitor/apple2plus/cmd	BL1	0x0072	
+monitor/apple2plus/cmd	BLANK	0x0076	
+monitor/apple2plus/cmd	STOR	0x007d	
+monitor/apple2plus/cmd	RTS5	0x0089	
+monitor/apple2plus/cmd	SETMODE	0x008a	
+monitor/apple2plus/cmd	SETMDZ	0x008f	
+monitor/apple2plus/cmd	LT	0x0092	
+monitor/apple2plus/cmd	LT2	0x0094	
+monitor/apple2plus/cmd	MOVE	0x009e	
+monitor/apple2plus/cmd	VFY	0x00a8	
+monitor/apple2plus/cmd	VFYOK	0x00ca	
+monitor/apple2plus/cmd	LIST1	0x00d0	
+monitor/apple2plus/cmd	LIST2	0x00d5	
+monitor/apple2plus/cmd	A1PC	0x00e7	
+monitor/apple2plus/cmd	A1PCLP	0x00ea	
+monitor/apple2plus/cmd	A1PCRTS	0x00f1	
+monitor/apple2plus/cmd	SETINV	0x00f2	
+monitor/apple2plus/cmd	SETNORM	0x00f6	MON_SETNORM
+monitor/apple2plus/cmd	SETIFLG	0x00f8	MON_SETNORM
+monitor/apple2plus/cmd	SETKBD	0x00fb	MON_SETKBD
+monitor/apple2plus/cmd	INPORT	0x00fd	MON_INPORT
+monitor/apple2plus/cmd	INPRT	0x00ff	MON_INPORT
+monitor/apple2plus/cmd	SETVID	0x0105	MON_SETVID
+monitor/apple2plus/cmd	OUTPORT	0x0107	MON_OUTPORT
+monitor/apple2plus/cmd	OUTPRT	0x0109	MON_OUTPORT
+monitor/apple2plus/cmd	IOPRT	0x010d	
+monitor/apple2plus/cmd	IOPRT1	0x0119	
+monitor/apple2plus/cmd	IOPRT2	0x011b	
+monitor/apple2plus/cmd	XBASIC	0x0122	
+monitor/apple2plus/cmd	BASCONT	0x0125	
+monitor/apple2plus/cmd	GO	0x0128	
+monitor/apple2plus/cmd	REGZ	0x0131	
+monitor/apple2plus/cmd	TRACE	0x0134	
+monitor/apple2plus/cmd	STEPZ	0x0137	
+monitor/apple2plus/cmd	USR	0x013c	
+monitor/apple2plus/cmd	WRITE	0x013f	MON_WRITE
+monitor/apple2plus/cmd	WR1	0x0146	MON_WRITE
+monitor/apple2plus/cmd	WRBYTE	0x015f	MON_WRITE
+monitor/apple2plus/cmd	WRBYT2	0x0161	MON_WRITE
+monitor/apple2plus/cmd	CRMON	0x0168	MON_WRITE
+monitor/apple2plus/cmd	READ	0x016f	MON_READ
+monitor/apple2plus/cmd	RD2	0x017c	MON_RD2
+monitor/apple2plus/cmd	RD3	0x0188	MON_RD3
+monitor/apple2plus/cmd	PRERR	0x019f	MON_PRERR
+monitor/apple2plus/cmd	BELL	0x01ac	MON_BELL_impl
+monitor/apple2plus/cmd	RESTORE	0x01b1	
+monitor/apple2plus/cmd	RESTR1	0x01b6	
+monitor/apple2plus/cmd	SAVE	0x01bc	
+monitor/apple2plus/cmd	SAV1	0x01be	
+monitor/apple2plus/cmd	RESET	0x01cb	
+monitor/apple2plus/cmd	MON	0x01d7	
+monitor/apple2plus/cmd	MONZ	0x01db	
+monitor/apple2plus/cmd	NXTITM	0x01e5	
+monitor/apple2plus/cmd	CHRSRCH	0x01ec	
+monitor/apple2plus/cmd	DIG	0x01fc	
+monitor/apple2plus/cmd	NXTBIT	0x0202	
+monitor/apple2plus/cmd	NXTBAS	0x020a	
+monitor/apple2plus/cmd	NXTBS2	0x0214	
+monitor/apple2plus/cmd	GETNUM	0x0219	
+monitor/apple2plus/cmd	NXTCHR	0x021f	
+monitor/apple2plus/cmd	TOSUB	0x0230	
+monitor/apple2plus/cmd	ZMODE	0x0239	
+monitor/apple2plus/cmd	CHRTBL	0x023e	
+monitor/apple2plus/cmd	SUBTBL	0x0255	
+monitor/apple2plus/cmd	[end]	0xffff	
+monitor/apple2plus/debug	IRQ	0x0000	MON_IRQ
+monitor/apple2plus/debug	[start]	0x0000	MON_IRQ
+monitor/apple2plus/debug	BREAK	0x000c	
+monitor/apple2plus/debug	RESET2	0x0022	MON_RESET2
+monitor/apple2plus/debug	LFA9B	0x005b	MON_RESET2
+monitor/apple2plus/debug	LFAA3	0x0063	MON_RESET2
+monitor/apple2plus/debug	LFAA6	0x0066	MON_RESET2
+monitor/apple2plus/debug	LFAAB	0x006b	MON_RESET2
+monitor/apple2plus/debug	LFABA	0x007a	MON_RESET2
+monitor/apple2plus/debug	LFAC7	0x0087	MON_RESET2
+monitor/apple2plus/debug	REGDSP	0x0097	MON_REGDSP
+monitor/apple2plus/debug	RGDSP1	0x009a	MON_REGDSP
+monitor/apple2plus/debug	RDSP1	0x00a4	MON_REGDSP
+monitor/apple2plus/debug	LFAFC	0x00bc	MON_REGDSP
+monitor/apple2plus/debug	LFB01	0x00c1	
+monitor/apple2plus/debug	LFB08	0x00c8	
+monitor/apple2plus/debug	RTBL	0x00d9	
+monitor/apple2plus/debug	[end]	0xffff	
+monitor/apple2plus/disasm	INSDS1	0x0000	
+monitor/apple2plus/disasm	[start]	0x0000	
+monitor/apple2plus/disasm	INSDS2	0x000c	
+monitor/apple2plus/disasm	IEVEN	0x0019	
+monitor/apple2plus/disasm	ERR	0x0023	
+monitor/apple2plus/disasm	GETFMT	0x0027	
+monitor/apple2plus/disasm	MNNDX1	0x003c	
+monitor/apple2plus/disasm	MNNDX2	0x0040	
+monitor/apple2plus/disasm	MNNDX3	0x0047	
+monitor/apple2plus/disasm	INSTDSP	0x004e	
+monitor/apple2plus/disasm	PRNTOP	0x0052	
+monitor/apple2plus/disasm	PRNTBL	0x0059	
+monitor/apple2plus/disasm	PRMN1	0x0073	
+monitor/apple2plus/disasm	PRMN2	0x0077	
+monitor/apple2plus/disasm	PRADR1	0x008e	
+monitor/apple2plus/disasm	PRADR2	0x0092	
+monitor/apple2plus/disasm	PRADR3	0x00a4	
+monitor/apple2plus/disasm	PRADR4	0x00a8	
+monitor/apple2plus/disasm	PRADR5	0x00ae	
+monitor/apple2plus/disasm	RELADR	0x00b6	
+monitor/apple2plus/disasm	PRNTYX	0x00be	
+monitor/apple2plus/disasm	PRNTAX	0x00bf	
+monitor/apple2plus/disasm	PRNTX	0x00c2	
+monitor/apple2plus/disasm	PRBLNK	0x00c6	
+monitor/apple2plus/disasm	PRBL2	0x00c8	
+monitor/apple2plus/disasm	PCADJ	0x00d1	
+monitor/apple2plus/disasm	PCADJ2	0x00d2	
+monitor/apple2plus/disasm	PCADJ3	0x00d4	
+monitor/apple2plus/disasm	PCADJ4	0x00da	
+monitor/apple2plus/disasm	RTS2	0x00df	
+monitor/apple2plus/disasm	FMT1	0x00e0	
+monitor/apple2plus/disasm	FMT2	0x0124	
+monitor/apple2plus/disasm	CHAR1	0x0132	
+monitor/apple2plus/disasm	CHAR2	0x0138	
+monitor/apple2plus/disasm	MNEML	0x013e	
+monitor/apple2plus/disasm	MNEMR	0x017e	
+monitor/apple2plus/disasm	[end]	0xffff	
+monitor/apple2plus/display1	INIT	0x0000	MON_INIT
+monitor/apple2plus/display1	[start]	0x0000	MON_INIT
+monitor/apple2plus/display1	SETTXT	0x000a	MON_SETTXT
+monitor/apple2plus/display1	SETGR	0x0011	MON_SETGR
+monitor/apple2plus/display1	SETWND	0x001c	
+monitor/apple2plus/display1	TABV	0x002c	
+monitor/apple2plus/display1	[end]	0xffff	
+monitor/apple2plus/display2	BASCALC	0x0000	
+monitor/apple2plus/display2	[start]	0x0000	
+monitor/apple2plus/display2	BSCLC2	0x000f	
+monitor/apple2plus/display2	BELL1	0x0018	
+monitor/apple2plus/display2	BELL2	0x0023	
+monitor/apple2plus/display2	RTS2B	0x002e	
+monitor/apple2plus/display2	STOADV	0x002f	
+monitor/apple2plus/display2	ADVANCE	0x0033	
+monitor/apple2plus/display2	RTS3	0x003b	
+monitor/apple2plus/display2	VIDOUT	0x003c	
+monitor/apple2plus/display2	BS	0x004f	
+monitor/apple2plus/display2	UP	0x0059	
+monitor/apple2plus/display2	VTAB	0x0061	MON_TABV
+monitor/apple2plus/display2	VTABZ	0x0063	MON_TABV
+monitor/apple2plus/display2	RTS4	0x006a	MON_TABV
+monitor/apple2plus/display2	ESC1	0x006b	
+monitor/apple2plus/display2	CLREOP	0x0081	
+monitor/apple2plus/display2	CLEOP1	0x0085	
+monitor/apple2plus/display2	HOME	0x0097	MON_HOME
+monitor/apple2plus/display2	CR	0x00a1	
+monitor/apple2plus/display2	LF	0x00a5	
+monitor/apple2plus/display2	SCROLL	0x00af	
+monitor/apple2plus/display2	SCRL1	0x00b5	
+monitor/apple2plus/display2	SCRL2	0x00cb	
+monitor/apple2plus/display2	SCRL3	0x00d4	
+monitor/apple2plus/display2	CLREOL	0x00db	
+monitor/apple2plus/display2	CLEOLZ	0x00dd	
+monitor/apple2plus/display2	CLEOL2	0x00df	
+monitor/apple2plus/display2	WAIT	0x00e7	
+monitor/apple2plus/display2	WAIT2	0x00e8	
+monitor/apple2plus/display2	WAIT3	0x00e9	
+monitor/apple2plus/display2	NXTA4	0x00f3	
+monitor/apple2plus/display2	NXTA1	0x00f9	
+monitor/apple2plus/display2	RTS4B	0x0107	
+monitor/apple2plus/display2	[end]	0xffff	
+monitor/apple2plus/keyin	RDKEY	0x0000	MON_RDKEY
+monitor/apple2plus/keyin	[start]	0x0000	MON_RDKEY
+monitor/apple2plus/keyin	KEYIN	0x000f	MON_KEYIN, MON_RDKEY
+monitor/apple2plus/keyin	KEYIN2	0x0015	MON_KEYIN, MON_RDKEY
+monitor/apple2plus/keyin	ESC	0x0023	MON_RDKEY
+monitor/apple2plus/keyin	RDCHAR	0x0029	
+monitor/apple2plus/keyin	NOTCR	0x0031	
+monitor/apple2plus/keyin	NOTCR1	0x0053	
+monitor/apple2plus/keyin	CANCEL	0x0056	
+monitor/apple2plus/keyin	GETLNZ	0x005b	
+monitor/apple2plus/keyin	GETLN	0x005e	
+monitor/apple2plus/keyin	BCKSPC	0x0065	
+monitor/apple2plus/keyin	NXTCHAR	0x0069	
+monitor/apple2plus/keyin	NXTCHAR1	0x006c	
+monitor/apple2plus/keyin	CAPTST	0x0072	
+monitor/apple2plus/keyin	ADDINP	0x0078	
+monitor/apple2plus/keyin	[end]	0xffff	
+monitor/apple2plus/lores	PLOT	0x0000	MON_PLOT
+monitor/apple2plus/lores	[start]	0x0000	MON_PLOT
+monitor/apple2plus/lores	RTMASK	0x000c	MON_PLOT
+monitor/apple2plus/lores	PLOT1	0x000e	MON_PLOT
+monitor/apple2plus/lores	HLINE	0x0019	MON_HLINE
+monitor/apple2plus/lores	HLINE1	0x001c	MON_HLINE
+monitor/apple2plus/lores	VLINEZ	0x0026	MON_VLINE
+monitor/apple2plus/lores	VLINE	0x0028	MON_VLINE
+monitor/apple2plus/lores	RTS1	0x0031	
+monitor/apple2plus/lores	CLRSCR	0x0032	
+monitor/apple2plus/lores	CLRTOP	0x0036	
+monitor/apple2plus/lores	CLRSC2	0x0038	
+monitor/apple2plus/lores	CLRSC3	0x003c	
+monitor/apple2plus/lores	GBASCALC	0x0047	
+monitor/apple2plus/lores	GBCALC	0x0056	
+monitor/apple2plus/lores	NXTCOL	0x005f	
+monitor/apple2plus/lores	SETCOL	0x0064	MON_SETCOL
+monitor/apple2plus/lores	SCRN	0x0071	
+monitor/apple2plus/lores	SCRN2	0x0079	
+monitor/apple2plus/lores	RTMSKZ	0x007f	
+monitor/apple2plus/lores	[end]	0xffff	
+monitor/apple2plus/math	LFB60	0x0000	MON_LFB60
+monitor/apple2plus/math	[start]	0x0000	MON_LFB60
+monitor/apple2plus/math	LFB65	0x0005	MON_LFB60
+monitor/apple2plus/math	LFB78	0x0018	
+monitor/apple2plus/math	LFB88	0x0028	
+monitor/apple2plus/math	LFB94	0x0034	
+monitor/apple2plus/math	LFB97	0x0037	
+monitor/apple2plus/math	LFB9B	0x003b	
+monitor/apple2plus/math	LFBA5	0x0045	
+monitor/apple2plus/math	[end]	0xffff	
+monitor/apple2plus/paddles	PREAD	0x0000	
+monitor/apple2plus/paddles	[start]	0x0000	
+monitor/apple2plus/paddles	PREAD2	0x0007	
+monitor/apple2plus/paddles	RTS2D	0x0010	
+monitor/apple2plus/paddles	[end]	0xffff	
+monitor/apple2plus/vectors	M6502VEC	0x0000	
+monitor/apple2plus/vectors	[start]	0x0000	
+monitor/apple2plus/vectors	[end]	0xffff	
