@@ -37,12 +37,12 @@ std::uint16_t readZeroPageWord(std::uint8_t address) {
 }
 } // namespace
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: KEYIN (inclusive) .. ESC (exclusive)
+// Name normalization: KEYIN helper target kept internal; public entry is
+// useMonitorInputVector.
 std::uint8_t MON_KEYIN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: KEYIN (inclusive) .. ESC (exclusive)
-  // Name normalization: KEYIN helper target kept internal; public entry is
-  // useMonitorInputVector.
 
   constexpr std::uint8_t kMON_RNDL = ApplesoftVariables::ZP_MON_RNDL;
   constexpr std::uint8_t kMON_RNDH = ApplesoftVariables::ZP_MON_RNDH;
@@ -70,11 +70,11 @@ std::uint8_t MON_KEYIN() {
 
 // MON_RDKEY: monitor label RDKEY (keyin.o65.lst).
 // All monitor labels carry a virtual MON_ prefix in C++; RDKEY -> MON_RDKEY.
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: RDKEY (inclusive) .. RDCHAR (exclusive)
+// Name normalization: monitor label RDKEY mapped to MON_RDKEY in C++.
 std::uint8_t MON_RDKEY() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: RDKEY (inclusive) .. RDCHAR (exclusive)
-  // Name normalization: monitor label RDKEY mapped to MON_RDKEY in C++.
 
   constexpr std::uint8_t kMON_BASL = ApplesoftVariables::ZP_MON_BASL;
   // RDKEY prologue: fetch cursor row/column source char through ($28),Y,

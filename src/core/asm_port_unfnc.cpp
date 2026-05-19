@@ -201,11 +201,11 @@ static void AS_NORMALIZE_FAC_1(std::uint8_t facSign) {
   variables().AS_FAC_EXTENSION = 0u;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PDL (inclusive) .. AS_NXDIM (exclusive)
+// Name normalization: none (assembler label AS_PDL kept verbatim).
 void AS_PDL() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PDL (inclusive) .. AS_NXDIM (exclusive)
-  // Name normalization: none (assembler label AS_PDL kept verbatim).
 
   AS_CONINT();
   AS_SNGFLT(MON_PREAD());
@@ -215,11 +215,11 @@ void AS_PDL() {
 // Stub implementations for function handlers not yet ported.
 // ---------------------------------------------------------------------------
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SGN (inclusive) .. AS_ABS (exclusive)
+// Name normalization: none (assembler label AS_SGN kept verbatim).
 void AS_SGN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SGN (inclusive) .. AS_ABS (exclusive)
-  // Name normalization: none (assembler label AS_SGN kept verbatim).
 
   // ROM path: jsr AS_SIGN then fall through to AS_FLOAT to convert A=-1/0/+1 to
   // AS_FAC.
@@ -230,11 +230,11 @@ void AS_SGN() {
 
   AS_GIVAYF(signValue);
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_INT (inclusive) .. AS_QINT_3 (exclusive)
+// Name normalization: AS_INT -> AS_INT_fn (AS_INT is a C++ keyword).
 void AS_INT_fn() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_INT (inclusive) .. AS_QINT_3 (exclusive)
-  // Name normalization: AS_INT -> AS_INT_fn (AS_INT is a C++ keyword).
 
   // If exponent >= 0xA0, AS_FAC has no fractional bits and AS_INT is already
   // done.
@@ -254,71 +254,71 @@ void AS_INT_fn() {
 
   AS_NORMALIZE_FAC_1(facSign);
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_ABS (inclusive) .. AS_FCOMP (exclusive)
+// Name normalization: none (assembler label AS_ABS kept verbatim).
 void AS_ABS() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_ABS (inclusive) .. AS_FCOMP (exclusive)
-  // Name normalization: none (assembler label AS_ABS kept verbatim).
 
   variables().AS_FAC_SIGN =
       static_cast<std::uint8_t>(variables_const().AS_FAC_SIGN >> 1u);
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_L_USR1 (inclusive) .. AS_L_USR2 (exclusive)
+// Name normalization: none (assembler label AS_USR kept verbatim).
+//
+// The original ROM dispatches through a user-supplied machine-language
+// vector in zero page ($0A-$0C). The current runtime has no machine-code
+// execution bridge, so USR() is treated as an undefined function.
 void AS_USR_impl() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_L_USR1 (inclusive) .. AS_L_USR2 (exclusive)
-  // Name normalization: none (assembler label AS_USR kept verbatim).
-  //
-  // The original ROM dispatches through a user-supplied machine-language
-  // vector in zero page ($0A-$0C). The current runtime has no machine-code
-  // execution bridge, so USR() is treated as an undefined function.
   AS_ERROR(AS_ERR_UNDEFFUNC);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_USR (inclusive) .. AS_CHARAC (exclusive)
+// Name normalization: none (assembler label AS_USR kept verbatim).
+//
+// The original ROM dispatches through a user-supplied machine-language
+// vector in zero page ($0A-$0C). The current runtime has no machine-code
+// execution bridge, so USR() is treated as an undefined function.
 void AS_USR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_USR (inclusive) .. AS_CHARAC (exclusive)
-  // Name normalization: none (assembler label AS_USR kept verbatim).
-  //
-  // The original ROM dispatches through a user-supplied machine-language
-  // vector in zero page ($0A-$0C). The current runtime has no machine-code
-  // execution bridge, so USR() is treated as an undefined function.
   ApplesoftNG::ExternalJumpDispatcher::JumpFromInstruction(
       ApplesoftNG::ExternalJumpDispatcher::ADDR_AS_USR);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FRE (inclusive) .. AS_ERROR (exclusive)
+// Name normalization: wrapper name AS_FRE_fn used to avoid clashing with the
+// existing AS_FRE implementation in core.
 void AS_FRE_fn() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FRE (inclusive) .. AS_ERROR (exclusive)
-  // Name normalization: wrapper name AS_FRE_fn used to avoid clashing with the
-  // existing AS_FRE implementation in core.
 
   AS_FRE();
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_UNDFNC (inclusive) .. AS_DEF (exclusive)
+// Name normalization: AS_ERROR_fn used for AS_UNFNC table entry $D7 (SCRN().
 void AS_ERROR_fn() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_UNDFNC (inclusive) .. AS_DEF (exclusive)
-  // Name normalization: AS_ERROR_fn used for AS_UNFNC table entry $D7 (SCRN().
 
   AS_ERROR(AS_ERR_UNDEFFUNC);
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_POS (inclusive) .. AS_SNGFLT (exclusive)
+// Name normalization: none (assembler label AS_POS kept verbatim).
 static void AS_PDL_fn() { AS_PDL(); }
 void AS_POS() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_POS (inclusive) .. AS_SNGFLT (exclusive)
-  // Name normalization: none (assembler label AS_POS kept verbatim).
 
   AS_SNGFLT(variables_const().MON_CH);
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SQR (inclusive) .. AS_RND (exclusive)
+// Name normalization: none (assembler label AS_SQR kept verbatim).
 static void AS_SQR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SQR (inclusive) .. AS_RND (exclusive)
-  // Name normalization: none (assembler label AS_SQR kept verbatim).
 
   const double input = facToDouble();
   if (input < 0.0) {
@@ -328,16 +328,16 @@ static void AS_SQR() {
 
   doubleToFac(std::sqrt(input));
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_RND (inclusive) .. AS_LOG (exclusive)
+// Name normalization: none (assembler label AS_RND kept verbatim).
+//
+// RND uses the packed FAC-format seed at zero-page RNDSEED ($c9-$cd). A
+// zero argument returns the current seed unchanged; a negative argument
+// reseeds the generator from the argument value; positive arguments advance
+// the sequence.
 static void AS_RND() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_RND (inclusive) .. AS_LOG (exclusive)
-  // Name normalization: none (assembler label AS_RND kept verbatim).
-  //
-  // RND uses the packed FAC-format seed at zero-page RNDSEED ($c9-$cd). A
-  // zero argument returns the current seed unchanged; a negative argument
-  // reseeds the generator from the argument value; positive arguments advance
-  // the sequence.
 
   constexpr std::uint16_t kRndSeedAddress = ApplesoftVariables::ZP_AS_RNDSEED;
 
@@ -364,11 +364,11 @@ static void AS_RND() {
   writePackedFloat(kRndSeedAddress, seed);
   doubleToFac(seed);
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_LOG (inclusive) .. AS_EXP (exclusive)
+// Name normalization: none (assembler label AS_LOG kept verbatim).
 static void AS_LOG() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_LOG (inclusive) .. AS_EXP (exclusive)
-  // Name normalization: none (assembler label AS_LOG kept verbatim).
 
   const double input = facToDouble();
   if (input <= 0.0) {
@@ -378,11 +378,11 @@ static void AS_LOG() {
 
   doubleToFac(std::log(input));
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_EXP (inclusive) .. AS_COS (exclusive)
+// Name normalization: none (assembler label AS_EXP kept verbatim).
 static void AS_EXP() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_EXP (inclusive) .. AS_COS (exclusive)
-  // Name normalization: none (assembler label AS_EXP kept verbatim).
 
   const double input = facToDouble();
   const double result = std::exp(input);
@@ -393,43 +393,43 @@ static void AS_EXP() {
 
   doubleToFac(result);
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_COS (inclusive) .. AS_SIN (exclusive)
+// Name normalization: none (assembler label AS_COS kept verbatim).
 static void AS_COS() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_COS (inclusive) .. AS_SIN (exclusive)
-  // Name normalization: none (assembler label AS_COS kept verbatim).
 
   doubleToFac(std::cos(facToDouble()));
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SIN (inclusive) .. AS_TAN (exclusive)
+// Name normalization: none (assembler label AS_SIN kept verbatim).
 static void AS_SIN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SIN (inclusive) .. AS_TAN (exclusive)
-  // Name normalization: none (assembler label AS_SIN kept verbatim).
 
   doubleToFac(std::sin(facToDouble()));
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_TAN (inclusive) .. AS_ATN (exclusive)
+// Name normalization: none (assembler label AS_TAN kept verbatim).
 static void AS_TAN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_TAN (inclusive) .. AS_ATN (exclusive)
-  // Name normalization: none (assembler label AS_TAN kept verbatim).
 
   doubleToFac(std::tan(facToDouble()));
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_ATN (inclusive) .. AS_PEEK (exclusive)
+// Name normalization: none (assembler label AS_ATN kept verbatim).
 static void AS_ATN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_ATN (inclusive) .. AS_PEEK (exclusive)
-  // Name normalization: none (assembler label AS_ATN kept verbatim).
 
   doubleToFac(std::atan(facToDouble()));
 }
 static void AS_PEEK_fn() { AS_PEEK(); }
-static void AS_LEN_fn() { AS_LEN(); }
-static void AS_STR_fn() { AS_STR(); }
 // AS_Labels: AS_VAL (inclusive) .. AS_L_VAL_1 (exclusive)
 // Name normalization: none (assembler label AS_VAL kept verbatim).
+static void AS_LEN_fn() { AS_LEN(); }
+static void AS_STR_fn() { AS_STR(); }
 void AS_VAL() {
   (void)AS_GETSTR();
   AS_FIN();

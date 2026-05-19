@@ -140,23 +140,23 @@ void MON_COUT(std::uint8_t value);
 
 namespace {
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: SETNORM (inclusive) .. SETKBD (exclusive)
+// Name normalization: SETNORM -> MON_SETNORM (monitor label gets MON_
+// prefix).
 void MON_SETNORM() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: SETNORM (inclusive) .. SETKBD (exclusive)
-  // Name normalization: SETNORM -> MON_SETNORM (monitor label gets MON_
-  // prefix).
 
   variables().MON_INVFLG = 0xffu;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: INIT (inclusive) .. SETTXT (exclusive)
+// Name normalization: INIT -> MON_INIT (monitor label gets MON_ prefix).
+//
+// Falls through into SETTXT in ROM; modeled by explicit call.
 void MON_INIT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: INIT (inclusive) .. SETTXT (exclusive)
-  // Name normalization: INIT -> MON_INIT (monitor label gets MON_ prefix).
-  //
-  // Falls through into SETTXT in ROM; modeled by explicit call.
 
   variables().MON_STATUS = 0u;
   (void)variables_const().readByte(IOPorts::ADDR_AS_SW_LORES);
@@ -165,42 +165,42 @@ void MON_INIT() {
   MON_SETTXT();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: SETVID (inclusive) .. OUTPORT (exclusive)
+// Name normalization: SETVID -> MON_SETVID (monitor label gets MON_ prefix).
 void MON_SETVID() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: SETVID (inclusive) .. OUTPORT (exclusive)
-  // Name normalization: SETVID -> MON_SETVID (monitor label gets MON_ prefix).
 
   MON_OUTPORT(0u);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: SETKBD (inclusive) .. INPORT (exclusive)
+// Name normalization: SETKBD -> MON_SETKBD (monitor label gets MON_ prefix).
 void MON_SETKBD() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: SETKBD (inclusive) .. INPORT (exclusive)
-  // Name normalization: SETKBD -> MON_SETKBD (monitor label gets MON_ prefix).
 
   MON_INPORT(0u);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: BELL (inclusive) .. AS_RESTORE (exclusive)
+// Name normalization: BELL -> MON_BELL (monitor label gets MON_ prefix).
 void MON_BELL_impl() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: BELL (inclusive) .. AS_RESTORE (exclusive)
-  // Name normalization: BELL -> MON_BELL (monitor label gets MON_ prefix).
 
   constexpr std::uint8_t kBellChar = 0x87u;
   MON_COUT(kBellChar);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_LFB60 (inclusive) .. AS_LFB78 (exclusive)
+// Name normalization: AS_LFB60 -> MON_LFB60 (monitor label gets MON_ prefix).
+//
+// Clears the monitor text window, then writes the 9-byte "<APPLE ]["
+// banner to screen memory at $040E..$0416.
 void MON_LFB60() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_LFB60 (inclusive) .. AS_LFB78 (exclusive)
-  // Name normalization: AS_LFB60 -> MON_LFB60 (monitor label gets MON_ prefix).
-  //
-  // Clears the monitor text window, then writes the 9-byte "<APPLE ]["
-  // banner to screen memory at $040E..$0416.
 
   static constexpr std::array<std::uint8_t, 9> kAS_LFB08 = {
       0x3cu,
@@ -227,22 +227,22 @@ void MON_LFB60() {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: CROUT (inclusive) .. PRA1 (exclusive)
+// Name normalization: CROUT -> MON_CROUT (monitor label gets MON_ prefix).
+//
+// `lda #$8d` + `bne COUT` is an unconditional transfer to COUT with CR.
 void MON_CROUT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: CROUT (inclusive) .. PRA1 (exclusive)
-  // Name normalization: CROUT -> MON_CROUT (monitor label gets MON_ prefix).
-  //
-  // `lda #$8d` + `bne COUT` is an unconditional transfer to COUT with CR.
   constexpr std::uint8_t kCarriageReturn = 0x8du;
   MON_COUT(kCarriageReturn);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: PRBYTE (inclusive) .. COUT (exclusive)
+// Name normalization: PRBYTE -> MON_PRBYTE (monitor label gets MON_ prefix).
 void MON_PRBYTE(std::uint8_t value) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: PRBYTE (inclusive) .. COUT (exclusive)
-  // Name normalization: PRBYTE -> MON_PRBYTE (monitor label gets MON_ prefix).
 
   const auto emitHexNibble = [](std::uint8_t nibble) -> std::uint8_t {
     // PRHEX/PRHEXZ: AS_ORA #"0"|$80; if >= ':' add 6 to reach 'A'..'F'.
@@ -261,14 +261,14 @@ void MON_PRBYTE(std::uint8_t value) {
 
 void MON_BELL() { MON_BELL_impl(); }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: INSDS1 (inclusive) .. REGDSP (exclusive)
+// Name normalization: INSDS1 -> MON_INSDS1 (monitor label gets MON_ prefix).
+//
+// Full monitor disassembly formatting is not modeled yet. Emit a compact
+// address/opcode trace at MON_A1 and advance MON_A1 by one byte.
 std::int8_t MON_INSDS1() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: INSDS1 (inclusive) .. REGDSP (exclusive)
-  // Name normalization: INSDS1 -> MON_INSDS1 (monitor label gets MON_ prefix).
-  //
-  // Full monitor disassembly formatting is not modeled yet. Emit a compact
-  // address/opcode trace at MON_A1 and advance MON_A1 by one byte.
   constexpr std::uint8_t kSpace = static_cast<std::uint8_t>(' ' | 0x80u);
 
   const std::uint16_t pc = variables_const().MON_A1;
@@ -283,28 +283,28 @@ std::int8_t MON_INSDS1() {
   return static_cast<std::int8_t>(opcode);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON (inclusive) .. REGZ (exclusive)
+// Name normalization: MON -> MON_MON (monitor label gets MON_ prefix).
+//
+// The interactive monitor command loop is not hosted in this runtime.
+// Emit a minimal monitor prompt marker and return to the caller.
 void MON_MON() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: MON (inclusive) .. REGZ (exclusive)
-  // Name normalization: MON -> MON_MON (monitor label gets MON_ prefix).
-  //
-  // The interactive monitor command loop is not hosted in this runtime.
-  // Emit a minimal monitor prompt marker and return to the caller.
   constexpr std::uint8_t kPrompt = static_cast<std::uint8_t>('>' | 0x80u);
   MON_CROUT();
   MON_COUT(kPrompt);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: RESET2 (inclusive) .. REGDSP (exclusive)
+// Name normalization: RESET2 -> MON_RESET2 (monitor label gets MON_ prefix).
+//
+// One-sentence behavior summary: initialize monitor I/O modes, validate
+// bootstrap sentinel bytes, then either jump through warm vectors or scan
+// ROM pages for a signature and jump to the matched page entrypoint.
 void MON_RESET2() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: RESET2 (inclusive) .. REGDSP (exclusive)
-  // Name normalization: RESET2 -> MON_RESET2 (monitor label gets MON_ prefix).
-  //
-  // One-sentence behavior summary: initialize monitor I/O modes, validate
-  // bootstrap sentinel bytes, then either jump through warm vectors or scan
-  // ROM pages for a signature and jump to the matched page entrypoint.
 
   constexpr std::uint16_t kWarmVector =
       ApplesoftVariables::ADDR_MON_DEBUG_WARM_VECTOR;
@@ -403,26 +403,26 @@ void MON_RESET2() {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: OLDBRK (inclusive) .. RESET2 (exclusive)
+// Name normalization: OLDBRK -> MON_OLDBRK (monitor label gets MON_ prefix).
+//
+// OLDBRK disassembles at current PC, prints registers, then transfers to MON.
 void MON_OLDBRK() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: OLDBRK (inclusive) .. RESET2 (exclusive)
-  // Name normalization: OLDBRK -> MON_OLDBRK (monitor label gets MON_ prefix).
-  //
-  // OLDBRK disassembles at current PC, prints registers, then transfers to MON.
 
   (void)MON_INSDS1();
   MON_REGDSP();
   MON_MON();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: REGDSP (inclusive) .. AS_LFB01 (exclusive)
+// Name normalization: REGDSP -> MON_REGDSP (monitor label gets MON_ prefix).
+//
+// Prints monitor register labels and the saved register byte values.
 void MON_REGDSP() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: REGDSP (inclusive) .. AS_LFB01 (exclusive)
-  // Name normalization: REGDSP -> MON_REGDSP (monitor label gets MON_ prefix).
-  //
-  // Prints monitor register labels and the saved register byte values.
 
   constexpr std::uint8_t kRegBase = ApplesoftVariables::ZP_MON_DEBUG_REG_A;
   constexpr std::uint8_t kSpace = static_cast<std::uint8_t>(' ' | 0x80u);
@@ -541,11 +541,11 @@ void AS_COLD_START() {
   AS_RESTART();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_ERRDIR (inclusive) .. AS_DEF (exclusive)
+// Name normalization: none (assembler label AS_ERRDIR kept verbatim).
 void AS_ERRDIR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_ERRDIR (inclusive) .. AS_DEF (exclusive)
-  // Name normalization: none (assembler label AS_ERRDIR kept verbatim).
 
   if (!IsDirectMode()) {
     return;
@@ -554,75 +554,75 @@ void AS_ERRDIR() {
   AS_ERROR(AS_ERR_ILLDIR);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_UNDFNC (inclusive) .. AS_DEF (exclusive)
+// Name normalization: none (assembler label AS_UNDFNC kept verbatim).
 void AS_UNDFNC() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_UNDFNC (inclusive) .. AS_DEF (exclusive)
-  // Name normalization: none (assembler label AS_UNDFNC kept verbatim).
 
   AS_ERROR(AS_ERR_UNDEFFUNC);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_BADNAM (inclusive) .. AS_NAMOK (exclusive)
+// Name normalization: none (assembler label AS_BADNAM kept verbatim).
 void AS_BADNAM() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_BADNAM (inclusive) .. AS_NAMOK (exclusive)
-  // Name normalization: none (assembler label AS_BADNAM kept verbatim).
 
   AS_SYNERR();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_BASIC (inclusive) .. AS_BASIC2 (exclusive)
+// Name normalization: none (assembler label AS_BASIC kept verbatim).
 void AS_BASIC() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_BASIC (inclusive) .. AS_BASIC2 (exclusive)
-  // Name normalization: none (assembler label AS_BASIC kept verbatim).
 
   AS_COLD_START();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_BASIC2 (inclusive) .. AS_PTRGET4 (exclusive)
+// Name normalization: none (assembler label AS_BASIC2 kept verbatim).
 void AS_BASIC2() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_BASIC2 (inclusive) .. AS_PTRGET4 (exclusive)
-  // Name normalization: none (assembler label AS_BASIC2 kept verbatim).
 
   AS_RESTART();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GME (inclusive) .. AS_MULTIPLY_SUBSCRIPT (exclusive)
+// Name normalization: none (assembler label AS_GME kept verbatim).
 void AS_GME() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_GME (inclusive) .. AS_MULTIPLY_SUBSCRIPT (exclusive)
-  // Name normalization: none (assembler label AS_GME kept verbatim).
 
   AS_MEMERR();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SUBERR (inclusive) .. AS_IQERR (exclusive)
+// Name normalization: none (assembler label AS_SUBERR kept verbatim).
 void AS_SUBERR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SUBERR (inclusive) .. AS_IQERR (exclusive)
-  // Name normalization: none (assembler label AS_SUBERR kept verbatim).
 
   gJerErrorCode = AS_ERR_BADSUBS;
   AS_JER();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GSE (inclusive) .. AS_GME (exclusive)
+// Name normalization: none (assembler label AS_GSE kept verbatim).
 void AS_GSE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_GSE (inclusive) .. AS_GME (exclusive)
-  // Name normalization: none (assembler label AS_GSE kept verbatim).
 
   AS_SUBERR();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FAE_1 (inclusive) .. AS_MULTIPLY_SUBSCRIPT (exclusive)
+// Name normalization: none (assembler label AS_FAE_1 kept verbatim).
 void AS_FAE_1() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FAE_1 (inclusive) .. AS_MULTIPLY_SUBSCRIPT (exclusive)
-  // Name normalization: none (assembler label AS_FAE_1 kept verbatim).
 
   ProgramPointer descriptor{variables_const().AS_LOWTR};
   std::uint8_t descriptorY = 4u; // FIND_ARRAY_ELEMENT leaves descriptor[4]
@@ -688,20 +688,20 @@ void AS_FAE_1() {
   variables().AS_VARPNT = varpnt;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GETARY (inclusive) .. AS_GETARY2 (exclusive)
+// Name normalization: none (assembler label AS_GETARY kept verbatim).
 void AS_GETARY() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_GETARY (inclusive) .. AS_GETARY2 (exclusive)
-  // Name normalization: none (assembler label AS_GETARY kept verbatim).
 
   AS_GETARY2();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GETARY2 (inclusive) .. AS_NEG32768 (exclusive)
+// Name normalization: none (assembler label AS_GETARY2 kept verbatim).
 void AS_GETARY2() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_GETARY2 (inclusive) .. AS_NEG32768 (exclusive)
-  // Name normalization: none (assembler label AS_GETARY2 kept verbatim).
 
   const std::uint8_t numDim = variables_const().AS_NUMDIM;
   const ProgramPointer lowtr{variables_const().AS_LOWTR};
@@ -710,21 +710,21 @@ void AS_GETARY2() {
   variables().AS_ARYPNT = lowtr.advanced(arypntOffset).address;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_C_ZERO (inclusive) .. AS_MAKE_NEW_VARIABLE (exclusive)
+// Name normalization: none (assembler label AS_C_ZERO kept verbatim).
 void AS_C_ZERO() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_C_ZERO (inclusive) .. AS_MAKE_NEW_VARIABLE (exclusive)
-  // Name normalization: none (assembler label AS_C_ZERO kept verbatim).
 
   variables().AS_RESULT[0] = kCZeroData[0];
   variables().AS_RESULT[1] = kCZeroData[1];
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_USE_OLD_ARRAY (inclusive) .. AS_MAKE_NEW_ARRAY (exclusive)
+// Name normalization: none (assembler label AS_USE_OLD_ARRAY kept verbatim).
 void AS_USE_OLD_ARRAY() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_USE_OLD_ARRAY (inclusive) .. AS_MAKE_NEW_ARRAY (exclusive)
-  // Name normalization: none (assembler label AS_USE_OLD_ARRAY kept verbatim).
 
   if (variables_const().AS_DIMFLG != 0u) {
     gJerErrorCode = AS_ERR_REDIMD;
@@ -738,17 +738,17 @@ void AS_USE_OLD_ARRAY() {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_MAKE_NEW_ARRAY (T:11b8, inclusive) .. AS_FIND_ARRAY_ELEMENT
+// (T:124b, exclusive) Name normalization: none (assembler label
+// AS_MAKE_NEW_ARRAY kept verbatim).
+//
+// Creates a new array entry at AS_LOWTR: writes header (name, size, numdim,
+// dim extents), allocates element space, zeroes it, and stores the array
+// byte-size in the descriptor. Falls through to AS_FIND_ARRAY_ELEMENT unless
+// called from AS_DIM (AS_DIMFLG != 0).
 void AS_MAKE_NEW_ARRAY() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_MAKE_NEW_ARRAY (T:11b8, inclusive) .. AS_FIND_ARRAY_ELEMENT
-  // (T:124b, exclusive) Name normalization: none (assembler label
-  // AS_MAKE_NEW_ARRAY kept verbatim).
-  //
-  // Creates a new array entry at AS_LOWTR: writes header (name, size, numdim,
-  // dim extents), allocates element space, zeroes it, and stores the array
-  // byte-size in the descriptor. Falls through to AS_FIND_ARRAY_ELEMENT unless
-  // called from AS_DIM (AS_DIMFLG != 0).
 
   // T:11b8 – lda AS_SUBFLG; bne AS_ERR_NODATA
   if (variables_const().AS_SUBFLG != 0u) {
@@ -912,13 +912,13 @@ void AS_MAKE_NEW_ARRAY() {
   AS_FIND_ARRAY_ELEMENT();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FIND_ARRAY_ELEMENT (inclusive) .. AS_FAE_1 (exclusive)
+// Name normalization: none (assembler label AS_FIND_ARRAY_ELEMENT kept
+// verbatim). AS_LOWTR is the base pointer to the current array descriptor;
+// descriptor[4] stores #dims.
 void AS_FIND_ARRAY_ELEMENT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FIND_ARRAY_ELEMENT (inclusive) .. AS_FAE_1 (exclusive)
-  // Name normalization: none (assembler label AS_FIND_ARRAY_ELEMENT kept
-  // verbatim). AS_LOWTR is the base pointer to the current array descriptor;
-  // descriptor[4] stores #dims.
 
   const ProgramPointer descriptor{variables_const().AS_LOWTR};
   const std::uint8_t numDims = descriptor.read(4u);
@@ -930,13 +930,13 @@ void AS_FIND_ARRAY_ELEMENT() {
   AS_FAE_1();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_MULTIPLY_SUBSCRIPT (inclusive) .. AS_MULTIPLY_SUBS_1
+// (exclusive) Name normalization: none (assembler label AS_MULTIPLY_SUBSCRIPT
+// kept verbatim). AS_Load the 16-bit array-dimension multiplier from the
+// AS_LOWTR descriptor pointer.
 std::uint16_t AS_MULTIPLY_SUBSCRIPT(std::uint8_t descriptorOffset) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_MULTIPLY_SUBSCRIPT (inclusive) .. AS_MULTIPLY_SUBS_1
-  // (exclusive) Name normalization: none (assembler label AS_MULTIPLY_SUBSCRIPT
-  // kept verbatim). AS_Load the 16-bit array-dimension multiplier from the
-  // AS_LOWTR descriptor pointer.
 
   ApplesoftVariables::setLowByte(variables().AS_INDEX, descriptorOffset);
 
@@ -947,13 +947,13 @@ std::uint16_t AS_MULTIPLY_SUBSCRIPT(std::uint8_t descriptorOffset) {
       descriptor.read(static_cast<std::uint16_t>(descriptorOffset - 1u)));
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_MULTIPLY_SUBS_1 (inclusive) .. AS_FRE (exclusive)
+// Name normalization: none (assembler label AS_MULTIPLY_SUBS_1 kept
+// verbatim). AS_STRNG2 is dual-use elsewhere, but in this slice it is the
+// 16-bit multiplicand.
 std::uint16_t AS_MULTIPLY_SUBS_1(std::uint8_t multiplierHigh) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_MULTIPLY_SUBS_1 (inclusive) .. AS_FRE (exclusive)
-  // Name normalization: none (assembler label AS_MULTIPLY_SUBS_1 kept
-  // verbatim). AS_STRNG2 is dual-use elsewhere, but in this slice it is the
-  // 16-bit multiplicand.
 
   variables().AS_RESULT[3] = multiplierHigh;
   variables().AS_INDX = 16u;
@@ -992,20 +992,20 @@ std::uint16_t AS_MULTIPLY_SUBS_1(std::uint8_t multiplierHigh) {
   return product;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SNGFLT (inclusive) .. AS_ERRDIR (exclusive)
+// Name normalization: none (assembler label AS_SNGFLT kept verbatim).
 void AS_SNGFLT(std::uint8_t value) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SNGFLT (inclusive) .. AS_ERRDIR (exclusive)
-  // Name normalization: none (assembler label AS_SNGFLT kept verbatim).
 
   AS_GIVAYF(static_cast<std::int16_t>(value));
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_OR (inclusive) .. AS_ANDOP (exclusive)
+// Name normalization: none (assembler label AS_OR kept verbatim).
 void AS_OR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_OR (inclusive) .. AS_ANDOP (exclusive)
-  // Name normalization: none (assembler label AS_OR kept verbatim).
 
   if ((variables_const().AS_ARG[0] | variables_const().AS_FAC[0]) != 0u) {
     AS_TRUE();
@@ -1016,11 +1016,11 @@ void AS_OR() {
   AS_ANDOP();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_ANDOP (inclusive) .. AS_FALSE (exclusive)
+// Name normalization: none (assembler label AS_ANDOP kept verbatim).
 void AS_ANDOP() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_ANDOP (inclusive) .. AS_FALSE (exclusive)
-  // Name normalization: none (assembler label AS_ANDOP kept verbatim).
 
   if (variables_const().AS_ARG[0] == 0u || variables_const().AS_FAC[0] == 0u) {
     AS_FALSE();
@@ -1031,45 +1031,45 @@ void AS_ANDOP() {
   AS_TRUE();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FALSE (inclusive) .. AS_TRUE (exclusive)
+// Name normalization: none (assembler label AS_FALSE kept verbatim).
 void AS_FALSE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FALSE (inclusive) .. AS_TRUE (exclusive)
-  // Name normalization: none (assembler label AS_FALSE kept verbatim).
 
   AS_SNGFLT(0u);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_TRUE (inclusive) .. AS_RELOPS (exclusive)
+// Name normalization: none (assembler label AS_TRUE kept verbatim).
 void AS_TRUE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_TRUE (inclusive) .. AS_RELOPS (exclusive)
-  // Name normalization: none (assembler label AS_TRUE kept verbatim).
 
   AS_SNGFLT(1u);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SET_VARPNT_AND_YA (inclusive) .. AS_GETARY (exclusive)
+// Name normalization: none (assembler label AS_SET_VARPNT_AND_YA kept
+// verbatim).
 void AS_SET_VARPNT_AND_YA() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SET_VARPNT_AND_YA (inclusive) .. AS_GETARY (exclusive)
-  // Name normalization: none (assembler label AS_SET_VARPNT_AND_YA kept
-  // verbatim).
 
   const ProgramPointer lowtr{variables_const().AS_LOWTR};
   variables().AS_VARPNT = lowtr.advanced(2u).address; // AS_VARPNT
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MAKE_NEW_VARIABLE (inclusive) .. GETARY (exclusive)
+// Name normalization: none (assembler label MAKE_NEW_VARIABLE prefixed with
+// AS_ in C++).
+//
+// Create a new simple variable entry by shifting the array region up seven
+// bytes, then writing the two-byte name and a zero-initialized five-byte
+// value.
 void AS_MAKE_NEW_VARIABLE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: MAKE_NEW_VARIABLE (inclusive) .. GETARY (exclusive)
-  // Name normalization: none (assembler label MAKE_NEW_VARIABLE prefixed with
-  // AS_ in C++).
-  //
-  // Create a new simple variable entry by shifting the array region up seven
-  // bytes, then writing the two-byte name and a zero-initialized five-byte
-  // value.
 
   const std::uint16_t arytab = variables_const().AS_ARYTAB;
   const std::uint16_t strend = variables_const().AS_STREND;
@@ -1120,27 +1120,27 @@ void AS_MAKE_NEW_VARIABLE() {
   variables().AS_VARPNT = static_cast<std::uint16_t>(arytab + 2u);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NAME_NOT_FOUND (inclusive) .. AS_C_ZERO (exclusive)
+// Name normalization: none (assembler label AS_NAME_NOT_FOUND kept verbatim).
+//
+// Variable not found: check context via return address to decide between
+// returning a zero constant or creating a new variable entry.
+//
+// Original ROM logic:
+// 3443 T:1087  68        pla  ; pull return address low byte
+// 3444 T:1088  48        pha  ; push it back
+// 3445 T:1089  c9 d7     cmp #<FRM_VARIABLE_CALL
+// 3446 T:108b  d0 0f     bne MAKE_NEW_VARIABLE
+// 3447 T:108d  ba        tsx
+// 3448 T:108e  bd 02 01  lda STACK+2,X ; peek return address high byte
+// 3449 T:1091  c9 0e     cmp #>FRM_VARIABLE_CALL
+// 3450 T:1093  d0 07     bne MAKE_NEW_VARIABLE
+// 3451 T:1095  a9 9a     lda #<C_ZERO
+// 3452 T:1097  a0 10     ldy #>C_ZERO
+// 3453 T:1099  60        rts
 void AS_NAME_NOT_FOUND() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_NAME_NOT_FOUND (inclusive) .. AS_C_ZERO (exclusive)
-  // Name normalization: none (assembler label AS_NAME_NOT_FOUND kept verbatim).
-  //
-  // Variable not found: check context via return address to decide between
-  // returning a zero constant or creating a new variable entry.
-  //
-  // Original ROM logic:
-  // 3443 T:1087  68        pla  ; pull return address low byte
-  // 3444 T:1088  48        pha  ; push it back
-  // 3445 T:1089  c9 d7     cmp #<FRM_VARIABLE_CALL
-  // 3446 T:108b  d0 0f     bne MAKE_NEW_VARIABLE
-  // 3447 T:108d  ba        tsx
-  // 3448 T:108e  bd 02 01  lda STACK+2,X ; peek return address high byte
-  // 3449 T:1091  c9 0e     cmp #>FRM_VARIABLE_CALL
-  // 3450 T:1093  d0 07     bne MAKE_NEW_VARIABLE
-  // 3451 T:1095  a9 9a     lda #<C_ZERO
-  // 3452 T:1097  a0 10     ldy #>C_ZERO
-  // 3453 T:1099  60        rts
 
   constexpr std::uint16_t kFRM_VARIABLE_CALL = 0x0ed7u; // Derived from .sym
 
@@ -1152,11 +1152,11 @@ void AS_NAME_NOT_FOUND() {
   AS_MAKE_NEW_VARIABLE();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PTRGET3 (inclusive) .. AS_BADNAM (exclusive)
+// Name normalization: none (assembler label AS_PTRGET3 kept verbatim).
 void AS_PTRGET3() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PTRGET3 (inclusive) .. AS_BADNAM (exclusive)
-  // Name normalization: none (assembler label AS_PTRGET3 kept verbatim).
 
   ApplesoftVariables::setLowByte(variables().AS_VARNAM,
                                  AS_CHRGOT()); // AS_VARNAM low byte
@@ -1169,11 +1169,11 @@ void AS_PTRGET3() {
   AS_NAMOK();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PTRGET2 (inclusive) .. AS_PTRGET3 (exclusive)
+// Name normalization: none (assembler label AS_PTRGET2 kept verbatim).
 void AS_PTRGET2() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PTRGET2 (inclusive) .. AS_PTRGET3 (exclusive)
-  // Name normalization: none (assembler label AS_PTRGET2 kept verbatim).
 
   AS_PTRGET3();
 }
@@ -1190,13 +1190,13 @@ std::uint16_t AS_PTRGET() {
   return variables_const().AS_VARPNT; // AS_VARPNT
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_ARRAY (inclusive) .. AS_MAKE_NEW_ARRAY (exclusive)
+// Name normalization: none (assembler label AS_ARRAY kept verbatim).
+// Parse subscripts (if present), then search AS_ARYTAB for matching array
+// name.
 void AS_ARRAY() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_ARRAY (inclusive) .. AS_MAKE_NEW_ARRAY (exclusive)
-  // Name normalization: none (assembler label AS_ARRAY kept verbatim).
-  // Parse subscripts (if present), then search AS_ARYTAB for matching array
-  // name.
 
   if (variables_const().AS_SUBFLG == 0u) {
     const std::uint8_t dimflgOrInteger = static_cast<std::uint8_t>(
@@ -1287,11 +1287,11 @@ void AS_ARRAY() {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_DIM (inclusive) .. AS_PTRGET (exclusive)
+// Name normalization: none (assembler label AS_DIM kept verbatim).
 void AS_DIM() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_DIM (inclusive) .. AS_PTRGET (exclusive)
-  // Name normalization: none (assembler label AS_DIM kept verbatim).
 
   variables().AS_DIMFLG = 1u; // AS_DIMFLG non-zero when called from AS_DIM.
   AS_PTRGET2();
@@ -1301,21 +1301,21 @@ void AS_DIM() {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NXDIM (inclusive) .. AS_DIM (exclusive)
+// Name normalization: none (assembler label AS_NXDIM kept verbatim).
 void AS_NXDIM() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_NXDIM (inclusive) .. AS_DIM (exclusive)
-  // Name normalization: none (assembler label AS_NXDIM kept verbatim).
 
   AS_CHKCOM();
   AS_DIM();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PTRGET4 (inclusive) .. AS_ISLETC (exclusive)
+// Name normalization: none (assembler label AS_PTRGET4 kept verbatim).
 void AS_PTRGET4() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PTRGET4 (inclusive) .. AS_ISLETC (exclusive)
-  // Name normalization: none (assembler label AS_PTRGET4 kept verbatim).
 
   std::uint8_t current = AS_CHRGET();
   std::uint8_t secondChar = 0u;
@@ -1369,22 +1369,22 @@ void SetPendingErrorCode(std::uint8_t errorCode) {
   gPendingErrorCode = errorCode;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NUMCMP (inclusive) .. AS_CMPDONE (exclusive)
+// Name normalization: none (assembler label AS_NUMCMP kept verbatim).
 void AS_NUMCMP() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_NUMCMP (inclusive) .. AS_CMPDONE (exclusive)
-  // Name normalization: none (assembler label AS_NUMCMP kept verbatim).
 
   // ROM reaches AS_CMPDONE with C set only when compare result was negative.
   gNumericCompareCarry = (gNumericCompareResult < 0);
   AS_CMPDONE();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CMPDONE (inclusive) .. AS_PDL (exclusive)
+// Name normalization: none (assembler label AS_CMPDONE kept verbatim).
 void AS_CMPDONE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_CMPDONE (inclusive) .. AS_PDL (exclusive)
-  // Name normalization: none (assembler label AS_CMPDONE kept verbatim).
 
   std::int16_t x = static_cast<std::int16_t>(gNumericCompareResult) + 1;
   if (x < 0) {
@@ -1400,11 +1400,11 @@ void AS_CMPDONE() {
   AS_FLOAT();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_AYINT (inclusive) .. AS_MI1 (exclusive)
+// Name normalization: none (assembler label AS_AYINT kept verbatim).
 void AS_AYINT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_AYINT (inclusive) .. AS_MI1 (exclusive)
-  // Name normalization: none (assembler label AS_AYINT kept verbatim).
 
   if (variables_const().AS_FAC[0] < 0x90u) {
     AS_MI2();
@@ -1420,11 +1420,11 @@ void AS_AYINT() {
   AS_MI2();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HANDLERR (inclusive) .. AS_RESUME (exclusive)
+// Name normalization: none (assembler label AS_HANDLERR kept verbatim).
 void AS_HANDLERR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HANDLERR (inclusive) .. AS_RESUME (exclusive)
-  // Name normalization: none (assembler label AS_HANDLERR kept verbatim).
   variables().AS_ERRNUM = gPendingErrorCode;
   variables().AS_ERRSTK = variables_const().AS_REMSTK;
 
@@ -1439,11 +1439,11 @@ void AS_HANDLERR() {
   AS_NEWSTT();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SCREEN (inclusive) .. AS_UNARY (exclusive)
+// Name normalization: none (assembler label AS_SCREEN kept verbatim).
 void AS_SCREEN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SCREEN (inclusive) .. AS_UNARY (exclusive)
-  // Name normalization: none (assembler label AS_SCREEN kept verbatim).
 
   AS_CHRGET();
   AS_PLOTFNS();
@@ -1457,15 +1457,15 @@ void AS_SCREEN() {
   AS_SYNCHR(static_cast<std::uint8_t>(')'));
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_UNARY (inclusive) .. AS_OR (exclusive)
+// Name normalization: none (assembler label AS_UNARY kept verbatim).
+//
+// Dispatch a built-in unary function or string function identified by
+// the current token.  String functions (AS_LEFT$, RIGHT$, MID$) parse two
+// arguments; all other functions parse one argument via AS_PARCHK.
 void AS_UNARY() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_UNARY (inclusive) .. AS_OR (exclusive)
-  // Name normalization: none (assembler label AS_UNARY kept verbatim).
-  //
-  // Dispatch a built-in unary function or string function identified by
-  // the current token.  String functions (AS_LEFT$, RIGHT$, MID$) parse two
-  // arguments; all other functions parse one argument via AS_PARCHK.
 
   constexpr std::uint8_t kAS_TOKEN_SCRN = 0xd7u;
   constexpr std::uint8_t kAS_TOKEN_SGN = 0xd2u;
@@ -1514,11 +1514,11 @@ void AS_UNARY() {
   AS_CHKNUM();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_RELOPS (inclusive) .. AS_STRCMP (exclusive)
+// Name normalization: none (assembler label AS_RELOPS kept verbatim).
 void AS_RELOPS() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_RELOPS (inclusive) .. AS_STRCMP (exclusive)
-  // Name normalization: none (assembler label AS_RELOPS kept verbatim).
 
   constexpr std::uint16_t kAS_ARG = ApplesoftVariables::ZP_AS_ARG;
 
@@ -1534,13 +1534,13 @@ void AS_RELOPS() {
   AS_NUMCMP();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_STRCMP (inclusive) .. AS_NUMCMP (exclusive)
+// Name normalization: none (assembler label AS_STRCMP kept verbatim).
+// Pointer candidates lifted: FAC+1/+2 and ARG+3/+4 are unified string-data
+// pointers.
 void AS_STRCMP() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_STRCMP (inclusive) .. AS_NUMCMP (exclusive)
-  // Name normalization: none (assembler label AS_STRCMP kept verbatim).
-  // Pointer candidates lifted: FAC+1/+2 and ARG+3/+4 are unified string-data
-  // pointers.
 
   variables().AS_VALTYP = 0u;
   variables().AS_CPRTYP =
@@ -1562,14 +1562,14 @@ void AS_STRCMP() {
   AS_NUMCMP();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FRE (inclusive) .. AS_GIVAYF (exclusive)
+// Name normalization: none (assembler label AS_FRE kept verbatim).
+// AS_FRETOP and AS_STREND are one logical address pair each; model the
+// subtraction as one 16-bit free-space computation before floating the signed
+// result.
 void AS_FRE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FRE (inclusive) .. AS_GIVAYF (exclusive)
-  // Name normalization: none (assembler label AS_FRE kept verbatim).
-  // AS_FRETOP and AS_STREND are one logical address pair each; model the
-  // subtraction as one 16-bit free-space computation before floating the signed
-  // result.
 
   if (variables_const().AS_VALTYP != 0u) {
     (void)AS_FREFAC();
@@ -1583,13 +1583,13 @@ void AS_FRE() {
   AS_GIVAYF(static_cast<std::int16_t>(freeSpace));
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GIVAYF (inclusive) .. AS_POS (exclusive)
+// Name normalization: none (assembler label AS_GIVAYF kept verbatim).
+// The A/Y pair is one signed 16-bit integer on entry; represent it as one
+// C++ value instead of split low/high byte locals.
 void AS_GIVAYF(std::int16_t value) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_GIVAYF (inclusive) .. AS_POS (exclusive)
-  // Name normalization: none (assembler label AS_GIVAYF kept verbatim).
-  // The A/Y pair is one signed 16-bit integer on entry; represent it as one
-  // C++ value instead of split low/high byte locals.
 
   const std::uint16_t rawValue = static_cast<std::uint16_t>(value);
 
@@ -1601,14 +1601,14 @@ void AS_GIVAYF(std::int16_t value) {
   AS_FLOAT_1(0x90u);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FNC_ (inclusive) .. AS_FUNCT (exclusive)
+// Name normalization: none (assembler label AS_FNC_ kept verbatim).
+//
+// Common routine for "AS_DEF" and "FN" - parse FN token and function name.
+// Requires "FN" token, sets AS_SUBFLG high bit, parses name to AS_FNCNAM.
 void AS_FNC_() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FNC_ (inclusive) .. AS_FUNCT (exclusive)
-  // Name normalization: none (assembler label AS_FNC_ kept verbatim).
-  //
-  // Common routine for "AS_DEF" and "FN" - parse FN token and function name.
-  // Requires "FN" token, sets AS_SUBFLG high bit, parses name to AS_FNCNAM.
 
   // Require "FN" token
   AS_SYNCHR(static_cast<std::uint8_t>(0xc2u)); // AS_TOKEN_FN = 0xc2
@@ -1633,16 +1633,16 @@ void AS_FNC_() {
   AS_CHKNUM();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_DEF (inclusive) .. AS_FNC_ (exclusive)
+// Name normalization: none (assembler label AS_DEF kept verbatim).
+//
+// "AS_DEF" STATEMENT
+// Parse: AS_DEF FN name (arg) = expression
+// Stacks AS_VARPNT, AS_TXTPTR, and 5 bytes of AS_FAC, then jumps to
+// AS_FNCDATA to store.
 void AS_DEF() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_DEF (inclusive) .. AS_FNC_ (exclusive)
-  // Name normalization: none (assembler label AS_DEF kept verbatim).
-  //
-  // "AS_DEF" STATEMENT
-  // Parse: AS_DEF FN name (arg) = expression
-  // Stacks AS_VARPNT, AS_TXTPTR, and 5 bytes of AS_FAC, then jumps to
-  // AS_FNCDATA to store.
 
   // Parse "FN name"
   AS_FNC_();
@@ -1686,15 +1686,15 @@ void AS_DEF() {
 // execution. FN call stack is managed via theStack().pushFnByte() /
 // peekFnByte() / popFnByte().
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FUNCT (inclusive) .. AS_FNCDATA (exclusive)
+// Name normalization: none (assembler label AS_FUNCT kept verbatim).
+//
+// "FN" AS_FUNCTION AS_CALL - invoke user-defined function
+// Parse FN name, save old argument value, evaluate expression with new value,
+// restore old value via AS_FNCDATA.
 void AS_FUNCT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FUNCT (inclusive) .. AS_FNCDATA (exclusive)
-  // Name normalization: none (assembler label AS_FUNCT kept verbatim).
-  //
-  // "FN" AS_FUNCTION AS_CALL - invoke user-defined function
-  // Parse FN name, save old argument value, evaluate expression with new value,
-  // restore old value via AS_FNCDATA.
 
   // Clear stack for this function call
   theStack().clearFnStack();
@@ -1796,15 +1796,15 @@ void AS_FUNCT() {
   // Stack now contains 5 saved bytes - fall through to AS_FNCDATA to restore
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FNCDATA (inclusive) .. AS_STR (exclusive)
+// Name normalization: none (assembler label AS_FNCDATA kept verbatim).
+//
+// AS_STORE FIVE BYTES FROM AS_STACK AT (AS_FNCNAM)
+// Pop 5 stack bytes and store to (AS_FNCNAM),Y with Y incrementing from 0
+// to 4.
 void AS_FNCDATA() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FNCDATA (inclusive) .. AS_STR (exclusive)
-  // Name normalization: none (assembler label AS_FNCDATA kept verbatim).
-  //
-  // AS_STORE FIVE BYTES FROM AS_STACK AT (AS_FNCNAM)
-  // Pop 5 stack bytes and store to (AS_FNCNAM),Y with Y incrementing from 0
-  // to 4.
 
   const std::uint16_t fncnampnt = variables_const().AS_FNCNAM;
 
@@ -1818,16 +1818,16 @@ void AS_FNCDATA() {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FRMEVL (inclusive) .. AS_FRM_STACK_1 (exclusive)
+// Name normalization: AS_FRMEVL_1/2 and related sublabels are modeled inline.
+//
+// Incremental port note:
+// This now includes the AS_FRM_RECURSE..AS_FRM_STACK_1 tranche by modeling
+// the recursive precedence walk and the stacked-AS_LHS frame handoff to
+// AS_ARG/AS_CPRMASK.
 void AS_FRMEVL() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FRMEVL (inclusive) .. AS_FRM_STACK_1 (exclusive)
-  // Name normalization: AS_FRMEVL_1/2 and related sublabels are modeled inline.
-  //
-  // Incremental port note:
-  // This now includes the AS_FRM_RECURSE..AS_FRM_STACK_1 tranche by modeling
-  // the recursive precedence walk and the stacked-AS_LHS frame handoff to
-  // AS_ARG/AS_CPRMASK.
 
   constexpr std::uint8_t kAS_STACK_ROOM_BYTES = 1u;
   constexpr std::uint8_t kAS_TOKEN_PLUS = 0xc8u;
@@ -1963,15 +1963,15 @@ void AS_FRMEVL() {
   frmevl_eval(frmevl_eval, 0u, true);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: SCRN (inclusive) .. end of SCRN routine (exclusive)
+// Name normalization: SCRN -> MON_SCRN (monitor label gets MON_ prefix).
+//
+// Monitor path:
+//   lsr A / php / jsr GBASCALC / lda (GBASL),Y / plp
+//   if odd row, shift high nibble down; then mask to 4-bit color.
 std::uint8_t MON_SCRN(std::uint8_t row, std::uint8_t column) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: SCRN (inclusive) .. end of SCRN routine (exclusive)
-  // Name normalization: SCRN -> MON_SCRN (monitor label gets MON_ prefix).
-  //
-  // Monitor path:
-  //   lsr A / php / jsr GBASCALC / lda (GBASL),Y / plp
-  //   if odd row, shift high nibble down; then mask to 4-bit color.
 
   const std::uint8_t halfRow = static_cast<std::uint8_t>(row >> 1u);
   const bool gbasCarry = (row & 0x01u) != 0u;
@@ -2030,17 +2030,17 @@ static void MON_BREAK() {
   ApplesoftNG::ExternalJumpDispatcher::JumpFromWord(
       ApplesoftNG::ExternalJumpDispatcher::ADDR_MON_OLDBRK);
 }
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: IRQ (inclusive) .. BREAK (exclusive)
+// Name normalization: IRQ -> MON_IRQ (monitor label gets MON_ prefix).
+//
+// 6502 IRQ/BRK handler entry point.
+// - Saves A to $45.
+// - Checks processor status on stack to distinguish IRQ from BRK.
+// - If BRK (bit 4 of status on stack is set), branches to BREAK.
+// - If IRQ, jumps through vector at $03FE.
 void MON_IRQ() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: IRQ (inclusive) .. BREAK (exclusive)
-  // Name normalization: IRQ -> MON_IRQ (monitor label gets MON_ prefix).
-  //
-  // 6502 IRQ/BRK handler entry point.
-  // - Saves A to $45.
-  // - Checks processor status on stack to distinguish IRQ from BRK.
-  // - If BRK (bit 4 of status on stack is set), branches to BREAK.
-  // - If IRQ, jumps through vector at $03FE.
 
   variables().MON_DEBUG_REG_A =
       0; // sta $45 (A is currently not passed, using 0)
@@ -2061,13 +2061,13 @@ void MON_IRQ() {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FCOMP (inclusive) .. AS_FCOMP2 (exclusive)
+// Name normalization: none (assembler label AS_FCOMP kept verbatim).
+// Pointer candidate: DEST ($60/$61) is one unified pointer to the packed
+// comparand.
 std::int8_t AS_FCOMP(std::uint16_t argAddress) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FCOMP (inclusive) .. AS_FCOMP2 (exclusive)
-  // Name normalization: none (assembler label AS_FCOMP kept verbatim).
-  // Pointer candidate: DEST ($60/$61) is one unified pointer to the packed
-  // comparand.
 
   variables().AS_DEST = argAddress;
 
@@ -2076,13 +2076,13 @@ std::int8_t AS_FCOMP(std::uint16_t argAddress) {
   return gNumericCompareResult;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: STRCMP_1 (inclusive) .. PDL (exclusive)
+// Name normalization: CompareArgAndFacStrings is the C++ helper name for the
+// STRCMP_1/STRCMP_2 loop. Pointer candidates lifted: ARG+3/+4 and FAC+1/+2
+// are the two unified string-data pointers.
 std::int8_t CompareArgAndFacStrings() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: STRCMP_1 (inclusive) .. PDL (exclusive)
-  // Name normalization: CompareArgAndFacStrings is the C++ helper name for the
-  // STRCMP_1/STRCMP_2 loop. Pointer candidates lifted: ARG+3/+4 and FAC+1/+2
-  // are the two unified string-data pointers.
 
   const std::uint8_t argLength = variables_const().AS_ARG[0];
   const std::uint8_t facLength = variables_const().AS_FAC[0];
@@ -2122,22 +2122,22 @@ std::int8_t CompareArgAndFacStrings() {
   return 0;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: PREAD (inclusive) .. end of listing routine (exclusive)
+// Name normalization: PREAD -> MON_PREAD (monitor label gets MON_ prefix).
+//
+// Monitor flow:
+//   lda PTRIG        ; trigger paddle timing
+//   ldy #$00         ; counter
+// PREAD2:
+//   lda PADDL0,X     ; selected paddle input
+//   bpl RTS2D        ; return when bit 7 clears
+//   iny              ; count while timing bit remains set
+//   bne PREAD2       ; saturate at 255
+//   dey
+// RTS2D: rts
 std::uint8_t MON_PREAD() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: PREAD (inclusive) .. end of listing routine (exclusive)
-  // Name normalization: PREAD -> MON_PREAD (monitor label gets MON_ prefix).
-  //
-  // Monitor flow:
-  //   lda PTRIG        ; trigger paddle timing
-  //   ldy #$00         ; counter
-  // PREAD2:
-  //   lda PADDL0,X     ; selected paddle input
-  //   bpl RTS2D        ; return when bit 7 clears
-  //   iny              ; count while timing bit remains set
-  //   bne PREAD2       ; saturate at 255
-  //   dey
-  // RTS2D: rts
 
   // In the original monitor, paddle index is supplied in X.
   // The current C++ calling path provides the converted operand in AS_FAC+4.

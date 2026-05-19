@@ -349,21 +349,21 @@ static void AS_FPWRT() {
   doubleToFac(result);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_OR (inclusive) .. AS_ANDOP (exclusive)
+// Name normalization: AS_OR -> AS_OR_op in AS_MATHTBL dispatch (AS_OR is
+// table label).
 void AS_OR_op() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_OR (inclusive) .. AS_ANDOP (exclusive)
-  // Name normalization: AS_OR -> AS_OR_op in AS_MATHTBL dispatch (AS_OR is
-  // table label).
 
   AS_OR();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NEGOP (inclusive) .. AS_CON_LOG_E (exclusive)
+// Name normalization: none (assembler label AS_NEGOP kept verbatim).
 void AS_NEGOP() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_NEGOP (inclusive) .. AS_CON_LOG_E (exclusive)
-  // Name normalization: none (assembler label AS_NEGOP kept verbatim).
 
   auto &vars = variables();
   const auto &cvars = variables_const();
@@ -377,18 +377,18 @@ void AS_NEGOP() {
   vars.AS_FAC_SIGN = static_cast<std::uint8_t>(sign ^ 0xffu);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_EQUOP (inclusive) .. AS_FN_ (exclusive)
+// Name normalization: none (assembler label AS_EQUOP kept verbatim).
+//
+// Tests whether AS_FAC == 0.  In the Applesoft float format the exponent byte
+// is stored at ZP_AS_FAC ($9D); a zero exponent means the value is exactly
+// 0.0. Returns AS_FAC = 1.0 (true) when the operand is zero, 0.0 (false)
+// otherwise. Used both as the "=" operator handler (via AS_MEQUU table entry)
+// and as the implementation of the NOT pseudo-function (via AS_NOT_ ->
+// AS_EQUL -> AS_EQUOP).
 void AS_EQUOP() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_EQUOP (inclusive) .. AS_FN_ (exclusive)
-  // Name normalization: none (assembler label AS_EQUOP kept verbatim).
-  //
-  // Tests whether AS_FAC == 0.  In the Applesoft float format the exponent byte
-  // is stored at ZP_AS_FAC ($9D); a zero exponent means the value is exactly
-  // 0.0. Returns AS_FAC = 1.0 (true) when the operand is zero, 0.0 (false)
-  // otherwise. Used both as the "=" operator handler (via AS_MEQUU table entry)
-  // and as the implementation of the NOT pseudo-function (via AS_NOT_ ->
-  // AS_EQUL -> AS_EQUOP).
 
   const std::uint8_t facExponent = variables_const().AS_FAC[0];
   AS_SNGFLT(facExponent == 0u ? static_cast<std::uint8_t>(1u)
