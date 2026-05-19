@@ -1,6 +1,5 @@
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_TOKEN_ADDRESS_TABLE (inclusive) .. AS_UNFNC (exclusive)
 // Name normalization: none
 
 #include "core/asm_port_token_address_table.hpp"
@@ -160,6 +159,10 @@ static void AS_NEW_Handler() { AS_NEW(); }
 // The -1 RTS-dispatch artifact from the 6502 source is dropped; plain
 // function pointers are used and the caller is responsible for invoking them.
 // ---------------------------------------------------------------------------
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_TOKEN_ADDRESS_TABLE (inclusive) .. AS_UNFNC (exclusive)
+// Name normalization: none
 AS_TOKEN_ADDRESS_TABLE_fn AS_TOKEN_ADDRESS_TABLE(std::size_t index) {
   static constexpr AS_TOKEN_ADDRESS_TABLE_fn table[] = {
       AS_ENDX,              // [0]  $80...128...END

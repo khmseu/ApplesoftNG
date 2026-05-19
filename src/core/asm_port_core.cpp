@@ -106,7 +106,7 @@ void WriteProgramByte(std::uint16_t address, std::uint8_t value) {
 bool IsOnErr() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_ERROR (inclusive) .. AS_L_ERROR_1 (exclusive)
+  // Helper logic extracted from the AS_ERROR prologue predicate.
   // Name normalization: helper name chosen for the inline AS_ERROR predicate.
   // `bit AS_ERRFLG` + `bpl` means ON ERR is active when AS_ERRFLG bit 7 is set.
   return (variables_const().AS_ERRFLG & 0x80u) != 0u;

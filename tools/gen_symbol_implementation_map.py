@@ -46,6 +46,76 @@ FUNC_DEF_RE = re.compile(
     r"([A-Za-z_][A-Za-z0-9_]*)\s*\([^;{}]*\)\s*(?:\{|$)"
 )
 
+FUNC_START_SKIP_PREFIXES = (
+    "return ",
+    "if ",
+    "for ",
+    "while ",
+    "switch ",
+    "case ",
+    "throw ",
+    "else",
+    "do ",
+    "break",
+    "continue",
+)
+
+
+def _parse_function_definition_at(lines: list[str], start_idx: int) -> str | None:
+    """Parse a function definition that may span multiple lines."""
+    start_probe = lines[start_idx].strip()
+    if not start_probe or start_probe.startswith("//"):
+        return None
+
+    if "(" not in start_probe:
+        return None
+
+    lowered = start_probe.lower()
+    if lowered.startswith(FUNC_START_SKIP_PREFIXES):
+        return None
+
+    signature_prefix = start_probe.split("(", 1)[0]
+    if "=" in signature_prefix:
+        # Assignments/lambdas are not free-function definitions.
+        return None
+
+    candidate_parts: list[str] = []
+    saw_open_brace = False
+    saw_open_paren = False
+
+    for j in range(start_idx, min(start_idx + 8, len(lines))):
+        probe = lines[j].strip()
+        if not probe:
+            continue
+        if probe.startswith("//"):
+            continue
+
+        candidate_parts.append(probe)
+        if "(" in probe:
+            saw_open_paren = True
+
+        if "{" in probe:
+            saw_open_brace = True
+            break
+        if probe.endswith(";"):
+            # Declaration/prototype, not a definition.
+            return None
+
+    if not saw_open_brace:
+        return None
+    if not saw_open_paren:
+        return None
+
+    candidate = " ".join(candidate_parts)
+    m = FUNC_DEF_RE.match(candidate)
+    if not m:
+        return None
+
+    func_name = m.group(1)
+    if func_name in {"if", "for", "while", "switch", "return"}:
+        return None
+    return func_name
+
 
 @dataclass(frozen=True)
 class Symbol:
@@ -127,31 +197,9 @@ def _next_function_name(lines: list[str], start_idx: int) -> str | None:
         if "AS_Labels:" in line or "MON_Labels:" in line:
             break
 
-        m = FUNC_DEF_RE.match(line)
-        if not m:
-            continue
-
-        func_name = m.group(1)
-        if func_name in {"if", "for", "while", "switch", "return"}:
-            continue
-
-        # Require function-definition context (opening brace on line or shortly after).
-        tail = line[m.end() :]
-        if "{" in tail:
+        func_name = _parse_function_definition_at(lines, i)
+        if func_name:
             return func_name
-        for j in range(i + 1, min(i + 8, len(lines))):
-            probe = lines[j].strip()
-            if not probe:
-                continue
-            if probe.startswith("//"):
-                continue
-            if probe.startswith("{"):
-                return func_name
-            if probe.endswith(";"):
-                break
-            if "{" in probe:
-                return func_name
-            break
     return None
 
 
@@ -259,35 +307,8 @@ def scan_all_function_definitions(src_root: Path) -> list[FunctionDefinition]:
     for cpp_path in sorted(src_root.rglob("*.cpp")):
         lines = cpp_path.read_text(encoding="utf-8", errors="replace").splitlines()
         for idx, line in enumerate(lines):
-            m = FUNC_DEF_RE.match(line)
-            if not m:
-                continue
-
-            func_name = m.group(1)
-            if func_name in {"if", "for", "while", "switch", "return"}:
-                continue
-
-            # Require function-definition context (opening brace on line or shortly after).
-            tail = line[m.end() :]
-            has_brace = "{" in tail
-            if not has_brace:
-                for j in range(idx + 1, min(idx + 8, len(lines))):
-                    probe = lines[j].strip()
-                    if not probe:
-                        continue
-                    if probe.startswith("//"):
-                        continue
-                    if probe.startswith("{"):
-                        has_brace = True
-                        break
-                    if probe.endswith(";"):
-                        break
-                    if "{" in probe:
-                        has_brace = True
-                        break
-                    break
-
-            if has_brace:
+            func_name = _parse_function_definition_at(lines, idx)
+            if func_name:
                 definitions.append(
                     FunctionDefinition(
                         file_path=cpp_path,

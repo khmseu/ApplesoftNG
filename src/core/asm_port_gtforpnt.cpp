@@ -23,6 +23,10 @@ std::uint16_t stack_word_at(const AS_GTFORPNTState &state, std::uint8_t x,
 
 } // namespace
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GTFORPNT (inclusive) .. AS_BLTU (exclusive)
+// Name normalization: none (assembler label AS_GTFORPNT kept verbatim).
 AS_GTFORPNTResult AS_GTFORPNT(std::uint8_t stackPointer,
                               AS_GTFORPNTState &state) {
   // TSX + 4: skip return address and caller context to first candidate frame.

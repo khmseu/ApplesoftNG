@@ -18,6 +18,10 @@ void copy_page_backward(AS_BLTU2State &state) {
 
 } // namespace
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_BLTU (inclusive) .. AS_BLTU2 (exclusive)
+// Name normalization: none (assembler label AS_BLTU kept verbatim).
 AS_BLTUResult AS_BLTU(AS_BLTUState &state) {
   // AS_BLTU starts by validating/grooming destination via AS_REASON.
   state.reason.a = state.a;

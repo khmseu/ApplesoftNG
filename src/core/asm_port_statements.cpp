@@ -411,12 +411,8 @@ void AS_PUTSTR() {
 }
 
 void DeleteExistingAS_Line() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_NUMBERED_LINE delete block (inclusive) .. AS_PUT_NEW_LINE
-  // (exclusive) Name normalization: C++ helper; corresponds to the inline
-  // delete block inside AS_NUMBERED_LINE (T:0471–T:04b5) in the assembler
-  // listing.
+  // C++ helper: implements the inline delete/shift block of AS_NUMBERED_LINE
+  // (d471–d4b4), extracted for clarity.  Not a ROM entry point.
 
   const std::uint16_t lowtr = variables_const().AS_LOWTR;
   const std::uint16_t nextAS_Line = ApplesoftVariables::makeWord(
@@ -438,13 +434,12 @@ void DeleteExistingAS_Line() {
   variables().AS_VARTAB = static_cast<std::uint16_t>(vartab - lineSize);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PUT_NEW_LINE (inclusive) .. AS_FIX_LINKS (exclusive)
+// Name normalization: renamed to InsertNewAS_Line in C++; corresponds to
+// AS_PUT_NEW_LINE at d4b5.
 void InsertNewAS_Line() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PUT_NEW_LINE (inclusive) .. AS_FIX_LINKS (exclusive)
-  // Name normalization: C++ helper; corresponds to AS_PUT_NEW_LINE
-  // (T:04b5–T:04f2).
-
   constexpr std::uint16_t kTokenBuf =
       static_cast<std::uint16_t>(ApplesoftVariables::ADDR_AS_INPUT_BUFFER - 5u);
 
@@ -489,13 +484,13 @@ void InsertNewAS_Line() {
   variables().AS_STREND = newVartab;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PARSE_INPUT_LINE (inclusive) .. AS_FNDLIN (exclusive)
+// Name normalization: none (assembler label AS_PARSE_INPUT_LINE kept verbatim).
+// AS_PARSE (d56c) falls through from AS_PARSE_INPUT_LINE (d559); both address
+// ranges are implemented by this single C++ function.
 void AS_PARSE_INPUT_LINE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PARSE_INPUT_LINE (inclusive) .. AS_FNDLIN (exclusive)
-  // Name normalization: none (assembler label AS_PARSE_INPUT_LINE kept
-  // verbatim).
-
   std::uint8_t inputIndex = 0;
   std::uint8_t outputIndex = 0;
   bool inRem = false;
@@ -557,6 +552,12 @@ void AS_PARSE_INPUT_LINE() {
   SetTextPointerToInputBufferMinus1();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NUMBERED_LINE (inclusive) .. AS_PUT_NEW_LINE (exclusive)
+// Name normalization: renamed to HandleNumberedAS_Line in C++; implements the
+// full AS_NUMBERED_LINE entry point at d45c (squash VARTAB, LINGET, parse,
+// FNDLIN, optional delete, then fall through to AS_PUT_NEW_LINE).
 void HandleNumberedAS_Line() {
   AS_LINGET();
   AS_PARSE_INPUT_LINE();
@@ -612,12 +613,11 @@ void AS_FIX_LINKS() {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FNDLIN (inclusive) .. AS_FL1 (exclusive)
+// Name normalization: none (assembler label AS_FNDLIN kept verbatim).
 bool AS_FNDLIN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FNDLIN (inclusive) .. AS_FL1 (exclusive)
-  // Name normalization: none (assembler label AS_FNDLIN kept verbatim).
-
   // Assembler falls through from AS_FNDLIN directly into AS_FL1 with
   // A=AS_TXTTAB, X=AS_TXTTAB+1.
   return AS_FL1(variables_const().AS_TXTTAB);

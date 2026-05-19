@@ -398,6 +398,7 @@ void AS_EQUOP() {
 // ---------------------------------------------------------------------------
 // Math operator table: precedence + handler for tokens $C8-$D1.
 // Index = token - $C8.
+// AS_Labels: AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)
 // ---------------------------------------------------------------------------
 MathTblEntry AS_MATHTBL(std::size_t index) {
   static constexpr MathTblEntry table[] = {

@@ -127,12 +127,11 @@ Inlin2Result AS_INLIN2(std::uint8_t x) {
   return Inlin2Result::fromAddress(0u, inputBufferMinus1);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_INCHR (inclusive) .. AS_PARSE_INPUT_LINE (exclusive)
+// Name normalization: none (assembler label AS_INCHR kept verbatim).
 std::uint8_t AS_INCHR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_INCHR (inclusive) .. AS_PARSE_INPUT_LINE (exclusive)
-  // name normalization: none (assembler label AS_INCHR kept verbatim).
-
   return ApplesoftNG::ExternalJumpDispatcher::JumpFromWord<std::uint8_t>(
              (ApplesoftVariables::ZP_MON_KSW)) &
          0x7fu;

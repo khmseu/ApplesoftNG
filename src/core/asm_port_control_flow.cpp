@@ -421,12 +421,11 @@ void AS_ENDX_impl(bool shouldPrintBreak) {
   AS_RESTART();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_RESTART (inclusive)
+// Name normalization: none (assembler label AS_RESTART kept verbatim).
 void AS_RESTART() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_RESTART (inclusive)
-  // Name normalization: none (assembler label AS_RESTART kept verbatim).
-
   AS_CRDO();
   const Inlin2Result inlin2 = AS_INLIN2(AS_RESTART_PROMPT);
   SetTextPointer(inlin2.address());

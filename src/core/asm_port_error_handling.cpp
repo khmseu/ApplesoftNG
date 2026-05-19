@@ -20,9 +20,11 @@ void AS_HANDLERR();
 void AS_INPRT();
 void AS_RESTART();
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_ERROR (inclusive) .. AS_PRINT_ERROR_LINNUM (exclusive)
+// Name normalization: none (assembler label AS_ERROR kept verbatim).
 void AS_ERROR(std::uint8_t error_code_offset) {
-  // Source: applesoft.o65.lst:1337
-
   gPendingErrorCode = error_code_offset;
 
   if (IsOnErr()) {
@@ -40,15 +42,21 @@ void AS_ERROR(std::uint8_t error_code_offset) {
   AS_PRINT_ERROR_LINNUM();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_MEMERR (inclusive) .. AS_ERROR (exclusive)
+// Name normalization: none (assembler label AS_MEMERR kept verbatim).
 std::uint8_t AS_MEMERR() {
-  // Source: applesoft.o65.lst:1329
   AS_ERROR(AS_ERR_MEMFULL);
   return AS_ERR_MEMFULL;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PRINT_ERROR_LINNUM (inclusive) .. AS_RESTART (exclusive)
+// Name normalization: none (assembler label AS_PRINT_ERROR_LINNUM kept
+// verbatim).
 void AS_PRINT_ERROR_LINNUM() {
-  // Source: applesoft.o65.lst:1356
-
   // AS_QT_ERROR(0) is " AS_ERROR" + BELL
   AS_PRINT_ERROR_LINNUM(
       std::string_view(AS_QT_ERROR(0))); // Use index 0 for " AS_ERROR"

@@ -443,6 +443,7 @@ static void AS_MIDSTR_fn() { AS_MIDSTR(); }
 // ---------------------------------------------------------------------------
 // Dispatch table for Applesoft unary/built-in function tokens $D2-$EA.
 // Index = token - $D2. Direct addresses — no RTS-dispatch -1 adjustment.
+// AS_Labels: AS_UNFNC (inclusive) .. AS_MATHTBL (exclusive)
 // ---------------------------------------------------------------------------
 AS_UNFNC_fn AS_UNFNC(std::size_t index) {
   static constexpr AS_UNFNC_fn table[] = {
