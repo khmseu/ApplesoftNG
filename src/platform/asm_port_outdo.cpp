@@ -133,8 +133,8 @@ void MON_WAIT(std::uint8_t a) {
   } while (outer != 0u);
 }
 void MON_COUT(std::uint8_t a) {
-  ApplesoftNG::ExternalJumpDispatcher::Jump(
-      variables_const().readWord(ApplesoftVariables::ZP_MON_CSW), a);
+  ApplesoftNG::ExternalJumpDispatcher::JumpFromWord(
+      ApplesoftVariables::ZP_MON_CSW, a);
 }
 std::uint8_t AS_OUTDO(std::uint8_t a) {
   a |= 0x80u;

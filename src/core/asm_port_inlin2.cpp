@@ -92,8 +92,8 @@ std::uint8_t MON_RDKEY() {
   variables().writeByte(cursorAddress, flashingChar);
 
   const std::uint8_t keyboardValue =
-      ApplesoftNG::ExternalJumpDispatcher::Jump<std::uint8_t>(
-          readZeroPageWord(ApplesoftVariables::ZP_MON_KSW));
+      ApplesoftNG::ExternalJumpDispatcher::JumpFromWord<std::uint8_t>(
+          (ApplesoftVariables::ZP_MON_KSW));
 
   // KEYIN epilogue: restore original screen char, clear keyboard strobe, return
   // keycode.
@@ -133,8 +133,8 @@ std::uint8_t AS_INCHR() {
   // AS_Labels: AS_INCHR (inclusive) .. AS_PARSE_INPUT_LINE (exclusive)
   // name normalization: none (assembler label AS_INCHR kept verbatim).
 
-  return ApplesoftNG::ExternalJumpDispatcher::Jump<std::uint8_t>(
-             readZeroPageWord(ApplesoftVariables::ZP_MON_KSW)) &
+  return ApplesoftNG::ExternalJumpDispatcher::JumpFromWord<std::uint8_t>(
+             (ApplesoftVariables::ZP_MON_KSW)) &
          0x7fu;
 }
 

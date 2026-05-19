@@ -18,4 +18,6 @@ using AS_TOKEN_ADDRESS_TABLE_fn = void (*)();
 /// Maps tokens $80 (END) through $BF (AS_NEW), i.e. indices 0–63.
 AS_TOKEN_ADDRESS_TABLE_fn AS_TOKEN_ADDRESS_TABLE(std::size_t index);
 
+void AS_AMPERSAND();
+
 } // namespace applesoft::asm_port

@@ -85,8 +85,8 @@ void AS_ENDX_impl(bool shouldPrintBreak);
 
 namespace {
 
-constexpr std::uint16_t kStepAS_LabelAddress = 0x07afu;
-constexpr std::uint16_t kConOneScratchAddress = 0x03fbu;
+constexpr std::uint16_t kStepLabelAddress = 0x07afu;
+constexpr std::uint16_t kConOneScratchAddress = 0xe913u;
 constexpr std::uint8_t kPackedFloatByteCount = 5u;
 constexpr std::uint8_t kStepValueOffsetInForFrame = 4u;
 // Applesoft packed float for 1.0:
@@ -106,7 +106,7 @@ void ApplyFacSign() {
   variables().AS_FAC[1] = signedMantissaHigh;
 }
 
-void SetBranchTargetToAS_STEP() { variables().AS_INDEX = kStepAS_LabelAddress; }
+void SetBranchTargetToAS_STEP() { variables().AS_INDEX = kStepLabelAddress; }
 
 void AS_LOAD_FAC_FROM_YA() {
   // Source:
@@ -274,7 +274,7 @@ void AS_FRM_STACK_3() {
   theStack().pushByte(variables_const().AS_FAC[0]);
 
   const std::uint16_t branchTarget = variables_const().AS_INDEX;
-  if (branchTarget == kStepAS_LabelAddress) {
+  if (branchTarget == kStepLabelAddress) {
     AS_STEP();
   }
   // Other indirect targets used by AS_FRM_STACK_3 are not ported yet; return to

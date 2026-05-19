@@ -1,4 +1,6 @@
 #pragma once
+#include "core/applesoft_variables.hpp"
+#include "core/asm_port_token_address_table.hpp"
 #include <cstdint>
 
 namespace ApplesoftNG {
@@ -21,9 +23,24 @@ public:
    * @return The result of the called function.
    */
   template <typename R = void, typename... Args>
-  static R Jump(std::uint16_t address, Args &&...args);
+  static R JumpTo(std::uint16_t address, Args &&...args);
+
+  /**
+   * @brief Executes a jump by reading the destination from a memory word.
+   */
+  template <typename R = void, typename... Args>
+  static R JumpFromWord(std::uint16_t wordAddress, Args &&...args);
+
+  /**
+   * @brief Executes a jump by reading the destination from a JMP instruction.
+   */
+  template <typename R = void, typename... Args>
+  static R JumpFromInstruction(std::uint16_t jumpAddress, Args &&...args);
 
   // Well-known monitor entry points
+  static constexpr std::uint16_t ADDR_AS_USR =
+      applesoft::asm_port::ApplesoftVariables::ZP_AS_USR;
+  static constexpr std::uint16_t ADDR_AS_AMPERSAND = 0x03f5u;
   static constexpr std::uint16_t ADDR_MON_KEYIN = 0xFD1Bu;
   static constexpr std::uint16_t ADDR_MON_OLDBRK = 0xFA59u;
   static constexpr std::uint16_t ADDR_MON_COUT1 = 0xFDF0u;
@@ -44,6 +61,8 @@ public:
 namespace applesoft::asm_port {
 void AS_BASIC();
 void AS_BASIC2();
+void AS_USR();
+void AS_USR_impl();
 std::uint8_t MON_GETLN();
 std::uint8_t MON_KEYIN();
 void MON_OLDBRK();
@@ -53,7 +72,7 @@ void MON_COUT1(std::uint8_t a);
 namespace ApplesoftNG {
 
 template <typename R, typename... Args>
-R ExternalJumpDispatcher::Jump(std::uint16_t address, Args &&...args) {
+R ExternalJumpDispatcher::JumpTo(std::uint16_t address, Args &&...args) {
   using namespace applesoft::asm_port;
 
   auto invoke = [&]<typename Func>(Func &&f) -> R {
@@ -72,6 +91,9 @@ R ExternalJumpDispatcher::Jump(std::uint16_t address, Args &&...args) {
   };
 
   switch (address) {
+  case ADDR_AS_USR:
+    return invoke(AS_USR_impl);
+
   case ADDR_AS_BASIC:
     return invoke(AS_BASIC);
 
@@ -87,8 +109,11 @@ R ExternalJumpDispatcher::Jump(std::uint16_t address, Args &&...args) {
   case ADDR_MON_COUT1:
     return invoke(MON_COUT1);
 
-  case 0x03fbu:
+  case applesoft::asm_port::ApplesoftVariables::ADDR_MON_NMI_VECTOR:
     break;
+
+  case ADDR_AS_AMPERSAND:
+    return invoke(AS_AMPERSAND);
 
   case 0xc100u:
   case 0xc200u:
@@ -109,6 +134,30 @@ R ExternalJumpDispatcher::Jump(std::uint16_t address, Args &&...args) {
     throw std::runtime_error("ExternalJumpDispatcher: Unhandled jump address " +
                              std::to_string(address));
   }
+}
+
+template <typename R, typename... Args>
+R ExternalJumpDispatcher::JumpFromWord(std::uint16_t wordAddress,
+                                       Args &&...args) {
+  return JumpTo<R>(applesoft::asm_port::variables_const().readWord(wordAddress),
+                   std::forward<Args>(args)...);
+}
+
+template <typename R, typename... Args>
+R ExternalJumpDispatcher::JumpFromInstruction(std::uint16_t jumpAddress,
+                                              Args &&...args) {
+  constexpr std::uint8_t kJmpOpcode = 0x4cu;
+
+  if (applesoft::asm_port::variables_const().readByte(jumpAddress) !=
+      kJmpOpcode) {
+    throw std::runtime_error("ExternalJumpDispatcher: Expected JMP opcode at "
+                             "address " +
+                             std::to_string(jumpAddress));
+  }
+
+  const std::uint16_t target = applesoft::asm_port::variables_const().readWord(
+      static_cast<std::uint16_t>(jumpAddress + 1u));
+  return JumpTo<R>(target, std::forward<Args>(args)...);
 }
 
 } // namespace ApplesoftNG

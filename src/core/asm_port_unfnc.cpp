@@ -13,6 +13,7 @@
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_strlit.hpp"
 #include "core/asm_port_strlt2.hpp"
+#include "core/jump_table.hpp"
 
 #include <cmath>
 
@@ -262,7 +263,7 @@ void AS_ABS() {
   variables().AS_FAC_SIGN =
       static_cast<std::uint8_t>(variables_const().AS_FAC_SIGN >> 1u);
 }
-static void AS_USR() {
+void AS_USR_impl() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
   // AS_Labels: AS_L_USR1 (inclusive) .. AS_L_USR2 (exclusive)
@@ -273,6 +274,20 @@ static void AS_USR() {
   // execution bridge, so USR() is treated as an undefined function.
   AS_ERROR(AS_ERR_UNDEFFUNC);
 }
+
+void AS_USR() {
+  // Source:
+  // SourceMaterial/Combo/asrom.lst
+  // AS_Labels: AS_USR (inclusive) .. AS_CHARAC (exclusive)
+  // Name normalization: none (assembler label AS_USR kept verbatim).
+  //
+  // The original ROM dispatches through a user-supplied machine-language
+  // vector in zero page ($0A-$0C). The current runtime has no machine-code
+  // execution bridge, so USR() is treated as an undefined function.
+  ApplesoftNG::ExternalJumpDispatcher::JumpFromInstruction(
+      ApplesoftNG::ExternalJumpDispatcher::ADDR_AS_USR);
+}
+
 void AS_FRE_fn() {
   // Source:
   // SourceMaterial/Combo/asrom.lst

@@ -7,6 +7,7 @@
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/jump_table.hpp"
 
 namespace applesoft::asm_port {
 
@@ -135,6 +136,12 @@ static void AS_STORE() {
 }
 static void AS_SPEED_Handler() { AS_SPEED(); }
 static void AS_AMPERSAND_VECTOR() {
+  // '&' dispatch uses a machine-language vector at $03F5 in the ROM model.
+  // No machine-code bridge exists in this runtime, so treat it as unsupported.
+  ApplesoftNG::ExternalJumpDispatcher::JumpFromInstruction(
+      ApplesoftNG::ExternalJumpDispatcher::ADDR_AS_AMPERSAND);
+}
+void AS_AMPERSAND() {
   // '&' dispatch uses a machine-language vector at $03F5 in the ROM model.
   // No machine-code bridge exists in this runtime, so treat it as unsupported.
   AS_ERROR(AS_ERR_UNDEFSTAT);

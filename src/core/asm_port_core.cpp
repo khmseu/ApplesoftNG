@@ -349,12 +349,12 @@ void MON_RESET2() {
                                 kSentinelCheckMask) == warmVectorSentinel) {
     if (warmVectorValue == kJumpToBasic) {
       variables().writeWord(kWarmVector, kJumpToBasic2);
-      ApplesoftNG::ExternalJumpDispatcher::Jump(kJumpToBasic);
+      AS_BASIC();
       return;
     }
 
     // AS_LFAA3 path: jump through warm vector ($03F2/$03F3).
-    ApplesoftNG::ExternalJumpDispatcher::Jump(warmVectorValue);
+    ApplesoftNG::ExternalJumpDispatcher::JumpFromWord(kWarmVector);
     return;
   } else {
     // AS_LFAA6 path: install bootstrap bytes, then scan descending pages.
@@ -394,11 +394,11 @@ void MON_RESET2() {
         continue;
       }
 
-      ApplesoftNG::ExternalJumpDispatcher::Jump(scanPtr);
+      ApplesoftNG::ExternalJumpDispatcher::JumpTo(scanPtr);
       return;
     }
     variables().writeWord(kWarmVector, kJumpToBasic2);
-    ApplesoftNG::ExternalJumpDispatcher::Jump(kJumpToBasic);
+    AS_BASIC();
     return;
   }
 }
@@ -2011,7 +2011,8 @@ public:
   // used by the original vector entry.
   static void NMI_VECTOR() {
     // FFFA points at $03FB.
-    ApplesoftNG::ExternalJumpDispatcher::Jump(0x03fbu);
+    ApplesoftNG::ExternalJumpDispatcher::JumpFromInstruction(
+        ApplesoftVariables::ADDR_MON_NMI_VECTOR);
   }
 
   static void RESET_VECTOR() {
@@ -2025,7 +2026,10 @@ public:
   }
 };
 
-static void MON_BREAK() { MON_OLDBRK(); }
+static void MON_BREAK() {
+  ApplesoftNG::ExternalJumpDispatcher::JumpFromWord(
+      ApplesoftNG::ExternalJumpDispatcher::ADDR_MON_OLDBRK);
+}
 void MON_IRQ() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
@@ -2053,8 +2057,7 @@ void MON_IRQ() {
   } else {
     constexpr std::uint16_t kIRQVector =
         ApplesoftVariables::ADDR_MON_IRQ_VECTOR;
-    ApplesoftNG::ExternalJumpDispatcher::Jump(
-        variables_const().readWord(kIRQVector));
+    ApplesoftNG::ExternalJumpDispatcher::JumpFromWord((kIRQVector));
   }
 }
 
