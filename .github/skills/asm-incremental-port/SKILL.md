@@ -9,6 +9,7 @@ description: Incrementally port Applesoft assembly label ranges to C++ using an 
 
 Incrementally port Applesoft historical assembler ranges into C++ using a strict two-label conversion window.
 
+Normative conversion behavior is defined in [.github/instructions/asm-to-cpp.instructions.md](../../instructions/asm-to-cpp.instructions.md).
 For function-scoped `AS_Labels` claim formatting and validation, follow [.github/skills/writing-claims/SKILL.md](../writing-claims/SKILL.md).
 
 ## Trigger Phrases
@@ -34,66 +35,26 @@ Optional:
 ### Label Resolution & Analysis
 
 1. Resolve both labels in the authoritative listing under [SourceMaterial/Combo/asrom.lst](../../../SourceMaterial/Combo/asrom.lst).
-2. Read the bounded range from `start_label` up to but not including `end_label`, including inline comments and comments immediately preceding the range.
-3. Identify 16-bit pointer candidates in the window before coding:
-   - indirect forms such as `($NN),Y` and `($NN,X)`
-   - split-byte construction with `#<label` / `#>label`
-   - carry-chain pointer arithmetic (`ADC` on low byte with carry into high byte)
-
-4. For each candidate, plan one unified C++ representation (pointer or pointer abstraction). Do not keep low/high bytes as separate independent locals when they represent one pointer.
-5. Consult [docs/function-cross-reference.md](../../../docs/function-cross-reference.md), to identify existing implementations, current stub placeholders, and source locations for functions in the window.
+2. If either label is missing, return an error naming the missing label and stop.
+3. Read the bounded range from `start_label` up to but not including `end_label`, including inline comments and comments immediately preceding the range.
+4. Consult [docs/function-cross-reference.md](../../../docs/function-cross-reference.md) to identify existing implementations, stub placeholders, and source locations in this window.
 
 ### Implementation
 
 1. Summarize intent in exactly 3-5 bullets, each limited to a maximum of 15 words, before coding.
-2. Implement one C++ function for the range.
-   - If the requested window contains more than one function's worth of ROM logic, split it into multiple C++ functions so the entire `start_label`..`end_label` window is covered.
-   - Keep each split function aligned to a coherent sub-range and preserve label-based naming where possible.
-3. If the range does not end in an `RTS`, `JMP`, or unconditional branch, preserve the fall-through into `end_label` by calling the following function at that point. Add a checklist item to confirm that the next-label fall-through is modeled explicitly.
-4. All symbols in the authoritative sources already include context-appropriate prefixes (`AS_` or `MON_`). Use these exact labels verbatim in C++.
-5. Route all fixed-address global state access through `ApplesoftVariables` (`variables()` / `variables_const()` accessors). If a required fixed address is missing, add it to `ApplesoftVariables` before use.
-6. For fixed-address byte pairs that form pointers, read/write them through one conceptual pointer variable (or an explicit pointer abstraction), and lift carry-chain updates to unified pointer arithmetic. Example: if `ZP_LO` and `ZP_HI` represent one 16-bit address, use `uint16_t ptr = variables().readWord(ZP_LO);` instead of separate byte reads.
-7. Route all $C000-$CFFF reads/writes through an `IOPorts`-style companion class with named constants and single-byte accessors; do not implement actual device semantics yet.
-8. For dual-use integer/pointer storage, use an explicit representation (`union`, `std::variant`, or dedicated wrapper) and document the rationale.
-9. Keep label-based naming as-is when legal; otherwise normalize only as needed to satisfy C++ identifier rules and document the mapping.
-10. Choose destination by behavior:
-
-- language/runtime semantics -> [src/core](../../../src/core)
-- device/console/monitor I/O semantics -> [src/platform](../../../src/platform)
+2. Implement the conversion using [.github/instructions/asm-to-cpp.instructions.md](../../instructions/asm-to-cpp.instructions.md) as the authoritative rule set.
+3. Ensure full `start_label`..`end_label` coverage, including split-into-multiple-functions behavior when needed.
 
 ### Finalization
 
 1. Add missing dependency stubs near the new implementation with `TODO(asm-port)` markers.
 2. Add or update function-scoped `AS_Labels` claim comments per [.github/skills/writing-claims/SKILL.md](../writing-claims/SKILL.md).
-   - If the range was split, add separate claims for each function's specific sub-range.
 3. Update [docs/function-cross-reference.md](../../../docs/function-cross-reference.md) to reflect newly ported functions and updated stub/real status.
-4. Build and report the exact files changed.
-
-## Function Address Table Pattern
-
-If the range is a 6502 jump-table or RTS-dispatch table (a sequence of `.word LABEL` or `.word LABEL-1` entries):
-
-- The `-1` is a 6502 RTS-dispatch artifact; use plain function pointers in C++.
-- Declare `using <TableName>_fn = <return>(*)(<params>);` for the common handler signature.
-- Implement `<TableName>_fn <TableName>(std::size_t index)` — a lookup that returns the pointer; the **caller** invokes it.
-- Body uses a `static constexpr` array of function pointers.
-- Preserve the per-entry token/label comments.
-- Create stubs for every callee not yet ported, following the standard dummy implementation rules.
+4. Build and report exact files changed.
 
 ## Definition Of Done
 
-- Conversion is bounded by requested labels.
-- Behavior and comments from the source range are reflected in code comments.
-- Pointer candidates in the window are identified and mapped to unified C++ representations.
-- Carry-chain pointer updates are modeled as unified pointer arithmetic.
-- Any dual-use pointer/integer storage is explicit and documented.
-- New function compiles.
-- Any unresolved dependencies are represented by dummy implementations.
-- No runtime reads from SourceMaterial.
-- Any fixed-address global state access in the ported slice uses `ApplesoftVariables`.
-- Function-scoped `AS_Labels` claims follow [.github/skills/writing-claims/SKILL.md](../writing-claims/SKILL.md).
-- If the slice was split, each generated function has its own sub-range claim.
-- [docs/function-cross-reference.md](../../../docs/function-cross-reference.md) is updated for the ported window.
+All items in the Output Checklist from [.github/instructions/asm-to-cpp.instructions.md](../../instructions/asm-to-cpp.instructions.md) are satisfied.
 
 ## Notes
 

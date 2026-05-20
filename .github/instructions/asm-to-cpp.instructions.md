@@ -6,6 +6,8 @@ applyTo: "SourceMaterial/Combo/asrom.lst,SourceMaterial/Combo/asrom.sym,src/**/*
 
 Use these instructions when converting a bounded assembler segment into C++.
 
+This file is the canonical rule set for asm-range conversion. Prompts and skills should reference this file instead of duplicating its full rules.
+
 ## Required Inputs
 
 - `start_label`: first label of the conversion window, inclusive.
