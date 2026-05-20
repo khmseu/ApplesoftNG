@@ -74,6 +74,7 @@ std::uint8_t AS_GTNUM();
 std::uint8_t AS_COMBYTE();
 void AS_RTS_10();
 
+// AS_Labels: AS_NEW (inclusive) .. AS_SCRTCH (exclusive)
 bool AS_NEW_impl() {
   if (!IsStatementEndOfParsedInput()) {
     return false;
@@ -83,6 +84,7 @@ bool AS_NEW_impl() {
   return true;
 }
 
+// AS_Labels: AS_SCRTCH (inclusive) .. AS_SETPTRS (exclusive)
 void AS_SCRTCH_impl() {
   const std::uint16_t txtTabAddr = variables_const().AS_TXTTAB;
   variables().AS_LOCK = 0;
@@ -99,6 +101,7 @@ void AS_SCRTCH_impl() {
   AS_SETPTRS_impl();
 }
 
+// AS_Labels: AS_SETPTRS (inclusive) .. AS_CLEAR (exclusive)
 bool AS_SETPTRS_impl() {
   AS_STXTPT();
   AS_CLEAR();
@@ -726,10 +729,11 @@ void AS_DEL() {
   AS_FIX_LINKS();
 }
 
+// AS_Labels: AS_LIST (inclusive) .. AS_FOR (exclusive)
+// Included ROM labels: AS_GETCHR, AS_LIST_4
 void AS_LIST() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_LIST (inclusive) .. AUTO (exclusive)
   // Name normalization: none (assembler label AS_LIST kept verbatim).
 
   if (!IsStatementEndOfParsedInput()) {
@@ -757,8 +761,6 @@ void AS_LIST() {
       break;
     }
 
-    AS_CRDO();
-
     const std::uint16_t currentAS_Line = ApplesoftVariables::makeWord(
         variables_const().readByte(static_cast<std::uint16_t>(current + 2u)),
         variables_const().readByte(static_cast<std::uint16_t>(current + 3u)));
@@ -766,9 +768,10 @@ void AS_LIST() {
       break;
     }
 
+    AS_CRDO();
     variables().AS_CURLIN = currentAS_Line;
     AS_LINPRT();
-    variables().MON_CH = 5u;
+    AS_OUTDO(' ');
 
     std::uint16_t offset = 4u;
     while (true) {
@@ -777,11 +780,25 @@ void AS_LIST() {
       if (ch == 0u) {
         break;
       }
-      AS_OUTDO(static_cast<std::uint8_t>(ch & 0x7fu));
+
+      if (ch < 0x80u) {
+        AS_OUTDO(static_cast<std::uint8_t>(ch & 0x7fu));
+      } else {
+        // Expand token
+        AS_OUTDO(' ');
+        std::string_view tokenName = AS_TOKEN_NAME_TABLE(ch - 0x80u);
+        for (char tc : tokenName) {
+          AS_OUTDO(static_cast<std::uint8_t>(tc));
+        }
+        AS_OUTDO(' ');
+      }
       ++offset;
     }
 
-    current = static_cast<std::uint16_t>(current + offset + 1u);
+    // current = link (low, high)
+    current = ApplesoftVariables::makeWord(
+        variables_const().readByte(current),
+        variables_const().readByte(static_cast<std::uint16_t>(current + 1u)));
     variables().AS_LOWTR = current;
   }
 

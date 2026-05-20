@@ -6,6 +6,7 @@
 
 namespace applesoft::asm_port {
 
+// AS_Labels: AS_CLEAR (inclusive) .. AS_CLEARC (exclusive)
 void AS_CLEAR() {
   if (AS_CHRGOT() != 0) {
     return;
@@ -13,6 +14,7 @@ void AS_CLEAR() {
   AS_CLEARC();
 }
 
+// AS_Labels: AS_CLEARC (inclusive) .. AS_STKINI (exclusive)
 void AS_CLEARC() {
   variables().AS_FRETOP = variables_const().AS_MEMSIZ;
 
@@ -24,6 +26,7 @@ void AS_CLEARC() {
   AS_STKINI();
 }
 
+// AS_Labels: AS_STKINI (inclusive) .. AS_STXTPT (exclusive)
 void AS_STKINI() {
   variables().AS_TEMPPT = ApplesoftVariables::ZP_AS_TEMPST;
 
@@ -37,15 +40,18 @@ void AS_STKINI() {
   variables().AS_SUBFLG = 0;
 }
 
+// AS_Labels: AS_STXTPT (inclusive) .. AS_LIST (exclusive)
 void AS_STXTPT() {
   variables().AS_TXTPTR =
       static_cast<std::uint16_t>(variables_const().AS_TXTTAB - 1u);
 }
 
+// AS_Labels: AS_RESTORE (inclusive) .. AS_SETDA (exclusive)
 void AS_RESTORE() {
   AS_SETDA(static_cast<std::uint16_t>(variables_const().AS_TXTTAB - 1u));
 }
 
+// AS_Labels: AS_SETDA (inclusive) .. AS_ISCNTC (exclusive)
 void AS_SETDA(std::uint16_t addr) { variables().AS_DATPTR = addr; }
 
 } // namespace applesoft::asm_port

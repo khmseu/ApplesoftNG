@@ -13,6 +13,20 @@
 
 namespace applesoft::asm_port {
 
+void AS_END2_impl(bool shouldPrintBreak);
+void AS_END4_impl(bool shouldPrintBreak);
+void AS_ENDX_impl(bool shouldPrintBreak);
+void AS_STOP_impl(bool shouldPrintBreak);
+void AS_RESTART();
+void AS_CRDO();
+struct Inlin2Result;
+Inlin2Result AS_INLIN2(std::uint8_t prompt);
+void ClearErrFlag();
+void MarkDirectMode();
+void HandleNumberedAS_Line();
+void AS_PARSE_INPUT_LINE();
+void SetTextPointer(std::uint16_t address);
+
 bool IsStatementEndOfParsedInput();
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
@@ -371,6 +385,8 @@ std::uint8_t PeekTopControlTokenAfterAS_GTFORPNT() {
   return theStack().readByteAt(theStack().readStackPointer(), 1u);
 }
 
+// AS_Line 1925, 1781 call this: jsr AS_ISCNTC
+// AS_Labels: AS_ISCNTC (inclusive) .. AS_CONTROL_C_TYPED (exclusive)
 bool AS_ISCNTC() {
   constexpr std::uint8_t kCTRL_C_CODE = 0x83;
 
@@ -383,6 +399,7 @@ bool AS_ISCNTC() {
   return true;
 }
 
+// AS_Labels: AS_STOP (inclusive) .. AS_END2 (exclusive)
 void AS_STOP() { AS_STOP_impl(false); }
 
 void AS_STOP_impl(bool shouldPrintBreak) {
@@ -393,13 +410,18 @@ void AS_STOP_impl(bool shouldPrintBreak) {
   AS_ENDX_impl(shouldPrintBreak);
 }
 
+// AS_Labels: AS_ENDX (inclusive) .. AS_END2 (exclusive)
 void AS_ENDX() { AS_ENDX_impl(false); }
 
 void AS_ENDX_impl(bool shouldPrintBreak) {
   if (!IsStatementEndOfParsedInput()) {
     return;
   }
+  AS_END2_impl(shouldPrintBreak);
+}
 
+// AS_Labels: AS_END2 (inclusive) .. AS_END4 (exclusive)
+void AS_END2_impl(bool shouldPrintBreak) {
   const std::uint16_t textPointer = variables_const().AS_TXTPTR;
   const std::uint16_t currentAS_Line = variables_const().AS_CURLIN;
   const std::uint8_t currentPageHi =
@@ -410,9 +432,12 @@ void AS_ENDX_impl(bool shouldPrintBreak) {
     variables().AS_OLDLIN = currentAS_Line;
   }
 
-  theStack().popReturnAddress();
-  theStack().popReturnAddress();
+  theStack().setStackPointer(0xffu); // AS_STKINI logic
+  AS_END4_impl(shouldPrintBreak);
+}
 
+// AS_Labels: AS_END4 (inclusive) .. AS_CONT (exclusive)
+void AS_END4_impl(bool shouldPrintBreak) {
   if (shouldPrintBreak) {
     AS_PRINT_ERROR_LINNUM(AS_QT_ERROR(AS_QT_BREAK_INDEX));
     return;
@@ -448,10 +473,10 @@ void AS_RESTART() {
   AS_TRACE_();
 }
 
+// AS_Labels: AS_CONTROL_C_TYPED (inclusive) .. AS_STOP (exclusive)
 void AS_CONTROL_C_TYPED() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_CONTROL_C_TYPED (inclusive) .. AS_STOP (exclusive)
   // Name normalization: none (assembler label AS_CONTROL_C_TYPED kept
   // verbatim).
   const std::uint8_t errFlags = variables_const().AS_ERRFLG;
@@ -469,10 +494,10 @@ void AS_CONTROL_C_TYPED() {
   AS_STOP_impl(true);
 }
 
+// AS_Labels: AS_CONT (inclusive) .. AS_SAVE (exclusive)
 void AS_CONT() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_CONT (inclusive) .. AS_SAVE (exclusive)
   // Name normalization: none (assembler label AS_CONT kept verbatim).
   // Internal label mapping: "bne AS_RTS_4" is modeled as an early return.
 
@@ -489,12 +514,12 @@ void AS_CONT() {
   variables().AS_CURLIN = variables_const().AS_OLDLIN;
 }
 
+// AS_Labels: AS_GOSUB (inclusive) .. AS_GO_TO_LINE (exclusive)
 void AS_GOSUB() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_GOSUB (inclusive) .. AS_GO_TO_LINE (exclusive)
-  // Name normalization: none (assembler label AS_GOSUB kept verbatim).
   //
+  // Name normalization: none (assembler label AS_GOSUB kept verbatim).
   // Executes the "AS_GOSUB" command:
   // - Checks stack space for the return frame (7 bytes)
   // - Pushes return frame containing: AS_TXTPTR (2), AS_CURLIN (2),
@@ -523,12 +548,14 @@ void AS_GOSUB() {
   AS_GO_TO_LINE();
 }
 
+// AS_Labels: AS_GO_TO_LINE (inclusive) .. AS_GOTO (exclusive)
 void AS_GO_TO_LINE() {
   (void)AS_CHRGOT();
   AS_GOTO();
   AS_NEWSTT();
 }
 
+// AS_Labels: AS_GOTO (inclusive) .. AS_RTS_5 (exclusive)
 void AS_GOTO() {
   AS_LINGET();
   const std::uint8_t remnOffset = AS_REMN();
@@ -556,10 +583,10 @@ void AS_GOTO() {
   variables().AS_TXTPTR = destination;
 }
 
+// AS_Labels: AS_RESUME (inclusive) .. AS_JSYN (exclusive)
 void AS_RESUME() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_RESUME (inclusive) .. AS_JSYN (exclusive)
   // Name normalization: none (assembler label AS_RESUME kept verbatim).
   variables().AS_CURLIN = variables_const().AS_ERRLIN;
   variables().AS_TXTPTR = variables_const().AS_ERRPOS;
@@ -567,10 +594,10 @@ void AS_RESUME() {
   AS_NEWSTT();
 }
 
+// AS_Labels: AS_ONERR (inclusive) .. AS_HANDLERR (exclusive)
 void AS_ONERR() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_ONERR (inclusive) .. AS_HANDLERR (exclusive)
   // Name normalization: none (assembler label AS_ONERR kept verbatim).
   constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
 
@@ -619,6 +646,7 @@ void PushForPntFrame() {
   theStack().pushToken(AS_TOKEN_FOR);
 }
 
+// AS_Labels: AS_FOR (inclusive) .. AS_STEP (exclusive)
 void AS_FOR() {
   constexpr std::uint8_t kAS_TOKEN_TO = 0xc1u;
 
@@ -739,6 +767,7 @@ void AS_NEXT() {
   AS_NEXT();
 }
 
+// AS_Labels: AS_POP (inclusive) .. AS_RETURN (exclusive)
 void AS_POP() {
   constexpr std::uint8_t kAS_TOKEN_GOSUB = 0xb0;
 
@@ -763,6 +792,7 @@ void AS_POP() {
   AS_ERROR(AS_ERR_NOGOSUB);
 }
 
+// AS_Labels: AS_RETURN (inclusive) .. AS_DATA (exclusive)
 void AS_RETURN() {
   (void)theStack().popByte();
   const std::uint8_t currentAS_LineLo = theStack().popByte();
@@ -782,6 +812,7 @@ void AS_RETURN() {
       ApplesoftVariables::makeWord(textPointerAS_Lo, textPointerHi);
 }
 
+// AS_Labels: AS_STEP (inclusive) .. AS_NEWSTT (exclusive)
 void AS_STEP() {
   constexpr std::uint8_t kAS_TOKEN_STEP = 0xc7u;
 
@@ -802,6 +833,7 @@ void AS_STEP() {
   AS_NEWSTT();
 }
 
+// AS_Labels: AS_NEWSTT (inclusive) .. AS_TRACE_ (exclusive)
 void AS_NEWSTT() {
   variables().AS_REMSTK = theStack().readStackPointer();
 
@@ -827,6 +859,7 @@ void AS_NEWSTT() {
   AS_TRACE_();
 }
 
+// AS_Labels: AS_TRACE_ (inclusive) .. AS_GOEND (exclusive)
 void AS_TRACE_() {
   if (IsTraceEnabled()) {
     if (IsRunningMode()) {
