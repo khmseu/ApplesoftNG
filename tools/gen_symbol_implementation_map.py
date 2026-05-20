@@ -194,8 +194,10 @@ def parse_sym_files(sym_root: Path) -> dict[str, list[Symbol]]:
 def _next_function_name(lines: list[str], start_idx: int) -> str | None:
     for i in range(start_idx + 1, len(lines)):
         line = lines[i]
+        # Skip other labels while searching for the next function to allow
+        # stacking multiple AS_Labels claims for one function.
         if "AS_Labels:" in line or "MON_Labels:" in line:
-            break
+            continue
 
         func_name = _parse_function_definition_at(lines, i)
         if func_name:
@@ -306,7 +308,7 @@ def scan_all_function_definitions(src_root: Path) -> list[FunctionDefinition]:
     definitions: list[FunctionDefinition] = []
     for cpp_path in sorted(src_root.rglob("*.cpp")):
         lines = cpp_path.read_text(encoding="utf-8", errors="replace").splitlines()
-        for idx, line in enumerate(lines):
+        for idx in range(len(lines)):
             func_name = _parse_function_definition_at(lines, idx)
             if func_name:
                 definitions.append(
