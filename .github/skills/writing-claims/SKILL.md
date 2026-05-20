@@ -20,7 +20,7 @@ Link C++ implementation functions to their original 6502 assembly ROM address ra
 
 ### 1. Label Identification
 
-- Find the starting label (and its address) in the authoritative listing: [SourceMaterial/Combo/asrom.lst](../../../SourceMaterial/Combo/asrom.lst).
+- Find the starting label (and its address) in the authoritative listing: [SourceMaterial/Combo/asrom.lst](../../../SourceMaterial/Combo/asrom.lst). If the file is missing or incomplete, search for the symbol in `asrom.sym` or notify the user.
 - Identify the exclusive end label (the first label after the range).
 
 ### 2. Format Metadata
@@ -36,15 +36,15 @@ Use the standard comment block:
 - `<StartLabel>`: The inclusive entry point label.
 - `<EndLabel>`: The exclusive boundary label (usually the start of the next routine).
 - Use exact labels from the assembly (e.g., `AS_CHRGET`, `MON_COUT`).
-- If there is a name mapping or normalization, add a `// Name normalization:` note below the claim.
+- If the C++ function name differs from the original assembly label (e.g., due to required normalization or descriptive renaming), add a `// Name normalization:` note below the claim.
 
 ### 3. Proper Placement
 
-**CRITICAL**: Claims must be **function-scoped**.
+**CRITICAL**: Claims must be **function-scoped**. Follow this checklist:
 
-- Place the comment block **immediately preceding** the function signature or **inside** the function body.
-- **NEVER** use file-scoped claims at the top of a file; the map scraper assumes a claim applies to the very next function it encounters.
-- Ensure no other `AS_Labels` comments exist between the claim and the function.
+1. Place the comment block **immediately preceding** the function signature or **inside** the function body.
+2. **NEVER** use file-scoped claims at the top of a file; the map scraper assumes a claim applies to the very next function it encounters.
+3. Ensure no other `AS_Labels` comments exist between the claim and the function.
 
 ### 4. Validation
 
