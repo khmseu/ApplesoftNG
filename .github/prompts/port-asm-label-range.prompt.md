@@ -44,7 +44,8 @@ Required input:
 ### Finalization
 
 1. Update [docs/function-cross-reference.md](../../docs/function-cross-reference.md) so the new implementation and current stub/real state are captured.
-2. Build and report status.
+2. Add or update function-scoped `AS_Labels` claim comments following [.github/skills/writing-claims/SKILL.md](../skills/writing-claims/SKILL.md).
+3. Build and report status.
 
 ## Response format
 
@@ -53,4 +54,5 @@ Required input:
 - Pointer candidates identified and how each was lifted/unified.
 - Files changed.
 - Any stubs created.
+- Whether `AS_Labels` claims were added/updated per [.github/skills/writing-claims/SKILL.md](../skills/writing-claims/SKILL.md).
 - Build result.

@@ -44,7 +44,8 @@ Treat only labels declared as assembler labels in the authoritative listing [Sou
 
 11. If callees are not implemented yet, add dummy implementations in the same subsystem.
 12. Update [docs/function-cross-reference.md](../../docs/function-cross-reference.md) after the port so it reflects new implementations and current stub/real status.
-13. Run a build after each increment; use the Output Checklist below as the acceptance gate for all detailed constraints.
+13. Add or update function-scoped `AS_Labels` claim comments for the new implementation following [.github/skills/writing-claims/SKILL.md](../skills/writing-claims/SKILL.md).
+14. Run a build after each increment; use the Output Checklist below as the acceptance gate for all detailed constraints.
 
 ## Implementation Rules
 
@@ -99,6 +100,7 @@ Create stubs only for missing dependencies required by the converted function.
 - Missing callees have explicit dummy implementations.
 - Any fixed-address global state access uses `ApplesoftVariables` accessors.
 - [docs/function-cross-reference.md](../../docs/function-cross-reference.md) has been updated to reflect this port.
+- Function-scoped `AS_Labels` claims are present and follow [.github/skills/writing-claims/SKILL.md](../skills/writing-claims/SKILL.md).
 - Project still configures and builds.
 
 ## Function Address Table Pattern

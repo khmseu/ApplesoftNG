@@ -9,6 +9,8 @@ description: Incrementally port Applesoft assembly label ranges to C++ using an 
 
 Incrementally port Applesoft historical assembler ranges into C++ using a strict two-label conversion window.
 
+For function-scoped `AS_Labels` claim formatting and validation, follow [.github/skills/writing-claims/SKILL.md](../writing-claims/SKILL.md).
+
 ## Trigger Phrases
 
 - "convert labels X to Y"
@@ -60,8 +62,9 @@ Optional:
 ### Finalization
 
 1. Add missing dependency stubs near the new implementation with `TODO(asm-port)` markers.
-2. Update [docs/function-cross-reference.md](../../../docs/function-cross-reference.md) to reflect newly ported functions and updated stub/real status.
-3. Build and report the exact files changed.
+2. Add or update function-scoped `AS_Labels` claim comments per [.github/skills/writing-claims/SKILL.md](../writing-claims/SKILL.md).
+3. Update [docs/function-cross-reference.md](../../../docs/function-cross-reference.md) to reflect newly ported functions and updated stub/real status.
+4. Build and report the exact files changed.
 
 ## Function Address Table Pattern
 
@@ -85,6 +88,7 @@ If the range is a 6502 jump-table or RTS-dispatch table (a sequence of `.word LA
 - Any unresolved dependencies are represented by dummy implementations.
 - No runtime reads from SourceMaterial.
 - Any fixed-address global state access in the ported slice uses `ApplesoftVariables`.
+- Function-scoped `AS_Labels` claims follow [.github/skills/writing-claims/SKILL.md](../writing-claims/SKILL.md).
 - [docs/function-cross-reference.md](../../../docs/function-cross-reference.md) is updated for the ported window.
 
 ## Notes
