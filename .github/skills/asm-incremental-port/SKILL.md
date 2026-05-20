@@ -47,6 +47,8 @@ Optional:
 
 1. Summarize intent in exactly 3-5 bullets, each limited to a maximum of 15 words, before coding.
 2. Implement one C++ function for the range.
+   - If the requested window contains more than one function's worth of ROM logic, split it into multiple C++ functions so the entire `start_label`..`end_label` window is covered.
+   - Keep each split function aligned to a coherent sub-range and preserve label-based naming where possible.
 3. If the range does not end in an `RTS`, `JMP`, or unconditional branch, preserve the fall-through into `end_label` by calling the following function at that point. Add a checklist item to confirm that the next-label fall-through is modeled explicitly.
 4. All symbols in the authoritative sources already include context-appropriate prefixes (`AS_` or `MON_`). Use these exact labels verbatim in C++.
 5. Route all fixed-address global state access through `ApplesoftVariables` (`variables()` / `variables_const()` accessors). If a required fixed address is missing, add it to `ApplesoftVariables` before use.
@@ -63,6 +65,7 @@ Optional:
 
 1. Add missing dependency stubs near the new implementation with `TODO(asm-port)` markers.
 2. Add or update function-scoped `AS_Labels` claim comments per [.github/skills/writing-claims/SKILL.md](../writing-claims/SKILL.md).
+   - If the range was split, add separate claims for each function's specific sub-range.
 3. Update [docs/function-cross-reference.md](../../../docs/function-cross-reference.md) to reflect newly ported functions and updated stub/real status.
 4. Build and report the exact files changed.
 
@@ -89,6 +92,7 @@ If the range is a 6502 jump-table or RTS-dispatch table (a sequence of `.word LA
 - No runtime reads from SourceMaterial.
 - Any fixed-address global state access in the ported slice uses `ApplesoftVariables`.
 - Function-scoped `AS_Labels` claims follow [.github/skills/writing-claims/SKILL.md](../writing-claims/SKILL.md).
+- If the slice was split, each generated function has its own sub-range claim.
 - [docs/function-cross-reference.md](../../../docs/function-cross-reference.md) is updated for the ported window.
 
 ## Notes

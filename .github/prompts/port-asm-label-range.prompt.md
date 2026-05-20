@@ -26,6 +26,8 @@ Required input:
 ### Implementation
 
 1. Implement one C++ function that reproduces the behavior.
+   - If the requested window contains more than one function's worth of ROM behavior, split the implementation into multiple C++ functions so the full `start_label`..`end_label` range is covered.
+   - Keep each new function aligned to a coherent sub-range and preserve label-based naming where possible.
 2. If the range does not end in an `RTS`, `JMP`, or unconditional branch, model fall-through into `end_label` by calling the following function or by returning continuation state that the caller uses to invoke the next label.
 3. All symbols defined in monitor source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/monitor`](../../SourceMaterial/Apple-II-Source-slim/src/system/monitor)) carry a virtual `MON_` prefix. A label `xyz` in a monitor listing is always named `MON_xyz` in C++. When the range references `MON_xyz`, look up label `xyz` in the monitor listings and implement the C++ function as `MON_xyz`.
 4. All symbols defined in applesoft source files (under [`SourceMaterial/Apple-II-Source-slim/src/system/applesoft`](../../SourceMaterial/Apple-II-Source-slim/src/system/applesoft)) carry a virtual `AS_` prefix. A label `xyz` in an applesoft listing is always named `AS_xyz` in C++. When the range references `AS_xyz`, look up label `xyz` in the applesoft listings and implement the C++ function as `AS_xyz`.
@@ -45,6 +47,7 @@ Required input:
 
 1. Update [docs/function-cross-reference.md](../../docs/function-cross-reference.md) so the new implementation and current stub/real state are captured.
 2. Add or update function-scoped `AS_Labels` claim comments following [.github/skills/writing-claims/SKILL.md](../skills/writing-claims/SKILL.md).
+   - If the range was split into multiple functions, add separate claims for each function's individual sub-range.
 3. Build and report status.
 
 ## Response format
@@ -55,4 +58,5 @@ Required input:
 - Files changed.
 - Any stubs created.
 - Whether `AS_Labels` claims were added/updated per [.github/skills/writing-claims/SKILL.md](../skills/writing-claims/SKILL.md).
+- If split, which function maps to which claimed sub-range.
 - Build result.

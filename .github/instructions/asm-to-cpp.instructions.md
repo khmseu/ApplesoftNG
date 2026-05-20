@@ -33,6 +33,8 @@ Treat only labels declared as assembler labels in the authoritative listing [Sou
    - All symbols in the authoritative sources already include context-appropriate prefixes (`AS_` or `MON_`). Use these exact labels verbatim in C++.
 
 8. Implement one primary C++ function that preserves the original assembler name as much as possible.
+   - If the bounded window clearly carries more than one function's worth of behavior, split the port into multiple C++ functions so the entire `start_label`..`end_label` window is covered.
+   - Keep each split function focused on a coherent sub-range, and preserve original label naming where possible.
 9. Place the function in the appropriate runtime area:
    - interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
    - console or machine-facing I/O behavior: [src/platform](../../src/platform) and [include/platform](../../include/platform)
@@ -45,6 +47,9 @@ Treat only labels declared as assembler labels in the authoritative listing [Sou
 11. If callees are not implemented yet, add dummy implementations in the same subsystem.
 12. Update [docs/function-cross-reference.md](../../docs/function-cross-reference.md) after the port so it reflects new implementations and current stub/real status.
 13. Add or update function-scoped `AS_Labels` claim comments for the new implementation following [.github/skills/writing-claims/SKILL.md](../skills/writing-claims/SKILL.md).
+
+- When the range is split into multiple C++ functions, add separate claims for each function's covered sub-range.
+
 14. Run a build after each increment; use the Output Checklist below as the acceptance gate for all detailed constraints.
 
 ## Implementation Rules
@@ -101,6 +106,7 @@ Create stubs only for missing dependencies required by the converted function.
 - Any fixed-address global state access uses `ApplesoftVariables` accessors.
 - [docs/function-cross-reference.md](../../docs/function-cross-reference.md) has been updated to reflect this port.
 - Function-scoped `AS_Labels` claims are present and follow [.github/skills/writing-claims/SKILL.md](../skills/writing-claims/SKILL.md).
+- If the port window was split, each generated function has a separate claim covering its own sub-range.
 - Project still configures and builds.
 
 ## Function Address Table Pattern
