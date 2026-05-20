@@ -1014,22 +1014,20 @@ void AS_IF() {
   AS_REM();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_REM (inclusive) .. AS_IF_TRUE (exclusive)
+// Name normalization: none (assembler label AS_REM kept verbatim).
 void AS_REM() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_REM (inclusive) .. AS_IF_TRUE (exclusive)
-  // Name normalization: none (assembler label AS_REM kept verbatim).
-
   const std::uint8_t offset = AS_REMN();
   AS_ADDON(offset);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_IF_TRUE (inclusive) .. AS_ONGOTO (exclusive)
+// Name normalization: none (assembler label AS_IF_TRUE kept verbatim).
 void AS_IF_TRUE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_IF_TRUE (inclusive) .. AS_ONGOTO (exclusive)
-  // Name normalization: none (assembler label AS_IF_TRUE kept verbatim).
-
   if (AS_CHRGOT() >= kTokenBase) {
     AS_EXECUTE_STATEMENT();
     return;
@@ -1038,12 +1036,11 @@ void AS_IF_TRUE() {
   AS_GOTO();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_ONGOTO (inclusive) .. AS_LINGET (exclusive)
+// Name normalization: none (assembler label AS_ONGOTO kept verbatim).
 void AS_ONGOTO() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_ONGOTO (inclusive) .. AS_LINGET (exclusive)
-  // Name normalization: none (assembler label AS_ONGOTO kept verbatim).
-
   constexpr std::uint8_t kAS_TOKEN_GOSUB = 0xb0u;
   constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
 

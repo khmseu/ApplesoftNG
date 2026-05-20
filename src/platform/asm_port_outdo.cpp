@@ -3,6 +3,7 @@
 #include "core/io_ports.hpp"
 #include "core/jump_table.hpp"
 #include <cstdint>
+
 namespace applesoft::asm_port {
 void MON_TABV(std::uint8_t row_zero_based);
 namespace {
@@ -136,6 +137,11 @@ void MON_COUT(std::uint8_t a) {
   ApplesoftNG::ExternalJumpDispatcher::JumpFromWord(
       ApplesoftVariables::ZP_MON_CSW, a);
 }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_OUTDO (inclusive) .. AS_INPUTERR (exclusive)
+// Name normalization: none (assembler label AS_OUTDO kept verbatim).
 std::uint8_t AS_OUTDO(std::uint8_t a) {
   a |= 0x80u;
   if (a >= 0xa0u)
@@ -145,6 +151,16 @@ std::uint8_t AS_OUTDO(std::uint8_t a) {
   MON_WAIT(variables_const().AS_SPEEDZ);
   return a;
 }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_OUTSP (inclusive) .. AS_OUTQUES (exclusive)
+// Name normalization: none (assembler label AS_OUTSP kept verbatim).
 void AS_OUTSP() { AS_OUTDO(static_cast<std::uint8_t>(' ' & 0x7fu)); }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_OUTQUES (inclusive) .. AS_OUTDO (exclusive)
+// Name normalization: none (assembler label AS_OUTQUES kept verbatim).
 void AS_OUTQUES() { AS_OUTDO(static_cast<std::uint8_t>('?' & 0x7fu)); }
 } // namespace applesoft::asm_port

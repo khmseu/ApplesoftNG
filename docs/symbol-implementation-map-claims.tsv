@@ -48,10 +48,10 @@ AS_EXECUTE_STATEMENT	src/core/asm_port_control_flow.cpp	933	AS_TRACE_ (inclusive
 AS_EXECUTE_STATEMENT_1	src/core/asm_port_control_flow.cpp	943	AS_EXECUTE_STATEMENT (inclusive) .. AS_EXECUTE_STATEMENT_1	AS_EXECUTE_STATEMENT	AS_EXECUTE_STATEMENT_1	asrom	AS_EXECUTE_STATEMENT	0xd828	AS_EXECUTE_STATEMENT_1	0xd82a	resolved-range	ok
 AS_COLON_	src/core/asm_port_control_flow.cpp	958	AS_EXECUTE_STATEMENT_1 (inclusive) .. AS_COLON_ (exclusive)	AS_EXECUTE_STATEMENT_1	AS_COLON_	asrom	AS_EXECUTE_STATEMENT_1	0xd82a	AS_COLON_	0xd842	resolved-range	ok
 AS_IF	src/core/asm_port_control_flow.cpp	983	AS_COLON_ (inclusive) .. AS_RESTORE (exclusive)	AS_COLON_	AS_RESTORE	asrom	AS_COLON_	0xd842	AS_RESTORE	0xd849	resolved-range	ok
-AS_REM	src/core/asm_port_control_flow.cpp	997	AS_IF (inclusive) .. AS_REM (exclusive)	AS_IF	AS_REM	asrom	AS_IF	0xd9c9	AS_REM	0xd9dc	resolved-range	ok
-AS_IF_TRUE	src/core/asm_port_control_flow.cpp	1020	AS_REM (inclusive) .. AS_IF_TRUE (exclusive)	AS_REM	AS_IF_TRUE	asrom	AS_REM	0xd9dc	AS_IF_TRUE	0xd9e1	resolved-range	ok
-AS_ONGOTO	src/core/asm_port_control_flow.cpp	1030	AS_IF_TRUE (inclusive) .. AS_ONGOTO (exclusive)	AS_IF_TRUE	AS_ONGOTO	asrom	AS_IF_TRUE	0xd9e1	AS_ONGOTO	0xd9ec	resolved-range	ok
-AS_ONGOTO	src/core/asm_port_control_flow.cpp	1044	AS_ONGOTO (inclusive) .. AS_LINGET (exclusive)	AS_ONGOTO	AS_LINGET	asrom	AS_ONGOTO	0xd9ec	AS_LINGET	0xda0c	resolved-range	ok
+AS_IF	src/core/asm_port_control_flow.cpp	997	AS_IF (inclusive) .. AS_REM (exclusive)	AS_IF	AS_REM	asrom	AS_IF	0xd9c9	AS_REM	0xd9dc	resolved-range	ok
+AS_REM	src/core/asm_port_control_flow.cpp	1019	AS_REM (inclusive) .. AS_IF_TRUE (exclusive)	AS_REM	AS_IF_TRUE	asrom	AS_REM	0xd9dc	AS_IF_TRUE	0xd9e1	resolved-range	ok
+AS_IF_TRUE	src/core/asm_port_control_flow.cpp	1028	AS_IF_TRUE (inclusive) .. AS_ONGOTO (exclusive)	AS_IF_TRUE	AS_ONGOTO	asrom	AS_IF_TRUE	0xd9e1	AS_ONGOTO	0xd9ec	resolved-range	ok
+AS_ONGOTO	src/core/asm_port_control_flow.cpp	1041	AS_ONGOTO (inclusive) .. AS_LINGET (exclusive)	AS_ONGOTO	AS_LINGET	asrom	AS_ONGOTO	0xd9ec	AS_LINGET	0xda0c	resolved-range	ok
 MON_SETNORM	src/core/asm_port_core.cpp	145	SETNORM (inclusive) .. SETKBD (exclusive)	SETNORM	SETKBD						unresolved	no-module-match
 MON_INIT	src/core/asm_port_core.cpp	155	INIT (inclusive) .. SETTXT (exclusive)	INIT	SETTXT						unresolved	no-module-match
 MON_SETVID	src/core/asm_port_core.cpp	170	SETVID (inclusive) .. OUTPORT (exclusive)	SETVID	OUTPORT						unresolved	no-module-match
@@ -211,6 +211,7 @@ AS_OR_op	src/core/asm_port_mathtbl.cpp	354	AS_OR (inclusive) .. AS_ANDOP (exclus
 AS_NEGOP	src/core/asm_port_mathtbl.cpp	364	AS_NEGOP (inclusive) .. AS_CON_LOG_E (exclusive)	AS_NEGOP	AS_CON_LOG_E	asrom	AS_NEGOP	0xeed0	AS_CON_LOG_E	0xeedb	resolved-range	ok
 AS_EQUOP	src/core/asm_port_mathtbl.cpp	382	AS_EQUOP (inclusive) .. AS_FN_ (exclusive)	AS_EQUOP	AS_FN_	asrom	AS_EQUOP	0xde98	AS_FN_	0xdea4	resolved-range	ok
 AS_MATHTBL	src/core/asm_port_mathtbl.cpp	401	AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)	AS_MATHTBL	AS_TOKEN_NAME_TABLE	asrom	AS_MATHTBL	0xd0b2	AS_TOKEN_NAME_TABLE	0xd0d0	resolved-range	ok
+AS_NXIN	src/core/asm_port_nxin.cpp	10	AS_NXIN (inclusive) .. AS_READ (exclusive)	AS_NXIN	AS_READ	asrom	AS_NXIN	0xdbdc	AS_READ	0xdbe2	resolved-range	ok
 AS_CHKNUM	src/core/asm_port_parser.cpp	31	AS_SYNCHR (inclusive) .. AS_CHKNUM (exclusive)	AS_SYNCHR	AS_CHKNUM	asrom	AS_SYNCHR	0xdec0	AS_CHKNUM	0xdd6a	skipped-ambiguous-range	end-not-greater-than-start
 AS_CHKSTR	src/core/asm_port_parser.cpp	52	AS_CHKNUM (inclusive) .. AS_CHKSTR (exclusive)	AS_CHKNUM	AS_CHKSTR	asrom	AS_CHKNUM	0xdd6a	AS_CHKSTR	0xdd6c	resolved-range	ok
 AS_CHKCOM	src/core/asm_port_parser.cpp	64	AS_CHKSTR (inclusive) .. AS_CHKVAL (exclusive)	AS_CHKSTR	AS_CHKVAL	asrom	AS_CHKSTR	0xdd6c	AS_CHKVAL	0xdd6d	resolved-range	ok
@@ -352,6 +353,9 @@ CROUT	src/platform/asm_port_getln.cpp	71	CROUT (inclusive) .. PRA1 (exclusive)	C
 AS_GETLNZ	src/platform/asm_port_getln.cpp	77	AS_GETLNZ (inclusive) .. BCKSPC (exclusive)	AS_GETLNZ	BCKSPC						unresolved	no-module-match
 NOTCR	src/platform/asm_port_getln.cpp	90	NOTCR (inclusive) .. AS_GETLNZ (exclusive)	NOTCR	AS_GETLNZ						unresolved	no-module-match
 MON_GETLN	src/platform/asm_port_getln.cpp	132	AS_GETLN (inclusive) .. CROUT (exclusive)	AS_GETLN	CROUT						unresolved	no-module-match
+AS_OUTDO	src/platform/asm_port_outdo.cpp	143	AS_OUTDO (inclusive) .. AS_INPUTERR (exclusive)	AS_OUTDO	AS_INPUTERR	asrom	AS_OUTDO	0xdb5c	AS_INPUTERR	0xdb71	resolved-range	ok
+AS_OUTSP	src/platform/asm_port_outdo.cpp	157	AS_OUTSP (inclusive) .. AS_OUTQUES (exclusive)	AS_OUTSP	AS_OUTQUES	asrom	AS_OUTSP	0xdb57	AS_OUTQUES	0xdb5a	resolved-range	ok
+AS_OUTQUES	src/platform/asm_port_outdo.cpp	165	AS_OUTQUES (inclusive) .. AS_OUTDO (exclusive)	AS_OUTQUES	AS_OUTDO	asrom	AS_OUTQUES	0xdb5a	AS_OUTDO	0xdb5c	resolved-range	ok
 copy_page_backward	src/core/asm_port_bltu.cpp	7									unclaimed	no-label-range-claim
 AS_CHRGET	src/core/asm_port_chrget.cpp	69									unclaimed	no-label-range-claim
 AS_CHRGOT	src/core/asm_port_chrget.cpp	71									unclaimed	no-label-range-claim
@@ -424,7 +428,6 @@ AS_ADDACC_WITH_DIGIT	src/core/asm_port_math.cpp	455									unclaimed	no-label-r
 AS_ADD_EXPONENTS	src/core/asm_port_math.cpp	467									unclaimed	no-label-range-claim
 argToDouble	src/core/asm_port_mathtbl.cpp	60									unclaimed	no-label-range-claim
 doubleToFac	src/core/asm_port_mathtbl.cpp	76									unclaimed	no-label-range-claim
-AS_NXIN	src/core/asm_port_nxin.cpp	8									unclaimed	no-label-range-claim
 AS_SYNCHR	src/core/asm_port_parser.cpp	28									unclaimed	no-label-range-claim
 AS_CHKOPN	src/core/asm_port_parser.cpp	140									unclaimed	no-label-range-claim
 CurrentStatementChar	src/core/asm_port_parser.cpp	320									unclaimed	no-label-range-claim
@@ -569,18 +572,15 @@ read_prompt_char	src/platform/asm_port_getln.cpp	14									unclaimed	no-label-r
 write_input_buffer	src/platform/asm_port_getln.cpp	16									unclaimed	no-label-range-claim
 read_input_buffer	src/platform/asm_port_getln.cpp	22									unclaimed	no-label-range-claim
 read_screen_char_via_28_y	src/platform/asm_port_getln.cpp	27									unclaimed	no-label-range-claim
-computeTextRowBase	src/platform/asm_port_outdo.cpp	13									unclaimed	no-label-range-claim
-setCursorRow	src/platform/asm_port_outdo.cpp	25									unclaimed	no-label-range-claim
-scrollWindowUp	src/platform/asm_port_outdo.cpp	26									unclaimed	no-label-range-claim
-advanceCursorToNextAS_Line	src/platform/asm_port_outdo.cpp	47									unclaimed	no-label-range-claim
-consumeKeyboardAS_Latch	src/platform/asm_port_outdo.cpp	64									unclaimed	no-label-range-claim
-MON_LFB78	src/platform/asm_port_outdo.cpp	69									unclaimed	no-label-range-claim
-MON_VIDOUT	src/platform/asm_port_outdo.cpp	87									unclaimed	no-label-range-claim
-MON_COUT1	src/platform/asm_port_outdo.cpp	120									unclaimed	no-label-range-claim
-MON_WAIT	src/platform/asm_port_outdo.cpp	125									unclaimed	no-label-range-claim
-MON_COUT	src/platform/asm_port_outdo.cpp	135									unclaimed	no-label-range-claim
-AS_OUTDO	src/platform/asm_port_outdo.cpp	139									unclaimed	no-label-range-claim
-AS_OUTSP	src/platform/asm_port_outdo.cpp	148									unclaimed	no-label-range-claim
-AS_OUTQUES	src/platform/asm_port_outdo.cpp	149									unclaimed	no-label-range-claim
+computeTextRowBase	src/platform/asm_port_outdo.cpp	14									unclaimed	no-label-range-claim
+setCursorRow	src/platform/asm_port_outdo.cpp	26									unclaimed	no-label-range-claim
+scrollWindowUp	src/platform/asm_port_outdo.cpp	27									unclaimed	no-label-range-claim
+advanceCursorToNextAS_Line	src/platform/asm_port_outdo.cpp	48									unclaimed	no-label-range-claim
+consumeKeyboardAS_Latch	src/platform/asm_port_outdo.cpp	65									unclaimed	no-label-range-claim
+MON_LFB78	src/platform/asm_port_outdo.cpp	70									unclaimed	no-label-range-claim
+MON_VIDOUT	src/platform/asm_port_outdo.cpp	88									unclaimed	no-label-range-claim
+MON_COUT1	src/platform/asm_port_outdo.cpp	121									unclaimed	no-label-range-claim
+MON_WAIT	src/platform/asm_port_outdo.cpp	126									unclaimed	no-label-range-claim
+MON_COUT	src/platform/asm_port_outdo.cpp	136									unclaimed	no-label-range-claim
 print	src/platform/console.cpp	4									unclaimed	no-label-range-claim
 readLine	src/platform/console.cpp	6									unclaimed	no-label-range-claim
