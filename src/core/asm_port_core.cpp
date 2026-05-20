@@ -145,10 +145,7 @@ namespace {
 // AS_Labels: SETNORM (inclusive) .. SETKBD (exclusive)
 // Name normalization: SETNORM -> MON_SETNORM (monitor label gets MON_
 // prefix).
-void MON_SETNORM() {
-
-  variables().MON_INVFLG = 0xffu;
-}
+void MON_SETNORM() { variables().MON_INVFLG = 0xffu; }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -169,19 +166,13 @@ void MON_INIT() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: SETVID (inclusive) .. OUTPORT (exclusive)
 // Name normalization: SETVID -> MON_SETVID (monitor label gets MON_ prefix).
-void MON_SETVID() {
-
-  MON_OUTPORT(0u);
-}
+void MON_SETVID() { MON_OUTPORT(0u); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: SETKBD (inclusive) .. INPORT (exclusive)
 // Name normalization: SETKBD -> MON_SETKBD (monitor label gets MON_ prefix).
-void MON_SETKBD() {
-
-  MON_INPORT(0u);
-}
+void MON_SETKBD() { MON_INPORT(0u); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -558,46 +549,31 @@ void AS_ERRDIR() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_UNDFNC (inclusive) .. AS_DEF (exclusive)
 // Name normalization: none (assembler label AS_UNDFNC kept verbatim).
-void AS_UNDFNC() {
-
-  AS_ERROR(AS_ERR_UNDEFFUNC);
-}
+void AS_UNDFNC() { AS_ERROR(AS_ERR_UNDEFFUNC); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_BADNAM (inclusive) .. AS_NAMOK (exclusive)
 // Name normalization: none (assembler label AS_BADNAM kept verbatim).
-void AS_BADNAM() {
-
-  AS_SYNERR();
-}
+void AS_BADNAM() { AS_SYNERR(); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_BASIC (inclusive) .. AS_BASIC2 (exclusive)
 // Name normalization: none (assembler label AS_BASIC kept verbatim).
-void AS_BASIC() {
-
-  AS_COLD_START();
-}
+void AS_BASIC() { AS_COLD_START(); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_BASIC2 (inclusive) .. AS_PTRGET4 (exclusive)
 // Name normalization: none (assembler label AS_BASIC2 kept verbatim).
-void AS_BASIC2() {
-
-  AS_RESTART();
-}
+void AS_BASIC2() { AS_RESTART(); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GME (inclusive) .. AS_MULTIPLY_SUBSCRIPT (exclusive)
 // Name normalization: none (assembler label AS_GME kept verbatim).
-void AS_GME() {
-
-  AS_MEMERR();
-}
+void AS_GME() { AS_MEMERR(); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -613,10 +589,7 @@ void AS_SUBERR() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GSE (inclusive) .. AS_GME (exclusive)
 // Name normalization: none (assembler label AS_GSE kept verbatim).
-void AS_GSE() {
-
-  AS_SUBERR();
-}
+void AS_GSE() { AS_SUBERR(); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -692,10 +665,7 @@ void AS_FAE_1() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GETARY (inclusive) .. AS_GETARY2 (exclusive)
 // Name normalization: none (assembler label AS_GETARY kept verbatim).
-void AS_GETARY() {
-
-  AS_GETARY2();
-}
+void AS_GETARY() { AS_GETARY2(); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -1035,19 +1005,13 @@ void AS_ANDOP() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FALSE (inclusive) .. AS_TRUE (exclusive)
 // Name normalization: none (assembler label AS_FALSE kept verbatim).
-void AS_FALSE() {
-
-  AS_SNGFLT(0u);
-}
+void AS_FALSE() { AS_SNGFLT(0u); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_TRUE (inclusive) .. AS_RELOPS (exclusive)
 // Name normalization: none (assembler label AS_TRUE kept verbatim).
-void AS_TRUE() {
-
-  AS_SNGFLT(1u);
-}
+void AS_TRUE() { AS_SNGFLT(1u); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -1173,10 +1137,7 @@ void AS_PTRGET3() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_PTRGET2 (inclusive) .. AS_PTRGET3 (exclusive)
 // Name normalization: none (assembler label AS_PTRGET2 kept verbatim).
-void AS_PTRGET2() {
-
-  AS_PTRGET3();
-}
+void AS_PTRGET2() { AS_PTRGET3(); }
 
 std::uint16_t AS_PTRGET() {
   // Source:

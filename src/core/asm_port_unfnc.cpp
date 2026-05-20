@@ -271,9 +271,7 @@ void AS_ABS() {
 // The original ROM dispatches through a user-supplied machine-language
 // vector in zero page ($0A-$0C). The current runtime has no machine-code
 // execution bridge, so USR() is treated as an undefined function.
-void AS_USR_impl() {
-  AS_ERROR(AS_ERR_UNDEFFUNC);
-}
+void AS_USR_impl() { AS_ERROR(AS_ERR_UNDEFFUNC); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -293,27 +291,18 @@ void AS_USR() {
 // AS_Labels: AS_FRE (inclusive) .. AS_ERROR (exclusive)
 // Name normalization: wrapper name AS_FRE_fn used to avoid clashing with the
 // existing AS_FRE implementation in core.
-void AS_FRE_fn() {
-
-  AS_FRE();
-}
+void AS_FRE_fn() { AS_FRE(); }
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_UNDFNC (inclusive) .. AS_DEF (exclusive)
 // Name normalization: AS_ERROR_fn used for AS_UNFNC table entry $D7 (SCRN().
-void AS_ERROR_fn() {
-
-  AS_ERROR(AS_ERR_UNDEFFUNC);
-}
+void AS_ERROR_fn() { AS_ERROR(AS_ERR_UNDEFFUNC); }
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_POS (inclusive) .. AS_SNGFLT (exclusive)
 // Name normalization: none (assembler label AS_POS kept verbatim).
 static void AS_PDL_fn() { AS_PDL(); }
-void AS_POS() {
-
-  AS_SNGFLT(variables_const().MON_CH);
-}
+void AS_POS() { AS_SNGFLT(variables_const().MON_CH); }
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_SQR (inclusive) .. AS_RND (exclusive)
@@ -397,34 +386,22 @@ static void AS_EXP() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_COS (inclusive) .. AS_SIN (exclusive)
 // Name normalization: none (assembler label AS_COS kept verbatim).
-static void AS_COS() {
-
-  doubleToFac(std::cos(facToDouble()));
-}
+static void AS_COS() { doubleToFac(std::cos(facToDouble())); }
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_SIN (inclusive) .. AS_TAN (exclusive)
 // Name normalization: none (assembler label AS_SIN kept verbatim).
-static void AS_SIN() {
-
-  doubleToFac(std::sin(facToDouble()));
-}
+static void AS_SIN() { doubleToFac(std::sin(facToDouble())); }
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_TAN (inclusive) .. AS_ATN (exclusive)
 // Name normalization: none (assembler label AS_TAN kept verbatim).
-static void AS_TAN() {
-
-  doubleToFac(std::tan(facToDouble()));
-}
+static void AS_TAN() { doubleToFac(std::tan(facToDouble())); }
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_ATN (inclusive) .. AS_PEEK (exclusive)
 // Name normalization: none (assembler label AS_ATN kept verbatim).
-static void AS_ATN() {
-
-  doubleToFac(std::atan(facToDouble()));
-}
+static void AS_ATN() { doubleToFac(std::atan(facToDouble())); }
 static void AS_PEEK_fn() { AS_PEEK(); }
 // AS_Labels: AS_VAL (inclusive) .. AS_L_VAL_1 (exclusive)
 // Name normalization: none (assembler label AS_VAL kept verbatim).

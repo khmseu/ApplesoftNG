@@ -354,10 +354,7 @@ static void AS_FPWRT() {
 // AS_Labels: AS_OR (inclusive) .. AS_ANDOP (exclusive)
 // Name normalization: AS_OR -> AS_OR_op in AS_MATHTBL dispatch (AS_OR is
 // table label).
-void AS_OR_op() {
-
-  AS_OR();
-}
+void AS_OR_op() { AS_OR(); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
