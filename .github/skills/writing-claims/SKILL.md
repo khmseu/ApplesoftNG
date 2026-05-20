@@ -1,13 +1,13 @@
 ---
 name: writing-claims
-description: "Use when: documenting or linking C++ functions to original assembly ROM address ranges (writing AS_Labels claims)."
+description: "How to link C++ functions to assembly labels."
 ---
 
 # Writing Symbol Claims
 
 ## Purpose
 
-Link C++ implementation functions to their original 6502 assembly ROM address ranges using a specific comment metadata format readable by `gen_symbol_implementation_map.py`.
+Link C++ functions to 6502 assembly ROM address ranges using `AS_Labels` claims.
 
 ## Trigger Phrases
 
@@ -16,16 +16,16 @@ Link C++ implementation functions to their original 6502 assembly ROM address ra
 - "claim these symbols"
 - "map this function to ROM"
 
-## Procedure
+## 1. Identification Rules
 
-### 1. Label Identification
+1.  **Search**: Consult [SourceMaterial/Combo/asrom.lst](../../../SourceMaterial/Combo/asrom.lst) to find the start label, address, and next label.
+2.  **Fallback**: If the symbol is not obvious in the listing, use `asrom.sym` to confirm the exact symbol name, then return to the listing to determine the exclusive end label.
+3.  **No Match**: If the symbol cannot be found, report `Missing symbol: <symbol_name>`.
+4.  **End Label**: Use the first label that follows the claimed range in the listing as the exclusive boundary.
 
-- Find the starting label (and its address) in the authoritative listing: [SourceMaterial/Combo/asrom.lst](../../../SourceMaterial/Combo/asrom.lst). If the file is missing or incomplete, search for the symbol in `asrom.sym` or notify the user.
-- Identify the exclusive end label (the first label after the range).
+## 2. Formatting Rules
 
-### 2. Format Metadata
-
-Use the standard comment block:
+Use this exact comment pattern:
 
 ```cpp
 // Source:
@@ -33,34 +33,42 @@ Use the standard comment block:
 // AS_Labels: <StartLabel> (inclusive) .. <EndLabel> (exclusive)
 ```
 
-- `<StartLabel>`: The inclusive entry point label.
-- `<EndLabel>`: The exclusive boundary label (usually the start of the next routine).
-- Use exact labels from the assembly (e.g., `AS_CHRGET`, `MON_COUT`).
-- If the C++ function name differs from the original assembly label (e.g., due to required normalization or descriptive renaming), add a `// Name normalization:` note below the claim.
+1.  **<StartLabel>**: Exact inclusive entry point label (e.g., `AS_CHRGET`).
+2.  **<EndLabel>**: Exact exclusive boundary label (e.g., `AS_CHRGOT`).
+3.  **Name Normalization**: If the C++ name differs from the assembly label, add a note below the claim.
+    - _Example_: `// Name normalization: AS_GET_CHAR maps to AS_CHRGET`
 
-### 3. Proper Placement
+## 3. Placement Rules
 
-**CRITICAL**: Claims must be **function-scoped**. Follow this checklist:
+**CRITICAL**: Claims MUST be **function-scoped**.
 
-1. Place the comment block **immediately preceding** the function signature or **inside** the function body.
-2. **NEVER** use file-scoped claims at the top of a file; the map scraper assumes a claim applies to the very next function it encounters.
-3. Ensure no other `AS_Labels` comments exist between the claim and the function.
+1.  **Open Function**: Identify the C++ function that implements the claimed ROM range.
+2.  **Insert Claim**: Place the claim block immediately before that function definition.
+    - _Valid example_:
+      ```cpp
+      // AS_Labels: AS_START (inclusive) .. AS_END (exclusive)
+      void my_func() {
+      }
+      ```
+3.  **Keep Together**: If you need a name-normalization note, place it directly below the claim block and immediately above the same function definition.
+4.  **Invalid Scope**: Do not place claims inside the function body or at file scope far from the function they describe.
+5.  **Isolation**: Keep each `AS_Labels` block attached to the function it describes, with no unrelated `AS_Labels` comments in between.
 
-### 4. Validation
+## 4. Validation Rules
 
-- Run the scraper: `python3 ./tools/gen_symbol_implementation_map.py`.
-- Verify the output: `grep "<Address>" docs/symbol-implementation-map.tsv`.
-- Ensure the third column (Original Symbol) and fifth column (C++ Function) match your intent.
+1.  **Process**: Run `python3 ./tools/gen_symbol_implementation_map.py`.
+2.  **Verify**: Run `rg "<Address>" docs/symbol-implementation-map.tsv`.
+3.  **Confirm**: Columns 3 (Asm) and 5 (C++) must match intent.
 
 ## Decision Guide
 
-- **Single Function vs. Fall-through**: If a routine is a single functional unit, claim it as one range.
-- **Multiple Entry Points**: The map scraper supports multiple claims for a single C++ function. If a function implements multiple original assembly entry points (e.g., via fall-through or internal dispatch), you can provide multiple `AS_Labels` comment blocks. These can be "stacked" immediately preceding the function or placed inside the function body.
-- **Overlapping Ranges**: If two functions claim overlapping ranges, the scraper will correctly associate the symbols in that overlap with both functions.
+- **Single Function**: Claim as one range.
+- **Multiple Entry Points**: Use multiple `AS_Labels` blocks sequentially immediately before the same function definition.
+- **Overlap**: Scraper associates overlapping ranges with both functions.
 
 ## Definition of Done
 
-- Claim comment is in the correct C++ source file.
-- Claim is placed at function scope (not file scope).
-- `gen_symbol_implementation_map.py` runs successfully.
-- `docs/symbol-implementation-map.tsv` shows correctly attributed symbols for the claimed range.
+- Claim is in correct source file.
+- Claim is function-scoped.
+- Scraper runs without error.
+- `.tsv` file shows correct mapping.
