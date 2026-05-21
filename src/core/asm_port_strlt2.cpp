@@ -18,6 +18,7 @@ std::uint8_t AS_FRETMP(std::uint16_t descriptorAddress);
 bool AS_FRETMS(std::uint16_t descriptorAddress);
 std::uint8_t AS_GETBYT();
 void AS_IQERR();
+void AS_GOIQ();
 void AS_CHKCLS();
 void AS_CONINT();
 void AS_SNGFLT(std::uint8_t value);
@@ -759,17 +760,24 @@ std::uint8_t AS_GETSTR() {
 // Name normalization: none (assembler label AS_ASC kept verbatim).
 //
 // "AS_ASC" built-in: return AS_ASCII value of first character.
-// AS_GOIQ ($e6f2) is a one-instruction trampoline to AS_IQERR; inlined here.
 void AS_ASC() {
   const std::uint8_t length = AS_GETSTR();
   if (length == 0u) {
-    AS_IQERR(); // AS_GOIQ: jmp AS_IQERR — illegal quantity for empty string
+    AS_GOIQ();
     return;
   }
   const std::uint16_t strAddr = read_AS_INDEX();
   const std::uint8_t ch = variables_const().readByte(strAddr);
   AS_SNGFLT(ch);
 }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GOIQ (inclusive) .. AS_GTBYTC (exclusive)
+// Name normalization: none (assembler label AS_GOIQ kept verbatim).
+//
+// Illegal quantity error trampoline used by AS_ASC and numeric checks.
+void AS_GOIQ() { AS_IQERR(); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
