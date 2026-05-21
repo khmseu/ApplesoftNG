@@ -16,7 +16,6 @@ extern std::uint8_t gFloatInput;
 void AS_SHIFT_RIGHT();
 void AS_SHIFT_RIGHT_4();
 void AS_COMPLEMENT_FAC();
-void AS_NORMALIZE_FAC_1();
 void AS_NORMALIZE_FAC_2();
 void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount);
 void AS_NORMALIZE_FAC_5(bool carry = false);
@@ -34,6 +33,9 @@ void AS_ADD_EXPONENTS_1();
 void AS_NEGATE_FAC();
 void AS_INCREMENT_FAC_MANTISSA();
 void AS_INCREMENT_MANTISSA();
+void AS_FADD_4();
+void AS_L_FADD_3_1(std::uint16_t minuendBase, std::uint16_t subtrahendBase);
+void AS_NORMALIZE_FAC_1(bool carrySet);
 
 void AS_SHIFT_RIGHT() {
   // TODO(asm-port): AS_SHIFT_RIGHT is required by AS_FADD_1 continuation
@@ -161,6 +163,82 @@ void AS_FADD_2(std::uint8_t exponent) {
     // ... (complex alignment and subtraction logic)
   }
   // This is a partial stub to satisfy AS_MUL10 for now.
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FADD_3 (inclusive) .. AS_L_FADD_3_1 (exclusive)
+// Name normalization: none (assembler label AS_FADD_3 kept verbatim).
+void AS_FADD_3(std::uint16_t adjustedAddress) {
+  const std::uint8_t sgnComparison = variables_const().AS_SGNCPR;
+  if ((sgnComparison & 0x80u) == 0u) {
+    // Out-of-window continuation: add mantissas in AS_FADD_4.
+    AS_FADD_4();
+    return;
+  }
+
+  constexpr std::uint16_t kFacBase = 0x009du;
+  constexpr std::uint16_t kArgBase = 0x00a5u;
+  const std::uint16_t minuendBase =
+      (adjustedAddress == kArgBase) ? kFacBase : kArgBase;
+
+  AS_L_FADD_3_1(minuendBase, adjustedAddress);
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_L_FADD_3_1 (inclusive) .. AS_NORMALIZE_FAC_1 (exclusive)
+// Name normalization: none (assembler label AS_L_FADD_3_1 kept verbatim).
+void AS_L_FADD_3_1(std::uint16_t minuendBase, std::uint16_t subtrahendBase) {
+  // Pointer candidates lifted:
+  // - FAC bytes ($9e..$a1) and ARG bytes ($a6..$a9) are addressed through
+  //   unified base pointers rather than split byte variables.
+  // - The adjusted operand selector (X in ROM) is represented as the unified
+  //   `subtrahendBase` pointer.
+  const auto minuend = variables_const().pointer(minuendBase);
+  const auto subtrahend = variables_const().pointer(subtrahendBase);
+
+  std::uint16_t acc = static_cast<std::uint16_t>(
+      static_cast<std::uint8_t>(~variables_const().AS_SGNCPR) +
+      variables_const().AS_ARG_EXTENSION + 1u);
+  variables().AS_FAC_EXTENSION = static_cast<std::uint8_t>(acc & 0xffu);
+  bool carry = acc > 0xffu;
+
+  for (std::uint16_t offset = 4u; offset >= 1u; --offset) {
+    const std::uint16_t lhs = minuend.read(offset);
+    const std::uint16_t rhs = subtrahend.read(offset);
+    const std::uint16_t sub =
+        static_cast<std::uint16_t>(rhs + (carry ? 0u : 1u));
+    const std::uint16_t out = static_cast<std::uint16_t>((lhs - sub) & 0xffu);
+    carry = lhs >= sub;
+    variables().AS_FAC[offset] = static_cast<std::uint8_t>(out);
+    if (offset == 1u) {
+      break;
+    }
+  }
+
+  AS_NORMALIZE_FAC_1(carry);
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NORMALIZE_FAC_1 (inclusive) .. AS_NORMALIZE_FAC_2 (exclusive)
+// Name normalization: none (assembler label AS_NORMALIZE_FAC_1 kept verbatim).
+void AS_NORMALIZE_FAC_1(bool carrySet) {
+  if (!carrySet) {
+    AS_COMPLEMENT_FAC();
+  }
+  AS_NORMALIZE_FAC_2();
+}
+
+void AS_FADD_4() {
+  // TODO(asm-port): AS_FADD_4 is the same-sign mantissa-add continuation from
+  // AS_FADD_3 and is not ported yet.
+}
+
+void AS_COMPLEMENT_FAC() {
+  // TODO(asm-port): AS_COMPLEMENT_FAC is required by AS_NORMALIZE_FAC_1 when
+  // subtraction produces a negative intermediate mantissa.
 }
 
 /**
