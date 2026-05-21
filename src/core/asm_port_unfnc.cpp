@@ -29,6 +29,8 @@ void AS_FRE();
 void AS_PEEK();
 void AS_QINT();
 void AS_ERROR(std::uint8_t error_code_offset);
+static void AS_L_VAL_1();
+static void AS_L_VAL_2();
 
 static double facToDouble() {
   const auto &cv = variables_const();
@@ -152,6 +154,8 @@ static void writePackedFloat(std::uint16_t address, double value) {
   packed.write(static_cast<std::uint8_t>((mantissa >> 8u) & 0xffu), 3u);
   packed.write(static_cast<std::uint8_t>(mantissa & 0xffu), 4u);
 }
+
+static void write_AS_DEST(std::uint16_t value) { variables().AS_DEST = value; }
 
 static void AS_NORMALIZE_FAC_1(std::uint8_t facSign) {
   std::uint64_t integerValue =
@@ -409,7 +413,50 @@ static void AS_LEN_fn() { AS_LEN(); }
 static void AS_STR_fn() { AS_STR(); }
 void AS_VAL() {
   (void)AS_GETSTR();
+  if (variables_const().AS_FAC[4] == 0u) {
+    variables().AS_FAC[0] = 0u;
+    return;
+  }
+
+  AS_L_VAL_1();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_L_VAL_1 (inclusive) .. AS_L_VAL_2 (exclusive)
+// Name normalization: none (assembler label AS_L_VAL_1 kept verbatim).
+static void AS_L_VAL_1() {
+  // Pointer candidates lifted:
+  // - AS_TXTPTR and AS_STRNG2 are each used as unified 16-bit text pointers.
+  // - AS_INDEX is the unified string-start pointer returned by AS_GETSTR.
+  // - AS_DEST stores the unified end-of-string pointer for temporary NUL swap.
+  const std::uint16_t savedTextPointer = variables_const().AS_TXTPTR;
+  variables().AS_STRNG2 = savedTextPointer;
+
+  const std::uint16_t stringStart = variables_const().AS_INDEX;
+  variables().AS_TXTPTR = stringStart;
+
+  const std::uint8_t stringLength = variables_const().AS_FAC[4];
+  const std::uint16_t endAddress =
+      static_cast<std::uint16_t>(stringStart + stringLength);
+  write_AS_DEST(endAddress);
+
+  const std::uint8_t savedByte = variables_const().readByte(endAddress);
+  variables().writeByte(endAddress, 0u);
+
+  (void)AS_CHRGOT();
   AS_FIN();
+
+  variables().writeByte(endAddress, savedByte);
+  AS_L_VAL_2();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_L_VAL_2 (inclusive) .. AS_POINT (exclusive)
+// Name normalization: none (assembler label AS_L_VAL_2 kept verbatim).
+static void AS_L_VAL_2() {
+  variables().AS_TXTPTR = variables_const().AS_STRNG2;
 }
 static void AS_ASC_fn() { AS_ASC(); }
 static void AS_CHRSTR_fn() { AS_CHRSTR(); }
