@@ -43,15 +43,6 @@ constexpr std::uint16_t kAS_INPUT_BUFFER_PLUS_1 =
 
 std::uint8_t AS_CHRGET_INPUT() { return AS_CHRGET(); }
 
-// TODO(asm-port): port AS_INLIN label.
-// void AS_INLIN() {}
-
-// TODO(asm-port): port AS_PTRGET label.
-// std::uint16_t AS_PTRGET() { return 0; }
-
-// TODO(asm-port): monitor key input path used by AS_GET mode in
-// AS_PROCESS_INPUT_LIST. std::uint8_t MON_RDKEY() { return 0; }
-
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: L_INSTART_1 (inclusive) .. L_INSTART_5 (exclusive)
@@ -181,9 +172,6 @@ void AS_FINDATA() {
     return;
   }
 }
-
-// TODO(asm-port): comma checker used between input variables.
-// void AS_CHKCOM() {}
 
 } // namespace
 
