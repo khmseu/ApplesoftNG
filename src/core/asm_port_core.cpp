@@ -16,6 +16,23 @@
 
 namespace applesoft::asm_port {
 
+namespace {
+
+struct FrmevlStackFrame {
+  std::array<std::uint8_t, 5> fac;
+  std::uint8_t sign = 0u;
+  std::uint8_t precedence = 0u;
+};
+
+constexpr std::uint8_t kMathTableEntrySize = 3u;
+constexpr std::uint8_t kAS_LASTOPNoMath = 0xffu;
+
+void write_AS_LASTOP(std::uint8_t value) {
+  ApplesoftVariables::setLowByte(variables().AS_TXPSV, value);
+}
+
+} // namespace
+
 void AS_SYNERR();
 extern std::uint8_t gJerErrorCode;
 void MON_RESET2();
@@ -79,10 +96,18 @@ void AS_CAT();
 void AS_CHKSTR();
 void AS_CHKCOM();
 std::uint8_t AS_GETBYT();
+void AS_ROUND_FAC();
 extern std::int8_t gNumericCompareResult;
 extern bool gNumericCompareCarry;
 extern std::uint8_t gFloatInput;
 extern std::uint8_t gPendingErrorCode;
+void AS_SNTXERR();
+FrmevlStackFrame AS_FRM_STACK_1(std::uint8_t precedence);
+bool AS_NOTMATH(std::uint8_t token);
+std::uint8_t AS_FRM_PERFORM_1(const FrmevlStackFrame &lhsFrame,
+                              std::uint8_t cprtypForFrame,
+                              const MathTblEntry &pendingEntry,
+                              std::uint8_t lastOpOffset);
 
 void SetTextPointer(std::uint16_t address) { variables().AS_TXTPTR = address; }
 
@@ -1781,11 +1806,11 @@ void AS_FNCDATA() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_FRMEVL (inclusive) .. AS_FRM_STACK_1 (exclusive)
+// AS_Labels: AS_FRMEVL (inclusive) .. AS_SNTXERR (exclusive)
 // Name normalization: AS_FRMEVL_1/2 and related sublabels are modeled inline.
 //
 // Incremental port note:
-// This now includes the AS_FRM_RECURSE..AS_FRM_STACK_1 tranche by modeling
+// This now includes the AS_FRM_RECURSE..AS_SNTXERR tranche by modeling
 // the recursive precedence walk and the stacked-AS_LHS frame handoff to
 // AS_ARG/AS_CPRMASK.
 void AS_FRMEVL() {
@@ -1843,6 +1868,7 @@ void AS_FRMEVL() {
       MathTblEntry pendingEntry{};
       std::uint8_t cprtypForFrame = 0u;
       bool relationalPath = false;
+      std::uint8_t lastOpOffset = kAS_LASTOPNoMath;
 
       if (variables_const().AS_CPRTYP != 0u) {
         // AS_FRM_RELATIONAL: fold string-vs-numeric state into AS_CPRTYP and
@@ -1856,21 +1882,14 @@ void AS_FRMEVL() {
         const std::uint16_t txtptr = variables_const().AS_TXTPTR;
         variables().AS_TXTPTR = static_cast<std::uint16_t>(txtptr - 1u);
         pendingEntry = AS_MATHTBL(AS_M_REL_IDX);
+        lastOpOffset =
+            static_cast<std::uint8_t>(AS_M_REL_IDX * kMathTableEntrySize);
       } else {
         // AS_NOTMATH/AS_GOEX: stop when the next token is not an infix
         // operator.
-        if (token < kAS_TOKEN_PLUS || token > kTOKEN_AS_LESS) {
+        if (AS_NOTMATH(token)) {
           return;
         }
-
-        // AS_FRMEVL_2_3 special-case (+ with string AS_FAC) is AS_CAT in ROM.
-        if (token == kAS_TOKEN_PLUS &&
-            (variables_const().AS_VALTYP & 0x80u) != 0u) {
-          AS_CAT();
-          return;
-        }
-
-        AS_CHKNUM();
 
         const std::size_t mathIndex =
             static_cast<std::size_t>(token - kAS_TOKEN_PLUS);
@@ -1878,6 +1897,8 @@ void AS_FRMEVL() {
           return;
         }
         pendingEntry = AS_MATHTBL(mathIndex);
+        lastOpOffset =
+            static_cast<std::uint8_t>(mathIndex * kMathTableEntrySize);
       }
 
       // AS_FRM_PRECEDENCE_TEST/AS_PREFNC: defer lower-or-equal precedence work
@@ -1886,42 +1907,104 @@ void AS_FRMEVL() {
         return;
       }
 
+      if (!relationalPath) {
+        AS_CHKNUM();
+      }
+
       // AS_FRM_RECURSE (inclusive) .. AS_FRM_STACK_1 (exclusive): recurse into
-      // AS_FRMEVL_1 while carrying pending operator/precedence state.
-      const std::array<std::uint8_t, 5> lhsFac = {
-          variables_const().AS_FAC[0], variables_const().AS_FAC[1],
-          variables_const().AS_FAC[2], variables_const().AS_FAC[3],
-          variables_const().AS_FAC[4],
-      };
-      const std::uint8_t lhsSign = variables_const().AS_FAC_SIGN;
+      // AS_FRMEVL_1 while carrying the stacked left operand and precedence.
+      const FrmevlStackFrame lhsFrame = AS_FRM_STACK_1(pendingEntry.precedence);
 
       if (!relationalPath) {
         (void)AS_CHRGET();
       }
-      self(self, pendingEntry.precedence, false);
-
-      // AS_FRM_PERFORM_2 frame handoff: move stacked left operand to AS_ARG and
-      // synthesize AS_CPRMASK/AS_SGNCPR as if popped from the ROM expression
-      // stack.
-      variables().AS_CPRMASK = static_cast<std::uint8_t>(cprtypForFrame >> 1u);
-      for (std::uint8_t i = 0; i < lhsFac.size(); ++i) {
-        variables().AS_ARG[i] = lhsFac[i];
-      }
-      variables().AS_ARG[5] = lhsSign;
-      variables().AS_SGNCPR =
-          static_cast<std::uint8_t>(lhsSign ^ variables_const().AS_FAC_SIGN);
-
-      if (cprtypForFrame != 0u) {
-        variables().AS_CPRTYP = cprtypForFrame;
-      }
-
-      if (pendingEntry.handler != nullptr) {
-        pendingEntry.handler();
-      }
+      self(self, lhsFrame.precedence, false);
+      (void)AS_FRM_PERFORM_1(lhsFrame, cprtypForFrame, pendingEntry,
+                             lastOpOffset);
     }
   };
 
   frmevl_eval(frmevl_eval, 0u, true);
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SNTXERR (inclusive) .. AS_FRM_STACK_1 (exclusive)
+// Name normalization: none (assembler label AS_SNTXERR kept verbatim).
+void AS_SNTXERR() { AS_SYNERR(); }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FRM_STACK_1 (inclusive) .. AS_NOTMATH (exclusive)
+// Name normalization: none (assembler label AS_FRM_STACK_1 kept verbatim).
+//
+// The three ROM entry points build one logical left-hand operand frame. The
+// C++ port keeps that state in a unified object instead of split stack bytes.
+FrmevlStackFrame AS_FRM_STACK_1(std::uint8_t precedence) {
+  AS_ROUND_FAC();
+
+  return {
+      {variables_const().AS_FAC[0], variables_const().AS_FAC[1],
+       variables_const().AS_FAC[2], variables_const().AS_FAC[3],
+       variables_const().AS_FAC[4]},
+      variables_const().AS_FAC_SIGN,
+      precedence,
+  };
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NOTMATH (inclusive) .. AS_FRM_PERFORM_1 (exclusive)
+// Name normalization: none (assembler label AS_NOTMATH kept verbatim).
+bool AS_NOTMATH(std::uint8_t token) {
+  constexpr std::uint8_t kAS_TOKEN_PLUS = 0xc8u;
+  constexpr std::uint8_t kTOKEN_AS_LESS = 0xd1u;
+
+  if (token < kAS_TOKEN_PLUS || token > kTOKEN_AS_LESS) {
+    write_AS_LASTOP(kAS_LASTOPNoMath);
+    return true;
+  }
+
+  // AS_FRMEVL_2_3 special-case (+ with string AS_FAC) is AS_CAT in ROM.
+  if (token == kAS_TOKEN_PLUS && (variables_const().AS_VALTYP & 0x80u) != 0u) {
+    AS_CAT();
+    return true;
+  }
+
+  return false;
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FRM_PERFORM_1 (inclusive) .. AS_FRM_ELEMENT (exclusive)
+// Name normalization: none (assembler label AS_FRM_PERFORM_1 kept verbatim).
+std::uint8_t AS_FRM_PERFORM_1(const FrmevlStackFrame &lhsFrame,
+                              std::uint8_t cprtypForFrame,
+                              const MathTblEntry &pendingEntry,
+                              std::uint8_t lastOpOffset) {
+  if (pendingEntry.precedence != AS_P_REL) {
+    AS_CHKNUM();
+  }
+
+  write_AS_LASTOP(lastOpOffset);
+  variables().AS_CPRMASK = static_cast<std::uint8_t>(cprtypForFrame >> 1u);
+
+  for (std::uint8_t i = 0u; i < lhsFrame.fac.size(); ++i) {
+    variables().AS_ARG[i] = lhsFrame.fac[i];
+  }
+  variables().AS_ARG[5] = lhsFrame.sign;
+  variables().AS_SGNCPR =
+      static_cast<std::uint8_t>(lhsFrame.sign ^ variables_const().AS_FAC_SIGN);
+
+  if (cprtypForFrame != 0u) {
+    variables().AS_CPRTYP = cprtypForFrame;
+  }
+
+  if (pendingEntry.handler != nullptr) {
+    pendingEntry.handler();
+  }
+
+  return variables_const().AS_FAC[0];
 }
 
 // Source:

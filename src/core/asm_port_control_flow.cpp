@@ -255,11 +255,7 @@ void AS_FCOMP2() {
 
 namespace {
 
-void AS_FRM_STACK_2(std::uint8_t signByte) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FRM_STACK_2 (inclusive) .. AS_FRM_STACK_3 (exclusive)
-  // Name normalization: none (assembler label AS_FRM_STACK_2 kept verbatim).
+void PushFacSignReturnAddress(std::uint8_t signByte) {
   const std::uint8_t returnAddressAS_Low = theStack().popByte();
   // Net effect of ROM sequence PLA / STA AS_INDEX / INC AS_INDEX:
   // store the low return-address byte plus one as an 8-bit value so AS_INDEX
@@ -274,11 +270,7 @@ void AS_FRM_STACK_2(std::uint8_t signByte) {
   theStack().pushByte(signByte);
 }
 
-void AS_FRM_STACK_3() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FRM_STACK_3 (inclusive) .. AS_NOTMATH (exclusive)
-  // Name normalization: none (assembler label AS_FRM_STACK_3 kept verbatim).
+void PushRoundedFacAndDispatch() {
   AS_ROUND_FAC();
 
   theStack().pushByte(variables_const().AS_FAC[4]);
@@ -291,8 +283,8 @@ void AS_FRM_STACK_3() {
   if (branchTarget == kStepLabelAddress) {
     AS_STEP();
   }
-  // Other indirect targets used by AS_FRM_STACK_3 are not ported yet; return to
-  // caller.
+  // Other indirect targets used by this FOR/STEP helper are not ported yet;
+  // return to caller.
 }
 
 constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
@@ -684,7 +676,7 @@ void AS_FOR() {
   AS_FRMNUM();
   ApplyFacSign();
   SetBranchTargetToAS_STEP();
-  AS_FRM_STACK_3();
+  PushRoundedFacAndDispatch();
 }
 
 void AS_NEXT() {
@@ -828,7 +820,7 @@ void AS_STEP() {
   }
 
   const std::int8_t stepSign = AS_SIGN();
-  AS_FRM_STACK_2(static_cast<std::uint8_t>(stepSign));
+  PushFacSignReturnAddress(static_cast<std::uint8_t>(stepSign));
   PushForPntFrame();
   AS_NEWSTT();
 }
