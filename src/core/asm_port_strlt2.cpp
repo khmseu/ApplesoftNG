@@ -29,6 +29,9 @@ bool AS_ISLETC();
 std::uint16_t AS_PTRGET();
 void AS_NEGATE_FAC();
 void AS_EQUOP();
+void AS_FUNCT();
+void AS_UNARY();
+void AS_PARCHK();
 void AS_GIVAYF(std::int16_t value);
 void AS_STRTXT();
 void AS_SYNERR();
@@ -243,6 +246,31 @@ void AS_NOT_() {
   // Applesoft NOT returns true when FAC is zero and false otherwise; the code
   // path is identical to the existing AS_EQUOP truth test.
   AS_EQUOP();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FN_ (inclusive) .. AS_FRM_VARIABLE (exclusive)
+// Name normalization: none (assembler label AS_FN_ kept verbatim).
+//
+// Dispatch expression token handling: FN calls, unary built-ins (SGN and
+// above), or parenthesized-expression parsing.
+void AS_FN_() {
+  constexpr std::uint8_t kTokenFN = 0xc2u;
+  constexpr std::uint8_t kTokenSGN = 0xd2u;
+
+  const std::uint8_t token = AS_CHRGOT();
+  if (token == kTokenFN) {
+    AS_FUNCT();
+    return;
+  }
+
+  if (token >= kTokenSGN) {
+    AS_UNARY();
+    return;
+  }
+
+  AS_PARCHK();
 }
 
 void AS_FRMEVL_2() {
