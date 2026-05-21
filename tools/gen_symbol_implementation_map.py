@@ -37,6 +37,8 @@ SYM_DECL_RE = re.compile(
 # We accept labels that appear in the AS_Labels/MON_Labels comment style.
 LABEL_TOKEN_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 
+IGNORED_CLAIM_TOKENS = {"inclusive", "exclusive", "t"}
+
 # Function definition heuristic: enough for this repository's free functions.
 FUNC_DEF_RE = re.compile(
     r"^\s*(?:static\s+)?"
@@ -242,6 +244,23 @@ def _prev_function_name(lines: list[str], start_idx: int) -> str | None:
     return None
 
 
+def _pick_claim_label(tokens: list[str], prefer_last: bool) -> str:
+    ordered = list(reversed(tokens)) if prefer_last else tokens
+
+    # Prefer canonical ROM symbols when present.
+    for token in ordered:
+        if token.startswith(("AS_", "MON_")):
+            return token
+
+    # Fallback: first non-marker token.
+    for token in ordered:
+        if token.lower() in IGNORED_CLAIM_TOKENS:
+            continue
+        return token
+
+    return ""
+
+
 def _extract_label_tokens(label_comment: str) -> tuple[str, str | None]:
     # Normalize by removing trailing prose markers.
     text = label_comment.replace("(inclusive)", "").replace("(exclusive)", "")
@@ -251,12 +270,14 @@ def _extract_label_tokens(label_comment: str) -> tuple[str, str | None]:
         left, right = text.split("..", 1)
         left_tokens = LABEL_TOKEN_RE.findall(left)
         right_tokens = LABEL_TOKEN_RE.findall(right)
-        start = left_tokens[-1] if left_tokens else ""
-        end = right_tokens[0] if right_tokens else None
+        start = _pick_claim_label(left_tokens, prefer_last=False)
+        end = (
+            _pick_claim_label(right_tokens, prefer_last=False) if right_tokens else None
+        )
         return start, end
 
     tokens = LABEL_TOKEN_RE.findall(text)
-    return (tokens[-1] if tokens else "", None)
+    return (_pick_claim_label(tokens, prefer_last=False), None)
 
 
 def scan_label_claims(src_root: Path) -> list[LabelRangeClaim]:

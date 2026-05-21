@@ -77,50 +77,50 @@ AS_GETARY	src/core/asm_port_core.cpp	691	AS_GETARY (inclusive) .. AS_GETARY2 (ex
 AS_GETARY2	src/core/asm_port_core.cpp	697	AS_GETARY2 (inclusive) .. AS_NEG32768 (exclusive)	AS_GETARY2	AS_NEG32768	asrom	AS_GETARY2	0xe0ef	AS_NEG32768	0xe0fe	resolved-range	ok
 AS_C_ZERO	src/core/asm_port_core.cpp	710	AS_C_ZERO (inclusive) .. AS_MAKE_NEW_VARIABLE (exclusive)	AS_C_ZERO	AS_MAKE_NEW_VARIABLE	asrom	AS_C_ZERO	0xe09a	AS_MAKE_NEW_VARIABLE	0xe09c	resolved-range	ok
 AS_USE_OLD_ARRAY	src/core/asm_port_core.cpp	720	AS_USE_OLD_ARRAY (inclusive) .. AS_MAKE_NEW_ARRAY (exclusive)	AS_USE_OLD_ARRAY	AS_MAKE_NEW_ARRAY	asrom	AS_USE_OLD_ARRAY	0xe19e	AS_MAKE_NEW_ARRAY	0xe1b8	resolved-range	ok
-AS_MAKE_NEW_ARRAY	src/core/asm_port_core.cpp	738	AS_MAKE_NEW_ARRAY (T:11b8, inclusive) .. AS_FIND_ARRAY_ELEMENT	inclusive	AS_FIND_ARRAY_ELEMENT						unresolved	no-module-match
-AS_FIND_ARRAY_ELEMENT	src/core/asm_port_core.cpp	912	AS_FIND_ARRAY_ELEMENT (inclusive) .. AS_FAE_1 (exclusive)	AS_FIND_ARRAY_ELEMENT	AS_FAE_1	asrom	AS_FIND_ARRAY_ELEMENT	0xe24b	AS_FAE_1	0xe253	resolved-range	ok
-AS_MULTIPLY_SUBSCRIPT	src/core/asm_port_core.cpp	930	AS_MULTIPLY_SUBSCRIPT (inclusive) .. AS_MULTIPLY_SUBS_1	AS_MULTIPLY_SUBSCRIPT	AS_MULTIPLY_SUBS_1	asrom	AS_MULTIPLY_SUBSCRIPT	0xe2ad	AS_MULTIPLY_SUBS_1	0xe2b6	resolved-range	ok
-AS_MULTIPLY_SUBS_1	src/core/asm_port_core.cpp	947	AS_MULTIPLY_SUBS_1 (inclusive) .. AS_FRE (exclusive)	AS_MULTIPLY_SUBS_1	AS_FRE	asrom	AS_MULTIPLY_SUBS_1	0xe2b6	AS_FRE	0xe2de	resolved-range	ok
-AS_SNGFLT	src/core/asm_port_core.cpp	992	AS_SNGFLT (inclusive) .. AS_ERRDIR (exclusive)	AS_SNGFLT	AS_ERRDIR	asrom	AS_SNGFLT	0xe301	AS_ERRDIR	0xe306	resolved-range	ok
-AS_OR	src/core/asm_port_core.cpp	1001	AS_OR (inclusive) .. AS_ANDOP (exclusive)	AS_OR	AS_ANDOP	asrom	AS_OR	0xdf4f	AS_ANDOP	0xdf55	resolved-range	ok
-AS_ANDOP	src/core/asm_port_core.cpp	1016	AS_ANDOP (inclusive) .. AS_FALSE (exclusive)	AS_ANDOP	AS_FALSE	asrom	AS_ANDOP	0xdf55	AS_FALSE	0xdf5d	resolved-range	ok
-AS_FALSE	src/core/asm_port_core.cpp	1031	AS_FALSE (inclusive) .. AS_TRUE (exclusive)	AS_FALSE	AS_TRUE	asrom	AS_FALSE	0xdf5d	AS_TRUE	0xdf60	resolved-range	ok
-AS_TRUE	src/core/asm_port_core.cpp	1037	AS_TRUE (inclusive) .. AS_RELOPS (exclusive)	AS_TRUE	AS_RELOPS	asrom	AS_TRUE	0xdf60	AS_RELOPS	0xdf65	resolved-range	ok
-AS_SET_VARPNT_AND_YA	src/core/asm_port_core.cpp	1043	AS_SET_VARPNT_AND_YA (inclusive) .. AS_GETARY (exclusive)	AS_SET_VARPNT_AND_YA	AS_GETARY	asrom	AS_SET_VARPNT_AND_YA	0xe0de	AS_GETARY	0xe0ed	resolved-range	ok
-AS_MAKE_NEW_VARIABLE	src/core/asm_port_core.cpp	1054	AS_MAKE_NEW_VARIABLE (inclusive) .. AS_SET_VARPNT_AND_YA	AS_MAKE_NEW_VARIABLE	AS_SET_VARPNT_AND_YA	asrom	AS_MAKE_NEW_VARIABLE	0xe09c	AS_SET_VARPNT_AND_YA	0xe0de	resolved-range	ok
-AS_NAME_NOT_FOUND	src/core/asm_port_core.cpp	1116	AS_NAME_NOT_FOUND (inclusive) .. AS_C_ZERO (exclusive)	AS_NAME_NOT_FOUND	AS_C_ZERO	asrom	AS_NAME_NOT_FOUND	0xe087	AS_C_ZERO	0xe09a	resolved-range	ok
-AS_PTRGET3	src/core/asm_port_core.cpp	1148	AS_PTRGET3 (inclusive) .. AS_BADNAM (exclusive)	AS_PTRGET3	AS_BADNAM	asrom	AS_PTRGET3	0xdfea	AS_BADNAM	0xdff4	resolved-range	ok
-AS_PTRGET2	src/core/asm_port_core.cpp	1165	AS_PTRGET2 (inclusive) .. AS_PTRGET3 (exclusive)	AS_PTRGET2	AS_PTRGET3	asrom	AS_PTRGET2	0xdfe8	AS_PTRGET3	0xdfea	resolved-range	ok
-AS_ARRAY	src/core/asm_port_core.cpp	1172	AS_PTRGET (inclusive) .. AS_PTRGET2 (exclusive)	AS_PTRGET	AS_PTRGET2	asrom	AS_PTRGET	0xdfe3	AS_PTRGET2	0xdfe8	resolved-range	ok
-AS_ARRAY	src/core/asm_port_core.cpp	1183	AS_ARRAY (inclusive) .. AS_MAKE_NEW_ARRAY (exclusive)	AS_ARRAY	AS_MAKE_NEW_ARRAY	asrom	AS_ARRAY	0xe11e	AS_MAKE_NEW_ARRAY	0xe1b8	resolved-range	ok
-AS_DIM	src/core/asm_port_core.cpp	1280	AS_DIM (inclusive) .. AS_PTRGET (exclusive)	AS_DIM	AS_PTRGET	asrom	AS_DIM	0xdfd9	AS_PTRGET	0xdfe3	resolved-range	ok
-AS_NXDIM	src/core/asm_port_core.cpp	1294	AS_NXDIM (inclusive) .. AS_DIM (exclusive)	AS_NXDIM	AS_DIM	asrom	AS_NXDIM	0xdfd6	AS_DIM	0xdfd9	resolved-range	ok
-AS_PTRGET4	src/core/asm_port_core.cpp	1304	AS_PTRGET4 (inclusive) .. AS_ISLETC (exclusive)	AS_PTRGET4	AS_ISLETC	asrom	AS_PTRGET4	0xe007	AS_ISLETC	0xe07d	resolved-range	ok
-AS_NUMCMP	src/core/asm_port_core.cpp	1362	AS_NUMCMP (inclusive) .. AS_CMPDONE (exclusive)	AS_NUMCMP	AS_CMPDONE	asrom	AS_NUMCMP	0xdfb0	AS_CMPDONE	0xdfc1	resolved-range	ok
-AS_CMPDONE	src/core/asm_port_core.cpp	1373	AS_CMPDONE (inclusive) .. AS_PDL (exclusive)	AS_CMPDONE	AS_PDL	asrom	AS_CMPDONE	0xdfc1	AS_PDL	0xdfcd	resolved-range	ok
-AS_AYINT	src/core/asm_port_core.cpp	1393	AS_AYINT (inclusive) .. AS_MI1 (exclusive)	AS_AYINT	AS_MI1	asrom	AS_AYINT	0xe10c	AS_MI1	0xe119	resolved-range	ok
-AS_HANDLERR	src/core/asm_port_core.cpp	1413	AS_HANDLERR (inclusive) .. AS_RESUME (exclusive)	AS_HANDLERR	AS_RESUME	asrom	AS_HANDLERR	0xf2e9	AS_RESUME	0xf318	resolved-range	ok
-AS_SCREEN	src/core/asm_port_core.cpp	1432	AS_SCREEN (inclusive) .. AS_UNARY (exclusive)	AS_SCREEN	AS_UNARY	asrom	AS_SCREEN	0xdef9	AS_UNARY	0xdf0c	resolved-range	ok
-AS_UNARY	src/core/asm_port_core.cpp	1450	AS_UNARY (inclusive) .. AS_OR (exclusive)	AS_UNARY	AS_OR	asrom	AS_UNARY	0xdf0c	AS_OR	0xdf4f	resolved-range	ok
-AS_RELOPS	src/core/asm_port_core.cpp	1507	AS_RELOPS (inclusive) .. AS_STRCMP (exclusive)	AS_RELOPS	AS_STRCMP	asrom	AS_RELOPS	0xdf65	AS_STRCMP	0xdf7d	resolved-range	ok
-AS_STRCMP	src/core/asm_port_core.cpp	1527	AS_STRCMP (inclusive) .. AS_NUMCMP (exclusive)	AS_STRCMP	AS_NUMCMP	asrom	AS_STRCMP	0xdf7d	AS_NUMCMP	0xdfb0	resolved-range	ok
-AS_FRE	src/core/asm_port_core.cpp	1555	AS_FRE (inclusive) .. AS_GIVAYF (exclusive)	AS_FRE	AS_GIVAYF	asrom	AS_FRE	0xe2de	AS_GIVAYF	0xe2f2	resolved-range	ok
-AS_GIVAYF	src/core/asm_port_core.cpp	1576	AS_GIVAYF (inclusive) .. AS_POS (exclusive)	AS_GIVAYF	AS_POS	asrom	AS_GIVAYF	0xe2f2	AS_POS	0xe2ff	resolved-range	ok
-AS_FNC_	src/core/asm_port_core.cpp	1594	AS_FNC_ (inclusive) .. AS_FUNCT (exclusive)	AS_FNC_	AS_FUNCT	asrom	AS_FNC_	0xe341	AS_FUNCT	0xe354	resolved-range	ok
-AS_DEF	src/core/asm_port_core.cpp	1626	AS_DEF (inclusive) .. AS_FNC_ (exclusive)	AS_DEF	AS_FNC_	asrom	AS_DEF	0xe313	AS_FNC_	0xe341	resolved-range	ok
-AS_FUNCT	src/core/asm_port_core.cpp	1679	AS_FUNCT (inclusive) .. AS_FNCDATA (exclusive)	AS_FUNCT	AS_FNCDATA	asrom	AS_FUNCT	0xe354	AS_FNCDATA	0xe3af	resolved-range	ok
-AS_FNCDATA	src/core/asm_port_core.cpp	1789	AS_FNCDATA (inclusive) .. AS_STR (exclusive)	AS_FNCDATA	AS_STR	asrom	AS_FNCDATA	0xe3af	AS_STR	0xe3c5	resolved-range	ok
-AS_FRMEVL	src/core/asm_port_core.cpp	1811	AS_FRMEVL (inclusive) .. AS_SNTXERR (exclusive)	AS_FRMEVL	AS_SNTXERR	asrom	AS_FRMEVL	0xdd7b	AS_SNTXERR	0xde0d	resolved-range	ok
-AS_SNTXERR	src/core/asm_port_core.cpp	1934	AS_SNTXERR (inclusive) .. AS_FRM_STACK_1 (exclusive)	AS_SNTXERR	AS_FRM_STACK_1	asrom	AS_SNTXERR	0xde0d	AS_FRM_STACK_1	0xde10	resolved-range	ok
-AS_FRM_STACK_1	src/core/asm_port_core.cpp	1940	AS_FRM_STACK_1 (inclusive) .. AS_NOTMATH (exclusive)	AS_FRM_STACK_1	AS_NOTMATH	asrom	AS_FRM_STACK_1	0xde10	AS_NOTMATH	0xde35	resolved-range	ok
-AS_NOTMATH	src/core/asm_port_core.cpp	1959	AS_NOTMATH (inclusive) .. AS_FRM_PERFORM_1 (exclusive)	AS_NOTMATH	AS_FRM_PERFORM_1	asrom	AS_NOTMATH	0xde35	AS_FRM_PERFORM_1	0xde3a	resolved-range	ok
-AS_FRM_PERFORM_1	src/core/asm_port_core.cpp	1981	AS_FRM_PERFORM_1 (inclusive) .. AS_FRM_ELEMENT (exclusive)	AS_FRM_PERFORM_1	AS_FRM_ELEMENT	asrom	AS_FRM_PERFORM_1	0xde3a	AS_FRM_ELEMENT	0xde60	resolved-range	ok
-MON_SCRN	src/core/asm_port_core.cpp	2014	SCRN (inclusive) .. end of SCRN routine (exclusive)	SCRN	end						unresolved	no-module-match
-NMI_VECTOR	src/core/asm_port_core.cpp	2052	M6502VEC (inclusive) .. end of listing (exclusive)	M6502VEC	end						unresolved	no-module-match
-MON_IRQ	src/core/asm_port_core.cpp	2081	IRQ (inclusive) .. BREAK (exclusive)	IRQ	BREAK						unresolved	no-module-match
-AS_FCOMP	src/core/asm_port_core.cpp	2112	AS_FCOMP (inclusive) .. AS_FCOMP2 (exclusive)	AS_FCOMP	AS_FCOMP2	asrom	AS_FCOMP	0xebb2	AS_FCOMP2	0xebb4	resolved-range	ok
-CompareArgAndFacStrings	src/core/asm_port_core.cpp	2127	STRCMP_1 (inclusive) .. PDL (exclusive)	STRCMP_1	PDL						unresolved	no-module-match
-MON_PREAD	src/core/asm_port_core.cpp	2173	PREAD (inclusive) .. end of listing routine (exclusive)	PREAD	end						unresolved	no-module-match
+AS_MAKE_NEW_ARRAY	src/core/asm_port_core.cpp	738	AS_MAKE_NEW_ARRAY (inclusive) .. AS_FIND_ARRAY_ELEMENT (exclusive)	AS_MAKE_NEW_ARRAY	AS_FIND_ARRAY_ELEMENT	asrom	AS_MAKE_NEW_ARRAY	0xe1b8	AS_FIND_ARRAY_ELEMENT	0xe24b	resolved-range	ok
+AS_FIND_ARRAY_ELEMENT	src/core/asm_port_core.cpp	911	AS_FIND_ARRAY_ELEMENT (inclusive) .. AS_FAE_1 (exclusive)	AS_FIND_ARRAY_ELEMENT	AS_FAE_1	asrom	AS_FIND_ARRAY_ELEMENT	0xe24b	AS_FAE_1	0xe253	resolved-range	ok
+AS_MULTIPLY_SUBSCRIPT	src/core/asm_port_core.cpp	929	AS_MULTIPLY_SUBSCRIPT (inclusive) .. AS_MULTIPLY_SUBS_1	AS_MULTIPLY_SUBSCRIPT	AS_MULTIPLY_SUBS_1	asrom	AS_MULTIPLY_SUBSCRIPT	0xe2ad	AS_MULTIPLY_SUBS_1	0xe2b6	resolved-range	ok
+AS_MULTIPLY_SUBS_1	src/core/asm_port_core.cpp	946	AS_MULTIPLY_SUBS_1 (inclusive) .. AS_FRE (exclusive)	AS_MULTIPLY_SUBS_1	AS_FRE	asrom	AS_MULTIPLY_SUBS_1	0xe2b6	AS_FRE	0xe2de	resolved-range	ok
+AS_SNGFLT	src/core/asm_port_core.cpp	991	AS_SNGFLT (inclusive) .. AS_ERRDIR (exclusive)	AS_SNGFLT	AS_ERRDIR	asrom	AS_SNGFLT	0xe301	AS_ERRDIR	0xe306	resolved-range	ok
+AS_OR	src/core/asm_port_core.cpp	1000	AS_OR (inclusive) .. AS_ANDOP (exclusive)	AS_OR	AS_ANDOP	asrom	AS_OR	0xdf4f	AS_ANDOP	0xdf55	resolved-range	ok
+AS_ANDOP	src/core/asm_port_core.cpp	1015	AS_ANDOP (inclusive) .. AS_FALSE (exclusive)	AS_ANDOP	AS_FALSE	asrom	AS_ANDOP	0xdf55	AS_FALSE	0xdf5d	resolved-range	ok
+AS_FALSE	src/core/asm_port_core.cpp	1030	AS_FALSE (inclusive) .. AS_TRUE (exclusive)	AS_FALSE	AS_TRUE	asrom	AS_FALSE	0xdf5d	AS_TRUE	0xdf60	resolved-range	ok
+AS_TRUE	src/core/asm_port_core.cpp	1036	AS_TRUE (inclusive) .. AS_RELOPS (exclusive)	AS_TRUE	AS_RELOPS	asrom	AS_TRUE	0xdf60	AS_RELOPS	0xdf65	resolved-range	ok
+AS_SET_VARPNT_AND_YA	src/core/asm_port_core.cpp	1042	AS_SET_VARPNT_AND_YA (inclusive) .. AS_GETARY (exclusive)	AS_SET_VARPNT_AND_YA	AS_GETARY	asrom	AS_SET_VARPNT_AND_YA	0xe0de	AS_GETARY	0xe0ed	resolved-range	ok
+AS_MAKE_NEW_VARIABLE	src/core/asm_port_core.cpp	1053	AS_MAKE_NEW_VARIABLE (inclusive) .. AS_SET_VARPNT_AND_YA	AS_MAKE_NEW_VARIABLE	AS_SET_VARPNT_AND_YA	asrom	AS_MAKE_NEW_VARIABLE	0xe09c	AS_SET_VARPNT_AND_YA	0xe0de	resolved-range	ok
+AS_NAME_NOT_FOUND	src/core/asm_port_core.cpp	1115	AS_NAME_NOT_FOUND (inclusive) .. AS_C_ZERO (exclusive)	AS_NAME_NOT_FOUND	AS_C_ZERO	asrom	AS_NAME_NOT_FOUND	0xe087	AS_C_ZERO	0xe09a	resolved-range	ok
+AS_PTRGET3	src/core/asm_port_core.cpp	1147	AS_PTRGET3 (inclusive) .. AS_BADNAM (exclusive)	AS_PTRGET3	AS_BADNAM	asrom	AS_PTRGET3	0xdfea	AS_BADNAM	0xdff4	resolved-range	ok
+AS_PTRGET2	src/core/asm_port_core.cpp	1164	AS_PTRGET2 (inclusive) .. AS_PTRGET3 (exclusive)	AS_PTRGET2	AS_PTRGET3	asrom	AS_PTRGET2	0xdfe8	AS_PTRGET3	0xdfea	resolved-range	ok
+AS_ARRAY	src/core/asm_port_core.cpp	1171	AS_PTRGET (inclusive) .. AS_PTRGET2 (exclusive)	AS_PTRGET	AS_PTRGET2	asrom	AS_PTRGET	0xdfe3	AS_PTRGET2	0xdfe8	resolved-range	ok
+AS_ARRAY	src/core/asm_port_core.cpp	1182	AS_ARRAY (inclusive) .. AS_MAKE_NEW_ARRAY (exclusive)	AS_ARRAY	AS_MAKE_NEW_ARRAY	asrom	AS_ARRAY	0xe11e	AS_MAKE_NEW_ARRAY	0xe1b8	resolved-range	ok
+AS_DIM	src/core/asm_port_core.cpp	1279	AS_DIM (inclusive) .. AS_PTRGET (exclusive)	AS_DIM	AS_PTRGET	asrom	AS_DIM	0xdfd9	AS_PTRGET	0xdfe3	resolved-range	ok
+AS_NXDIM	src/core/asm_port_core.cpp	1293	AS_NXDIM (inclusive) .. AS_DIM (exclusive)	AS_NXDIM	AS_DIM	asrom	AS_NXDIM	0xdfd6	AS_DIM	0xdfd9	resolved-range	ok
+AS_PTRGET4	src/core/asm_port_core.cpp	1303	AS_PTRGET4 (inclusive) .. AS_ISLETC (exclusive)	AS_PTRGET4	AS_ISLETC	asrom	AS_PTRGET4	0xe007	AS_ISLETC	0xe07d	resolved-range	ok
+AS_NUMCMP	src/core/asm_port_core.cpp	1361	AS_NUMCMP (inclusive) .. AS_CMPDONE (exclusive)	AS_NUMCMP	AS_CMPDONE	asrom	AS_NUMCMP	0xdfb0	AS_CMPDONE	0xdfc1	resolved-range	ok
+AS_CMPDONE	src/core/asm_port_core.cpp	1372	AS_CMPDONE (inclusive) .. AS_PDL (exclusive)	AS_CMPDONE	AS_PDL	asrom	AS_CMPDONE	0xdfc1	AS_PDL	0xdfcd	resolved-range	ok
+AS_AYINT	src/core/asm_port_core.cpp	1392	AS_AYINT (inclusive) .. AS_MI1 (exclusive)	AS_AYINT	AS_MI1	asrom	AS_AYINT	0xe10c	AS_MI1	0xe119	resolved-range	ok
+AS_HANDLERR	src/core/asm_port_core.cpp	1412	AS_HANDLERR (inclusive) .. AS_RESUME (exclusive)	AS_HANDLERR	AS_RESUME	asrom	AS_HANDLERR	0xf2e9	AS_RESUME	0xf318	resolved-range	ok
+AS_SCREEN	src/core/asm_port_core.cpp	1431	AS_SCREEN (inclusive) .. AS_UNARY (exclusive)	AS_SCREEN	AS_UNARY	asrom	AS_SCREEN	0xdef9	AS_UNARY	0xdf0c	resolved-range	ok
+AS_UNARY	src/core/asm_port_core.cpp	1449	AS_UNARY (inclusive) .. AS_OR (exclusive)	AS_UNARY	AS_OR	asrom	AS_UNARY	0xdf0c	AS_OR	0xdf4f	resolved-range	ok
+AS_RELOPS	src/core/asm_port_core.cpp	1506	AS_RELOPS (inclusive) .. AS_STRCMP (exclusive)	AS_RELOPS	AS_STRCMP	asrom	AS_RELOPS	0xdf65	AS_STRCMP	0xdf7d	resolved-range	ok
+AS_STRCMP	src/core/asm_port_core.cpp	1526	AS_STRCMP (inclusive) .. AS_NUMCMP (exclusive)	AS_STRCMP	AS_NUMCMP	asrom	AS_STRCMP	0xdf7d	AS_NUMCMP	0xdfb0	resolved-range	ok
+AS_FRE	src/core/asm_port_core.cpp	1554	AS_FRE (inclusive) .. AS_GIVAYF (exclusive)	AS_FRE	AS_GIVAYF	asrom	AS_FRE	0xe2de	AS_GIVAYF	0xe2f2	resolved-range	ok
+AS_GIVAYF	src/core/asm_port_core.cpp	1575	AS_GIVAYF (inclusive) .. AS_POS (exclusive)	AS_GIVAYF	AS_POS	asrom	AS_GIVAYF	0xe2f2	AS_POS	0xe2ff	resolved-range	ok
+AS_FNC_	src/core/asm_port_core.cpp	1593	AS_FNC_ (inclusive) .. AS_FUNCT (exclusive)	AS_FNC_	AS_FUNCT	asrom	AS_FNC_	0xe341	AS_FUNCT	0xe354	resolved-range	ok
+AS_DEF	src/core/asm_port_core.cpp	1625	AS_DEF (inclusive) .. AS_FNC_ (exclusive)	AS_DEF	AS_FNC_	asrom	AS_DEF	0xe313	AS_FNC_	0xe341	resolved-range	ok
+AS_FUNCT	src/core/asm_port_core.cpp	1678	AS_FUNCT (inclusive) .. AS_FNCDATA (exclusive)	AS_FUNCT	AS_FNCDATA	asrom	AS_FUNCT	0xe354	AS_FNCDATA	0xe3af	resolved-range	ok
+AS_FNCDATA	src/core/asm_port_core.cpp	1788	AS_FNCDATA (inclusive) .. AS_STR (exclusive)	AS_FNCDATA	AS_STR	asrom	AS_FNCDATA	0xe3af	AS_STR	0xe3c5	resolved-range	ok
+AS_FRMEVL	src/core/asm_port_core.cpp	1810	AS_FRMEVL (inclusive) .. AS_SNTXERR (exclusive)	AS_FRMEVL	AS_SNTXERR	asrom	AS_FRMEVL	0xdd7b	AS_SNTXERR	0xde0d	resolved-range	ok
+AS_SNTXERR	src/core/asm_port_core.cpp	1933	AS_SNTXERR (inclusive) .. AS_FRM_STACK_1 (exclusive)	AS_SNTXERR	AS_FRM_STACK_1	asrom	AS_SNTXERR	0xde0d	AS_FRM_STACK_1	0xde10	resolved-range	ok
+AS_FRM_STACK_1	src/core/asm_port_core.cpp	1939	AS_FRM_STACK_1 (inclusive) .. AS_NOTMATH (exclusive)	AS_FRM_STACK_1	AS_NOTMATH	asrom	AS_FRM_STACK_1	0xde10	AS_NOTMATH	0xde35	resolved-range	ok
+AS_NOTMATH	src/core/asm_port_core.cpp	1958	AS_NOTMATH (inclusive) .. AS_FRM_PERFORM_1 (exclusive)	AS_NOTMATH	AS_FRM_PERFORM_1	asrom	AS_NOTMATH	0xde35	AS_FRM_PERFORM_1	0xde3a	resolved-range	ok
+AS_FRM_PERFORM_1	src/core/asm_port_core.cpp	1980	AS_FRM_PERFORM_1 (inclusive) .. AS_FRM_ELEMENT (exclusive)	AS_FRM_PERFORM_1	AS_FRM_ELEMENT	asrom	AS_FRM_PERFORM_1	0xde3a	AS_FRM_ELEMENT	0xde60	resolved-range	ok
+MON_SCRN	src/core/asm_port_core.cpp	2013	SCRN (inclusive) .. end of SCRN routine (exclusive)	SCRN	end						unresolved	no-module-match
+NMI_VECTOR	src/core/asm_port_core.cpp	2051	M6502VEC (inclusive) .. end of listing (exclusive)	M6502VEC	end						unresolved	no-module-match
+MON_IRQ	src/core/asm_port_core.cpp	2080	IRQ (inclusive) .. BREAK (exclusive)	IRQ	BREAK						unresolved	no-module-match
+AS_FCOMP	src/core/asm_port_core.cpp	2111	AS_FCOMP (inclusive) .. AS_FCOMP2 (exclusive)	AS_FCOMP	AS_FCOMP2	asrom	AS_FCOMP	0xebb2	AS_FCOMP2	0xebb4	resolved-range	ok
+CompareArgAndFacStrings	src/core/asm_port_core.cpp	2126	STRCMP_1 (inclusive) .. PDL (exclusive)	STRCMP_1	PDL						unresolved	no-module-match
+MON_PREAD	src/core/asm_port_core.cpp	2172	PREAD (inclusive) .. end of listing routine (exclusive)	PREAD	end						unresolved	no-module-match
 AS_ERROR	src/core/asm_port_error_handling.cpp	25	AS_ERROR (inclusive) .. AS_PRINT_ERROR_LINNUM (exclusive)	AS_ERROR	AS_PRINT_ERROR_LINNUM	asrom	AS_ERROR	0xd412	AS_PRINT_ERROR_LINNUM	0xd431	resolved-range	ok
 AS_MEMERR	src/core/asm_port_error_handling.cpp	47	AS_MEMERR (inclusive) .. AS_ERROR (exclusive)	AS_MEMERR	AS_ERROR	asrom	AS_MEMERR	0xd410	AS_ERROR	0xd412	resolved-range	ok
 AS_PRINT_ERROR_LINNUM	src/core/asm_port_error_handling.cpp	56	AS_PRINT_ERROR_LINNUM (inclusive) .. AS_RESTART (exclusive)	AS_PRINT_ERROR_LINNUM	AS_RESTART	asrom	AS_PRINT_ERROR_LINNUM	0xd431	AS_RESTART	0xd43c	resolved-range	ok
@@ -129,7 +129,7 @@ AS_INVERSE	src/core/asm_port_graphics.cpp	22	AS_NORMAL (inclusive) .. AS_INVERSE
 AS_FLASH	src/core/asm_port_graphics.cpp	32	AS_INVERSE (inclusive) .. AS_FLASH (exclusive)	AS_INVERSE	AS_FLASH	asrom	AS_INVERSE	0xf277	AS_FLASH	0xf280	resolved-range	ok
 MON_SETCOL	src/core/asm_port_graphics.cpp	42	AS_FLASH (inclusive) .. AS_COLOR (exclusive)	AS_FLASH	AS_COLOR	asrom	AS_FLASH	0xf280	AS_COLOR	0xf24f	skipped-ambiguous-range	end-not-greater-than-start
 MON_TABV	src/core/asm_port_graphics.cpp	52	SETCOL (inclusive) .. SCRN (exclusive)	SETCOL	SCRN						unresolved	no-module-match
-MON_IOPRT	src/core/asm_port_graphics.cpp	66	TABV (inclusive) .. external AS_VTAB jump target (exclusive)	TABV	external						unresolved	no-module-match
+MON_IOPRT	src/core/asm_port_graphics.cpp	66	TABV (inclusive) .. external AS_VTAB jump target (exclusive)	TABV	AS_VTAB						unresolved	no-module-match
 MON_IOPRT	src/core/asm_port_graphics.cpp	71	AS_VTAB (inclusive) .. ESC1 (exclusive)	AS_VTAB	ESC1						unresolved	no-module-match
 MON_INPORT	src/core/asm_port_graphics.cpp	101	IOPRT (inclusive) .. XBASIC (exclusive)	IOPRT	XBASIC						unresolved	no-module-match
 MON_OUTPORT	src/core/asm_port_graphics.cpp	129	INPORT (inclusive) .. SETVID (exclusive)	INPORT	SETVID						unresolved	no-module-match
@@ -206,7 +206,7 @@ AS_NORMALIZE_FAC_6	src/core/asm_port_math.cpp	612	AS_NORMALIZE_FAC_6 (inclusive)
 AS_ZERO_FAC	src/core/asm_port_math.cpp	646	AS_ZERO_FAC (inclusive) .. AS_STA_IN_FAC_SIGN_AND_EXP (exclusive)	AS_ZERO_FAC	AS_STA_IN_FAC_SIGN_AND_EXP	asrom	AS_ZERO_FAC	0xe84e	AS_STA_IN_FAC_SIGN_AND_EXP	0xe850	resolved-range	ok
 facToDouble	src/core/asm_port_mathtbl.cpp	3	AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)	AS_MATHTBL	AS_TOKEN_NAME_TABLE	asrom	AS_MATHTBL	0xd0b2	AS_TOKEN_NAME_TABLE	0xd0d0	resolved-range	ok
 AS_FMULTT	src/core/asm_port_mathtbl.cpp	105	FMULTT (inclusive) .. LOAD_ARG_FROM_YA (exclusive)	FMULTT	LOAD_ARG_FROM_YA						unresolved	no-module-match
-AS_COPY_RESULT_INTO_FAC	src/core/asm_port_mathtbl.cpp	179	COPY_RESULT_INTO_FAC (inclusive, 0x1ae6)	x1ae6							unresolved	no-module-match
+AS_COPY_RESULT_INTO_FAC	src/core/asm_port_mathtbl.cpp	179	COPY_RESULT_INTO_FAC (inclusive, 0x1ae6)	COPY_RESULT_INTO_FAC							unresolved	no-module-match
 AS_FDIVT	src/core/asm_port_mathtbl.cpp	201	AS_FDIVT (inclusive) .. AS_COPY_RESULT_INTO_FAC (exclusive)	AS_FDIVT	AS_COPY_RESULT_INTO_FAC	asrom	AS_FDIVT	0xea69	AS_COPY_RESULT_INTO_FAC	0xeae6	resolved-range	ok
 AS_FPWRT	src/core/asm_port_mathtbl.cpp	303	FPWRT (inclusive) .. NEGOP (exclusive)	FPWRT	NEGOP						unresolved	no-module-match
 AS_OR_op	src/core/asm_port_mathtbl.cpp	354	AS_OR (inclusive) .. AS_ANDOP (exclusive)	AS_OR	AS_ANDOP	asrom	AS_OR	0xdf4f	AS_ANDOP	0xdf55	resolved-range	ok
@@ -393,11 +393,11 @@ IsOnErr	src/core/asm_port_core.cpp	131									unclaimed	no-label-range-claim
 IsDirectMode	src/core/asm_port_core.cpp	140									unclaimed	no-label-range-claim
 AS_GENERIC_END	src/core/asm_port_core.cpp	157									unclaimed	no-label-range-claim
 MON_BELL	src/core/asm_port_core.cpp	278									unclaimed	no-label-range-claim
-AS_PTRGET	src/core/asm_port_core.cpp	1169									unclaimed	no-label-range-claim
-SetPendingErrorCode	src/core/asm_port_core.cpp	1356									unclaimed	no-label-range-claim
-RESET_VECTOR	src/core/asm_port_core.cpp	2064									unclaimed	no-label-range-claim
-IRQ_VECTOR	src/core/asm_port_core.cpp	2069									unclaimed	no-label-range-claim
-MON_BREAK	src/core/asm_port_core.cpp	2075									unclaimed	no-label-range-claim
+AS_PTRGET	src/core/asm_port_core.cpp	1168									unclaimed	no-label-range-claim
+SetPendingErrorCode	src/core/asm_port_core.cpp	1355									unclaimed	no-label-range-claim
+RESET_VECTOR	src/core/asm_port_core.cpp	2063									unclaimed	no-label-range-claim
+IRQ_VECTOR	src/core/asm_port_core.cpp	2068									unclaimed	no-label-range-claim
+MON_BREAK	src/core/asm_port_core.cpp	2074									unclaimed	no-label-range-claim
 add_u8	src/core/asm_port_error.cpp	22									unclaimed	no-label-range-claim
 AS_SYNERR	src/core/asm_port_error_handling.cpp	75									unclaimed	no-label-range-claim
 AS_JER	src/core/asm_port_error_handling.cpp	80									unclaimed	no-label-range-claim

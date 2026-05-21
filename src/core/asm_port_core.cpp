@@ -735,9 +735,8 @@ void AS_USE_OLD_ARRAY() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_MAKE_NEW_ARRAY (T:11b8, inclusive) .. AS_FIND_ARRAY_ELEMENT
-// (T:124b, exclusive) Name normalization: none (assembler label
-// AS_MAKE_NEW_ARRAY kept verbatim).
+// AS_Labels: AS_MAKE_NEW_ARRAY (inclusive) .. AS_FIND_ARRAY_ELEMENT (exclusive)
+// Name normalization: none (assembler label AS_MAKE_NEW_ARRAY kept verbatim).
 //
 // Creates a new array entry at AS_LOWTR: writes header (name, size, numdim,
 // dim extents), allocates element space, zeroes it, and stores the array
