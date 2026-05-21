@@ -313,7 +313,7 @@ AS_JERR	src/core/asm_port_strlt2.cpp	672	AS_JERR (inclusive) .. AS_PUTEMP (exclu
 AS_PUTEMP	src/core/asm_port_strlt2.cpp	678	AS_PUTEMP (inclusive) .. AS_GETSPA (exclusive)	AS_PUTEMP	AS_GETSPA	asrom	AS_PUTEMP	0xe435	AS_GETSPA	0xe452	resolved-range	ok
 AS_FREFAC	src/core/asm_port_strlt2.cpp	703	AS_FREFAC (inclusive) .. AS_FRETMP (exclusive)	AS_FREFAC	AS_FRETMP	asrom	AS_FREFAC	0xe600	AS_FRETMP	0xe604	resolved-range	ok
 AS_STRINI	src/core/asm_port_strlt2.cpp	707	AS_STRINI (inclusive) .. AS_STRSPA (exclusive)	AS_STRINI	AS_STRSPA	asrom	AS_STRINI	0xe3d5	AS_STRSPA	0xe3dd	resolved-range	ok
-AS_STRSPA	src/core/asm_port_strlt2.cpp	720	AS_STRSPA (inclusive) .. AS_L_STRSPA_1 (exclusive)	AS_STRSPA	AS_L_STRSPA_1						unresolved	no-module-match
+AS_STRSPA	src/core/asm_port_strlt2.cpp	720	AS_STRSPA (inclusive) .. AS_STRLIT (exclusive)	AS_STRSPA	AS_STRLIT	asrom	AS_STRSPA	0xe3dd	AS_STRLIT	0xe3e7	resolved-range	ok
 AS_LEN	src/core/asm_port_strlt2.cpp	734	AS_LEN (inclusive) .. AS_GETSTR (exclusive)	AS_LEN	AS_GETSTR	asrom	AS_LEN	0xe6d6	AS_GETSTR	0xe6dc	resolved-range	ok
 AS_GETSTR	src/core/asm_port_strlt2.cpp	745	AS_GETSTR (inclusive) .. AS_ASC (exclusive)	AS_GETSTR	AS_ASC	asrom	AS_GETSTR	0xe6dc	AS_ASC	0xe6e5	resolved-range	ok
 AS_ASC	src/core/asm_port_strlt2.cpp	758	AS_ASC (inclusive) .. AS_GOIQ (exclusive)	AS_ASC	AS_GOIQ	asrom	AS_ASC	0xe6e5	AS_GOIQ	0xe6f2	resolved-range	ok
@@ -325,6 +325,7 @@ AS_CHRSTR	src/core/asm_port_strlt2.cpp	840	AS_CHRSTR (inclusive) .. AS_LEFTSTR (
 AS_LEFTSTR	src/core/asm_port_strlt2.cpp	875	AS_LEFTSTR (inclusive) .. AS_RIGHTSTR (exclusive)	AS_LEFTSTR	AS_RIGHTSTR	asrom	AS_LEFTSTR	0xe65a	AS_RIGHTSTR	0xe686	resolved-range	ok
 AS_RIGHTSTR	src/core/asm_port_strlt2.cpp	890	AS_RIGHTSTR (inclusive) .. AS_MIDSTR (exclusive)	AS_RIGHTSTR	AS_MIDSTR	asrom	AS_RIGHTSTR	0xe686	AS_MIDSTR	0xe691	resolved-range	ok
 AS_MIDSTR	src/core/asm_port_strlt2.cpp	907	AS_MIDSTR (inclusive) .. AS_SUBSTRING_SETUP (exclusive)	AS_MIDSTR	AS_SUBSTRING_SETUP	asrom	AS_MIDSTR	0xe691	AS_SUBSTRING_SETUP	0xe6b9	resolved-range	ok
+AS_STRLT2	src/core/asm_port_strlt2.cpp	936	AS_STRLT2 (inclusive) .. AS_PUTNEW (exclusive)	AS_STRLT2	AS_PUTNEW	asrom	AS_STRLT2	0xe3ed	AS_PUTNEW	0xe42a	resolved-range	ok
 AS_POINT	src/core/asm_port_strtxt.cpp	19	AS_POINT (inclusive) .. AS_GTNUM (exclusive)	AS_POINT	AS_GTNUM	asrom	AS_POINT	0xe73d	AS_GTNUM	0xe746	resolved-range	ok
 AS_TRACE	src/core/asm_port_token_address_table.cpp	104	AS_TRACE (inclusive) .. AS_NORMAL (exclusive)	AS_TRACE	AS_NORMAL	asrom	AS_TRACE	0xf26d	AS_NORMAL	0xf273	resolved-range	ok
 AS_TOKEN_ADDRESS_TABLE	src/core/asm_port_token_address_table.cpp	164	AS_TOKEN_ADDRESS_TABLE (inclusive) .. AS_UNFNC (exclusive)	AS_TOKEN_ADDRESS_TABLE	AS_UNFNC	asrom	AS_TOKEN_ADDRESS_TABLE	0xd000	AS_UNFNC	0xd080	resolved-range	ok
@@ -517,7 +518,6 @@ write_AS_FAC_descriptor_address	src/core/asm_port_strlt2.cpp	127									unclaim
 AS_FRM_VARIABLE	src/core/asm_port_strlt2.cpp	205									unclaimed	no-label-range-claim
 AS_FRMEVL_2	src/core/asm_port_strlt2.cpp	276									unclaimed	no-label-range-claim
 AS_CAT	src/core/asm_port_strlt2.cpp	718									unclaimed	no-label-range-claim
-AS_STRLT2	src/core/asm_port_strlt2.cpp	934									unclaimed	no-label-range-claim
 read_AS_TXTPTR	src/core/asm_port_strtxt.cpp	11									unclaimed	no-label-range-claim
 read_carry_flag	src/core/asm_port_strtxt.cpp	13									unclaimed	no-label-range-claim
 AS_STRLIT_from_word	src/core/asm_port_strtxt.cpp	15									unclaimed	no-label-range-claim

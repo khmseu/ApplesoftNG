@@ -717,7 +717,7 @@ void AS_STRINI(std::uint8_t length) {
 
 void AS_CAT() { AS_CAT_impl(); }
 
-// AS_Labels: AS_STRSPA (inclusive) .. AS_L_STRSPA_1 (exclusive)
+// AS_Labels: AS_STRSPA (inclusive) .. AS_STRLIT (exclusive)
 // Name normalization: none (assembler label AS_STRSPA kept verbatim).
 void AS_STRSPA(std::uint8_t length) {
   // AS_GETSPA: allocate space at bottom of string space (A=length).
@@ -931,6 +931,10 @@ void AS_MIDSTR() {
   SUBSTRING_BUILD(leftStart, copyAS_Length);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_STRLT2 (inclusive) .. AS_PUTNEW (exclusive)
+// Name normalization: none (assembler label AS_STRLT2 kept verbatim).
 void AS_STRLT2(std::uint16_t address) {
   // BUILD A DESCRIPTOR AS_FOR AS_STRING STARTING AT address
   // AND TERMINATED BY $00, (AS_CHARAC), AS_OR (AS_ENDCHR)
