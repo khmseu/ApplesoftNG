@@ -45,6 +45,21 @@ void AS_LOAD_ARG_FROM_YA() {
 void AS_FLOAT() { AS_FLOAT(static_cast<std::int8_t>(gFloatInput)); }
 
 /**
+ * AS_FADDH: Add 0.5 to FAC.
+ * Source:
+ * SourceMaterial/Combo/asrom.lst
+ * AS_Labels: AS_FADDH (inclusive) .. AS_FSUB (exclusive)
+ */
+void AS_FADDH() {
+  // ROM sequence loads YA with AS_CON_HALF ($EE64) then jumps to AS_FADD.
+  // Using the unified 16-bit pointer keeps the literal split-byte load
+  // together.
+  constexpr std::uint16_t kASConHalfAddress = 0xee64u;
+  AS_LOAD_ARG_FROM_YA(kASConHalfAddress);
+  AS_FADDT();
+}
+
+/**
  * AS_FSUB: AS_FAC = (Y,A) - AS_FAC
  * Source:
  * SourceMaterial/Combo/asrom.lst

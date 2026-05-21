@@ -686,7 +686,7 @@ asrom	AS_WAIT	0xe784	AS_WAIT
 asrom	AS_L_WAIT_1	0xe793	AS_WAIT
 asrom	AS_L_WAIT_2	0xe797	AS_WAIT
 asrom	AS_RTS_10	0xe79f	AS_WAIT, read_AS_INPUT_BUFFER
-asrom	AS_FADDH	0xe7a0	-
+asrom	AS_FADDH	0xe7a0	AS_FADDH
 asrom	AS_FSUB	0xe7a7	AS_FSUB
 asrom	AS_FSUBT	0xe7aa	AS_FSUBT
 asrom	AS_FADD_1	0xe7b9	-
