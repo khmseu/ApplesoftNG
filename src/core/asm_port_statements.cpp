@@ -134,6 +134,13 @@ void AS_RUN() {
   AS_GO_TO_LINE();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PEEK (inclusive) .. AS_POKE (exclusive)
+// Name normalization: none (assembler label AS_PEEK kept verbatim).
+//
+// Preserves AS_LINNUM across the peeked read while converting the loaded byte
+// to FAC via AS_SNGFLT.
 void AS_PEEK() {
   const std::uint16_t savedAS_Linnum = variables_const().AS_LINNUM;
   AS_GETADR();
