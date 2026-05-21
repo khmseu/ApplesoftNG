@@ -35,6 +35,11 @@ void AS_NEGATE_FAC();
 void AS_INCREMENT_FAC_MANTISSA();
 void AS_INCREMENT_MANTISSA();
 
+void AS_SHIFT_RIGHT() {
+  // TODO(asm-port): AS_SHIFT_RIGHT is required by AS_FADD_1 continuation
+  // alignment flow and is not ported yet.
+}
+
 void AS_LOAD_ARG_FROM_YA() {
   const std::uint16_t address = static_cast<std::uint16_t>(
       (static_cast<std::uint16_t>(variables_const().MON_DEBUG_REG_Y) << 8u) |
@@ -85,6 +90,21 @@ void AS_FSUBT() {
   variables().AS_SGNCPR = fac_sign ^ arg_sign;
 
   AS_FADDT();
+}
+
+/**
+ * AS_FADD_1: Align radix by shifting before add/subtract merge.
+ * Source:
+ * SourceMaterial/Combo/asrom.lst
+ * AS_Labels: AS_FADD_1 (inclusive) .. AS_FADD (exclusive)
+ */
+bool AS_FADD_1() {
+  AS_SHIFT_RIGHT();
+
+  // ROM sequence is `bcc AS_FADD_3` here (annotated as always-taken in the
+  // listing). Model this transfer as continuation state for the later
+  // AS_FADD_3 block, which is still port-incomplete.
+  return true;
 }
 
 /**
