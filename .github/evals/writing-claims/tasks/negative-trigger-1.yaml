@@ -4,7 +4,7 @@ description: Auto-generated negative-trigger task.
 tags:
   - negative-trigger
 inputs:
-  prompt: "Tell me a short joke about coffee."
+  prompt: Tell me a short joke about coffee.
 expected:
   should_trigger: false
 graders:
@@ -12,5 +12,5 @@ graders:
     name: omits-skill-keywords
     config:
       not_contains:
-        - "claims"
-        - "writing"
+        - claims
+        - writing

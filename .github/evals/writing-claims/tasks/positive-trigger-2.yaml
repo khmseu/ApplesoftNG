@@ -4,7 +4,7 @@ description: Auto-generated positive-trigger task.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with writing claims-related work"
+  prompt: I need assistance with writing claims-related work
 expected:
   should_trigger: true
 graders:
@@ -12,5 +12,5 @@ graders:
     name: contains-keywords
     config:
       contains:
-        - "claims"
-        - "writing"
+        - claims
+        - writing
