@@ -1051,9 +1051,10 @@ void AS_SET_VARPNT_AND_YA() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: MAKE_NEW_VARIABLE (inclusive) .. GETARY (exclusive)
-// Name normalization: none (assembler label MAKE_NEW_VARIABLE prefixed with
-// AS_ in C++).
+// AS_Labels: AS_MAKE_NEW_VARIABLE (inclusive) .. AS_SET_VARPNT_AND_YA
+// (exclusive)
+// Name normalization: none (assembler label AS_MAKE_NEW_VARIABLE kept
+// verbatim).
 //
 // Create a new simple variable entry by shifting the array region up seven
 // bytes, then writing the two-byte name and a zero-initialized five-byte
@@ -1106,7 +1107,8 @@ void AS_MAKE_NEW_VARIABLE() {
     variableRecord.write(0u, offset);
   }
 
-  variables().AS_VARPNT = static_cast<std::uint16_t>(arytab + 2u);
+  // Range-end fall-through in ROM enters AS_SET_VARPNT_AND_YA.
+  AS_SET_VARPNT_AND_YA();
 }
 
 // Source:
