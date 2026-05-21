@@ -17,9 +17,10 @@ Required input:
 ### Range Selection
 
 1. Inspect [docs/symbol-implementation-map.tsv](../../docs/symbol-implementation-map.tsv) starting at `start_address`.
-2. Find the next label `A` whose implemented-by column is `-`.
-3. Find the next claimed label `B` after `A` whose implemented-by column is not `-`.
-4. If either label cannot be found, return an error naming the missing label and stop.
+2. Treat `start_address` as a numeric lower bound, not a same-page filter; keep scanning forward across higher addresses until a valid range is found.
+3. Find the next label `A` whose implemented-by column is `-`.
+4. Find the next claimed label `B` after `A` whose implemented-by column is not `-`.
+5. If either label cannot be found, return an error naming the missing label and stop.
 
 ### Porting
 
