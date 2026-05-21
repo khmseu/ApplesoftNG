@@ -13,87 +13,93 @@ This file is the canonical rule set for asm-range conversion. Prompts and skills
 - `start_label`: first label of the conversion window, inclusive.
 - `end_label`: last label of the conversion window, exclusive.
 
-Treat only labels declared as assembler labels in the authoritative listing [SourceMaterial/Combo/asrom.lst](../../SourceMaterial/Combo/asrom.lst) as valid symbols (exclude comments, prose, and metadata headings).
+Treat only label-definition entries bound to addresses in [SourceMaterial/Combo/asrom.lst](../../SourceMaterial/Combo/asrom.lst) as valid symbols.
 
 ## Mandatory Workflow
 
 1. Locate both labels in the authoritative listing. If either label is not found, stop and report which label is missing before proceeding.
-2. Extract the range that starts at `start_label` and stops immediately before `end_label`.
-3. Identify 16-bit pointer candidates in the extracted range before coding using this checklist:
+1. Extract the range that starts at `start_label` and stops immediately before `end_label`.
+1. If a found label has no associated instructions in the extracted range, skip it and continue with the next valid label in range.
+1. Identify 16-bit pointer candidates in the extracted range before coding using this checklist:
    - indirect addressing operands such as `($NN),Y` and `($NN,X)`
    - split-byte address construction such as `#<label` and `#>label` stored to adjacent bytes
    - low-byte add plus carry-chain high-byte increment sequences (`ADC`/`INC` patterns)
-4. For each pointer candidate, plan a single unified C++ representation (pointer or pointer abstraction) instead of separate low/high byte locals.
-5. Before coding, consult [docs/function-cross-reference.md](../../docs/function-cross-reference.md) to determine which functions in this window are already ported, which are still stubs/placeholders, and where each function is implemented.
-6. Include comments that are:
+1. For each pointer candidate, plan a single unified C++ representation (pointer or pointer abstraction) instead of separate low/high byte locals.
+1. Before coding, consult [docs/function-cross-reference.md](../../docs/function-cross-reference.md) to determine which functions in this window are already ported, which are still stubs/placeholders, and where each function is implemented.
+1. Include comments that are:
    - inline inside the range.
    - immediately preceding the first line in range and directly describing the range behavior.
 
-7. Infer the behavior and data flow from opcodes, branch patterns, and comments.
+1. Infer the behavior and data flow from opcodes, branch patterns, and comments.
    - If the source slice does not end in an unconditional transfer (`RTS`, `JMP`, or unconditional branch), it falls through into the next label. Model that fall-through in C++ by calling the following function at that point, or by returning state that the caller uses to invoke the next label.
+
+   - If the extracted range contains invalid or unsupported opcodes, log an error, skip only the affected instructions, and continue porting the remaining valid instructions in range.
 
    - All symbols in the authoritative sources already include context-appropriate prefixes (`AS_` or `MON_`). Use these exact labels verbatim in C++.
 
-8. Implement one primary C++ function that preserves the original assembler name as much as possible.
-   - If the bounded window clearly carries more than one function's worth of behavior, split the port into multiple C++ functions so the entire `start_label`..`end_label` window is covered.
+1. Implement one primary C++ function that preserves the original assembler name as much as possible.
+   - If the bounded window contains instruction groups with independent control flow or independent state transitions, split the port into multiple C++ functions so the entire `start_label`..`end_label` window is covered.
    - Keep each split function focused on a coherent sub-range, and preserve original label naming where possible.
-9. Place the function in the appropriate runtime area:
+1. Place the function in the appropriate runtime area:
    - interpreter/runtime logic: [src/core](../../src/core) and [include/core](../../include/core)
    - console or machine-facing I/O behavior: [src/platform](../../src/platform) and [include/platform](../../include/platform)
 
-10. Add a short provenance comment above the function with:
-    - source listing path
-    - start/end labels
-    - any normalization done to keep name valid in C++
+1. Add a short provenance comment above the function with:
+   - source listing path
+   - start/end labels
+   - any normalization done to keep name valid in C++
 
-11. If callees are not implemented yet, add dummy implementations in the same subsystem.
-12. Update [docs/function-cross-reference.md](../../docs/function-cross-reference.md) after the port so it reflects new implementations and current stub/real status.
-13. Add or update function-scoped `AS_Labels` claim comments for the new implementation following [.github/skills/writing-claims/SKILL.md](../skills/writing-claims/SKILL.md).
+1. If callees are not implemented yet, add dummy implementations in the same subsystem.
+1. Update [docs/function-cross-reference.md](../../docs/function-cross-reference.md) and [docs/symbol-implementation-map.tsv](../../docs/symbol-implementation-map.tsv) after the port so it reflects new implementations and current stub/real status.
+1. Add or update function-scoped `AS_Labels` claim comments for the new implementation following [.github/skills/writing-claims/SKILL.md](../skills/writing-claims/SKILL.md).
 
 - When the range is split into multiple C++ functions, add separate claims for each function's covered sub-range.
 
-14. Run a build after each increment; use the Output Checklist below as the acceptance gate for all detailed constraints.
+1. Run a build after each increment; use the Output Checklist below as the acceptance gate for all detailed constraints.
 
 ## Implementation Rules
 
+Quick reference:
+
+| Area                 | Required action                                                               |
+| -------------------- | ----------------------------------------------------------------------------- |
+| Memory handling      | Unify 16-bit pointers and route fixed-address state through project accessors |
+| Naming               | Keep source labels; minimally normalize only when needed for C++              |
+| Missing dependencies | Add only required stubs and mark with `TODO(asm-port)`                        |
+| Scope discipline     | Keep changes bounded to the two-label window unless compile requires more     |
+
 ### 16-bit Pointer Synthesis
 
-- Do not model split-byte pointer flows as two unrelated `uint8_t` locals when they represent one logical address.
-- Lift split-byte pointer flows to one unified pointer-oriented representation in C++ (raw pointer, typed wrapper, or equivalent abstraction).
-- Translate carry-chain pointer arithmetic to one operation on the unified representation (for example `ptr += offset`) instead of open-coded low/high byte math.
-- For dual-use zero-page pairs (sometimes integer, sometimes pointer), use one explicit dual-use representation (for example `union`, `std::variant`, or a dedicated wrapper) and document why.
-- For absolute memory references that are not fixed-address state, prefer a consistent base-memory mapping model and index from it.
-- If an absolute address names a translated C++ object or a fixed-address zero-page variable, use the translated object or `ApplesoftVariables` accessor instead of a raw memory index.
+- Represent each logical 16-bit pointer with one unified C++ value (pointer/wrapper), not split low/high locals.
+- Convert carry-chain pointer math (`ADC`/`INC` patterns) into one unified pointer operation (for example `ptr += offset`).
+- For dual-use zero-page pairs (integer or pointer), use one explicit dual-use representation and document it.
+- For absolute references, use translated C++ objects or `ApplesoftVariables` accessors when available; otherwise use one consistent base-memory mapping model.
 
 ### Naming
 
 - Keep assembler symbol names verbatim when valid in C++.
 - If a symbol is not a valid C++ identifier, minimally normalize it (for example `.` to `_`) and document original symbol in a comment.
-- Prefer keeping capitalization consistent with source labels.
-- Use the exact literal labels from the `SourceMaterial/Combo` files (e.g., `AS_CHRGET`, `MON_COUT`).
 
 ### Fixed-Address Variables
 
-- Route all fixed-address state reads/writes through `ApplesoftVariables` (`variables()` / `variables_const()` and their byte/word accessors).
-- Do not mirror fixed addresses with separate globals, file-scope statics, or ad-hoc structs when `ApplesoftVariables` already represents them.
-- When a needed fixed address is missing, add it to `ApplesoftVariables` first, then use the accessors from ported code.
-- When a fixed-address pair forms one logical pointer, read/write it through one conceptual variable in the ported function (for example via word accessors or a dedicated pointer abstraction), not duplicated low/high temporaries.
-- Route all reads/writes for the $C000-$CFFF range through an `IOPorts`-style companion class with named constants and single-byte accessors.
-- `IOPorts` is the I/O-space companion to `ApplesoftVariables`: keep the same naming discipline for addresses, but do not model device semantics yet.
+- Route fixed-address state reads/writes through `ApplesoftVariables` accessors (`variables()` / `variables_const()`).
+- Do not duplicate fixed addresses with separate globals/statics/structs when `ApplesoftVariables` already covers them.
+- If a fixed address is missing, add it to `ApplesoftVariables` first, then use the accessor from ported code.
+- Route `$C000-$CFFF` reads/writes through `IOPorts` named single-byte accessors.
 
 ### Dummy Implementations
 
 Create stubs only for missing dependencies required by the converted function.
 
-| Rule                | Detail                                        |
-| ------------------- | --------------------------------------------- |
-| Name                | Use the original assembler-like name verbatim |
-| Marker              | Add `TODO(asm-port)` with the source label    |
-| `void` return       | Empty body                                    |
-| Pointer return      | `return nullptr;`                             |
-| Arithmetic return   | `return 0;`                                   |
-| `bool` return       | `return false;`                               |
-| Class/struct return | `return {};`                                  |
+| Rule                | Detail                                                                    |
+| ------------------- | ------------------------------------------------------------------------- |
+| Name                | Use the source label; if invalid in C++, apply only minimal normalization |
+| Marker              | Add `TODO(asm-port)` with the source label                                |
+| `void` return       | Empty body                                                                |
+| Pointer return      | `return nullptr;`                                                         |
+| Arithmetic return   | `return 0;`                                                               |
+| `bool` return       | `return false;`                                                           |
+| Class/struct return | `return {};`                                                              |
 
 ## Output Checklist
 
