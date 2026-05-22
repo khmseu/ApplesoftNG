@@ -14,8 +14,16 @@ extern std::uint8_t gFloatInput;
 
 // Forward declarations of subroutines used within AS_FADD/AS_FSUB
 void AS_SHIFT_RIGHT();
+void AS_SHIFT_RIGHT_1();
+void AS_SHIFT_RIGHT_2();
+void AS_SHIFT_RIGHT_5();
+void AS_L();
+void AS_L_L_1();
 void AS_SHIFT_RIGHT_4();
 void AS_COMPLEMENT_FAC();
+void AS_COMPLEMENT_FAC_MANTISSA();
+void AS_RTS_12();
+void AS_OVERFLOW();
 void AS_NORMALIZE_FAC_2();
 void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount);
 void AS_NORMALIZE_FAC_5(bool carry = false);
@@ -40,9 +48,110 @@ void AS_STA_IN_FAC_SIGN_AND_EXP();
 void AS_STA_IN_FAC_SIGN();
 void AS_NORMALIZE_FAC_3(std::uint8_t &shiftCount);
 
+namespace {
+// Shared shift context for the AS_SHIFT_RIGHT label family.
+std::int8_t g_shiftNegativeCount = -8;
+std::uint16_t g_shiftBase = 0x0061u; // AS_RESULT-1
+} // namespace
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SHIFT_RIGHT_1 (inclusive) .. AS_SHIFT_RIGHT_2 (exclusive)
+// Name normalization: none (assembler label AS_SHIFT_RIGHT_1 kept verbatim).
+void AS_SHIFT_RIGHT_1() {
+  g_shiftBase = 0x0061u; // AS_RESULT-1
+  AS_SHIFT_RIGHT_2();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SHIFT_RIGHT_2 (inclusive) .. AS_SHIFT_RIGHT (exclusive)
+// Name normalization: none (assembler label AS_SHIFT_RIGHT_2 kept verbatim).
+void AS_SHIFT_RIGHT_2() {
+  const std::uint8_t b4 =
+      variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 4u));
+  variables().AS_FAC_EXTENSION = b4;
+  variables().writeByte(
+      static_cast<std::uint16_t>(g_shiftBase + 4u),
+      variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 3u)));
+  variables().writeByte(
+      static_cast<std::uint16_t>(g_shiftBase + 3u),
+      variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 2u)));
+  variables().writeByte(
+      static_cast<std::uint16_t>(g_shiftBase + 2u),
+      variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 1u)));
+  variables().writeByte(static_cast<std::uint16_t>(g_shiftBase + 1u),
+                        variables_const().AS_SHIFT_SIGN_EXT);
+  AS_SHIFT_RIGHT();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SHIFT_RIGHT (inclusive) .. AS_L (exclusive)
+// Name normalization: none (assembler label AS_SHIFT_RIGHT kept verbatim).
 void AS_SHIFT_RIGHT() {
-  // TODO(asm-port): AS_SHIFT_RIGHT is required by AS_FADD_1 continuation
-  // alignment flow and is not ported yet.
+  g_shiftNegativeCount = static_cast<std::int8_t>(g_shiftNegativeCount + 8);
+  if (g_shiftNegativeCount <= 0) {
+    AS_SHIFT_RIGHT_2();
+    return;
+  }
+
+  g_shiftNegativeCount = static_cast<std::int8_t>(g_shiftNegativeCount - 8);
+  if (g_shiftNegativeCount < 0) {
+    AS_L();
+    return;
+  }
+
+  AS_SHIFT_RIGHT_5();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_L (inclusive) .. AS_L_L_1 (exclusive)
+// Name normalization: none (assembler label AS_L kept verbatim).
+void AS_L() {
+  auto byte1 =
+      variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 1u));
+  const bool oldSign = (byte1 & 0x80u) != 0u;
+  byte1 = static_cast<std::uint8_t>(byte1 << 1u);
+  if (oldSign) {
+    byte1 = static_cast<std::uint8_t>(byte1 + 1u);
+  }
+  variables().writeByte(static_cast<std::uint16_t>(g_shiftBase + 1u), byte1);
+  AS_L_L_1();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_L_L_1 (inclusive) .. AS_SHIFT_RIGHT_4 (exclusive)
+// Name normalization: none (assembler label AS_L_L_1 kept verbatim).
+void AS_L_L_1() {
+  auto byte1 =
+      variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 1u));
+  const bool carryIn = (byte1 & 0x01u) != 0u;
+  byte1 = static_cast<std::uint8_t>((byte1 >> 1u) | (carryIn ? 0x80u : 0u));
+  byte1 = static_cast<std::uint8_t>((byte1 >> 1u) | (carryIn ? 0x80u : 0u));
+  variables().writeByte(static_cast<std::uint16_t>(g_shiftBase + 1u), byte1);
+  AS_SHIFT_RIGHT_4();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SHIFT_RIGHT_4 (inclusive) .. AS_SHIFT_RIGHT_5 (exclusive)
+// Name normalization: none (assembler label AS_SHIFT_RIGHT_4 kept verbatim).
+void AS_SHIFT_RIGHT_4() {
+  // TODO(asm-port): model ROM Y-controlled short right-shift count precisely.
+  AS_SHIFT_RIGHT_5();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SHIFT_RIGHT_5 (inclusive) .. AS_LOG (exclusive)
+// Name normalization: none (assembler label AS_SHIFT_RIGHT_5 kept verbatim).
+void AS_SHIFT_RIGHT_5() {
+  // Return path with carry clear; this label is followed by ROM constant tables
+  // (AS_CON_ONE, AS_POLY_LOG, AS_CON_SQR_HALF, AS_CON_SQR_TWO,
+  // AS_CON_NEG_HALF, AS_CON_LOG_TWO) before AS_LOG.
 }
 
 void AS_LOAD_ARG_FROM_YA() {
@@ -258,9 +367,40 @@ void AS_FADD_4() {
   AS_NORMALIZE_FAC_5(carry);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_COMPLEMENT_FAC (inclusive) .. AS_COMPLEMENT_FAC_MANTISSA
+// (exclusive) Name normalization: none (assembler label AS_COMPLEMENT_FAC kept
+// verbatim).
 void AS_COMPLEMENT_FAC() {
-  // TODO(asm-port): AS_COMPLEMENT_FAC is required by AS_NORMALIZE_FAC_1 when
-  // subtraction produces a negative intermediate mantissa.
+  variables().AS_FAC_SIGN =
+      static_cast<std::uint8_t>(variables_const().AS_FAC_SIGN ^ 0xffu);
+  AS_COMPLEMENT_FAC_MANTISSA();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_COMPLEMENT_FAC_MANTISSA (inclusive) ..
+// AS_INCREMENT_FAC_MANTISSA (exclusive) Name normalization: none (assembler
+// label AS_COMPLEMENT_FAC_MANTISSA kept verbatim).
+void AS_COMPLEMENT_FAC_MANTISSA() {
+  variables().AS_FAC[1] =
+      static_cast<std::uint8_t>(variables_const().AS_FAC[1] ^ 0xffu);
+  variables().AS_FAC[2] =
+      static_cast<std::uint8_t>(variables_const().AS_FAC[2] ^ 0xffu);
+  variables().AS_FAC[3] =
+      static_cast<std::uint8_t>(variables_const().AS_FAC[3] ^ 0xffu);
+  variables().AS_FAC[4] =
+      static_cast<std::uint8_t>(variables_const().AS_FAC[4] ^ 0xffu);
+  variables().AS_FAC_EXTENSION =
+      static_cast<std::uint8_t>(variables_const().AS_FAC_EXTENSION ^ 0xffu);
+
+  const std::uint8_t ext =
+      static_cast<std::uint8_t>(variables_const().AS_FAC_EXTENSION + 1u);
+  variables().AS_FAC_EXTENSION = ext;
+  if (ext == 0u) {
+    AS_INCREMENT_FAC_MANTISSA();
+  }
 }
 
 /**
@@ -376,6 +516,11 @@ void AS_INCREMENT_MANTISSA() {
 /**
  * AS_INCREMENT_FAC_MANTISSA: Add carry to AS_FAC mantissa
  */
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_INCREMENT_FAC_MANTISSA (inclusive) .. AS_RTS_12 (exclusive)
+// Name normalization: none (assembler label AS_INCREMENT_FAC_MANTISSA kept
+// verbatim).
 void AS_INCREMENT_FAC_MANTISSA() {
   for (int i = 4; i >= 1; --i) {
     std::uint8_t val = variables_const().AS_FAC[i] + 1;
@@ -384,6 +529,18 @@ void AS_INCREMENT_FAC_MANTISSA() {
       break;
   }
 }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_RTS_12 (inclusive) .. AS_OVERFLOW (exclusive)
+// Name normalization: none (assembler label AS_RTS_12 kept verbatim).
+void AS_RTS_12() {}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_OVERFLOW (inclusive) .. AS_SHIFT_RIGHT_1 (exclusive)
+// Name normalization: none (assembler label AS_OVERFLOW kept verbatim).
+void AS_OVERFLOW() { AS_ERROR(0x45); }
 
 /**
  * AS_FLOAT: Convert signed byte in A to AS_FAC
