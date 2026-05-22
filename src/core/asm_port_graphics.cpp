@@ -13,6 +13,7 @@ std::uint8_t AS_MEMERR();
 void AS_CLEARC();
 std::uint8_t AS_GETBYT();
 void AS_IQERR();
+void AS_GOERR();
 std::uint8_t AS_CHRGOT();
 void AS_SYNCHR(std::uint8_t expected);
 
@@ -1071,7 +1072,7 @@ std::uint8_t AS_PLOTFNS() {
 
   const std::uint8_t first = AS_GETBYT();
   if (first >= kMaxCoordExclusive) {
-    AS_IQERR();
+    AS_GOERR();
     return 0u;
   }
   variables().AS_FIRST = first;
@@ -1080,13 +1081,22 @@ std::uint8_t AS_PLOTFNS() {
 
   const std::uint8_t second = AS_GETBYT();
   if (second >= kMaxCoordExclusive) {
-    AS_IQERR();
+    AS_GOERR();
     return 0u;
   }
 
   variables().MON_H2 = second;
   variables().MON_V2 = second;
   return second;
+}
+
+void AS_GOERR() {
+  // Source:
+  // SourceMaterial/Combo/asrom.lst
+  // AS_Labels: AS_GOERR (inclusive) .. AS_LINCOOR (exclusive)
+  // Name normalization: none (assembler label AS_GOERR kept verbatim).
+
+  AS_IQERR();
 }
 
 std::uint8_t AS_LINCOOR() {
@@ -1116,7 +1126,7 @@ std::uint8_t AS_LINCOOR() {
 
   const std::uint8_t cValue = AS_GETBYT();
   if (cValue >= kMaxCoordExclusive) {
-    AS_IQERR();
+    AS_GOERR();
     return 0u;
   }
 
