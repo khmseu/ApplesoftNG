@@ -403,7 +403,7 @@ static void AS_SIN() { doubleToFac(std::sin(facToDouble())); }
 static void AS_TAN() { doubleToFac(std::tan(facToDouble())); }
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_ATN (inclusive) .. AS_PEEK (exclusive)
+// AS_Labels: AS_ATN (inclusive) .. AS_GENERIC_CHRGET (exclusive)
 // Name normalization: none (assembler label AS_ATN kept verbatim).
 static void AS_ATN() { doubleToFac(std::atan(facToDouble())); }
 static void AS_PEEK_fn() { AS_PEEK(); }
