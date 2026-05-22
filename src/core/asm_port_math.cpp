@@ -36,6 +36,9 @@ void AS_INCREMENT_MANTISSA();
 void AS_FADD_4();
 void AS_L_FADD_3_1(std::uint16_t minuendBase, std::uint16_t subtrahendBase);
 void AS_NORMALIZE_FAC_1(bool carrySet);
+void AS_STA_IN_FAC_SIGN_AND_EXP();
+void AS_STA_IN_FAC_SIGN();
+void AS_NORMALIZE_FAC_3(std::uint8_t &shiftCount);
 
 void AS_SHIFT_RIGHT() {
   // TODO(asm-port): AS_SHIFT_RIGHT is required by AS_FADD_1 continuation
@@ -231,9 +234,28 @@ void AS_NORMALIZE_FAC_1(bool carrySet) {
   AS_NORMALIZE_FAC_2();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FADD_4 (inclusive) .. AS_NORMALIZE_FAC_3 (exclusive)
+// Name normalization: none (assembler label AS_FADD_4 kept verbatim).
 void AS_FADD_4() {
-  // TODO(asm-port): AS_FADD_4 is the same-sign mantissa-add continuation from
-  // AS_FADD_3 and is not ported yet.
+  std::uint16_t sum = static_cast<std::uint16_t>(
+      variables_const().AS_FAC_EXTENSION + variables_const().AS_ARG_EXTENSION);
+  variables().AS_FAC_EXTENSION = static_cast<std::uint8_t>(sum & 0xffu);
+  bool carry = sum > 0xffu;
+
+  for (std::uint16_t offset = 4u; offset >= 1u; --offset) {
+    sum = static_cast<std::uint16_t>(variables_const().AS_FAC[offset] +
+                                     variables_const().AS_ARG[offset] +
+                                     (carry ? 1u : 0u));
+    variables().AS_FAC[offset] = static_cast<std::uint8_t>(sum & 0xffu);
+    carry = sum > 0xffu;
+    if (offset == 1u) {
+      break;
+    }
+  }
+
+  AS_NORMALIZE_FAC_5(carry);
 }
 
 void AS_COMPLEMENT_FAC() {
@@ -674,23 +696,7 @@ void AS_NORMALIZE_FAC_2() {
 void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount) {
   // Loop while the MSB of the mantissa is not yet normalised.
   while ((variables_const().AS_FAC[1] & 0x80u) == 0u) {
-    ++shiftCount; // adc #1 (carry=0 throughout — old bit7 was 0)
-    // asl FAC_EXTENSION; rol FAC+4; rol FAC+3; rol FAC+2; rol FAC+1
-    const bool c0 = (variables_const().AS_FAC_EXTENSION & 0x80u) != 0u;
-    variables().AS_FAC_EXTENSION =
-        static_cast<std::uint8_t>(variables_const().AS_FAC_EXTENSION << 1u);
-    const bool c1 = (variables_const().AS_FAC[4] & 0x80u) != 0u;
-    variables().AS_FAC[4] = static_cast<std::uint8_t>(
-        (variables_const().AS_FAC[4] << 1u) | (c0 ? 1u : 0u));
-    const bool c2 = (variables_const().AS_FAC[3] & 0x80u) != 0u;
-    variables().AS_FAC[3] = static_cast<std::uint8_t>(
-        (variables_const().AS_FAC[3] << 1u) | (c1 ? 1u : 0u));
-    const bool c3 = (variables_const().AS_FAC[2] & 0x80u) != 0u;
-    variables().AS_FAC[2] = static_cast<std::uint8_t>(
-        (variables_const().AS_FAC[2] << 1u) | (c2 ? 1u : 0u));
-    variables().AS_FAC[1] = static_cast<std::uint8_t>(
-        (variables_const().AS_FAC[1] << 1u) | (c3 ? 1u : 0u));
-    // carry = old FAC[1] bit 7, which was 0 (loop condition), so carry=0.
+    AS_NORMALIZE_FAC_3(shiftCount);
   }
 
   // Exponent adjustment: sec; sbc FAC; bcs ZERO_FAC (underflow check).
@@ -703,6 +709,29 @@ void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount) {
   // this).
   variables().AS_FAC[0] = static_cast<std::uint8_t>(exponent - shiftCount);
   // Fall through to NORMALIZE_FAC_5: carry=0 here, so bcc RTS_11 → return.
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NORMALIZE_FAC_3 (inclusive) .. AS_NORMALIZE_FAC_4 (exclusive)
+// Name normalization: none (assembler label AS_NORMALIZE_FAC_3 kept verbatim).
+void AS_NORMALIZE_FAC_3(std::uint8_t &shiftCount) {
+  ++shiftCount;
+
+  const bool c0 = (variables_const().AS_FAC_EXTENSION & 0x80u) != 0u;
+  variables().AS_FAC_EXTENSION =
+      static_cast<std::uint8_t>(variables_const().AS_FAC_EXTENSION << 1u);
+  const bool c1 = (variables_const().AS_FAC[4] & 0x80u) != 0u;
+  variables().AS_FAC[4] = static_cast<std::uint8_t>(
+      (variables_const().AS_FAC[4] << 1u) | (c0 ? 1u : 0u));
+  const bool c2 = (variables_const().AS_FAC[3] & 0x80u) != 0u;
+  variables().AS_FAC[3] = static_cast<std::uint8_t>(
+      (variables_const().AS_FAC[3] << 1u) | (c1 ? 1u : 0u));
+  const bool c3 = (variables_const().AS_FAC[2] & 0x80u) != 0u;
+  variables().AS_FAC[2] = static_cast<std::uint8_t>(
+      (variables_const().AS_FAC[2] << 1u) | (c2 ? 1u : 0u));
+  variables().AS_FAC[1] = static_cast<std::uint8_t>(
+      (variables_const().AS_FAC[1] << 1u) | (c3 ? 1u : 0u));
 }
 
 // Source:
@@ -761,11 +790,22 @@ void AS_NORMALIZE_FAC_6() {
 //
 // Load A=0 and fall through to STA_IN_FAC_SIGN_AND_EXP/STA_IN_FAC_SIGN.
 // Stores 0 into FAC exponent and FAC_SIGN; returns.
-void AS_ZERO_FAC() {
-  variables().AS_FAC[0] = 0u; // lda #0; sta FAC
-  variables().AS_FAC_SIGN =
-      0u; // sta FAC_SIGN (via STA_IN_FAC_SIGN_AND_EXP fall-through)
-  // rts
+void AS_ZERO_FAC() { AS_STA_IN_FAC_SIGN_AND_EXP(); }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_STA_IN_FAC_SIGN_AND_EXP (inclusive) .. AS_STA_IN_FAC_SIGN
+// (exclusive) Name normalization: none (assembler label
+// AS_STA_IN_FAC_SIGN_AND_EXP kept verbatim).
+void AS_STA_IN_FAC_SIGN_AND_EXP() {
+  variables().AS_FAC[0] = 0u;
+  AS_STA_IN_FAC_SIGN();
 }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_STA_IN_FAC_SIGN (inclusive) .. AS_FADD_4 (exclusive)
+// Name normalization: none (assembler label AS_STA_IN_FAC_SIGN kept verbatim).
+void AS_STA_IN_FAC_SIGN() { variables().AS_FAC_SIGN = 0u; }
 
 } // namespace applesoft::asm_port
