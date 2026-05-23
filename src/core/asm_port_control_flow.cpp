@@ -1,104 +1,31 @@
 #include "core/asm_port_control_flow.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_chkmem.hpp"
+#include "core/asm_port_chrget.hpp"
 #include "core/asm_port_error.hpp"
+#include "core/asm_port_error_handling.hpp"
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_gtforpnt.hpp"
 #include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_local_utils.hpp"
+#include "core/asm_port_math.hpp"
+#include "core/asm_port_parser.hpp"
+#include "core/asm_port_print.hpp"
 #include "core/asm_port_stack.hpp"
+#include "core/asm_port_statements.hpp"
 #include "core/asm_port_token_address_table.hpp"
 #include "core/io_ports.hpp"
+#include "platform/asm_port_outdo.hpp"
 
 #include <cstdint>
-#include <string_view>
 
 namespace applesoft::asm_port {
 
-void AS_END2_impl(bool shouldPrintBreak);
-void AS_END4_impl(bool shouldPrintBreak);
-void AS_ENDX_impl(bool shouldPrintBreak);
-void AS_STOP_impl(bool shouldPrintBreak);
-void AS_RESTART();
-void AS_CRDO();
-struct Inlin2Result;
-Inlin2Result AS_INLIN2(std::uint8_t prompt);
-void ClearErrFlag();
-void MarkDirectMode();
-void HandleNumberedAS_Line();
-void AS_PARSE_INPUT_LINE();
-void SetTextPointer(std::uint16_t address);
-
-bool IsStatementEndOfParsedInput();
-std::uint8_t ReadProgramByte(std::uint16_t address);
-void WriteProgramByte(std::uint16_t address, std::uint8_t value);
-void AS_PRINT_ERROR_LINNUM(std::string_view prefix);
-std::uint8_t AS_CHRGOT();
-std::uint8_t AS_CHRGET();
-void AS_LINGET();
-void AS_SYNERR();
-void AS_SYNCHR(std::uint8_t expected);
-void AS_LET();
-void AS_IF();
-void AS_REM();
-void AS_IF_TRUE();
-void AS_ONGOTO();
-void AS_CONTROL_C_TYPED();
-void AS_STEP();
-void AS_TRACE_();
-void AS_FRMNUM();
-void AS_FRMEVL();
-void AS_CHKNUM();
-void AS_FADD();
 static void PushForPntFrame();
-std::uint8_t AS_GETBYT();
-void AS_ADDON(std::uint8_t offset);
-bool AS_ISCNTC();
-void AS_OUTSP();
-void AS_LINPRT();
-std::uint8_t AS_OUTDO(std::uint8_t value);
-std::uint8_t CurrentStatementChar();
-bool IsRunningMode();
-bool IsTraceEnabled();
-bool IsEndOfAS_LineAtTextPointer();
-bool IsEndOfProgramAtTextPointer();
-std::uint16_t ReadAS_LineNumberFromTextPointer();
-void AdvanceTextPointerToNextAS_Line();
-void AS_GOEND();
-void AS_EXECUTE_STATEMENT();
-void AS_EXECUTE_STATEMENT_1();
-void AS_NEWSTT();
-void AS_RESTART();
-void AS_RTS_5();
-void AS_GOSUB();
-void AS_GO_TO_LINE();
-void AS_GOTO();
-void AS_POP();
-void AS_RETURN();
-std::uint16_t AS_PTRGET();
-void AS_JSYN();
-void AS_PULL3();
-std::uint8_t AS_REMN();
-std::uint8_t AS_DATAN();
-bool AS_FL1(std::uint16_t startAddress);
-void AS_HANDLERR();
-void SetPendingErrorCode(std::uint8_t errorCode);
-std::uint8_t AS_INCHR();
-void SetTextPointer(std::uint16_t address);
-void ClearErrFlag();
-void MarkDirectMode();
-void AS_PARSE_INPUT_LINE();
-void HandleNumberedAS_Line();
-void AS_CRDO();
-void AS_SETFOR();
-void AS_ROUND_FAC();
 extern std::int8_t gNumericCompareResult;
 
 constexpr std::uint8_t kTokenBase = 0x80u;
 constexpr std::uint8_t AS_RESTART_PROMPT = ']' | 0x80u;
-
-void AS_STOP_impl(bool shouldPrintBreak);
-void AS_ENDX_impl(bool shouldPrintBreak);
 
 namespace {
 
@@ -351,9 +278,6 @@ void AS_SETFOR() {
 
   variables().AS_FAC_EXTENSION = 0u;
 }
-
-std::uint8_t ReadProgramByte(std::uint16_t address);
-void WriteProgramByte(std::uint16_t address, std::uint8_t value);
 
 bool gReturnFromPopContext = false;
 

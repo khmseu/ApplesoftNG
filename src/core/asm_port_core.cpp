@@ -4,14 +4,20 @@
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_handling.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_graphics.hpp"
 #include "core/asm_port_local_utils.hpp"
+#include "core/asm_port_math.hpp"
 #include "core/asm_port_mathtbl.hpp"
+#include "core/asm_port_parser.hpp"
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_reason.hpp"
 #include "core/asm_port_stack.hpp"
+#include "core/asm_port_statements.hpp"
+#include "core/asm_port_strlt2.hpp"
 #include "core/asm_port_unfnc.hpp"
 #include "core/io_ports.hpp"
 #include "core/jump_table.hpp"
+#include "platform/asm_port_outdo.hpp"
 
 #include <array>
 #include <cstdint>
@@ -35,74 +41,14 @@ void write_AS_LASTOP(std::uint8_t value) {
 
 } // namespace
 
-void AS_SYNERR();
 extern std::uint8_t gJerErrorCode;
-void MON_RESET2();
-void MON_OLDBRK();
-void MON_REGDSP();
-void MON_COUT(std::uint8_t a); // Defined in asm_port_outdo.cpp
-
-void AS_GETARY();
-void AS_GETARY2();
-void AS_FIND_ARRAY_ELEMENT();
-std::uint16_t AS_MULTIPLY_SUBS_1(std::uint8_t multiplierHigh);
-std::uint16_t AS_MULTIPLY_SUBSCRIPT(std::uint8_t descriptorOffset);
-void AS_GIVAYF(std::int16_t value);
-void AS_SNGFLT(std::uint8_t value);
-void AS_FALSE();
-void AS_TRUE();
-void AS_ANDOP();
-bool AS_ISLETC();
-void AS_NAMOK();
-void AS_NXDIM();
-void AS_ARRAY();
-void AS_MI1();
-void AS_MI2();
-void AS_CMPDONE();
-void AS_NUMCMP();
-void AS_PLOTFNS();
-void AS_SYNCHR(std::uint8_t expected);
-void AS_CHKNUM();
-void AS_FRMNUM();
-void AS_CHKCLS();
-void AS_MAKINT();
-void AS_CHKOPN();
-std::uint16_t AS_PTRGET();
-void AS_DATA();
-void AS_FRMEVL();
-void AS_STRCMP();
-void AS_PARCHK();
-void AS_STORE_FACDB_YX_ROUNDED();
-void AS_ERRDIR();
-std::int8_t AS_FCOMP(std::uint16_t argAddress);
-void AS_FCOMP2();
-void AS_FLOAT();
-void AS_FLOAT_1(std::uint8_t exponent);
-bool AS_CHKVAL(std::uint8_t savedValTyp);
-std::uint8_t MON_SCRN(std::uint8_t row, std::uint8_t column);
-std::uint8_t AS_FREFAC();
-std::uint8_t AS_FRETMP(std::uint16_t descriptorAddress);
-void AS_GARBAG();
 static std::int8_t CompareArgAndFacStrings();
-void AS_GOTO();
-void AS_NEWSTT();
-void AS_PRINT_ERROR_LINNUM();
-void MON_INPORT(std::uint8_t slot);
-void MON_OUTPORT(std::uint8_t slot);
-void MON_SETTXT();
-void MON_HOME();
 void AS_CAT();
-void AS_CHKSTR();
-void AS_CHKCOM();
-std::uint8_t AS_GETBYT();
-void AS_ROUND_FAC();
 extern std::int8_t gNumericCompareResult;
 extern bool gNumericCompareCarry;
 extern std::uint8_t gFloatInput;
 extern std::uint8_t gPendingErrorCode;
-void AS_SNTXERR();
 static FrmevlStackFrame AS_FRM_STACK_1(std::uint8_t precedence);
-bool AS_NOTMATH(std::uint8_t token);
 std::uint8_t AS_FRM_PERFORM_1(const FrmevlStackFrame &lhsFrame,
                               std::uint8_t cprtypForFrame,
                               const MathTblEntry &pendingEntry,
@@ -140,27 +86,17 @@ bool IsDirectMode() {
   return ApplesoftVariables::highByte(variables_const().AS_CURLIN) == 0xffu;
 }
 
-void AS_NORMAL();
-void AS_CRDO();
-void AS_SCRTCH();
-void AS_RESTART();
-
 constexpr std::array<std::uint8_t, 29> kGenericAS_CHRGETImage = {
     0xe6, 0xb8, 0xd0, 0x02, 0xe6, 0xb9, 0xad, 0x60, 0xea, 0xc9,
     0x3a, 0xb0, 0x0a, 0xc9, 0x20, 0xf0, 0xef, 0x38, 0xe9, 0x30,
     0x38, 0xe9, 0xd0, 0x60, 0x80, 0x4f, 0xc7, 0x52, 0x58,
 };
 
-void AS_COLD_START();
-
 void AS_GENERIC_END() {
   // AS_Label-only range in ROM: this address immediately falls into
   // AS_COLD_START.
   AS_COLD_START();
 }
-
-// Forward declaration: MON_COUT is defined in asm_port_outdo.cpp.
-void MON_COUT(std::uint8_t value);
 
 namespace {
 
