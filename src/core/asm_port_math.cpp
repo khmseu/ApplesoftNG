@@ -1,6 +1,7 @@
 #include "core/asm_port_math.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_chrget.hpp"
+#include "core/asm_port_error.hpp"
 #include "core/asm_port_error_handling.hpp"
 #include <cstdint>
 
@@ -10,7 +11,6 @@ extern std::uint8_t ReadProgramByte(std::uint16_t address);
 extern void AS_ERROR(std::uint8_t error_code);
 extern void AS_LOAD_ARG_FROM_YA();
 static void AS_COPY_ARG_TO_FAC();
-extern std::uint8_t gFloatInput;
 
 // Forward declarations of subroutines used within AS_FADD/AS_FSUB
 static void AS_SHIFT_RIGHT();
@@ -42,7 +42,8 @@ void AS_NEGATE_FAC();
 static void AS_INCREMENT_FAC_MANTISSA();
 static void AS_INCREMENT_MANTISSA();
 static void AS_FADD_4();
-static void AS_L_FADD_3_1(std::uint16_t minuendBase, std::uint16_t subtrahendBase);
+static void AS_L_FADD_3_1(std::uint16_t minuendBase,
+                          std::uint16_t subtrahendBase);
 static void AS_NORMALIZE_FAC_1(bool carrySet);
 static void AS_STA_IN_FAC_SIGN_AND_EXP();
 void AS_STA_IN_FAC_SIGN();
@@ -339,7 +340,8 @@ static void AS_FADD_3(std::uint16_t adjustedAddress) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_L_FADD_3_1 (inclusive) .. AS_NORMALIZE_FAC_1 (exclusive)
 // Name normalization: none (assembler label AS_L_FADD_3_1 kept verbatim).
-static void AS_L_FADD_3_1(std::uint16_t minuendBase, std::uint16_t subtrahendBase) {
+static void AS_L_FADD_3_1(std::uint16_t minuendBase,
+                          std::uint16_t subtrahendBase) {
   // Pointer candidates lifted:
   // - FAC bytes ($9e..$a1) and ARG bytes ($a6..$a9) are addressed through
   //   unified base pointers rather than split byte variables.

@@ -1,24 +1,15 @@
 #include "core/asm_port_error_handling.hpp"
 
+#include "core/asm_port_clear.hpp"
+#include "core/asm_port_control_flow.hpp"
+#include "core/asm_port_core.hpp"
+#include "core/asm_port_error.hpp"
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_qt_error.hpp"
+#include "platform/asm_port_outdo.hpp"
 
 namespace applesoft::asm_port {
-
-// Helper status functions (often found in asm_port_core.cpp or
-// asm_port_error.cpp)
-extern std::uint8_t gPendingErrorCode;
-extern std::uint8_t gJerErrorCode;
-
-bool IsOnErr();
-bool IsDirectMode();
-void AS_OUTQUES();
-void AS_CRDO();
-void AS_STKINI();
-void AS_HANDLERR();
-void AS_INPRT();
-void AS_RESTART();
 
 // Source:
 // SourceMaterial/Combo/asrom.lst

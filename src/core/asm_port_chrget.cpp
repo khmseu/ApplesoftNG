@@ -1,12 +1,10 @@
 #include "core/asm_port_chrget.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_core.hpp"
 
 #include <cstdint>
 
 namespace applesoft::asm_port {
-
-// Memory access helpers (defined in asm_port_core.cpp or local declarations)
-std::uint8_t ReadProgramByte(std::uint16_t address);
 
 /**
  * @brief AS_CHRGET_INTERNAL

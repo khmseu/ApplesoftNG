@@ -41,12 +41,7 @@ void write_AS_LASTOP(std::uint8_t value) {
 
 } // namespace
 
-extern std::uint8_t gJerErrorCode;
 static std::int8_t CompareArgAndFacStrings();
-extern std::int8_t gNumericCompareResult;
-extern bool gNumericCompareCarry;
-extern std::uint8_t gFloatInput;
-extern std::uint8_t gPendingErrorCode;
 static FrmevlStackFrame AS_FRM_STACK_1(std::uint8_t precedence);
 std::uint8_t AS_FRM_PERFORM_1(const FrmevlStackFrame &lhsFrame,
                               std::uint8_t cprtypForFrame,

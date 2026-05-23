@@ -20,6 +20,12 @@ inline constexpr std::uint8_t kAS_NEG32768Data[4] = {0x90u, 0x80u, 0x00u,
                                                      0x00u};
 inline constexpr std::uint8_t kCZeroData[2] = {0x00u, 0x00u};
 
+extern std::int8_t gNumericCompareResult;
+extern bool gNumericCompareCarry;
+extern std::uint8_t gFloatInput;
+extern std::uint8_t gPendingErrorCode;
+extern std::uint8_t gJerErrorCode;
+
 struct ProgramPointer {
   std::uint16_t address = 0;
 

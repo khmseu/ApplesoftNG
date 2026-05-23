@@ -22,7 +22,6 @@
 namespace applesoft::asm_port {
 
 static void PushForPntFrame();
-extern std::int8_t gNumericCompareResult;
 
 constexpr std::uint8_t kTokenBase = 0x80u;
 constexpr std::uint8_t AS_RESTART_PROMPT = ']' | 0x80u;
