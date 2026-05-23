@@ -980,13 +980,11 @@ void AS_PROGIO() {
   variables().MON_A2 = variables_const().AS_VARTAB;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_WRITE (inclusive) .. MON_BELL (exclusive)
+// Name normalization: none (assembler label MON_WRITE kept verbatim).
 void MON_WRITE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // MON_Labels: WRITE (inclusive) .. READ (exclusive)
-  // Name normalization: none (assembler label WRITE is prefixed with MON_ in
-  // C++).
-  //
   // Monitor tape write handler: emit bytes in [A1, A2) and then emit checksum.
   // The ROM loop updates A1 until it reaches A2 via NXTA1 carry behavior.
   // We model that range with one unified 16-bit pointer representation.
@@ -1192,13 +1190,11 @@ bool MON_NXTA1() {
   return a1 >= a2;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_RESTORE (inclusive) .. MON_SAVE (exclusive)
+// Name normalization: none (assembler label MON_RESTORE kept verbatim).
 void MON_RESTORE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // MON_Labels: RESTORE (inclusive) .. SAVE (exclusive)
-  // Name normalization: none (assembler label RESTORE is prefixed with MON_ in
-  // C++).
-  //
   // Restore 6502 register state from zero-page storage (used by debug
   // software). Restores accumulator, X, Y registers and processor status flags
   // from fixed locations. Original sequence: Load A from $48 (status), push;
