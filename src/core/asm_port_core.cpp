@@ -174,10 +174,9 @@ void MON_SETNORM() { variables().MON_INVFLG = 0xffu; }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: INIT (inclusive) .. SETTXT (exclusive)
-// Name normalization: INIT -> MON_INIT (monitor label gets MON_ prefix).
+// AS_Labels: MON_INIT (inclusive) .. MON_SETTXT (exclusive)
 //
-// Falls through into SETTXT in ROM; modeled by explicit call.
+// Falls through into MON_SETTXT in ROM; modeled by explicit call.
 void MON_INIT() {
 
   variables().MON_STATUS = 0u;
@@ -2169,8 +2168,7 @@ std::int8_t CompareArgAndFacStrings() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: PREAD (inclusive) .. end of listing routine (exclusive)
-// Name normalization: PREAD -> MON_PREAD (monitor label gets MON_ prefix).
+// AS_Labels: MON_PREAD (inclusive) .. MON_INIT (exclusive)
 //
 // Monitor flow:
 //   lda PTRIG        ; trigger paddle timing

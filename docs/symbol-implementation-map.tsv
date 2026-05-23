@@ -1120,10 +1120,10 @@ asrom	MON_LFAFC	0xfafc	-
 asrom	MON_LFB01	0xfb01	-
 asrom	MON_LFB08	0xfb08	-
 asrom	MON_RTBL	0xfb19	-
-asrom	MON_PREAD	0xfb1e	-
-asrom	MON_PREAD2	0xfb25	-
-asrom	MON_RTS2D	0xfb2e	-
-asrom	MON_INIT	0xfb2f	-
+asrom	MON_PREAD	0xfb1e	MON_PREAD
+asrom	MON_PREAD2	0xfb25	MON_PREAD
+asrom	MON_RTS2D	0xfb2e	MON_PREAD
+asrom	MON_INIT	0xfb2f	MON_INIT
 asrom	MON_SETTXT	0xfb39	-
 asrom	MON_SETGR	0xfb40	-
 asrom	MON_SETWND	0xfb4b	-
