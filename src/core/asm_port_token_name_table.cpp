@@ -1,8 +1,3 @@
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_TOKEN_NAME_TABLE (inclusive) .. AS_ERROR_MESSAGES (exclusive)
-// Name normalization: none
-//
 // The original ROM stores token names as a packed character stream with bit 7
 // set on the final character of each token. This port exposes the same table
 // semantics as decoded token text indexed by (token - 0x80).
@@ -13,6 +8,10 @@
 
 namespace applesoft::asm_port {
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_TOKEN_NAME_TABLE (inclusive) .. AS_ERROR_MESSAGES (exclusive)
+// Name normalization: none (assembler label AS_TOKEN_NAME_TABLE kept verbatim).
 std::string_view AS_TOKEN_NAME_TABLE(std::size_t index) {
   static constexpr std::array<std::string_view, 107> table = {
       "END",        "AS_FOR",     "AS_NEXT",   "AS_DATA",    "AS_INPUT",

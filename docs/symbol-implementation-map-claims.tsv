@@ -376,7 +376,7 @@ AS_STRLT2	src/core/asm_port_strlt2.cpp	944	AS_STRLT2 (inclusive) .. AS_PUTNEW (e
 AS_POINT	src/core/asm_port_strtxt.cpp	19	AS_POINT (inclusive) .. AS_GTNUM (exclusive)	AS_POINT	AS_GTNUM	asrom	AS_POINT	0xe73d	AS_GTNUM	0xe746	resolved-range	ok
 AS_TRACE	src/core/asm_port_token_address_table.cpp	107	AS_TRACE (inclusive) .. AS_NORMAL (exclusive)	AS_TRACE	AS_NORMAL	asrom	AS_TRACE	0xf26d	AS_NORMAL	0xf273	resolved-range	ok
 AS_TOKEN_ADDRESS_TABLE	src/core/asm_port_token_address_table.cpp	159	AS_TOKEN_ADDRESS_TABLE (inclusive) .. AS_UNFNC (exclusive)	AS_TOKEN_ADDRESS_TABLE	AS_UNFNC	asrom	AS_TOKEN_ADDRESS_TABLE	0xd000	AS_UNFNC	0xd080	resolved-range	ok
-AS_TOKEN_NAME_TABLE	src/core/asm_port_token_name_table.cpp	3	AS_TOKEN_NAME_TABLE (inclusive) .. AS_ERROR_MESSAGES (exclusive)	AS_TOKEN_NAME_TABLE	AS_ERROR_MESSAGES	asrom	AS_TOKEN_NAME_TABLE	0xd0d0	AS_ERROR_MESSAGES	0xd260	resolved-range	ok
+AS_TOKEN_NAME_TABLE	src/core/asm_port_token_name_table.cpp	13	AS_TOKEN_NAME_TABLE (inclusive) .. AS_ERROR_MESSAGES (exclusive)	AS_TOKEN_NAME_TABLE	AS_ERROR_MESSAGES	asrom	AS_TOKEN_NAME_TABLE	0xd0d0	AS_ERROR_MESSAGES	0xd260	resolved-range	ok
 facToDouble	src/core/asm_port_unfnc.cpp	3	AS_UNFNC (inclusive) .. AS_MATHTBL (exclusive)	AS_UNFNC	AS_MATHTBL	asrom	AS_UNFNC	0xd080	AS_MATHTBL	0xd0b2	resolved-range	ok
 AS_PDL	src/core/asm_port_unfnc.cpp	210	AS_PDL (inclusive) .. AS_NXDIM (exclusive)	AS_PDL	AS_NXDIM	asrom	AS_PDL	0xdfcd	AS_NXDIM	0xdfd6	resolved-range	ok
 AS_SGN	src/core/asm_port_unfnc.cpp	224	AS_SGN (inclusive) .. AS_ABS (exclusive)	AS_SGN	AS_ABS	asrom	AS_SGN	0xeb90	AS_ABS	0xebaf	resolved-range	ok
