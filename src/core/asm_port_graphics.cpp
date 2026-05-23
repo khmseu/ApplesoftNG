@@ -26,22 +26,20 @@ void AS_BKGND();
 void AS_L_BKGND_1();
 void AS_SHLOAD();
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NORMAL (inclusive) .. AS_INVERSE (exclusive)
+// Name normalization: none (assembler label AS_NORMAL kept verbatim).
 void AS_NORMAL() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_NORMAL (inclusive) .. AS_INVERSE (exclusive)
-  // Name normalization: none (assembler label AS_NORMAL kept verbatim).
-
   variables().MON_INVFLG = 0xffu;
   variables().AS_FLASH_BIT = 0x00u;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_INVERSE (inclusive) .. AS_FLASH (exclusive)
+// Name normalization: none (assembler label AS_INVERSE kept verbatim).
 void AS_INVERSE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_INVERSE (inclusive) .. AS_FLASH (exclusive)
-  // Name normalization: none (assembler label AS_INVERSE kept verbatim).
-
   variables().MON_INVFLG = 0x3fu;
   variables().AS_FLASH_BIT = 0x00u;
 }
@@ -96,13 +94,14 @@ void MON_TABV(std::uint8_t row_zero_based) {
 
 namespace {
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_IOPRT (inclusive) .. MON_IOPRT1 (exclusive)
+// AS_Labels: MON_IOPRT1 (inclusive) .. MON_IOPRT2 (exclusive)
+// AS_Labels: MON_IOPRT2 (inclusive) .. MON_XBASIC (exclusive)
+// Name normalization: helper name chosen for shared I/O-vector setup body.
 void MON_IOPRT(std::uint8_t slot, std::uint8_t vectorBase,
                std::uint8_t defaultVectorAS_Low) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: IOPRT (inclusive) .. XBASIC (exclusive)
-  // Name normalization: helper name chosen for shared I/O-vector setup body.
-
   constexpr std::uint8_t kSlotMask = 0x0fu;
   constexpr std::uint8_t kIoBaseHigh = 0xc0u; // >IOADR
   constexpr std::uint8_t kDefaultHigh =
@@ -125,12 +124,11 @@ void MON_IOPRT(std::uint8_t slot, std::uint8_t vectorBase,
 
 } // namespace
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_INPORT (inclusive) .. MON_SETVID (exclusive)
+// Name normalization: none (assembler label MON_INPORT kept verbatim).
 void MON_INPORT(std::uint8_t slot) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: INPORT (inclusive) .. SETVID (exclusive)
-  // Name normalization: INPORT -> MON_INPORT (monitor label gets MON_ prefix).
-
   constexpr std::uint8_t kMON_KSW = ApplesoftVariables::ZP_MON_KSW;
   constexpr std::uint8_t kKeyinAS_Low = 0x0fu; // <KEYIN from keyin.o65.sym
 
@@ -139,13 +137,11 @@ void MON_INPORT(std::uint8_t slot) {
             kKeyinAS_Low);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_OUTPORT (inclusive) .. MON_IOPRT (exclusive)
+// Name normalization: none (assembler label MON_OUTPORT kept verbatim).
 void MON_OUTPORT(std::uint8_t slot) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: OUTPORT (inclusive) .. IOPRT (exclusive)
-  // Name normalization: OUTPORT -> MON_OUTPORT (monitor label gets MON_
-  // prefix).
-
   constexpr std::uint8_t kMON_CSW = ApplesoftVariables::ZP_MON_CSW;
   constexpr std::uint8_t kCout1AS_Low = 0x62u; // <COUT1 from cmd.o65.sym
 
@@ -273,12 +269,11 @@ void MON_NXTCOL() {
   MON_SETCOL(advanced);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_HOME (inclusive) .. MON_CLREOL (exclusive)
+// Name normalization: none (assembler label MON_HOME kept verbatim).
 void MON_HOME() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: MON_HOME (inclusive) .. MON_CLREOL (exclusive)
-  // Name normalization: none (assembler label MON_HOME kept verbatim).
-  //
   // Monitor HOME initializes cursor to top-left of current window and clears
   // the window to blanks (high-bit set AS_ASCII space).
 
@@ -306,12 +301,12 @@ void MON_HOME() {
   variables().MON_CH = 0u;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_CLREOL (inclusive) .. MON_CLEOL2 (exclusive)
+// AS_Labels: MON_CLEOL2 (inclusive) .. MON_WAIT (exclusive)
+// Name normalization: none (assembler label MON_CLREOL kept verbatim).
 void MON_CLREOL() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: CLREOL (inclusive) .. RTS (exclusive)
-  // Name normalization: CLREOL -> MON_CLREOL (monitor label gets MON_ prefix).
-  //
   // Clears from current cursor position to end of line with high-bit-set
   // spaces.
 
@@ -370,12 +365,11 @@ void MON_SETGR() {
   MON_TABV(23u);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GR (inclusive) .. AS_TEXT (exclusive)
+// Name normalization: none (assembler label AS_GR kept verbatim).
 void AS_GR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_GR (inclusive) .. AS_STORE (exclusive)
-  // Name normalization: none (assembler label AS_GR kept verbatim).
-  //
   // lda AS_SW_LORES ($c056): soft-switch read activates lo-res graphics mode.
   // lda AS_SW_MIXSET ($c053): soft-switch read enables lower 4 lines as text.
   // jmp MON_SETGR: monitor SETGR sets up the lo-res graphics window.
@@ -384,12 +378,11 @@ void AS_GR() {
   MON_SETGR();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_TEXT (inclusive) .. AS_STORE (exclusive)
+// Name normalization: none (assembler label AS_TEXT kept verbatim).
 void AS_TEXT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_TEXT (inclusive) .. AS_STORE (exclusive)
-  // Name normalization: none (assembler label AS_TEXT kept verbatim).
-  //
   // lda AS_SW_LOWSCR ($c054): soft-switch read selects display page 1.
   // jmp MON_SETTXT: monitor SETTXT sets the full-screen text window.
   // Soft-switch side-effect read carries no value; state is set by MON_SETTXT.
@@ -418,12 +411,11 @@ void AS_HTAB() {
 void AS_HCOLOR();
 void STHPG();
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HGR2 (inclusive) .. AS_SETHPG (exclusive)
+// Name normalization: none (assembler label AS_HGR2 kept verbatim).
 void AS_HGR2() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HGR2 (inclusive) .. AS_SETHPG (exclusive)
-  // Name normalization: none (assembler label AS_HGR2 kept verbatim).
-
   // AS_HGR2 bit AS_SW_HISCR ; bit AS_SW_MIXCLR ; lda #$40 ; bne AS_SETHPG
   ioPorts().readByte(IOPorts::ADDR_AS_SW_HISCR);
   ioPorts().readByte(IOPorts::ADDR_AS_SW_MIXCLR);
@@ -431,12 +423,11 @@ void AS_HGR2() {
   STHPG();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HGR (inclusive) .. AS_SETHPG (exclusive)
+// Name normalization: none (assembler label AS_HGR kept verbatim).
 void AS_HGR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HGR (inclusive) .. AS_HCLR (exclusive)
-  // Name normalization: none (assembler label AS_HGR kept verbatim).
-
   // AS_HGR lda #$20 ; bit AS_SW_LOWSCR ; bit AS_SW_MIXSET
   variables().AS_HGR_PAGE = 0x20u;
   ioPorts().readByte(IOPorts::ADDR_AS_SW_LOWSCR);
@@ -444,13 +435,12 @@ void AS_HGR() {
   STHPG();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SETHPG (inclusive) .. AS_HCLR (exclusive)
+// Name normalization: AS_SETHPG -> STHPG (normalize based on typical 5-char
+// limit or SET.. prefix).
 void STHPG() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SETHPG (inclusive) .. AS_HCLR (exclusive)
-  // Name normalization: AS_SETHPG -> STHPG (normalize based on typical 5-char
-  // limit or SET.. prefix).
-
   // AS_SETHPG sta AS_HGR_PAGE ; lda AS_SW_HIRES ; lda AS_SW_TXTCLR
   // (Note: AS_HGR_PAGE already set by AS_HGR/AS_HGR2 in this port to simplify).
   ioPorts().readByte(IOPorts::ADDR_AS_SW_HIRES);
@@ -498,11 +488,11 @@ void AS_L_BKGND_1() {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HCOLOR (inclusive) .. AS_HPLOT (exclusive)
+// Name normalization: none (assembler label AS_HCOLOR kept verbatim).
 void AS_HCOLOR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HCOLOR (inclusive) .. AS_HPLOT (exclusive)
-  // Name normalization: none (assembler label AS_HCOLOR kept verbatim).
 
   static constexpr std::uint8_t kColorTable[8] = {0x00u, 0x2au, 0x55u, 0x7fu,
                                                   0x80u, 0xaau, 0xd5u, 0xffu};
@@ -518,21 +508,21 @@ void AS_HCOLOR() {
   variables().AS_HGR_BITS = pattern;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_ROT (inclusive) .. AS_SCALE (exclusive)
+// Name normalization: none (assembler label AS_ROT kept verbatim).
 void AS_ROT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_ROT (inclusive) .. AS_DRWPNT (exclusive)
-  // Name normalization: none (assembler label AS_ROT kept verbatim).
 
   const std::uint8_t val = AS_GETBYT();
   variables().AS_HGR_ROTATION = val;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SCALE (inclusive) .. AS_DRWPNT (exclusive)
+// Name normalization: none (assembler label AS_SCALE kept verbatim).
 void AS_SCALE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SCALE (inclusive) .. AS_DRWPNT (exclusive)
-  // Name normalization: none (assembler label AS_SCALE kept verbatim).
 
   const std::uint8_t val = AS_GETBYT();
   variables().AS_HGR_SCALE = val;
@@ -546,10 +536,10 @@ struct HiResCoordinates {
   bool valid;
 };
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HPOSN (inclusive) .. AS_HPLOT0 (exclusive)
 void AS_HPOSN(const HiResCoordinates &point) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HPOSN (inclusive) .. AS_HPLOT0 (exclusive)
   // Computes hi-res cursor address and bit state for the given coordinate.
 
   static constexpr std::uint8_t kMaskTable[7] = {0x81u, 0x82u, 0x84u, 0x88u,
@@ -590,10 +580,10 @@ void AS_HPOSN(const HiResCoordinates &point) {
 
 } // namespace
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HFNS (inclusive) .. AS_GGERR (exclusive)
 HiResCoordinates AS_HFNS() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HFNS (inclusive) .. AS_GGERR (exclusive)
   // Parses hi-res coordinates from TXTPTR and validates range X<280, Y<192.
 
   constexpr std::uint16_t kMaxXExclusive = 280u;
@@ -626,10 +616,10 @@ HiResCoordinates AS_HFNS() {
 // Name normalization: none (assembler label AS_GGERR kept verbatim).
 void AS_GGERR() { AS_GOERR(); }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HPLOT0 (inclusive) .. AS_MOVE_LEFT_OR_RIGHT (exclusive)
 void AS_HPLOT0(const HiResCoordinates &point) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HPLOT0 (inclusive) .. AS_MOVE_LEFT_OR_RIGHT (exclusive)
   // Plots one hi-res pixel using current HGR bit pattern.
 
   AS_HPOSN(point);
@@ -648,10 +638,10 @@ void AS_HPLOT0(const HiResCoordinates &point) {
   variables().writeByte(pixelAddress, updated);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HGLIN (inclusive) .. AS_DRAW0 (exclusive)
 void AS_HGLIN(const HiResCoordinates &start, const HiResCoordinates &target) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HGLIN (inclusive) .. AS_DRAW0 (exclusive)
   // Draws a line from current point to target point.
   // Mirrors key ROM line-state bookkeeping in
   // HGR_DX/HGR_DY/HGR_E/HGR_QUADRANT/HGR_COUNT.
@@ -1052,21 +1042,21 @@ void AS_SHLOAD() {
   MON_RD2();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_COLOR (inclusive) .. AS_VTAB (exclusive)
+// Name normalization: none (assembler label AS_COLOR kept verbatim).
 void AS_COLOR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_COLOR (inclusive) .. AS_VTAB (exclusive)
-  // Name normalization: none (assembler label AS_COLOR kept verbatim).
 
   const std::uint8_t color = AS_GETBYT();
   MON_SETCOL(color);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_VTAB (inclusive) .. AS_SPEED (exclusive)
+// Name normalization: none (assembler label AS_VTAB kept verbatim).
 void AS_VTAB() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_VTAB (inclusive) .. AS_SPEED (exclusive)
-  // Name normalization: none (assembler label AS_VTAB kept verbatim).
 
   const std::uint8_t line = AS_GETBYT();
   if (line == 0u || line > 24u) {
@@ -1078,11 +1068,11 @@ void AS_VTAB() {
   MON_TABV(static_cast<std::uint8_t>(line - 1u));
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HIMEM (inclusive) .. AS_LOMEM (exclusive)
+// Name normalization: none (assembler label AS_HIMEM kept verbatim).
 void AS_HIMEM() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HIMEM (inclusive) .. AS_LOMEM (exclusive)
-  // Name normalization: none (assembler label AS_HIMEM kept verbatim).
 
   AS_FRMNUM();
   AS_GETADR();
@@ -1109,11 +1099,11 @@ void AS_HIMEM() {
   variables().AS_FRETOP = variables_const().AS_LINNUM;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_LOMEM (inclusive) .. AS_ONERR (exclusive)
+// Name normalization: none (assembler label AS_LOMEM kept verbatim).
 void AS_LOMEM() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_LOMEM (inclusive) .. AS_ONERR (exclusive)
-  // Name normalization: none (assembler label AS_LOMEM kept verbatim).
 
   AS_FRMNUM();
   AS_GETADR();
@@ -1154,11 +1144,11 @@ void AS_LOMEM() {
   AS_CLEARC();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SPEED (inclusive) .. AS_TRACE (exclusive)
+// Name normalization: none (assembler label AS_SPEED kept verbatim).
 void AS_SPEED() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SPEED (inclusive) .. AS_TRACE (exclusive)
-  // Name normalization: none (assembler label AS_SPEED kept verbatim).
 
   const std::uint8_t speed = AS_GETBYT();
 
@@ -1166,12 +1156,11 @@ void AS_SPEED() {
   variables().AS_SPEEDZ = static_cast<std::uint8_t>(0u - speed);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PLOTFNS (inclusive) .. AS_GOERR (exclusive)
+// Name normalization: none (assembler label AS_PLOTFNS kept verbatim).
 std::uint8_t AS_PLOTFNS() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PLOTFNS (inclusive) .. AS_GOERR (exclusive)
-  // Name normalization: none (assembler label AS_PLOTFNS kept verbatim).
-  //
   // Parses "A,B" with each coordinate constrained to < 48.
   // Stores A in AS_FIRST and mirrors B into MON_H2/MON_V2.
 
@@ -1198,21 +1187,17 @@ std::uint8_t AS_PLOTFNS() {
   return second;
 }
 
-void AS_GOERR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_GOERR (inclusive) .. AS_LINCOOR (exclusive)
-  // Name normalization: none (assembler label AS_GOERR kept verbatim).
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GOERR (inclusive) .. AS_LINCOOR (exclusive)
+// Name normalization: none (assembler label AS_GOERR kept verbatim).
+void AS_GOERR() { AS_IQERR(); }
 
-  AS_IQERR();
-}
-
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_LINCOOR (inclusive) .. AS_PLOT (exclusive)
+// Name normalization: none (assembler label AS_LINCOOR kept verbatim).
 std::uint8_t AS_LINCOOR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_LINCOOR (inclusive) .. AS_PLOT (exclusive)
-  // Name normalization: none (assembler label AS_LINCOOR kept verbatim).
-  //
   // Parses "A,B AT C" used by AS_HLIN/AS_VLIN:
   // - normalizes endpoints so AS_FIRST <= MON_H2
   // - requires AT token
@@ -1241,11 +1226,11 @@ std::uint8_t AS_LINCOOR() {
   return cValue;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PLOT (inclusive) .. AS_HLIN (exclusive)
+// Name normalization: none (assembler label AS_PLOT kept verbatim).
 void AS_PLOT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PLOT (inclusive) .. AS_HLIN (exclusive)
-  // Name normalization: none (assembler label AS_PLOT kept verbatim).
 
   constexpr std::uint8_t kMaxXExclusive = 40u;
 
@@ -1260,11 +1245,11 @@ void AS_PLOT() {
   MON_PLOT(yCoord, xCoord);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HLIN (inclusive) .. AS_VLIN (exclusive)
+// Name normalization: none (assembler label AS_HLIN kept verbatim).
 void AS_HLIN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HLIN (inclusive) .. AS_VLIN (exclusive)
-  // Name normalization: none (assembler label AS_HLIN kept verbatim).
 
   constexpr std::uint8_t kMaxXExclusive = 40u;
 
@@ -1279,11 +1264,11 @@ void AS_HLIN() {
   MON_HLINE(yCoord, right, left);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_VLIN (inclusive) .. AS_COLOR (exclusive)
+// Name normalization: none (assembler label AS_VLIN kept verbatim).
 void AS_VLIN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_VLIN (inclusive) .. AS_COLOR (exclusive)
-  // Name normalization: none (assembler label AS_VLIN kept verbatim).
 
   constexpr std::uint8_t kMaxXExclusive = 40u;
 
