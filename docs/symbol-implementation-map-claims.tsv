@@ -251,31 +251,33 @@ AS_NEGOP	src/core/asm_port_mathtbl.cpp	352	AS_NEGOP (inclusive) .. AS_CON_LOG_E 
 AS_EQUOP	src/core/asm_port_mathtbl.cpp	370	AS_EQUOP (inclusive) .. AS_FN_ (exclusive)	AS_EQUOP	AS_FN_	asrom	AS_EQUOP	0xde98	AS_FN_	0xdea4	resolved-range	ok
 AS_MATHTBL	src/core/asm_port_mathtbl.cpp	392	AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)	AS_MATHTBL	AS_TOKEN_NAME_TABLE	asrom	AS_MATHTBL	0xd0b2	AS_TOKEN_NAME_TABLE	0xd0d0	resolved-range	ok
 AS_NXIN	src/core/asm_port_nxin.cpp	10	AS_NXIN (inclusive) .. AS_READ (exclusive)	AS_NXIN	AS_READ	asrom	AS_NXIN	0xdbdc	AS_READ	0xdbe2	resolved-range	ok
-AS_CHKNUM	src/core/asm_port_parser.cpp	31	AS_SYNCHR (inclusive) .. AS_CHKNUM (exclusive)	AS_SYNCHR	AS_CHKNUM	asrom	AS_SYNCHR	0xdec0	AS_CHKNUM	0xdd6a	skipped-ambiguous-range	end-not-greater-than-start
-AS_CHKSTR	src/core/asm_port_parser.cpp	52	AS_CHKNUM (inclusive) .. AS_CHKSTR (exclusive)	AS_CHKNUM	AS_CHKSTR	asrom	AS_CHKNUM	0xdd6a	AS_CHKSTR	0xdd6c	resolved-range	ok
-AS_CHKCOM	src/core/asm_port_parser.cpp	64	AS_CHKSTR (inclusive) .. AS_CHKVAL (exclusive)	AS_CHKSTR	AS_CHKVAL	asrom	AS_CHKSTR	0xdd6c	AS_CHKVAL	0xdd6d	resolved-range	ok
-AS_FRMNUM	src/core/asm_port_parser.cpp	76	AS_CHKCOM (inclusive) .. AS_SYNCHR (exclusive)	AS_CHKCOM	AS_SYNCHR	asrom	AS_CHKCOM	0xdebe	AS_SYNCHR	0xdec0	resolved-range	ok
-AS_PARCHK	src/core/asm_port_parser.cpp	85	AS_FRMNUM (inclusive) .. AS_FRMEVL (exclusive)	AS_FRMNUM	AS_FRMEVL	asrom	AS_FRMNUM	0xdd67	AS_FRMEVL	0xdd7b	resolved-range	ok
-AS_STORE_FACDB_YX_ROUNDED	src/core/asm_port_parser.cpp	97	AS_PARCHK (inclusive) .. AS_CHKCLS (exclusive)	AS_PARCHK	AS_CHKCLS	asrom	AS_PARCHK	0xdeb2	AS_CHKCLS	0xdeb8	resolved-range	ok
-AS_CHKCLS	src/core/asm_port_parser.cpp	113	AS_STORE_FACDB_YX_ROUNDED (inclusive) .. AS_COPY_ARG_TO_FAC	AS_STORE_FACDB_YX_ROUNDED	AS_COPY_ARG_TO_FAC	asrom	AS_STORE_FACDB_YX_ROUNDED	0xeb2b	AS_COPY_ARG_TO_FAC	0xeb53	resolved-range	ok
-AS_GTBYTC	src/core/asm_port_parser.cpp	148	AS_LINGET (inclusive) .. AS_LET (exclusive)	AS_LINGET	AS_LET	asrom	AS_LINGET	0xda0c	AS_LET	0xda46	resolved-range	ok
-AS_GTBYTC	src/core/asm_port_parser.cpp	183	AS_GTBYTC (inclusive) .. AS_GETBYT (exclusive)	AS_GTBYTC	AS_GETBYT	asrom	AS_GTBYTC	0xe6f5	AS_GETBYT	0xe6f8	resolved-range	ok
-AS_GETBYT	src/core/asm_port_parser.cpp	197	AS_GETBYT (inclusive) .. AS_CONINT (exclusive)	AS_GETBYT	AS_CONINT	asrom	AS_GETBYT	0xe6f8	AS_CONINT	0xe6fb	resolved-range	ok
-AS_CONINT	src/core/asm_port_parser.cpp	212	AS_CONINT (inclusive) .. AS_VAL (exclusive)	AS_CONINT	AS_VAL	asrom	AS_CONINT	0xe6fb	AS_VAL	0xe707	resolved-range	ok
-AS_GTNUM	src/core/asm_port_parser.cpp	234	AS_GTNUM (inclusive) .. AS_COMBYTE (exclusive)	AS_GTNUM	AS_COMBYTE	asrom	AS_GTNUM	0xe746	AS_COMBYTE	0xe74c	resolved-range	ok
-AS_COMBYTE	src/core/asm_port_parser.cpp	244	AS_COMBYTE (inclusive) .. AS_GETADR (exclusive)	AS_COMBYTE	AS_GETADR	asrom	AS_COMBYTE	0xe74c	AS_GETADR	0xe752	resolved-range	ok
-AS_GETADR	src/core/asm_port_parser.cpp	254	AS_QINT (inclusive) .. AS_INT (exclusive)	AS_QINT	AS_INT	asrom	AS_QINT	0xebf2	AS_INT	0xec23	resolved-range	ok
-AS_GETADR	src/core/asm_port_parser.cpp	304	AS_GETADR (inclusive) .. AS_PEEK (exclusive)	AS_GETADR	AS_PEEK	asrom	AS_GETADR	0xe752	AS_PEEK	0xe764	resolved-range	ok
-IsStatementEndOfParsedInput	src/core/asm_port_parser.cpp	323	AS_EXECUTE_STATEMENT (inclusive) .. AS_EXECUTE_STATEMENT_1	AS_EXECUTE_STATEMENT	AS_EXECUTE_STATEMENT_1	asrom	AS_EXECUTE_STATEMENT	0xd828	AS_EXECUTE_STATEMENT_1	0xd82a	resolved-range	ok
-AS_CHKVAL	src/core/asm_port_parser.cpp	333	AS_END2 (inclusive) .. AS_SAVE (exclusive)	AS_END2	AS_SAVE	asrom	AS_END2	0xd871	AS_SAVE	0xd8b0	resolved-range	ok
-AS_NEG32768	src/core/asm_port_parser.cpp	343	AS_CHKVAL (inclusive) .. AS_FRMEVL (exclusive)	AS_CHKVAL	AS_FRMEVL	asrom	AS_CHKVAL	0xdd6d	AS_FRMEVL	0xdd7b	resolved-range	ok
-AS_MAKINT	src/core/asm_port_parser.cpp	360	AS_NEG32768 (inclusive) .. AS_MAKINT (exclusive)	AS_NEG32768	AS_MAKINT	asrom	AS_NEG32768	0xe0fe	AS_MAKINT	0xe102	resolved-range	ok
-AS_MI1	src/core/asm_port_parser.cpp	372	AS_MAKINT (inclusive) .. AS_MKINT (exclusive)	AS_MAKINT	AS_MKINT	asrom	AS_MAKINT	0xe102	AS_MKINT	0xe108	resolved-range	ok
-AS_MI2	src/core/asm_port_parser.cpp	383	AS_MI1 (inclusive) .. AS_MI2 (exclusive)	AS_MI1	AS_MI2	asrom	AS_MI1	0xe119	AS_MI2	0xe11b	resolved-range	ok
-AS_ISLETC	src/core/asm_port_parser.cpp	392	AS_MI2 (inclusive) .. AS_ARRAY (exclusive)	AS_MI2	AS_ARRAY	asrom	AS_MI2	0xe11b	AS_ARRAY	0xe11e	resolved-range	ok
-AS_MKINT	src/core/asm_port_parser.cpp	401	AS_ISLETC (inclusive) .. AS_NAME_NOT_FOUND (exclusive)	AS_ISLETC	AS_NAME_NOT_FOUND	asrom	AS_ISLETC	0xe07d	AS_NAME_NOT_FOUND	0xe087	resolved-range	ok
-AS_NAMOK	src/core/asm_port_parser.cpp	412	AS_MKINT (inclusive) .. AS_AYINT (exclusive)	AS_MKINT	AS_AYINT	asrom	AS_MKINT	0xe108	AS_AYINT	0xe10c	resolved-range	ok
-AS_NAMOK	src/core/asm_port_parser.cpp	426	AS_NAMOK (inclusive) .. AS_BASIC (exclusive)	AS_NAMOK	AS_BASIC	asrom	AS_NAMOK	0xdff7	AS_BASIC	0xe000	resolved-range	ok
+AS_SYNCHR	src/core/asm_port_parser.cpp	30	AS_SYNCHR (inclusive) .. AS_SYNERR (exclusive)	AS_SYNCHR	AS_SYNERR	asrom	AS_SYNCHR	0xdec0	AS_SYNERR	0xdec9	resolved-range	ok
+AS_CHKNUM	src/core/asm_port_parser.cpp	50	AS_CHKNUM (inclusive) .. AS_CHKSTR (exclusive)	AS_CHKNUM	AS_CHKSTR	asrom	AS_CHKNUM	0xdd6a	AS_CHKSTR	0xdd6c	resolved-range	ok
+AS_CHKSTR	src/core/asm_port_parser.cpp	61	AS_CHKSTR (inclusive) .. AS_CHKVAL (exclusive)	AS_CHKSTR	AS_CHKVAL	asrom	AS_CHKSTR	0xdd6c	AS_CHKVAL	0xdd6d	resolved-range	ok
+AS_CHKCOM	src/core/asm_port_parser.cpp	72	AS_CHKCOM (inclusive) .. AS_SYNCHR (exclusive)	AS_CHKCOM	AS_SYNCHR	asrom	AS_CHKCOM	0xdebe	AS_SYNCHR	0xdec0	resolved-range	ok
+AS_FRMNUM	src/core/asm_port_parser.cpp	80	AS_FRMNUM (inclusive) .. AS_CHKNUM (exclusive)	AS_FRMNUM	AS_CHKNUM	asrom	AS_FRMNUM	0xdd67	AS_CHKNUM	0xdd6a	resolved-range	ok
+AS_PARCHK	src/core/asm_port_parser.cpp	91	AS_PARCHK (inclusive) .. AS_CHKCLS (exclusive)	AS_PARCHK	AS_CHKCLS	asrom	AS_PARCHK	0xdeb2	AS_CHKCLS	0xdeb8	resolved-range	ok
+AS_STORE_FACDB_YX_ROUNDED	src/core/asm_port_parser.cpp	106	AS_STORE_FACDB_YX_ROUNDED (inclusive) .. AS_COPY_ARG_TO_FAC	AS_STORE_FACDB_YX_ROUNDED	AS_COPY_ARG_TO_FAC	asrom	AS_STORE_FACDB_YX_ROUNDED	0xeb2b	AS_COPY_ARG_TO_FAC	0xeb53	resolved-range	ok
+AS_CHKCLS	src/core/asm_port_parser.cpp	133	AS_CHKCLS (inclusive) .. AS_CHKOPN (exclusive)	AS_CHKCLS	AS_CHKOPN	asrom	AS_CHKCLS	0xdeb8	AS_CHKOPN	0xdebb	resolved-range	ok
+AS_CHKOPN	src/core/asm_port_parser.cpp	142	AS_CHKOPN (inclusive) .. AS_CHKCOM (exclusive)	AS_CHKOPN	AS_CHKCOM	asrom	AS_CHKOPN	0xdebb	AS_CHKCOM	0xdebe	resolved-range	ok
+AS_LINGET	src/core/asm_port_parser.cpp	151	AS_LINGET (inclusive) .. AS_LET (exclusive)	AS_LINGET	AS_LET	asrom	AS_LINGET	0xda0c	AS_LET	0xda46	resolved-range	ok
+AS_GTBYTC	src/core/asm_port_parser.cpp	186	AS_GTBYTC (inclusive) .. AS_GETBYT (exclusive)	AS_GTBYTC	AS_GETBYT	asrom	AS_GTBYTC	0xe6f5	AS_GETBYT	0xe6f8	resolved-range	ok
+AS_GETBYT	src/core/asm_port_parser.cpp	200	AS_GETBYT (inclusive) .. AS_CONINT (exclusive)	AS_GETBYT	AS_CONINT	asrom	AS_GETBYT	0xe6f8	AS_CONINT	0xe6fb	resolved-range	ok
+AS_CONINT	src/core/asm_port_parser.cpp	215	AS_CONINT (inclusive) .. AS_VAL (exclusive)	AS_CONINT	AS_VAL	asrom	AS_CONINT	0xe6fb	AS_VAL	0xe707	resolved-range	ok
+AS_GTNUM	src/core/asm_port_parser.cpp	237	AS_GTNUM (inclusive) .. AS_COMBYTE (exclusive)	AS_GTNUM	AS_COMBYTE	asrom	AS_GTNUM	0xe746	AS_COMBYTE	0xe74c	resolved-range	ok
+AS_COMBYTE	src/core/asm_port_parser.cpp	247	AS_COMBYTE (inclusive) .. AS_GETADR (exclusive)	AS_COMBYTE	AS_GETADR	asrom	AS_COMBYTE	0xe74c	AS_GETADR	0xe752	resolved-range	ok
+AS_QINT	src/core/asm_port_parser.cpp	256	AS_QINT (inclusive) .. AS_INT (exclusive)	AS_QINT	AS_INT	asrom	AS_QINT	0xebf2	AS_INT	0xec23	resolved-range	ok
+AS_GETADR	src/core/asm_port_parser.cpp	306	AS_GETADR (inclusive) .. AS_PEEK (exclusive)	AS_GETADR	AS_PEEK	asrom	AS_GETADR	0xe752	AS_PEEK	0xe764	resolved-range	ok
+CurrentStatementChar	src/core/asm_port_parser.cpp	324	AS_EXECUTE_STATEMENT (inclusive) .. AS_EXECUTE_STATEMENT_1	AS_EXECUTE_STATEMENT	AS_EXECUTE_STATEMENT_1	asrom	AS_EXECUTE_STATEMENT	0xd828	AS_EXECUTE_STATEMENT_1	0xd82a	resolved-range	ok
+IsStatementEndOfParsedInput	src/core/asm_port_parser.cpp	334	AS_END2 (inclusive) .. AS_SAVE (exclusive)	AS_END2	AS_SAVE	asrom	AS_END2	0xd871	AS_SAVE	0xd8b0	resolved-range	ok
+AS_CHKVAL	src/core/asm_port_parser.cpp	344	AS_CHKVAL (inclusive) .. AS_FRMEVL (exclusive)	AS_CHKVAL	AS_FRMEVL	asrom	AS_CHKVAL	0xdd6d	AS_FRMEVL	0xdd7b	resolved-range	ok
+AS_NEG32768	src/core/asm_port_parser.cpp	360	AS_NEG32768 (inclusive) .. AS_MAKINT (exclusive)	AS_NEG32768	AS_MAKINT	asrom	AS_NEG32768	0xe0fe	AS_MAKINT	0xe102	resolved-range	ok
+AS_MAKINT	src/core/asm_port_parser.cpp	371	AS_MAKINT (inclusive) .. AS_MKINT (exclusive)	AS_MAKINT	AS_MKINT	asrom	AS_MAKINT	0xe102	AS_MKINT	0xe108	resolved-range	ok
+AS_MI1	src/core/asm_port_parser.cpp	381	AS_MI1 (inclusive) .. AS_MI2 (exclusive)	AS_MI1	AS_MI2	asrom	AS_MI1	0xe119	AS_MI2	0xe11b	resolved-range	ok
+AS_MI2	src/core/asm_port_parser.cpp	389	AS_MI2 (inclusive) .. AS_ARRAY (exclusive)	AS_MI2	AS_ARRAY	asrom	AS_MI2	0xe11b	AS_ARRAY	0xe11e	resolved-range	ok
+AS_ISLETC	src/core/asm_port_parser.cpp	397	AS_ISLETC (inclusive) .. AS_NAME_NOT_FOUND (exclusive)	AS_ISLETC	AS_NAME_NOT_FOUND	asrom	AS_ISLETC	0xe07d	AS_NAME_NOT_FOUND	0xe087	resolved-range	ok
+AS_MKINT	src/core/asm_port_parser.cpp	407	AS_MKINT (inclusive) .. AS_AYINT (exclusive)	AS_MKINT	AS_AYINT	asrom	AS_MKINT	0xe108	AS_AYINT	0xe10c	resolved-range	ok
+AS_NAMOK	src/core/asm_port_parser.cpp	420	AS_NAMOK (inclusive) .. AS_BASIC (exclusive)	AS_NAMOK	AS_BASIC	asrom	AS_NAMOK	0xdff7	AS_BASIC	0xe000	resolved-range	ok
 AS_INPRT	src/core/asm_port_print.cpp	223	AS_INPRT (inclusive) .. AS_GO_STROUT (exclusive)	AS_INPRT	AS_GO_STROUT	asrom	AS_INPRT	0xed19	AS_GO_STROUT	0xed31	resolved-range	ok
 AS_FOUT	src/core/asm_port_print.cpp	248	AS_FOUT (inclusive) .. AS_SQR (exclusive)	AS_FOUT	AS_SQR	asrom	AS_FOUT	0xed34	AS_SQR	0xee8d	resolved-range	ok
 AS_FOUT_1	src/core/asm_port_print.cpp	257	AS_FOUT_1 (inclusive) .. AS_FOUT_3 (exclusive)	AS_FOUT_1	AS_FOUT_3	asrom	AS_FOUT_1	0xed36	AS_FOUT_3	0xee17	resolved-range	ok
@@ -482,11 +484,6 @@ AS_ADD_EXPONENTS	src/core/asm_port_math.cpp	798									unclaimed	no-label-range
 facToDouble	src/core/asm_port_mathtbl.cpp	39									unclaimed	no-label-range-claim
 argToDouble	src/core/asm_port_mathtbl.cpp	55									unclaimed	no-label-range-claim
 doubleToFac	src/core/asm_port_mathtbl.cpp	71									unclaimed	no-label-range-claim
-AS_SYNCHR	src/core/asm_port_parser.cpp	28									unclaimed	no-label-range-claim
-AS_CHKOPN	src/core/asm_port_parser.cpp	140									unclaimed	no-label-range-claim
-AS_LINGET	src/core/asm_port_parser.cpp	145									unclaimed	no-label-range-claim
-AS_QINT	src/core/asm_port_parser.cpp	251									unclaimed	no-label-range-claim
-CurrentStatementChar	src/core/asm_port_parser.cpp	320									unclaimed	no-label-range-claim
 facToDouble	src/core/asm_port_print.cpp	25									unclaimed	no-label-range-claim
 foutImpl	src/core/asm_port_print.cpp	51									unclaimed	no-label-range-claim
 PrintDecimalUnsigned	src/core/asm_port_print.cpp	204									unclaimed	no-label-range-claim

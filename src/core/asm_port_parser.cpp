@@ -25,12 +25,11 @@ void AS_SYNCHR(std::uint8_t expected);
 void AS_CHKCLS();
 void AS_CHKOPN();
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SYNCHR (inclusive) .. AS_SYNERR (exclusive)
+// Name normalization: none (assembler label AS_SYNCHR kept verbatim).
 void AS_SYNCHR(std::uint8_t expected) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SYNCHR (inclusive) .. AS_CHKNUM (exclusive)
-  // Name normalization: none (assembler label AS_SYNCHR kept verbatim).
-  //
   // Require a specific statement token from the parsed input.
   // Read current character from AS_TXTPTR, compare with expected, advance if
   // match, error if not.
@@ -46,57 +45,50 @@ void AS_SYNCHR(std::uint8_t expected) {
   variables().AS_TXTPTR = static_cast<std::uint16_t>(txtPtr + 1u);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CHKNUM (inclusive) .. AS_CHKSTR (exclusive)
+// Name normalization: none (assembler label AS_CHKNUM kept verbatim).
 void AS_CHKNUM() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_CHKNUM (inclusive) .. AS_CHKSTR (exclusive)
-  // Name normalization: none (assembler label AS_CHKNUM kept verbatim).
-
   const bool facIsString = (variables_const().AS_VALTYP & 0x80u) != 0u;
   if (facIsString) {
     AS_ERROR(AS_ERR_BADTYPE);
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CHKSTR (inclusive) .. AS_CHKVAL (exclusive)
+// Name normalization: none (assembler label AS_CHKSTR kept verbatim).
 void AS_CHKSTR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_CHKSTR (inclusive) .. AS_CHKVAL (exclusive)
-  // Name normalization: none (assembler label AS_CHKSTR kept verbatim).
-
   const bool facIsString = (variables_const().AS_VALTYP & 0x80u) != 0u;
   if (!facIsString) {
     AS_ERROR(AS_ERR_BADTYPE);
   }
 }
 
-void AS_CHKCOM() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_CHKCOM (inclusive) .. AS_SYNCHR (exclusive)
-  // Name normalization: none (assembler label AS_CHKCOM kept verbatim).
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CHKCOM (inclusive) .. AS_SYNCHR (exclusive)
+// Name normalization: none (assembler label AS_CHKCOM kept verbatim).
+void AS_CHKCOM() { AS_SYNCHR(static_cast<std::uint8_t>(',')); }
 
-  AS_SYNCHR(static_cast<std::uint8_t>(','));
-}
-
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FRMNUM (inclusive) .. AS_CHKNUM (exclusive)
+// Name normalization: none (assembler label AS_FRMNUM kept verbatim).
 void AS_FRMNUM() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FRMNUM (inclusive) .. AS_FRMEVL (exclusive)
-  // Name normalization: none (assembler label AS_FRMNUM kept verbatim).
-  //
   // AS_FRMNUM does JSR AS_FRMEVL and falls through into AS_CHKNUM in ROM.
 
   AS_FRMEVL();
   AS_CHKNUM();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PARCHK (inclusive) .. AS_CHKCLS (exclusive)
+// Name normalization: none (assembler label AS_PARCHK kept verbatim).
 void AS_PARCHK() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PARCHK (inclusive) .. AS_CHKCLS (exclusive)
-  // Name normalization: none (assembler label AS_PARCHK kept verbatim).
-  //
   // Validates and evaluates a parenthesized expression at AS_TXTPTR:
   //   jsr AS_CHKOPN  — require '(' at current position
   //   jsr AS_FRMEVL  — evaluate the enclosed expression into AS_FAC
@@ -107,14 +99,16 @@ void AS_PARCHK() {
   AS_CHKCLS();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_STORE_FACDB_YX_ROUNDED (inclusive) .. AS_COPY_ARG_TO_FAC
+// (exclusive)
+// Name normalization: STORE_FACDB_YX_ROUNDED ->
+// AS_STORE_FACDB_YX_ROUNDED virtual Applesoft prefix only.
 void AS_STORE_FACDB_YX_ROUNDED() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_STORE_FACDB_YX_ROUNDED (inclusive) .. AS_COPY_ARG_TO_FAC
-  // (exclusive) Name normalization: STORE_FACDB_YX_ROUNDED ->
-  // AS_STORE_FACDB_YX_ROUNDED virtual Applesoft prefix only. Pointer candidate
-  // lifted: the ROM passes the destination in Y:X; the current C++ path
-  // materializes that destination in AS_VARPNT before calling this helper.
+  // Pointer candidate lifted: the ROM passes the destination in Y:X; the
+  // current C++ path materializes that destination in AS_VARPNT before calling
+  // this helper.
   AS_ROUND_FAC();
 
   const std::uint16_t destinationAddress = variables_const().AS_VARPNT;
@@ -132,22 +126,29 @@ void AS_STORE_FACDB_YX_ROUNDED() {
   variables().AS_FAC_EXTENSION = 0u;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CHKCLS (inclusive) .. AS_CHKOPN (exclusive)
+// Name normalization: none (assembler label AS_CHKCLS kept verbatim).
 void AS_CHKCLS() {
   // Check for ')' at current position.
   AS_SYNCHR(static_cast<std::uint8_t>(')'));
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CHKOPN (inclusive) .. AS_CHKCOM (exclusive)
+// Name normalization: none (assembler label AS_CHKOPN kept verbatim).
 void AS_CHKOPN() {
   // Check for '(' at current position.
   AS_SYNCHR(static_cast<std::uint8_t>('('));
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_LINGET (inclusive) .. AS_LET (exclusive)
+// Name normalization: none (assembler label AS_LINGET kept verbatim).
 void AS_LINGET() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_LINGET (inclusive) .. AS_LET (exclusive)
-  // Name normalization: none (assembler label AS_LINGET kept verbatim).
-
   auto is_digit = [](std::uint8_t ch) {
     return ch >= static_cast<std::uint8_t>('0') &&
            ch <= static_cast<std::uint8_t>('9');
@@ -248,12 +249,11 @@ std::uint8_t AS_COMBYTE() {
   return AS_GETBYT();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_QINT (inclusive) .. AS_INT (exclusive)
+// Name normalization: none (assembler label AS_QINT kept verbatim).
 void AS_QINT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_QINT (inclusive) .. AS_INT (exclusive)
-  // Name normalization: none (assembler label AS_QINT kept verbatim).
-  //
   // AS_QINT converts the unpacked AS_FAC mantissa into a signed 32-bit integer
   // in AS_FAC+1..AS_FAC+4 by arithmetic right-shifting according to the
   // exponent. The five-byte AS_FAC is treated as one logical fixed-point value
@@ -317,32 +317,31 @@ void AS_GETADR() {
   ApplesoftVariables::setHighByte(variables().AS_LINNUM, hi);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_EXECUTE_STATEMENT (inclusive) .. AS_EXECUTE_STATEMENT_1
+// (exclusive)
+// Name normalization: CurrentStatementChar maps to AS_EXECUTE_STATEMENT.
 std::uint8_t CurrentStatementChar() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_EXECUTE_STATEMENT (inclusive) .. AS_EXECUTE_STATEMENT_1
-  // (exclusive) Name normalization: helper name chosen for the inline
-  // AS_EXECUTE_STATEMENT load. AS_EXECUTE_STATEMENT uses `ldy #0` then `lda
-  // (AS_TXTPTR),Y`.
+  // AS_EXECUTE_STATEMENT uses `ldy #0` then `lda (AS_TXTPTR),Y`.
   return ReadProgramByte(variables_const().AS_TXTPTR);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_END2 (inclusive) .. AS_SAVE (exclusive)
+// Name normalization: IsStatementEndOfParsedInput maps to AS_END2 guard.
 bool IsStatementEndOfParsedInput() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_END2 (inclusive) .. AS_SAVE (exclusive)
-  // Name normalization: helper name chosen for the inline `bne AS_RTS_4` guard.
   // AS_STOP/END/AS_CONT continue only when parser is at end-of-statement; model
   // the zero-flag check via the current parsed character at AS_TXTPTR.
   return AS_CHRGOT() == 0u;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CHKVAL (inclusive) .. AS_FRMEVL (exclusive)
+// Name normalization: none (assembler label AS_CHKVAL kept verbatim).
 bool AS_CHKVAL(std::uint8_t savedValTyp) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_CHKVAL (inclusive) .. AS_FRMEVL (exclusive)
-  // Name normalization: none (assembler label AS_CHKVAL kept verbatim).
-
   const bool facIsString = (variables_const().AS_VALTYP & 0x80u) != 0u;
   const bool expectedString = (savedValTyp & 0x80u) != 0u;
 
@@ -354,64 +353,54 @@ bool AS_CHKVAL(std::uint8_t savedValTyp) {
   return facIsString;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NEG32768 (inclusive) .. AS_MAKINT (exclusive)
+// Name normalization: none (assembler label AS_NEG32768 kept verbatim).
 void AS_NEG32768() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_NEG32768 (inclusive) .. AS_MAKINT (exclusive)
-  // Name normalization: none (assembler label AS_NEG32768 kept verbatim).
-
   variables().AS_RESULT[0] = kAS_NEG32768Data[0];
   variables().AS_RESULT[1] = kAS_NEG32768Data[1];
   variables().AS_RESULT[2] = kAS_NEG32768Data[2];
   variables().AS_RESULT[3] = kAS_NEG32768Data[3];
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_MAKINT (inclusive) .. AS_MKINT (exclusive)
+// Name normalization: none (assembler label AS_MAKINT kept verbatim).
 void AS_MAKINT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_MAKINT (inclusive) .. AS_MKINT (exclusive)
-  // Name normalization: none (assembler label AS_MAKINT kept verbatim).
-
   AS_CHRGET();
   AS_FRMNUM();
   AS_MKINT();
 }
 
-void AS_MI1() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_MI1 (inclusive) .. AS_MI2 (exclusive)
-  // Name normalization: none (assembler label AS_MI1 kept verbatim).
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_MI1 (inclusive) .. AS_MI2 (exclusive)
+// Name normalization: none (assembler label AS_MI1 kept verbatim).
+void AS_MI1() { AS_IQERR(); }
 
-  AS_IQERR();
-}
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_MI2 (inclusive) .. AS_ARRAY (exclusive)
+// Name normalization: none (assembler label AS_MI2 kept verbatim).
+void AS_MI2() { AS_QINT(); }
 
-void AS_MI2() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_MI2 (inclusive) .. AS_ARRAY (exclusive)
-  // Name normalization: none (assembler label AS_MI2 kept verbatim).
-
-  AS_QINT();
-}
-
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_ISLETC (inclusive) .. AS_NAME_NOT_FOUND (exclusive)
+// Name normalization: none (assembler label AS_ISLETC kept verbatim).
 bool AS_ISLETC() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_ISLETC (inclusive) .. AS_NAME_NOT_FOUND (exclusive)
-  // Name normalization: none (assembler label AS_ISLETC kept verbatim).
-
   const std::uint8_t ch = AS_CHRGOT();
   return ch >= static_cast<std::uint8_t>('A') &&
          ch <= static_cast<std::uint8_t>('Z');
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_MKINT (inclusive) .. AS_AYINT (exclusive)
+// Name normalization: none (assembler label AS_MKINT kept verbatim).
 void AS_MKINT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_MKINT (inclusive) .. AS_AYINT (exclusive)
-  // Name normalization: none (assembler label AS_MKINT kept verbatim).
-
   if ((variables_const().AS_FAC_SIGN & 0x80u) != 0u) {
     AS_MI1();
     return;
@@ -420,12 +409,11 @@ void AS_MKINT() {
   AS_AYINT();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NAMOK (inclusive) .. AS_BASIC (exclusive)
+// Name normalization: none (assembler label AS_NAMOK kept verbatim).
 void AS_NAMOK() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_NAMOK (inclusive) .. AS_BASIC (exclusive)
-  // Name normalization: none (assembler label AS_NAMOK kept verbatim).
-
   variables().AS_VALTYP = 0u;        // AS_VALTYP
   variables().AS_VALTYP_PLUS_1 = 0u; // AS_VALTYP+1
   AS_PTRGET4();
