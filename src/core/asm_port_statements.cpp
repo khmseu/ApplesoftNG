@@ -884,11 +884,19 @@ void AS_L_RECALL_1() {
   MON_READ();
 }
 
-// TODO(asm-port): Implement label AS_GETARYPT from
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GETARYPT (inclusive) .. AS_HTAB (exclusive)
+// Name normalization: none (assembler label AS_GETARYPT kept verbatim).
+// TODO(asm-port): Implement label AS_GETARYPT behavior from
 // SourceMaterial/Combo/asrom.lst.
 void AS_GETARYPT() {}
 
-// TODO(asm-port): Implement label AS_TAPEPNT from
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_TAPEPNT (inclusive) .. AS_GETARYPT (exclusive)
+// Name normalization: none (assembler label AS_TAPEPNT kept verbatim).
+// TODO(asm-port): Implement label AS_TAPEPNT behavior from
 // SourceMaterial/Combo/asrom.lst.
 void AS_TAPEPNT() {}
 

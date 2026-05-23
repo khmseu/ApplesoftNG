@@ -1,5 +1,6 @@
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_error.hpp"
+#include "core/asm_port_error_messages.hpp"
 #include "core/io_ports.hpp"
 
 #include <cstdint>
@@ -19,6 +20,7 @@ void AS_SYNCHR(std::uint8_t expected);
 void AS_HCLR();
 void AS_BKGND();
 void AS_L_BKGND_1();
+void AS_SHLOAD();
 
 void AS_NORMAL() {
   // Source:
@@ -359,12 +361,11 @@ void AS_TEXT() {
   MON_SETTXT();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HTAB (inclusive) .. MON_PLOT (exclusive)
+// Name normalization: none (assembler label AS_HTAB kept verbatim).
 void AS_HTAB() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HTAB (inclusive) .. end of label range (exclusive)
-  // Name normalization: none (assembler label AS_HTAB kept verbatim).
-  //
   // jsr AS_GETBYT  — evaluate expression; result in X-reg (1-based column).
   // dex         — convert to 0-based.
   // AS_L_HTAB_1: if col >= 40, subtract 40 and emit CR (handles columns >
@@ -670,10 +671,10 @@ void AS_HGLIN(const HiResCoordinates &start, const HiResCoordinates &target) {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HPLOT (inclusive) .. AS_ROT (exclusive)
 void AS_HPLOT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HPLOT (inclusive) .. AS_HCOLOR (exclusive)
   // Plots a hi-res point or line for HPLOT forms, including repeated TO
   // clauses.
 
@@ -704,13 +705,11 @@ void AS_HPLOT() {
 
 namespace {
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_DRWPNT (inclusive) .. AS_DRAW (exclusive)
+// Name normalization: none (assembler label AS_DRWPNT kept verbatim).
 void AS_DRWPNT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: DRWPNT (inclusive) .. DRAW (exclusive)
-  // Name normalization: none (assembler label DRWPNT is prefixed with AS_ in
-  // C++).
-  //
   // Set up shape pointer for DRAW or XDRAW statement.
   // Looks up shape table to find requested shape data location.
   // If "AT" phrase present, gets XY coordinates and sets cursor position.
@@ -959,26 +958,36 @@ void AS_XDRAW1() { AS_DRAW1_Internal(true); }
 
 } // namespace
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_DRAW (inclusive) .. AS_XDRAW (exclusive)
+// Name normalization: DRAW -> AS_DRAW (applesoft virtual prefix).
 void AS_DRAW() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_DRAW0 (inclusive) .. AS_XDRAW0 (exclusive)
-  // Name normalization: DRAW -> AS_DRAW (applesoft virtual prefix).
   // DRAW statement: parse/prepare shape draw point, then dispatch to DRAW1.
 
   AS_DRWPNT();
   AS_DRAW1();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_XDRAW (inclusive) .. AS_SHLOAD (exclusive)
+// Name normalization: XDRAW -> AS_XDRAW (applesoft virtual prefix).
 void AS_XDRAW() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_XDRAW0 (inclusive) .. AS_HFNS (exclusive)
-  // Name normalization: XDRAW -> AS_XDRAW (applesoft virtual prefix).
   // XDRAW statement: parse/prepare shape draw point, then dispatch to XDRAW1.
 
   AS_DRWPNT();
   AS_XDRAW1();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SHLOAD (inclusive) .. AS_TAPEPNT (exclusive)
+// Name normalization: none (assembler label AS_SHLOAD kept verbatim).
+void AS_SHLOAD() {
+  // TODO(asm-port): Implement full cassette-backed SHLOAD behavior.
+  // Runtime currently has no complete cassette shape-table path.
+  AS_ERROR(AS_ERR_UNDEFSTAT);
 }
 
 void AS_COLOR() {
