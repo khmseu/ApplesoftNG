@@ -16,6 +16,9 @@ void AS_IQERR();
 void AS_GOERR();
 std::uint8_t AS_CHRGOT();
 void AS_SYNCHR(std::uint8_t expected);
+void AS_HCLR();
+void AS_BKGND();
+void AS_L_BKGND_1();
 
 void AS_NORMAL() {
   // Source:
@@ -417,12 +420,38 @@ void STHPG() {
   ioPorts().readByte(IOPorts::ADDR_AS_SW_HIRES);
   ioPorts().readByte(IOPorts::ADDR_AS_SW_TXTCLR);
 
+  AS_HCLR();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_HCLR (inclusive) .. AS_BKGND (exclusive)
+// Name normalization: none (assembler label AS_HCLR kept verbatim).
+void AS_HCLR() {
   // AS_HCLR lda #0 ; sta AS_HGR_BITS
   variables().AS_HGR_BITS = 0x00u;
 
+  AS_BKGND();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_BKGND (inclusive) .. AS_L_BKGND_1 (exclusive)
+// Name normalization: none (assembler label AS_BKGND kept verbatim).
+void AS_BKGND() {
   // AS_BKGND lda AS_HGR_PAGE ; sta AS_HGR_SHAPE+1 ; ldy #0 ; sta AS_HGR_SHAPE
   const std::uint8_t page = variables_const().AS_HGR_PAGE;
   variables().AS_HGR_SHAPE = ApplesoftVariables::makeWord(0x00u, page);
+
+  AS_L_BKGND_1();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_L_BKGND_1 (inclusive) .. AS_HPOSN (exclusive)
+// Name normalization: none (assembler label AS_L_BKGND_1 kept verbatim).
+void AS_L_BKGND_1() {
+  const std::uint8_t page = variables_const().AS_HGR_PAGE;
 
   // AS_L.AS_BKGND.1 lda AS_HGR_BITS ; sta (AS_HGR_SHAPE),Y ; jsr AS_COLOR.SHIFT
   // ; iny ; bne AS_L.AS_BKGND.1 ... Ported as a simple memory fill for now,
@@ -484,7 +513,7 @@ struct HiResCoordinates {
 void AS_HPOSN(const HiResCoordinates &point) {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: HPOSN (inclusive) .. HPLOT0 (exclusive)
+  // AS_Labels: AS_HPOSN (inclusive) .. AS_HPLOT0 (exclusive)
   // Computes hi-res cursor address and bit state for the given coordinate.
 
   static constexpr std::uint8_t kMaskTable[7] = {0x81u, 0x82u, 0x84u, 0x88u,
@@ -528,7 +557,7 @@ void AS_HPOSN(const HiResCoordinates &point) {
 HiResCoordinates AS_HFNS() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: HFNS (inclusive) .. GGERR (exclusive)
+  // AS_Labels: AS_HFNS (inclusive) .. AS_GGERR (exclusive)
   // Parses hi-res coordinates from TXTPTR and validates range X<280, Y<192.
 
   constexpr std::uint16_t kMaxXExclusive = 280u;
@@ -555,10 +584,16 @@ HiResCoordinates AS_HFNS() {
   return {x, y, true};
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GGERR (inclusive) .. AS_HCOLOR (exclusive)
+// Name normalization: none (assembler label AS_GGERR kept verbatim).
+void AS_GGERR() { AS_GOERR(); }
+
 void AS_HPLOT0(const HiResCoordinates &point) {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: HPLOT0 (inclusive) .. MOVE_LEFT_OR_RIGHT (exclusive)
+  // AS_Labels: AS_HPLOT0 (inclusive) .. AS_MOVE_LEFT_OR_RIGHT (exclusive)
   // Plots one hi-res pixel using current HGR bit pattern.
 
   AS_HPOSN(point);
@@ -580,7 +615,7 @@ void AS_HPLOT0(const HiResCoordinates &point) {
 void AS_HGLIN(const HiResCoordinates &start, const HiResCoordinates &target) {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: HGLIN (inclusive) .. COSINE_TABLE (exclusive)
+  // AS_Labels: AS_HGLIN (inclusive) .. AS_DRAW0 (exclusive)
   // Draws a line from current point to target point.
   // Mirrors key ROM line-state bookkeeping in
   // HGR_DX/HGR_DY/HGR_E/HGR_QUADRANT/HGR_COUNT.
@@ -852,6 +887,10 @@ void AS_LRUD1() {
   AS_LRUD4();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_MOVE_LEFT_OR_RIGHT (inclusive) .. AS_HGLIN (exclusive)
+// Name normalization: movement and LRUD sublabels map to this helper cluster.
 void AS_LRUDX1() {
   if (ApplesoftVariables::highByte(variables_const().AS_HGR_DX) & 0x04u) {
     AS_LRUD3_XORBIT();
@@ -923,7 +962,7 @@ void AS_XDRAW1() { AS_DRAW1_Internal(true); }
 void AS_DRAW() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_DRAW (inclusive) .. AS_XDRAW (exclusive)
+  // AS_Labels: AS_DRAW0 (inclusive) .. AS_XDRAW0 (exclusive)
   // Name normalization: DRAW -> AS_DRAW (applesoft virtual prefix).
   // DRAW statement: parse/prepare shape draw point, then dispatch to DRAW1.
 
@@ -934,7 +973,7 @@ void AS_DRAW() {
 void AS_XDRAW() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_XDRAW (inclusive) .. AS_SHLOAD (exclusive)
+  // AS_Labels: AS_XDRAW0 (inclusive) .. AS_HFNS (exclusive)
   // Name normalization: XDRAW -> AS_XDRAW (applesoft virtual prefix).
   // XDRAW statement: parse/prepare shape draw point, then dispatch to XDRAW1.
 
