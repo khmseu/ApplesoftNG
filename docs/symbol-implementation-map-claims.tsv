@@ -190,8 +190,8 @@ MON_KEYIN	src/core/asm_port_inlin2.cpp	42	MON_KEYIN (inclusive) .. MON_ESC (excl
 MON_RDKEY	src/core/asm_port_inlin2.cpp	75	MON_RDKEY (inclusive) .. MON_RDCHAR (exclusive)	MON_RDKEY	MON_RDCHAR	asrom	MON_RDKEY	0xfd0c	MON_RDCHAR	0xfd35	resolved-range	ok
 AS_INLIN2	src/core/asm_port_inlin2.cpp	106	AS_INLIN2 (inclusive) .. AS_INCHR (exclusive)	AS_INLIN2	AS_INCHR	asrom	AS_INLIN2	0xd52e	AS_INCHR	0xd553	resolved-range	ok
 AS_INCHR	src/core/asm_port_inlin2.cpp	136	AS_INCHR (inclusive) .. AS_PARSE_INPUT_LINE (exclusive)	AS_INCHR	AS_PARSE_INPUT_LINE	asrom	AS_INCHR	0xd553	AS_PARSE_INPUT_LINE	0xd559	resolved-range	ok
-parseStringInputAndStore	src/core/asm_port_input.cpp	48	L_INSTART_1 (inclusive) .. L_INSTART_5 (exclusive)	L_INSTART_1	L_INSTART_5						unresolved	no-module-match
-parseNumericInputAndStore	src/core/asm_port_input.cpp	93	L_INSTART_5 (inclusive) .. INPUT_MORE (exclusive)	L_INSTART_5	INPUT_MORE						unresolved	no-module-match
+parseStringInputAndStore	src/core/asm_port_input.cpp	48	AS_L_INSTART_1 (inclusive) .. AS_L_INSTART_5 (exclusive)	AS_L_INSTART_1	AS_L_INSTART_5	asrom	AS_L_INSTART_1	0xdc3f	AS_L_INSTART_5	0xdc63	resolved-range	ok
+parseNumericInputAndStore	src/core/asm_port_input.cpp	93	AS_L_INSTART_5 (inclusive) .. AS_INPUT_MORE (exclusive)	AS_L_INSTART_5	AS_INPUT_MORE	asrom	AS_L_INSTART_5	0xdc63	AS_INPUT_MORE	0xdc72	resolved-range	ok
 AS_FINDATA	src/core/asm_port_input.cpp	111	AS_FINDATA (inclusive) .. AS_INPDONE (exclusive)	AS_FINDATA	AS_INPDONE	asrom	AS_FINDATA	0xdca0	AS_INPDONE	0xdcc6	resolved-range	ok
 AS_INPUT	src/core/asm_port_input.cpp	180	AS_INPUT (inclusive) .. AS_NXIN (exclusive)	AS_INPUT	AS_NXIN	asrom	AS_INPUT	0xdbb2	AS_NXIN	0xdbdc	resolved-range	ok
 AS_READ	src/core/asm_port_input.cpp	212	AS_READ (inclusive) .. AS_INPUT_FLAG_ZERO (exclusive)	AS_READ	AS_INPUT_FLAG_ZERO	asrom	AS_READ	0xdbe2	AS_INPUT_FLAG_ZERO	0xdbe9	resolved-range	ok

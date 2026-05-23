@@ -45,7 +45,7 @@ std::uint8_t AS_CHRGET_INPUT() { return AS_CHRGET(); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: L_INSTART_1 (inclusive) .. L_INSTART_5 (exclusive)
+// AS_Labels: AS_L_INSTART_1 (inclusive) .. AS_L_INSTART_5 (exclusive)
 // Name normalization: L_INSTART_1..L_INSTART_4 local labels folded into
 // parseStringInputAndStore.
 void parseStringInputAndStore() {
@@ -90,7 +90,7 @@ void parseStringInputAndStore() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: L_INSTART_5 (inclusive) .. INPUT_MORE (exclusive)
+// AS_Labels: AS_L_INSTART_5 (inclusive) .. AS_INPUT_MORE (exclusive)
 // Name normalization: L_INSTART_5 local label folded into
 // parseNumericInputAndStore.
 void parseNumericInputAndStore() {
