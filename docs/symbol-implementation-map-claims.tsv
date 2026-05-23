@@ -225,17 +225,17 @@ AS_COPY_FAC_TO_ARG_ROUNDED	src/core/asm_port_math.cpp	514	AS_COPY_FAC_TO_ARG_ROU
 AS_ROUND_FAC	src/core/asm_port_math.cpp	530	AS_ROUND_FAC (inclusive) .. AS_RTS_14 (exclusive)	AS_ROUND_FAC	AS_RTS_14	asrom	AS_ROUND_FAC	0xeb72	AS_RTS_14	0xeb71	skipped-ambiguous-range	end-not-greater-than-start
 AS_INCREMENT_FAC_MANTISSA	src/core/asm_port_math.cpp	557	AS_INCREMENT_FAC_MANTISSA (inclusive) .. AS_RTS_12 (exclusive)	AS_INCREMENT_FAC_MANTISSA	AS_RTS_12	asrom	AS_INCREMENT_FAC_MANTISSA	0xe8c6	AS_RTS_12	0xe8d4	resolved-range	ok
 AS_RTS_12	src/core/asm_port_math.cpp	571	AS_RTS_12 (inclusive) .. AS_OVERFLOW (exclusive)	AS_RTS_12	AS_OVERFLOW	asrom	AS_RTS_12	0xe8d4	AS_OVERFLOW	0xe8d5	resolved-range	ok
-AS_OVERFLOW	src/core/asm_port_math.cpp	577	AS_OVERFLOW (inclusive) .. AS_SHIFT_RIGHT_1 (exclusive)	AS_OVERFLOW	AS_SHIFT_RIGHT_1	asrom	AS_OVERFLOW	0xe8d5	AS_SHIFT_RIGHT_1	0xe8da	resolved-range	ok
-AS_LOAD_ARG_FROM_YA	src/core/asm_port_math.cpp	809	AS_LOAD_ARG_FROM_YA (inclusive) .. AS_FMULT (exclusive)	AS_LOAD_ARG_FROM_YA	AS_FMULT	asrom	AS_LOAD_ARG_FROM_YA	0xe9e3	AS_FMULT	0xe97f	skipped-ambiguous-range	end-not-greater-than-start
-AS_COPY_ARG_TO_FAC	src/core/asm_port_math.cpp	824	AS_COPY_ARG_TO_FAC (inclusive) .. AS_MFA (exclusive)	AS_COPY_ARG_TO_FAC	AS_MFA	asrom	AS_COPY_ARG_TO_FAC	0xeb53	AS_MFA	0xeb55	resolved-range	ok
-AS_NORMALIZE_FAC_2	src/core/asm_port_math.cpp	841	AS_NORMALIZE_FAC_2 (inclusive) .. AS_ZERO_FAC (exclusive)	AS_NORMALIZE_FAC_2	AS_ZERO_FAC	asrom	AS_NORMALIZE_FAC_2	0xe82e	AS_ZERO_FAC	0xe84e	resolved-range	ok
-AS_NORMALIZE_FAC_4	src/core/asm_port_math.cpp	881	AS_NORMALIZE_FAC_4 (inclusive) .. AS_NORMALIZE_FAC_5 (exclusive)	AS_NORMALIZE_FAC_4	AS_NORMALIZE_FAC_5	asrom	AS_NORMALIZE_FAC_4	0xe880	AS_NORMALIZE_FAC_5	0xe88d	resolved-range	ok
-AS_NORMALIZE_FAC_3	src/core/asm_port_math.cpp	909	AS_NORMALIZE_FAC_3 (inclusive) .. AS_NORMALIZE_FAC_4 (exclusive)	AS_NORMALIZE_FAC_3	AS_NORMALIZE_FAC_4	asrom	AS_NORMALIZE_FAC_3	0xe874	AS_NORMALIZE_FAC_4	0xe880	resolved-range	ok
-AS_NORMALIZE_FAC_5	src/core/asm_port_math.cpp	932	AS_NORMALIZE_FAC_5 (inclusive) .. AS_NORMALIZE_FAC_6 (exclusive)	AS_NORMALIZE_FAC_5	AS_NORMALIZE_FAC_6	asrom	AS_NORMALIZE_FAC_5	0xe88d	AS_NORMALIZE_FAC_6	0xe88f	resolved-range	ok
-AS_NORMALIZE_FAC_6	src/core/asm_port_math.cpp	947	AS_NORMALIZE_FAC_6 (inclusive) .. AS_COMPLEMENT_FAC (exclusive)	AS_NORMALIZE_FAC_6	AS_COMPLEMENT_FAC	asrom	AS_NORMALIZE_FAC_6	0xe88f	AS_COMPLEMENT_FAC	0xe89e	resolved-range	ok
-AS_ZERO_FAC	src/core/asm_port_math.cpp	981	AS_ZERO_FAC (inclusive) .. AS_STA_IN_FAC_SIGN_AND_EXP (exclusive)	AS_ZERO_FAC	AS_STA_IN_FAC_SIGN_AND_EXP	asrom	AS_ZERO_FAC	0xe84e	AS_STA_IN_FAC_SIGN_AND_EXP	0xe850	resolved-range	ok
-AS_STA_IN_FAC_SIGN_AND_EXP	src/core/asm_port_math.cpp	990	AS_STA_IN_FAC_SIGN_AND_EXP (inclusive) .. AS_STA_IN_FAC_SIGN	AS_STA_IN_FAC_SIGN_AND_EXP	AS_STA_IN_FAC_SIGN	asrom	AS_STA_IN_FAC_SIGN_AND_EXP	0xe850	AS_STA_IN_FAC_SIGN	0xe852	resolved-range	ok
-AS_STA_IN_FAC_SIGN	src/core/asm_port_math.cpp	1000	AS_STA_IN_FAC_SIGN (inclusive) .. AS_FADD_4 (exclusive)	AS_STA_IN_FAC_SIGN	AS_FADD_4	asrom	AS_STA_IN_FAC_SIGN	0xe852	AS_FADD_4	0xe855	resolved-range	ok
+AS_OVERFLOW	src/core/asm_port_math.cpp	579	AS_OVERFLOW (inclusive) .. AS_SHIFT_RIGHT_1 (exclusive)	AS_OVERFLOW	AS_SHIFT_RIGHT_1	asrom	AS_OVERFLOW	0xe8d5	AS_SHIFT_RIGHT_1	0xe8da	resolved-range	ok
+AS_LOAD_ARG_FROM_YA	src/core/asm_port_math.cpp	811	AS_LOAD_ARG_FROM_YA (inclusive) .. AS_FMULT (exclusive)	AS_LOAD_ARG_FROM_YA	AS_FMULT	asrom	AS_LOAD_ARG_FROM_YA	0xe9e3	AS_FMULT	0xe97f	skipped-ambiguous-range	end-not-greater-than-start
+AS_COPY_ARG_TO_FAC	src/core/asm_port_math.cpp	826	AS_COPY_ARG_TO_FAC (inclusive) .. AS_MFA (exclusive)	AS_COPY_ARG_TO_FAC	AS_MFA	asrom	AS_COPY_ARG_TO_FAC	0xeb53	AS_MFA	0xeb55	resolved-range	ok
+AS_NORMALIZE_FAC_2	src/core/asm_port_math.cpp	843	AS_NORMALIZE_FAC_2 (inclusive) .. AS_ZERO_FAC (exclusive)	AS_NORMALIZE_FAC_2	AS_ZERO_FAC	asrom	AS_NORMALIZE_FAC_2	0xe82e	AS_ZERO_FAC	0xe84e	resolved-range	ok
+AS_NORMALIZE_FAC_4	src/core/asm_port_math.cpp	883	AS_NORMALIZE_FAC_4 (inclusive) .. AS_NORMALIZE_FAC_5 (exclusive)	AS_NORMALIZE_FAC_4	AS_NORMALIZE_FAC_5	asrom	AS_NORMALIZE_FAC_4	0xe880	AS_NORMALIZE_FAC_5	0xe88d	resolved-range	ok
+AS_NORMALIZE_FAC_3	src/core/asm_port_math.cpp	911	AS_NORMALIZE_FAC_3 (inclusive) .. AS_NORMALIZE_FAC_4 (exclusive)	AS_NORMALIZE_FAC_3	AS_NORMALIZE_FAC_4	asrom	AS_NORMALIZE_FAC_3	0xe874	AS_NORMALIZE_FAC_4	0xe880	resolved-range	ok
+AS_NORMALIZE_FAC_5	src/core/asm_port_math.cpp	934	AS_NORMALIZE_FAC_5 (inclusive) .. AS_NORMALIZE_FAC_6 (exclusive)	AS_NORMALIZE_FAC_5	AS_NORMALIZE_FAC_6	asrom	AS_NORMALIZE_FAC_5	0xe88d	AS_NORMALIZE_FAC_6	0xe88f	resolved-range	ok
+AS_NORMALIZE_FAC_6	src/core/asm_port_math.cpp	949	AS_NORMALIZE_FAC_6 (inclusive) .. AS_COMPLEMENT_FAC (exclusive)	AS_NORMALIZE_FAC_6	AS_COMPLEMENT_FAC	asrom	AS_NORMALIZE_FAC_6	0xe88f	AS_COMPLEMENT_FAC	0xe89e	resolved-range	ok
+AS_ZERO_FAC	src/core/asm_port_math.cpp	983	AS_ZERO_FAC (inclusive) .. AS_STA_IN_FAC_SIGN_AND_EXP (exclusive)	AS_ZERO_FAC	AS_STA_IN_FAC_SIGN_AND_EXP	asrom	AS_ZERO_FAC	0xe84e	AS_STA_IN_FAC_SIGN_AND_EXP	0xe850	resolved-range	ok
+AS_STA_IN_FAC_SIGN_AND_EXP	src/core/asm_port_math.cpp	992	AS_STA_IN_FAC_SIGN_AND_EXP (inclusive) .. AS_STA_IN_FAC_SIGN	AS_STA_IN_FAC_SIGN_AND_EXP	AS_STA_IN_FAC_SIGN	asrom	AS_STA_IN_FAC_SIGN_AND_EXP	0xe850	AS_STA_IN_FAC_SIGN	0xe852	resolved-range	ok
+AS_STA_IN_FAC_SIGN	src/core/asm_port_math.cpp	1002	AS_STA_IN_FAC_SIGN (inclusive) .. AS_FADD_4 (exclusive)	AS_STA_IN_FAC_SIGN	AS_FADD_4	asrom	AS_STA_IN_FAC_SIGN	0xe852	AS_FADD_4	0xe855	resolved-range	ok
 facToDouble	src/core/asm_port_mathtbl.cpp	3	AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)	AS_MATHTBL	AS_TOKEN_NAME_TABLE	asrom	AS_MATHTBL	0xd0b2	AS_TOKEN_NAME_TABLE	0xd0d0	resolved-range	ok
 AS_FMULTT	src/core/asm_port_mathtbl.cpp	105	FMULTT (inclusive) .. LOAD_ARG_FROM_YA (exclusive)	FMULTT	LOAD_ARG_FROM_YA						unresolved	no-module-match
 AS_COPY_RESULT_INTO_FAC	src/core/asm_port_mathtbl.cpp	179	COPY_RESULT_INTO_FAC (inclusive, 0x1ae6)	COPY_RESULT_INTO_FAC							unresolved	no-module-match
@@ -476,12 +476,12 @@ AS_INLIN2	src/core/asm_port_inlin2.cpp	104									unclaimed	no-label-range-clai
 AS_CHRGET_INPUT	src/core/asm_port_input.cpp	44									unclaimed	no-label-range-claim
 AS_FLOAT	src/core/asm_port_math.cpp	200									unclaimed	no-label-range-claim
 AS_INCREMENT_MANTISSA	src/core/asm_port_math.cpp	543									unclaimed	no-label-range-claim
-AS_FLOAT	src/core/asm_port_math.cpp	584									unclaimed	no-label-range-claim
-AS_FLOAT_1	src/core/asm_port_math.cpp	593									unclaimed	no-label-range-claim
-AS_FLOAT_2	src/core/asm_port_math.cpp	603									unclaimed	no-label-range-claim
-AS_FIN	src/core/asm_port_math.cpp	617									unclaimed	no-label-range-claim
-AS_ADDACC_WITH_DIGIT	src/core/asm_port_math.cpp	783									unclaimed	no-label-range-claim
-AS_ADD_EXPONENTS	src/core/asm_port_math.cpp	795									unclaimed	no-label-range-claim
+AS_FLOAT	src/core/asm_port_math.cpp	586									unclaimed	no-label-range-claim
+AS_FLOAT_1	src/core/asm_port_math.cpp	595									unclaimed	no-label-range-claim
+AS_FLOAT_2	src/core/asm_port_math.cpp	605									unclaimed	no-label-range-claim
+AS_FIN	src/core/asm_port_math.cpp	619									unclaimed	no-label-range-claim
+AS_ADDACC_WITH_DIGIT	src/core/asm_port_math.cpp	785									unclaimed	no-label-range-claim
+AS_ADD_EXPONENTS	src/core/asm_port_math.cpp	797									unclaimed	no-label-range-claim
 argToDouble	src/core/asm_port_mathtbl.cpp	60									unclaimed	no-label-range-claim
 doubleToFac	src/core/asm_port_mathtbl.cpp	76									unclaimed	no-label-range-claim
 AS_SYNCHR	src/core/asm_port_parser.cpp	28									unclaimed	no-label-range-claim

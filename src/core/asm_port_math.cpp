@@ -142,12 +142,14 @@ void AS_L_L_1() {
 void AS_SHIFT_RIGHT_4() {
   // Model the short-shift loop entered after AS_L/AS_L_L_1.
   // Carry into the first ROR is the current low bit from byte1.
-  bool carry =
-      (variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 1u)) & 0x01u) != 0u;
+  bool carry = (variables_const().readByte(
+                    static_cast<std::uint16_t>(g_shiftBase + 1u)) &
+                0x01u) != 0u;
 
   auto ror_with_carry = [&carry](std::uint8_t value) -> std::uint8_t {
     const bool newCarry = (value & 0x01u) != 0u;
-    const std::uint8_t result = static_cast<std::uint8_t>((value >> 1u) | (carry ? 0x80u : 0x00u));
+    const std::uint8_t result =
+        static_cast<std::uint8_t>((value >> 1u) | (carry ? 0x80u : 0x00u));
     carry = newCarry;
     return result;
   };
@@ -570,7 +572,7 @@ void AS_INCREMENT_FAC_MANTISSA() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_RTS_12 (inclusive) .. AS_OVERFLOW (exclusive)
 // Name normalization: none (assembler label AS_RTS_12 kept verbatim).
-void AS_RTS_12() {}
+void AS_RTS_12() { [[maybe_unused]] const bool returned = true; }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst

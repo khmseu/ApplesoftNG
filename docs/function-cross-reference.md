@@ -16,9 +16,9 @@
 | ApplyFacSign                        | real   | 5    | 1       | src/core/asm_port_control_flow.cpp        | 113  |
 | argToDouble                         | real   | 13   | 1       | src/core/asm_port_mathtbl.cpp             | 60   |
 | AS_ABS                              | real   | 2    | 2       | src/core/asm_port_unfnc.cpp               | 265  |
-| AS_ADDACC_WITH_DIGIT                | real   | 5    | 2       | src/core/asm_port_math.cpp                | 783  |
+| AS_ADDACC_WITH_DIGIT                | real   | 5    | 2       | src/core/asm_port_math.cpp                | 785  |
 | AS_ADDON                            | real   | 2    | 9       | src/core/asm_port_statements.cpp          | 291  |
-| AS_ADD_EXPONENTS                    | real   | 7    | 2       | src/core/asm_port_math.cpp                | 795  |
+| AS_ADD_EXPONENTS                    | real   | 7    | 2       | src/core/asm_port_math.cpp                | 797  |
 | AS_AMPERSAND                        | real   | 1    | 0       | src/core/asm_port_token_address_table.cpp | 138  |
 | AS_AMPERSAND_VECTOR                 | real   | 2    | 0       | src/core/asm_port_token_address_table.cpp | 132  |
 | AS_ANDOP                            | real   | 5    | 6       | src/core/asm_port_core.cpp                | 1016 |
@@ -68,7 +68,7 @@
 | AS_CONINT                           | real   | 7    | 8       | src/core/asm_port_parser.cpp              | 221  |
 | AS_CONT                             | real   | 9    | 3       | src/core/asm_port_control_flow.cpp        | 491  |
 | AS_CONTROL_C_TYPED                  | real   | 7    | 6       | src/core/asm_port_control_flow.cpp        | 470  |
-| AS_COPY_ARG_TO_FAC                  | real   | 6    | 4       | src/core/asm_port_math.cpp                | 826  |
+| AS_COPY_ARG_TO_FAC                  | real   | 6    | 4       | src/core/asm_port_math.cpp                | 828  |
 | AS_COPY_FAC_TO_ARG_ROUNDED          | real   | 6    | 5       | src/core/asm_port_math.cpp                | 516  |
 | AS_COPY_RESULT_INTO_FAC             | real   | 7    | 4       | src/core/asm_port_mathtbl.cpp             | 185  |
 | AS_COS                              | real   | 1    | 2       | src/core/asm_port_unfnc.cpp               | 393  |
@@ -112,7 +112,7 @@
 | AS_FCOMP                            | real   | 3    | 5       | src/core/asm_port_core.cpp                | 2114 |
 | AS_FCOMP2                           | real   | 46   | 5       | src/core/asm_port_control_flow.cpp        | 195  |
 | AS_FDIVT                            | real   | 83   | 2       | src/core/asm_port_mathtbl.cpp             | 203  |
-| AS_FIN                              | real   | 116  | 7       | src/core/asm_port_math.cpp                | 617  |
+| AS_FIN                              | real   | 116  | 7       | src/core/asm_port_math.cpp                | 619  |
 | AS_FINDATA                          | real   | 37   | 2       | src/core/asm_port_input.cpp               | 118  |
 | AS_FIND_ARRAY_ELEMENT               | real   | 5    | 5       | src/core/asm_port_core.cpp                | 914  |
 | AS_FIND_HIGHEST_STRING              | real   | 37   | 5       | src/core/asm_port_strlt2.cpp              | 390  |
@@ -122,9 +122,9 @@
 | AS_FLASH                            | real   | 2    | 4       | src/core/asm_port_graphics.cpp            | 53   |
 | AS_FLASH_Handler                    | real   | 1    | 0       | src/core/asm_port_token_address_table.cpp | 122  |
 | AS_FLOAT                            | real   | 1    | 6       | src/core/asm_port_math.cpp                | 200  |
-| AS_FLOAT                            | real   | 3    | 6       | src/core/asm_port_math.cpp                | 584  |
-| AS_FLOAT_1                          | real   | 3    | 4       | src/core/asm_port_math.cpp                | 593  |
-| AS_FLOAT_2                          | real   | 4    | 2       | src/core/asm_port_math.cpp                | 603  |
+| AS_FLOAT                            | real   | 3    | 6       | src/core/asm_port_math.cpp                | 586  |
+| AS_FLOAT_1                          | real   | 3    | 4       | src/core/asm_port_math.cpp                | 595  |
+| AS_FLOAT_2                          | real   | 4    | 2       | src/core/asm_port_math.cpp                | 605  |
 | AS_FMULTT                           | real   | 42   | 1       | src/core/asm_port_mathtbl.cpp             | 113  |
 | AS_FNCDATA                          | real   | 8    | 2       | src/core/asm_port_core.cpp                | 1793 |
 | AS_FNC\_                            | real   | 11   | 4       | src/core/asm_port_core.cpp                | 1597 |
@@ -236,7 +236,7 @@
 | AS_LIST                             | real   | 55   | 3       | src/core/asm_port_statements.cpp          | 747  |
 | AS_LOAD                             | real   | 14   | 3       | src/core/asm_port_statements.cpp          | 937  |
 | AS_LOAD_ARG_FROM_YA                 | real   | 4    | 7       | src/core/asm_port_math.cpp                | 193  |
-| AS_LOAD_ARG_FROM_YA                 | real   | 2    | 7       | src/core/asm_port_math.cpp                | 811  |
+| AS_LOAD_ARG_FROM_YA                 | real   | 2    | 7       | src/core/asm_port_math.cpp                | 813  |
 | AS_LOAD_FAC_FROM_YA                 | real   | 9    | 3       | src/core/asm_port_control_flow.cpp        | 126  |
 | AS_LOG                              | real   | 6    | 3       | src/core/asm_port_unfnc.cpp               | 364  |
 | AS_LOMEM                            | real   | 26   | 4       | src/core/asm_port_graphics.cpp            | 1122 |
@@ -292,11 +292,11 @@
 | AS_NORMAL                           | real   | 2    | 6       | src/core/asm_port_graphics.cpp            | 29   |
 | AS_NORMALIZE_FAC_1                  | real   | 4    | 6       | src/core/asm_port_math.cpp                | 375  |
 | AS_NORMALIZE_FAC_1                  | real   | 40   | 6       | src/core/asm_port_unfnc.cpp               | 160  |
-| AS_NORMALIZE_FAC_2                  | real   | 19   | 6       | src/core/asm_port_math.cpp                | 850  |
-| AS_NORMALIZE_FAC_3                  | real   | 15   | 4       | src/core/asm_port_math.cpp                | 911  |
-| AS_NORMALIZE_FAC_4                  | real   | 9    | 4       | src/core/asm_port_math.cpp                | 889  |
-| AS_NORMALIZE_FAC_5                  | real   | 3    | 4       | src/core/asm_port_math.cpp                | 938  |
-| AS_NORMALIZE_FAC_6                  | real   | 21   | 5       | src/core/asm_port_math.cpp                | 952  |
+| AS_NORMALIZE_FAC_2                  | real   | 19   | 6       | src/core/asm_port_math.cpp                | 852  |
+| AS_NORMALIZE_FAC_3                  | real   | 15   | 4       | src/core/asm_port_math.cpp                | 913  |
+| AS_NORMALIZE_FAC_4                  | real   | 9    | 4       | src/core/asm_port_math.cpp                | 891  |
+| AS_NORMALIZE_FAC_5                  | real   | 3    | 4       | src/core/asm_port_math.cpp                | 940  |
+| AS_NORMALIZE_FAC_6                  | real   | 21   | 5       | src/core/asm_port_math.cpp                | 954  |
 | AS_NORMAL_Handler                   | real   | 1    | 0       | src/core/asm_port_token_address_table.cpp | 120  |
 | AS_NOTMATH                          | real   | 11   | 4       | src/core/asm_port_core.cpp                | 1959 |
 | AS_NOTRACE                          | real   | 2    | 0       | src/core/asm_port_token_address_table.cpp | 116  |
@@ -312,7 +312,7 @@
 | AS_OUTDO                            | real   | 7    | 17      | src/platform/asm_port_outdo.cpp           | 145  |
 | AS_OUTQUES                          | real   | 1    | 7       | src/platform/asm_port_outdo.cpp           | 165  |
 | AS_OUTSP                            | real   | 1    | 5       | src/platform/asm_port_outdo.cpp           | 159  |
-| AS_OVERFLOW                         | real   | 1    | 5       | src/core/asm_port_math.cpp                | 579  |
+| AS_OVERFLOW                         | real   | 1    | 5       | src/core/asm_port_math.cpp                | 581  |
 | AS_PARCHK                           | real   | 3    | 6       | src/core/asm_port_parser.cpp              | 94   |
 | AS_PARSE_INPUT_LINE                 | real   | 50   | 7       | src/core/asm_port_statements.cpp          | 509  |
 | AS_PDL                              | real   | 2    | 3       | src/core/asm_port_unfnc.cpp               | 212  |
@@ -370,7 +370,7 @@
 | AS_ROT_Handler                      | real   | 1    | 0       | src/core/asm_port_token_address_table.cpp | 102  |
 | AS_ROUND_FAC                        | real   | 5    | 13      | src/core/asm_port_math.cpp                | 532  |
 | AS_RTS_10                           | real   | 1    | 3       | src/core/asm_port_statements.cpp          | 192  |
-| AS_RTS_12                           | stub   | 0    | 3       | src/core/asm_port_math.cpp                | 573  |
+| AS_RTS_12                           | real   | 1    | 3       | src/core/asm_port_math.cpp                | 573  |
 | AS_RTS_5                            | real   | 1    | 4       | src/core/asm_port_control_flow.cpp        | 616  |
 | AS_RUN                              | real   | 11   | 3       | src/core/asm_port_statements.cpp          | 123  |
 | AS_SAVE                             | real   | 9    | 4       | src/core/asm_port_statements.cpp          | 919  |
@@ -401,8 +401,8 @@
 | AS_SPEED                            | real   | 2    | 5       | src/core/asm_port_graphics.cpp            | 1167 |
 | AS_SPEED_Handler                    | real   | 1    | 0       | src/core/asm_port_token_address_table.cpp | 131  |
 | AS_SQR                              | real   | 6    | 2       | src/core/asm_port_unfnc.cpp               | 314  |
-| AS_STA_IN_FAC_SIGN                  | real   | 1    | 3       | src/core/asm_port_math.cpp                | 1002 |
-| AS_STA_IN_FAC_SIGN_AND_EXP          | real   | 2    | 4       | src/core/asm_port_math.cpp                | 993  |
+| AS_STA_IN_FAC_SIGN                  | real   | 1    | 3       | src/core/asm_port_math.cpp                | 1004 |
+| AS_STA_IN_FAC_SIGN_AND_EXP          | real   | 2    | 4       | src/core/asm_port_math.cpp                | 995  |
 | AS_STEP                             | real   | 15   | 4       | src/core/asm_port_control_flow.cpp        | 818  |
 | AS_STKINI                           | real   | 4    | 6       | src/core/asm_port_clear.cpp               | 30   |
 | AS_STOP                             | real   | 1    | 3       | src/core/asm_port_control_flow.cpp        | 396  |
@@ -452,7 +452,7 @@
 | AS_XDRAW                            | real   | 2    | 5       | src/core/asm_port_graphics.cpp            | 1021 |
 | AS_XDRAW1                           | real   | 1    | 1       | src/core/asm_port_graphics.cpp            | 1002 |
 | AS_XDRAW_Handler                    | real   | 1    | 0       | src/core/asm_port_token_address_table.cpp | 99   |
-| AS_ZERO_FAC                         | real   | 1    | 5       | src/core/asm_port_math.cpp                | 986  |
+| AS_ZERO_FAC                         | real   | 1    | 5       | src/core/asm_port_math.cpp                | 988  |
 | ClearErrFlag                        | real   | 1    | 3       | src/core/asm_port_core.cpp                | 114  |
 | clear_AS_FNCNAM_hi                  | real   | 2    | 1       | src/core/asm_port_strlt2.cpp              | 93   |
 | CLREOL                              | real   | 7    | 3       | src/platform/asm_port_getln.cpp           | 58   |
