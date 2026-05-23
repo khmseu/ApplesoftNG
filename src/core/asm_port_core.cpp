@@ -2010,7 +2010,7 @@ std::uint8_t AS_FRM_PERFORM_1(const FrmevlStackFrame &lhsFrame,
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: SCRN (inclusive) .. end of SCRN routine (exclusive)
+// AS_Labels: MON_SCRN (inclusive) .. MON_INSDS1 (exclusive)
 // Name normalization: SCRN -> MON_SCRN (monitor label gets MON_ prefix).
 //
 // Monitor path:

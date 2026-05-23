@@ -53,7 +53,7 @@ void AS_FLASH() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: SETCOL (inclusive) .. SCRN (exclusive)
+// AS_Labels: MON_SETCOL (inclusive) .. MON_SCRN (exclusive)
 // Name normalization: SETCOL -> MON_SETCOL (monitor label gets MON_ prefix).
 void MON_SETCOL(std::uint8_t color) {
   // Monitor stores a 4-bit color and mirrors it into both nibbles (17*A mod
@@ -156,13 +156,12 @@ void MON_OUTPORT(std::uint8_t slot) {
             kCout1AS_Low);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_PLOT (inclusive) .. MON_HLINE (exclusive)
+// Name normalization: MON_ prefix kept verbatim for monitor label.
 void MON_PLOT(std::uint8_t y, std::uint8_t x) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PLOT (inclusive) .. AS_HLINE (exclusive)
-  // Name normalization: AS_PLOT -> MON_PLOT (monitor label gets MON_ prefix).
-  //
-  // Mirrors ROM AS_PLOT/AS_PLOT1 behavior: compute lo-res cell base from Y,
+  // Mirrors ROM MON_PLOT/MON_PLOT1 behavior: compute lo-res cell base from Y,
   // then replace only the selected nibble (even row: low, odd row: high).
 
   const std::uint8_t halfRow = static_cast<std::uint8_t>(y >> 1u);
@@ -191,12 +190,11 @@ void MON_PLOT(std::uint8_t y, std::uint8_t x) {
   variables().writeByte(screenAddress, merged);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_HLINE (inclusive) .. MON_VLINEZ (exclusive)
+// Name normalization: MON_ prefix kept verbatim for monitor label.
 void MON_HLINE(std::uint8_t y, std::uint8_t right, std::uint8_t left) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HLINE (inclusive) .. AS_VLINEZ (exclusive)
-  // Name normalization: AS_HLINE -> MON_HLINE (monitor label gets MON_ prefix).
-  //
   // Draws a horizontal run from X=left through X=right at row Y.
 
   std::uint8_t x = left;
@@ -209,12 +207,11 @@ void MON_HLINE(std::uint8_t y, std::uint8_t right, std::uint8_t left) {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_VLINEZ (inclusive) .. MON_CLRSCR (exclusive)
+// Name normalization: MON_ prefix kept verbatim for monitor labels.
 void MON_VLINE(std::uint8_t x, std::uint8_t top) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_VLINEZ (inclusive) .. RTS1 (exclusive)
-  // Name normalization: AS_VLINE -> MON_VLINE (monitor label gets MON_ prefix).
-  //
   // Bottom endpoint is MON_V2 ($2d), as established by Applesoft AS_LINCOOR.
 
   const std::uint8_t bottom = variables_const().MON_V2;
@@ -227,6 +224,55 @@ void MON_VLINE(std::uint8_t x, std::uint8_t top) {
     }
     y = static_cast<std::uint8_t>(y + 1u);
   }
+}
+
+namespace {
+void MON_ClearColumns(std::uint8_t bottomY) {
+  variables().MON_V2 = bottomY;
+  for (std::uint8_t x = 39u;; --x) {
+    MON_VLINE(x, 0u);
+    if (x == 0u) {
+      break;
+    }
+  }
+}
+} // namespace
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_CLRSCR (inclusive) .. MON_GBASCALC (exclusive)
+// Name normalization: MON_ prefix kept verbatim for monitor labels.
+void MON_CLRSCR() { MON_ClearColumns(47u); }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_GBASCALC (inclusive) .. MON_NXTCOL (exclusive)
+// Name normalization: MON_ prefix kept verbatim for monitor labels.
+std::uint16_t MON_GBASCALC(std::uint8_t y) {
+  const std::uint8_t halfRow = static_cast<std::uint8_t>(y >> 1u);
+  const bool oddRow = (y & 0x01u) != 0u;
+
+  const std::uint8_t gbash =
+      static_cast<std::uint8_t>(((halfRow >> 1u) & 0x03u) | 0x04u);
+  std::uint8_t gbasl = static_cast<std::uint8_t>(halfRow & 0x18u);
+  if (oddRow) {
+    gbasl = static_cast<std::uint8_t>(gbasl + 0x80u);
+  }
+  const std::uint8_t gbaslBase = gbasl;
+  gbasl = static_cast<std::uint8_t>((gbasl << 2u) | gbaslBase);
+  return ApplesoftVariables::makeWord(gbasl, gbash);
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_NXTCOL (inclusive) .. MON_SETCOL (exclusive)
+// Name normalization: MON_ prefix kept verbatim for monitor labels.
+void MON_NXTCOL() {
+  const std::uint8_t nibble =
+      static_cast<std::uint8_t>(variables_const().MON_COLOR & 0x0fu);
+  const std::uint8_t advanced =
+      static_cast<std::uint8_t>((nibble + 3u) & 0x0fu);
+  MON_SETCOL(advanced);
 }
 
 void MON_HOME() {
