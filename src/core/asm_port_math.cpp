@@ -152,6 +152,7 @@ void AS_SHIFT_RIGHT_5() {
   // Return path with carry clear; this label is followed by ROM constant tables
   // (AS_CON_ONE, AS_POLY_LOG, AS_CON_SQR_HALF, AS_CON_SQR_TWO,
   // AS_CON_NEG_HALF, AS_CON_LOG_TWO) before AS_LOG.
+  [[maybe_unused]] const bool carryCleared = true;
 }
 
 void AS_LOAD_ARG_FROM_YA() {
