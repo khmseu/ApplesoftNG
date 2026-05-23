@@ -888,9 +888,12 @@ void AS_L_RECALL_1() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GETARYPT (inclusive) .. AS_HTAB (exclusive)
 // Name normalization: none (assembler label AS_GETARYPT kept verbatim).
-// TODO(asm-port): Implement label AS_GETARYPT behavior from
-// SourceMaterial/Combo/asrom.lst.
-void AS_GETARYPT() {}
+void AS_GETARYPT() {
+  variables().AS_SUBFLG = 0x40u;
+  (void)AS_PTRGET();
+  variables().AS_SUBFLG = 0u;
+  AS_VARTIO();
+}
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
