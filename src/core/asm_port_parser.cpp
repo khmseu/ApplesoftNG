@@ -1,30 +1,14 @@
 #include "core/asm_port_parser.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_chrget.hpp"
+#include "core/asm_port_core.hpp"
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_handling.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_math.hpp"
 #include <cstdint>
 
 namespace applesoft::asm_port {
-
-std::uint8_t ReadProgramByte(std::uint16_t address);
-void AS_SYNERR();
-void AS_FRMEVL();
-void AS_FRMNUM();
-void AS_CONINT();
-void AS_MKINT();
-bool AS_ISLETC();
-void AS_AYINT();
-void AS_PTRGET4();
-std::uint8_t AS_COMBYTE();
-void AS_GETADR();
-void AS_IQERR();
-void AS_ROUND_FAC();
-
-void AS_SYNCHR(std::uint8_t expected);
-void AS_CHKCLS();
-void AS_CHKOPN();
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
