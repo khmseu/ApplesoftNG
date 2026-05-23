@@ -3,12 +3,6 @@
 #include <cstdint>
 
 namespace applesoft::asm_port {
-
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_CHKMEM (inclusive) .. AS_REASON (exclusive)
-// Name normalization: none (assembler label AS_CHKMEM kept verbatim).
-
 struct AS_CHKMEMState {
   // Input A register on entry. The ROM doubles this requirement and adds 54
   // bytes.

@@ -1,7 +1,7 @@
 function	file	line	claim_raw	claim_start_label	claim_end_label	mapped_module	mapped_start_label	mapped_start_value	mapped_end_label	mapped_end_value	status	note
 AS_BLTU	src/core/asm_port_bltu.cpp	23	AS_BLTU (inclusive) .. AS_BLTU2 (exclusive)	AS_BLTU	AS_BLTU2	asrom	AS_BLTU	0xd393	AS_BLTU2	0xd39a	resolved-range	ok
 AS_BLTU2	src/core/asm_port_bltu.cpp	42	AS_BLTU2 (inclusive) .. AS_CHKMEM (exclusive)	AS_BLTU2	AS_CHKMEM	asrom	AS_BLTU2	0xd39a	AS_CHKMEM	0xd3d6	resolved-range	ok
-AS_CHKMEM	src/core/asm_port_chkmem.cpp	9	AS_CHKMEM (inclusive) .. AS_REASON (exclusive)	AS_CHKMEM	AS_REASON	asrom	AS_CHKMEM	0xd3d6	AS_REASON	0xd3e3	resolved-range	ok
+AS_CHKMEM	src/core/asm_port_chkmem.cpp	8	AS_CHKMEM (inclusive) .. AS_REASON (exclusive)	AS_CHKMEM	AS_REASON	asrom	AS_CHKMEM	0xd3d6	AS_REASON	0xd3e3	resolved-range	ok
 AS_CHRGET_INTERNAL	src/core/asm_port_chrget.cpp	14	AS_GENERIC_CHRGET (inclusive) .. AS_GENERIC_END (exclusive)	AS_GENERIC_CHRGET	AS_GENERIC_END	asrom	AS_GENERIC_CHRGET	0xf10b	AS_GENERIC_END	0xf128	resolved-range	ok
 AS_CLEAR	src/core/asm_port_clear.cpp	9	AS_CLEAR (inclusive) .. AS_CLEARC (exclusive)	AS_CLEAR	AS_CLEARC	asrom	AS_CLEAR	0xd66a	AS_CLEARC	0xd66c	resolved-range	ok
 AS_CLEARC	src/core/asm_port_clear.cpp	17	AS_CLEARC (inclusive) .. AS_STKINI (exclusive)	AS_CLEARC	AS_STKINI	asrom	AS_CLEARC	0xd66c	AS_STKINI	0xd683	resolved-range	ok
