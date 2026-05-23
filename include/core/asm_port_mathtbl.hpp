@@ -5,11 +5,6 @@
 
 namespace applesoft::asm_port {
 
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)
-// Name normalization: AS_OR -> AS_OR_op (AS_OR is a C++ keyword).
-
 // Precedence codes (equates from the source, used by the math operator
 // evaluator).
 inline constexpr std::uint8_t AS_P_OR = 0x46; // "AS_OR"  - lowest precedence

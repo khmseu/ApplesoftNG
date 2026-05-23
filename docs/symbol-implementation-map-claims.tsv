@@ -242,15 +242,14 @@ AS_NORMALIZE_FAC_6	src/core/asm_port_math.cpp	950	AS_NORMALIZE_FAC_6 (inclusive)
 AS_ZERO_FAC	src/core/asm_port_math.cpp	984	AS_ZERO_FAC (inclusive) .. AS_STA_IN_FAC_SIGN_AND_EXP (exclusive)	AS_ZERO_FAC	AS_STA_IN_FAC_SIGN_AND_EXP	asrom	AS_ZERO_FAC	0xe84e	AS_STA_IN_FAC_SIGN_AND_EXP	0xe850	resolved-range	ok
 AS_STA_IN_FAC_SIGN_AND_EXP	src/core/asm_port_math.cpp	993	AS_STA_IN_FAC_SIGN_AND_EXP (inclusive) .. AS_STA_IN_FAC_SIGN	AS_STA_IN_FAC_SIGN_AND_EXP	AS_STA_IN_FAC_SIGN	asrom	AS_STA_IN_FAC_SIGN_AND_EXP	0xe850	AS_STA_IN_FAC_SIGN	0xe852	resolved-range	ok
 AS_STA_IN_FAC_SIGN	src/core/asm_port_math.cpp	1003	AS_STA_IN_FAC_SIGN (inclusive) .. AS_FADD_4 (exclusive)	AS_STA_IN_FAC_SIGN	AS_FADD_4	asrom	AS_STA_IN_FAC_SIGN	0xe852	AS_FADD_4	0xe855	resolved-range	ok
-facToDouble	src/core/asm_port_mathtbl.cpp	3	AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)	AS_MATHTBL	AS_TOKEN_NAME_TABLE	asrom	AS_MATHTBL	0xd0b2	AS_TOKEN_NAME_TABLE	0xd0d0	resolved-range	ok
-AS_FMULTT	src/core/asm_port_mathtbl.cpp	105	FMULTT (inclusive) .. LOAD_ARG_FROM_YA (exclusive)	FMULTT	LOAD_ARG_FROM_YA						unresolved	no-module-match
-AS_COPY_RESULT_INTO_FAC	src/core/asm_port_mathtbl.cpp	179	COPY_RESULT_INTO_FAC (inclusive, 0x1ae6)	COPY_RESULT_INTO_FAC							unresolved	no-module-match
-AS_FDIVT	src/core/asm_port_mathtbl.cpp	201	AS_FDIVT (inclusive) .. AS_COPY_RESULT_INTO_FAC (exclusive)	AS_FDIVT	AS_COPY_RESULT_INTO_FAC	asrom	AS_FDIVT	0xea69	AS_COPY_RESULT_INTO_FAC	0xeae6	resolved-range	ok
-AS_FPWRT	src/core/asm_port_mathtbl.cpp	303	FPWRT (inclusive) .. NEGOP (exclusive)	FPWRT	NEGOP						unresolved	no-module-match
-AS_OR_op	src/core/asm_port_mathtbl.cpp	354	AS_OR (inclusive) .. AS_ANDOP (exclusive)	AS_OR	AS_ANDOP	asrom	AS_OR	0xdf4f	AS_ANDOP	0xdf55	resolved-range	ok
-AS_NEGOP	src/core/asm_port_mathtbl.cpp	361	AS_NEGOP (inclusive) .. AS_CON_LOG_E (exclusive)	AS_NEGOP	AS_CON_LOG_E	asrom	AS_NEGOP	0xeed0	AS_CON_LOG_E	0xeedb	resolved-range	ok
-AS_EQUOP	src/core/asm_port_mathtbl.cpp	379	AS_EQUOP (inclusive) .. AS_FN_ (exclusive)	AS_EQUOP	AS_FN_	asrom	AS_EQUOP	0xde98	AS_FN_	0xdea4	resolved-range	ok
-AS_MATHTBL	src/core/asm_port_mathtbl.cpp	398	AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)	AS_MATHTBL	AS_TOKEN_NAME_TABLE	asrom	AS_MATHTBL	0xd0b2	AS_TOKEN_NAME_TABLE	0xd0d0	resolved-range	ok
+AS_FMULTT	src/core/asm_port_mathtbl.cpp	100	AS_FMULTT (inclusive) .. AS_LOAD_ARG_FROM_YA (exclusive)	AS_FMULTT	AS_LOAD_ARG_FROM_YA	asrom	AS_FMULTT	0xe982	AS_LOAD_ARG_FROM_YA	0xe9e3	resolved-range	ok
+AS_COPY_RESULT_INTO_FAC	src/core/asm_port_mathtbl.cpp	174	AS_COPY_RESULT_INTO_FAC (inclusive) .. AS_LOAD_FAC_FROM_YA	AS_COPY_RESULT_INTO_FAC	AS_LOAD_FAC_FROM_YA	asrom	AS_COPY_RESULT_INTO_FAC	0xeae6	AS_LOAD_FAC_FROM_YA	0xeaf9	resolved-range	ok
+AS_FDIVT	src/core/asm_port_mathtbl.cpp	192	AS_FDIVT (inclusive) .. AS_COPY_RESULT_INTO_FAC (exclusive)	AS_FDIVT	AS_COPY_RESULT_INTO_FAC	asrom	AS_FDIVT	0xea69	AS_COPY_RESULT_INTO_FAC	0xeae6	resolved-range	ok
+AS_FPWRT	src/core/asm_port_mathtbl.cpp	294	AS_FPWRT (inclusive) .. AS_NEGOP (exclusive)	AS_FPWRT	AS_NEGOP	asrom	AS_FPWRT	0xee97	AS_NEGOP	0xeed0	resolved-range	ok
+AS_OR_op	src/core/asm_port_mathtbl.cpp	345	AS_OR (inclusive) .. AS_ANDOP (exclusive)	AS_OR	AS_ANDOP	asrom	AS_OR	0xdf4f	AS_ANDOP	0xdf55	resolved-range	ok
+AS_NEGOP	src/core/asm_port_mathtbl.cpp	352	AS_NEGOP (inclusive) .. AS_CON_LOG_E (exclusive)	AS_NEGOP	AS_CON_LOG_E	asrom	AS_NEGOP	0xeed0	AS_CON_LOG_E	0xeedb	resolved-range	ok
+AS_EQUOP	src/core/asm_port_mathtbl.cpp	370	AS_EQUOP (inclusive) .. AS_FN_ (exclusive)	AS_EQUOP	AS_FN_	asrom	AS_EQUOP	0xde98	AS_FN_	0xdea4	resolved-range	ok
+AS_MATHTBL	src/core/asm_port_mathtbl.cpp	392	AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)	AS_MATHTBL	AS_TOKEN_NAME_TABLE	asrom	AS_MATHTBL	0xd0b2	AS_TOKEN_NAME_TABLE	0xd0d0	resolved-range	ok
 AS_NXIN	src/core/asm_port_nxin.cpp	10	AS_NXIN (inclusive) .. AS_READ (exclusive)	AS_NXIN	AS_READ	asrom	AS_NXIN	0xdbdc	AS_READ	0xdbe2	resolved-range	ok
 AS_CHKNUM	src/core/asm_port_parser.cpp	31	AS_SYNCHR (inclusive) .. AS_CHKNUM (exclusive)	AS_SYNCHR	AS_CHKNUM	asrom	AS_SYNCHR	0xdec0	AS_CHKNUM	0xdd6a	skipped-ambiguous-range	end-not-greater-than-start
 AS_CHKSTR	src/core/asm_port_parser.cpp	52	AS_CHKNUM (inclusive) .. AS_CHKSTR (exclusive)	AS_CHKNUM	AS_CHKSTR	asrom	AS_CHKNUM	0xdd6a	AS_CHKSTR	0xdd6c	resolved-range	ok
@@ -480,8 +479,9 @@ AS_FLOAT_1	src/core/asm_port_math.cpp	595									unclaimed	no-label-range-claim
 AS_FLOAT_2	src/core/asm_port_math.cpp	605									unclaimed	no-label-range-claim
 AS_ADDACC_WITH_DIGIT	src/core/asm_port_math.cpp	786									unclaimed	no-label-range-claim
 AS_ADD_EXPONENTS	src/core/asm_port_math.cpp	798									unclaimed	no-label-range-claim
-argToDouble	src/core/asm_port_mathtbl.cpp	60									unclaimed	no-label-range-claim
-doubleToFac	src/core/asm_port_mathtbl.cpp	76									unclaimed	no-label-range-claim
+facToDouble	src/core/asm_port_mathtbl.cpp	39									unclaimed	no-label-range-claim
+argToDouble	src/core/asm_port_mathtbl.cpp	55									unclaimed	no-label-range-claim
+doubleToFac	src/core/asm_port_mathtbl.cpp	71									unclaimed	no-label-range-claim
 AS_SYNCHR	src/core/asm_port_parser.cpp	28									unclaimed	no-label-range-claim
 AS_CHKOPN	src/core/asm_port_parser.cpp	140									unclaimed	no-label-range-claim
 AS_LINGET	src/core/asm_port_parser.cpp	145									unclaimed	no-label-range-claim

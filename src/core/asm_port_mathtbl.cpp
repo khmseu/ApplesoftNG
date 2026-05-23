@@ -1,8 +1,3 @@
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)
-// Name normalization: AS_OR -> AS_OR_op (AS_OR is a C++ keyword).
-//
 // AS_MATHTBL is a 10-entry table mixing a one-byte precedence code with a
 // two-byte RTS-dispatch handler address for each math operator token $C8-$D1.
 // Sub-labels AS_M_NEG (index 7), AS_MEQUU (index 8), AS_M_REL (index 9) mark
@@ -102,8 +97,8 @@ static void doubleToFac(double value) {
 } // namespace
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: FMULTT (inclusive) .. LOAD_ARG_FROM_YA (exclusive)
-// Name normalization: FMULTT -> AS_FMULTT (AS_ prefix convention).
+// AS_Labels: AS_FMULTT (inclusive) .. AS_LOAD_ARG_FROM_YA (exclusive)
+// Name normalization: none (assembler label AS_FMULTT kept verbatim).
 //
 // Multiplies FAC by ARG, storing the result in FAC.  Computes the biased
 // result exponent as FAC_exp + ARG_exp - 128, handles zero/overflow/underflow,
@@ -176,12 +171,8 @@ static void AS_FMULTT() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: COPY_RESULT_INTO_FAC (inclusive, 0x1ae6)
-//            .. LOAD_FAC_FROM_YA (exclusive, 0x1af9)
-// Intent:
-//   - Copy 4-byte RESULT register into FAC mantissa (bytes +1 through +4)
-//   - Call NORMALIZE_FAC_2 to process the loaded value
-//   - Simple byte-by-byte copy with call-through pattern
+// AS_Labels: AS_COPY_RESULT_INTO_FAC (inclusive) .. AS_LOAD_FAC_FROM_YA
+// (exclusive)
 static void AS_COPY_RESULT_INTO_FAC() {
   auto &vars = variables();
   const auto &result = vars.AS_RESULT;
@@ -300,8 +291,8 @@ static void AS_FDIVT() {
 }
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: FPWRT (inclusive) .. NEGOP (exclusive)
-// Name normalization: FPWRT -> AS_FPWRT (AS_ prefix convention).
+// AS_Labels: AS_FPWRT (inclusive) .. AS_NEGOP (exclusive)
+// Name normalization: none (assembler label AS_FPWRT kept verbatim).
 //
 // Computes AS_FAC = AS_ARG ^ AS_FAC (ARG raised to the FAC power).  Uses the
 // ROM identity: ARG ^ FAC = exp(FAC * log(ARG)), with special cases for zero
@@ -395,8 +386,10 @@ void AS_EQUOP() {
 // ---------------------------------------------------------------------------
 // Math operator table: precedence + handler for tokens $C8-$D1.
 // Index = token - $C8.
-// AS_Labels: AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)
 // ---------------------------------------------------------------------------
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)
 MathTblEntry AS_MATHTBL(std::size_t index) {
   static constexpr MathTblEntry table[] = {
       {AS_P_ADD, AS_FADDT},  // [0] M_ADD  $C8...200...+
