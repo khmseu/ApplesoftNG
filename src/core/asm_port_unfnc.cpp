@@ -9,8 +9,11 @@
 
 #include "core/asm_port_unfnc.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_core.hpp"
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_math.hpp"
+#include "core/asm_port_parser.hpp"
 #include "core/asm_port_strlit.hpp"
 #include "core/asm_port_strlt2.hpp"
 #include "core/jump_table.hpp"
@@ -19,16 +22,6 @@
 
 namespace applesoft::asm_port {
 
-std::uint8_t MON_PREAD();
-void AS_CONINT();
-void AS_SNGFLT(std::uint8_t value);
-void AS_GIVAYF(std::int16_t value);
-void AS_FIN();
-std::uint8_t AS_GETSTR();
-void AS_FRE();
-void AS_PEEK();
-void AS_QINT();
-void AS_ERROR(std::uint8_t error_code_offset);
 static void AS_L_VAL_1();
 static void AS_L_VAL_2();
 
