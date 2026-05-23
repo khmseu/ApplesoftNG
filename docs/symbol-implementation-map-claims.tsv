@@ -291,7 +291,7 @@ AS_CRDO	src/core/asm_port_print.cpp	461	AS_CRDO (inclusive) .. AS_NEGATE (exclus
 AS_NEGATE	src/core/asm_port_print.cpp	478	AS_NEGATE (inclusive) .. AS_PR_COMMA (exclusive)	AS_NEGATE	AS_PR_COMMA	asrom	AS_NEGATE	0xdb00	AS_PR_COMMA	0xdb03	resolved-range	ok
 AS_PR_COMMA	src/core/asm_port_print.cpp	494	AS_PR_COMMA (inclusive) .. AS_PR_TAB_OR_SPC (exclusive)	AS_PR_COMMA	AS_PR_TAB_OR_SPC	asrom	AS_PR_COMMA	0xdb03	AS_PR_TAB_OR_SPC	0xdb16	resolved-range	ok
 AS_PR_TAB_OR_SPC	src/core/asm_port_print.cpp	524	AS_PR_TAB_OR_SPC (inclusive) .. AS_STROUT (exclusive)	AS_PR_TAB_OR_SPC	AS_STROUT	asrom	AS_PR_TAB_OR_SPC	0xdb16	AS_STROUT	0xdb3a	resolved-range	ok
-AS_QT_ERROR	src/core/asm_port_qt_error.cpp	3	AS_QT_ERROR (inclusive) .. AS_GTFORPNT (exclusive)	AS_QT_ERROR	AS_GTFORPNT	asrom	AS_QT_ERROR	0xd350	AS_GTFORPNT	0xd365	resolved-range	ok
+AS_QT_ERROR	src/core/asm_port_qt_error.cpp	14	AS_QT_ERROR (inclusive) .. AS_GTFORPNT (exclusive)	AS_QT_ERROR	AS_GTFORPNT	asrom	AS_QT_ERROR	0xd350	AS_GTFORPNT	0xd365	resolved-range	ok
 AS_REASON	src/core/asm_port_reason.cpp	25	AS_REASON (inclusive) .. AS_MEMERR (exclusive)	AS_REASON	AS_MEMERR	asrom	AS_REASON	0xd3e3	AS_MEMERR	0xd410	resolved-range	ok
 AS_NEW_impl	src/core/asm_port_statements.cpp	83	AS_NEW (inclusive) .. AS_SCRTCH (exclusive)	AS_NEW	AS_SCRTCH	asrom	AS_NEW	0xd649	AS_SCRTCH	0xd64b	resolved-range	ok
 AS_SCRTCH_impl	src/core/asm_port_statements.cpp	93	AS_SCRTCH (inclusive) .. AS_SETPTRS (exclusive)	AS_SCRTCH	AS_SETPTRS	asrom	AS_SCRTCH	0xd64b	AS_SETPTRS	0xd665	resolved-range	ok

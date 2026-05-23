@@ -1,8 +1,3 @@
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_QT_ERROR (inclusive) .. AS_GTFORPNT (exclusive)
-// Name normalization: none
-//
 // This ROM region stores three short, null-terminated status strings used by
 // the error-print path: " AS_ERROR"+bell, " IN ", and CR+"BREAK"+bell.
 // The original stream includes explicit terminator bytes; this conversion
@@ -14,6 +9,10 @@
 
 namespace applesoft::asm_port {
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_QT_ERROR (inclusive) .. AS_GTFORPNT (exclusive)
+// Name normalization: none (assembler label AS_QT_ERROR kept verbatim).
 std::string_view AS_QT_ERROR(std::size_t index) {
   static constexpr std::array<std::string_view, 3> table = {
       " AS_ERROR\a", // AS_QT_ERROR: leading space + AS_ERROR + bell ($07)
