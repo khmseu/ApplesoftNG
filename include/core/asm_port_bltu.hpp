@@ -8,11 +8,6 @@
 
 namespace applesoft::asm_port {
 
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_BLTU (inclusive) .. AS_BLTU2 (exclusive)
-// Name normalization: none (assembler label AS_BLTU kept verbatim).
-
 struct AS_BLTUState {
   // Inputs carried in A/Y on entry.
   std::uint8_t a = 0;

@@ -37,12 +37,11 @@ AS_BLTUResult AS_BLTU(AS_BLTUState &state) {
   return AS_BLTUResult{state.a, state.y};
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_BLTU2 (inclusive) .. AS_CHKMEM (exclusive)
+// Name normalization: none (assembler label AS_BLTU2 kept verbatim).
 AS_BLTU2Result AS_BLTU2(AS_BLTU2State &state) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_BLTU2 (inclusive) .. AS_CHKMEM (exclusive)
-  // Name normalization: none (assembler label AS_BLTU2 kept verbatim).
-
   if (state.y != 0) {
     state.setSourcePointer(
         static_cast<std::uint16_t>(state.sourcePointer() - state.y));

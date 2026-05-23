@@ -1,6 +1,6 @@
 function	file	line	claim_raw	claim_start_label	claim_end_label	mapped_module	mapped_start_label	mapped_start_value	mapped_end_label	mapped_end_value	status	note
 AS_BLTU	src/core/asm_port_bltu.cpp	23	AS_BLTU (inclusive) .. AS_BLTU2 (exclusive)	AS_BLTU	AS_BLTU2	asrom	AS_BLTU	0xd393	AS_BLTU2	0xd39a	resolved-range	ok
-AS_BLTU2	src/core/asm_port_bltu.cpp	43	AS_BLTU2 (inclusive) .. AS_CHKMEM (exclusive)	AS_BLTU2	AS_CHKMEM	asrom	AS_BLTU2	0xd39a	AS_CHKMEM	0xd3d6	resolved-range	ok
+AS_BLTU2	src/core/asm_port_bltu.cpp	42	AS_BLTU2 (inclusive) .. AS_CHKMEM (exclusive)	AS_BLTU2	AS_CHKMEM	asrom	AS_BLTU2	0xd39a	AS_CHKMEM	0xd3d6	resolved-range	ok
 AS_CHKMEM	src/core/asm_port_chkmem.cpp	9	AS_CHKMEM (inclusive) .. AS_REASON (exclusive)	AS_CHKMEM	AS_REASON	asrom	AS_CHKMEM	0xd3d6	AS_REASON	0xd3e3	resolved-range	ok
 AS_CHRGET_INTERNAL	src/core/asm_port_chrget.cpp	14	AS_GENERIC_CHRGET (inclusive) .. AS_GENERIC_END (exclusive)	AS_GENERIC_CHRGET	AS_GENERIC_END	asrom	AS_GENERIC_CHRGET	0xf10b	AS_GENERIC_END	0xf128	resolved-range	ok
 AS_CLEAR	src/core/asm_port_clear.cpp	9	AS_CLEAR (inclusive) .. AS_CLEARC (exclusive)	AS_CLEAR	AS_CLEARC	asrom	AS_CLEAR	0xd66a	AS_CLEARC	0xd66c	resolved-range	ok
@@ -178,10 +178,10 @@ AS_LOMEM	src/core/asm_port_graphics.cpp	1104	AS_LOMEM (inclusive) .. AS_ONERR (e
 AS_SPEED	src/core/asm_port_graphics.cpp	1149	AS_SPEED (inclusive) .. AS_TRACE (exclusive)	AS_SPEED	AS_TRACE	asrom	AS_SPEED	0xf262	AS_TRACE	0xf26d	resolved-range	ok
 AS_PLOTFNS	src/core/asm_port_graphics.cpp	1161	AS_PLOTFNS (inclusive) .. AS_GOERR (exclusive)	AS_PLOTFNS	AS_GOERR	asrom	AS_PLOTFNS	0xf1ec	AS_GOERR	0xf206	resolved-range	ok
 AS_GOERR	src/core/asm_port_graphics.cpp	1192	AS_GOERR (inclusive) .. AS_LINCOOR (exclusive)	AS_GOERR	AS_LINCOOR	asrom	AS_GOERR	0xf206	AS_LINCOOR	0xf209	resolved-range	ok
-AS_LINCOOR	src/core/asm_port_graphics.cpp	1201	AS_LINCOOR (inclusive) .. AS_PLOT (exclusive)	AS_LINCOOR	AS_PLOT	asrom	AS_LINCOOR	0xf209	AS_PLOT	0xf225	resolved-range	ok
-AS_PLOT	src/core/asm_port_graphics.cpp	1234	AS_PLOT (inclusive) .. AS_HLIN (exclusive)	AS_PLOT	AS_HLIN	asrom	AS_PLOT	0xf225	AS_HLIN	0xf232	resolved-range	ok
-AS_HLIN	src/core/asm_port_graphics.cpp	1253	AS_HLIN (inclusive) .. AS_VLIN (exclusive)	AS_HLIN	AS_VLIN	asrom	AS_HLIN	0xf232	AS_VLIN	0xf241	resolved-range	ok
-AS_VLIN	src/core/asm_port_graphics.cpp	1272	AS_VLIN (inclusive) .. AS_COLOR (exclusive)	AS_VLIN	AS_COLOR	asrom	AS_VLIN	0xf241	AS_COLOR	0xf24f	resolved-range	ok
+AS_LINCOOR	src/core/asm_port_graphics.cpp	1198	AS_LINCOOR (inclusive) .. AS_PLOT (exclusive)	AS_LINCOOR	AS_PLOT	asrom	AS_LINCOOR	0xf209	AS_PLOT	0xf225	resolved-range	ok
+AS_PLOT	src/core/asm_port_graphics.cpp	1231	AS_PLOT (inclusive) .. AS_HLIN (exclusive)	AS_PLOT	AS_HLIN	asrom	AS_PLOT	0xf225	AS_HLIN	0xf232	resolved-range	ok
+AS_HLIN	src/core/asm_port_graphics.cpp	1250	AS_HLIN (inclusive) .. AS_VLIN (exclusive)	AS_HLIN	AS_VLIN	asrom	AS_HLIN	0xf232	AS_VLIN	0xf241	resolved-range	ok
+AS_VLIN	src/core/asm_port_graphics.cpp	1269	AS_VLIN (inclusive) .. AS_COLOR (exclusive)	AS_VLIN	AS_COLOR	asrom	AS_VLIN	0xf241	AS_COLOR	0xf24f	resolved-range	ok
 AS_GTFORPNT	src/core/asm_port_gtforpnt.cpp	28	AS_GTFORPNT (inclusive) .. AS_BLTU (exclusive)	AS_GTFORPNT	AS_BLTU	asrom	AS_GTFORPNT	0xd365	AS_BLTU	0xd393	resolved-range	ok
 AS_INLIN	src/core/asm_port_inlin.cpp	9	AS_INLIN (inclusive) .. AS_INCHR (exclusive)	AS_INLIN	AS_INCHR	asrom	AS_INLIN	0xd52c	AS_INCHR	0xd553	resolved-range	ok
 MON_KEYIN	src/core/asm_port_inlin2.cpp	42	KEYIN (inclusive) .. ESC (exclusive)	KEYIN	ESC						unresolved	no-module-match
