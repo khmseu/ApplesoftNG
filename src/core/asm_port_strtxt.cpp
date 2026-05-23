@@ -25,6 +25,10 @@ void AS_POINT() {
 
 namespace {} // namespace
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_STRTXT (inclusive) .. AS_NOT_ (exclusive)
+// Name normalization: none (assembler label AS_STRTXT kept verbatim).
 void AS_STRTXT() {
   // AS_STRING CONSTANT ELEMENT
   // SET Y,A = (AS_TXTPTR)+CARRY

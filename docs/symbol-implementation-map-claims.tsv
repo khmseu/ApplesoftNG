@@ -374,6 +374,7 @@ AS_RIGHTSTR	src/core/asm_port_strlt2.cpp	898	AS_RIGHTSTR (inclusive) .. AS_MIDST
 AS_MIDSTR	src/core/asm_port_strlt2.cpp	915	AS_MIDSTR (inclusive) .. AS_SUBSTRING_SETUP (exclusive)	AS_MIDSTR	AS_SUBSTRING_SETUP	asrom	AS_MIDSTR	0xe691	AS_SUBSTRING_SETUP	0xe6b9	resolved-range	ok
 AS_STRLT2	src/core/asm_port_strlt2.cpp	944	AS_STRLT2 (inclusive) .. AS_PUTNEW (exclusive)	AS_STRLT2	AS_PUTNEW	asrom	AS_STRLT2	0xe3ed	AS_PUTNEW	0xe42a	resolved-range	ok
 AS_POINT	src/core/asm_port_strtxt.cpp	19	AS_POINT (inclusive) .. AS_GTNUM (exclusive)	AS_POINT	AS_GTNUM	asrom	AS_POINT	0xe73d	AS_GTNUM	0xe746	resolved-range	ok
+AS_STRTXT	src/core/asm_port_strtxt.cpp	30	AS_STRTXT (inclusive) .. AS_NOT_ (exclusive)	AS_STRTXT	AS_NOT_	asrom	AS_STRTXT	0xde81	AS_NOT_	0xde90	resolved-range	ok
 AS_TRACE	src/core/asm_port_token_address_table.cpp	107	AS_TRACE (inclusive) .. AS_NORMAL (exclusive)	AS_TRACE	AS_NORMAL	asrom	AS_TRACE	0xf26d	AS_NORMAL	0xf273	resolved-range	ok
 AS_TOKEN_ADDRESS_TABLE	src/core/asm_port_token_address_table.cpp	159	AS_TOKEN_ADDRESS_TABLE (inclusive) .. AS_UNFNC (exclusive)	AS_TOKEN_ADDRESS_TABLE	AS_UNFNC	asrom	AS_TOKEN_ADDRESS_TABLE	0xd000	AS_UNFNC	0xd080	resolved-range	ok
 AS_TOKEN_NAME_TABLE	src/core/asm_port_token_name_table.cpp	13	AS_TOKEN_NAME_TABLE (inclusive) .. AS_ERROR_MESSAGES (exclusive)	AS_TOKEN_NAME_TABLE	AS_ERROR_MESSAGES	asrom	AS_TOKEN_NAME_TABLE	0xd0d0	AS_ERROR_MESSAGES	0xd260	resolved-range	ok
@@ -562,7 +563,6 @@ AS_CAT	src/core/asm_port_strlt2.cpp	719									unclaimed	no-label-range-claim
 read_AS_TXTPTR	src/core/asm_port_strtxt.cpp	11									unclaimed	no-label-range-claim
 read_carry_flag	src/core/asm_port_strtxt.cpp	13									unclaimed	no-label-range-claim
 AS_STRLIT_from_word	src/core/asm_port_strtxt.cpp	15									unclaimed	no-label-range-claim
-AS_STRTXT	src/core/asm_port_strtxt.cpp	28									unclaimed	no-label-range-claim
 AS_NEXT_Handler	src/core/asm_port_token_address_table.cpp	81									unclaimed	no-label-range-claim
 AS_INPUT_Handler	src/core/asm_port_token_address_table.cpp	82									unclaimed	no-label-range-claim
 AS_DEL_Handler	src/core/asm_port_token_address_table.cpp	83									unclaimed	no-label-range-claim
