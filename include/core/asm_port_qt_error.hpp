@@ -5,11 +5,6 @@
 
 namespace applesoft::asm_port {
 
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_QT_ERROR (inclusive) .. AS_GTFORPNT (exclusive)
-// Name normalization: none (assembler label AS_QT_ERROR kept verbatim).
-
 /// Index constants for the short quoted-status strings block.
 inline constexpr std::size_t AS_QT_ERROR_INDEX = 0; // " AS_ERROR" + bell
 inline constexpr std::size_t AS_QT_IN_INDEX = 1;    // " IN "
