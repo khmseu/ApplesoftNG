@@ -52,6 +52,8 @@ void AS_REM();
 void AS_ONGOTO();
 void AS_ONERR();
 void AS_RESUME();
+void AS_RECALL();
+void AS_STORE();
 void AS_DEF();
 void AS_POKE();
 void AS_WAIT();
@@ -123,16 +125,8 @@ static void AS_HIMEM_Handler() { AS_HIMEM(); }
 static void AS_LOMEM_Handler() { AS_LOMEM(); }
 static void AS_ONERR_Handler() { AS_ONERR(); }
 static void AS_RESUME_Handler() { AS_RESUME(); }
-static void AS_RECALL() {
-  // RECALL/STORE are cassette-tape monitor integrations in ROM. The current
-  // runtime does not model cassette I/O, so report an unsupported statement.
-  AS_ERROR(AS_ERR_UNDEFSTAT);
-}
-static void AS_STORE() {
-  // RECALL/STORE are cassette-tape monitor integrations in ROM. The current
-  // runtime does not model cassette I/O, so report an unsupported statement.
-  AS_ERROR(AS_ERR_UNDEFSTAT);
-}
+static void AS_RECALL_Handler() { AS_RECALL(); }
+static void AS_STORE_Handler() { AS_STORE(); }
 static void AS_SPEED_Handler() { AS_SPEED(); }
 static void AS_AMPERSAND_VECTOR() {
   // '&' dispatch uses a machine-language vector at $03F5 in the ROM model.
@@ -204,8 +198,8 @@ AS_TOKEN_ADDRESS_TABLE_fn AS_TOKEN_ADDRESS_TABLE(std::size_t index) {
       AS_LOMEM_Handler,     // [36] $A4...164...AS_LOMEM:
       AS_ONERR_Handler,     // [37] $A5...165...AS_ONERR
       AS_RESUME_Handler,    // [38] $A6...166...AS_RESUME
-      AS_RECALL,            // [39] $A7...167...AS_RECALL
-      AS_STORE,             // [40] $A8...168...AS_STORE
+      AS_RECALL_Handler,    // [39] $A7...167...AS_RECALL
+      AS_STORE_Handler,     // [40] $A8...168...AS_STORE
       AS_SPEED_Handler,     // [41] $A9...169...AS_SPEED=
       AS_LET,               // [42] $AA...170...AS_LET
       AS_GOTO,              // [43] $AB...171...AS_GOTO

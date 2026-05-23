@@ -73,6 +73,11 @@ void AS_SNGFLT(std::uint8_t value);
 std::uint8_t AS_GTNUM();
 std::uint8_t AS_COMBYTE();
 void AS_RTS_10();
+void AS_L_STORE_1();
+void AS_L_RECALL_1();
+std::uint8_t AS_MEMERR();
+void AS_GETARYPT();
+void AS_TAPEPNT();
 
 // AS_Labels: AS_NEW (inclusive) .. AS_SCRTCH (exclusive)
 bool AS_NEW_impl() {
@@ -811,6 +816,81 @@ void AS_LIST() {
 
   AS_CRDO();
 }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_STORE (inclusive) .. AS_L_STORE_1 (exclusive)
+// Name normalization: none (assembler label AS_STORE kept verbatim).
+void AS_STORE() {
+  AS_GETARYPT();
+
+  const std::uint16_t descriptorAddress = variables_const().AS_LOWTR;
+  const std::uint8_t sizeHi = variables_const().readByte(
+      static_cast<std::uint16_t>(descriptorAddress + 3u));
+  std::uint8_t sizeLo = variables_const().readByte(
+      static_cast<std::uint16_t>(descriptorAddress + 2u));
+
+  bool borrow = (sizeLo < 1u);
+  sizeLo = static_cast<std::uint8_t>(sizeLo - 1u);
+  std::uint8_t adjustedHi = sizeHi;
+  if (borrow) {
+    adjustedHi = static_cast<std::uint8_t>(adjustedHi - 1u);
+  }
+
+  ApplesoftVariables::setLowByte(variables().AS_LINNUM, sizeLo);
+  ApplesoftVariables::setHighByte(variables().AS_LINNUM, adjustedHi);
+
+  AS_L_STORE_1();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_L_STORE_1 (inclusive) .. AS_RECALL (exclusive)
+// Name normalization: none (assembler label AS_L_STORE_1 kept verbatim).
+void AS_L_STORE_1() {
+  MON_WRITE();
+  AS_TAPEPNT();
+  MON_WRITE();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_RECALL (inclusive) .. AS_L_RECALL_1 (exclusive)
+// Name normalization: none (assembler label AS_RECALL kept verbatim).
+void AS_RECALL() {
+  AS_GETARYPT();
+  MON_READ();
+
+  const std::uint16_t descriptorAddress = variables_const().AS_LOWTR;
+  const std::uint16_t incomingSize = ApplesoftVariables::makeWord(
+      variables_const().readByte(
+          static_cast<std::uint16_t>(descriptorAddress + 2u)),
+      variables_const().readByte(
+          static_cast<std::uint16_t>(descriptorAddress + 3u)));
+  if (incomingSize < variables_const().AS_LINNUM) {
+    AS_MEMERR();
+    return;
+  }
+
+  AS_L_RECALL_1();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_L_RECALL_1 (inclusive) .. AS_HGR2 (exclusive)
+// Name normalization: none (assembler label AS_L_RECALL_1 kept verbatim).
+void AS_L_RECALL_1() {
+  AS_TAPEPNT();
+  MON_READ();
+}
+
+// TODO(asm-port): Implement label AS_GETARYPT from
+// SourceMaterial/Combo/asrom.lst.
+void AS_GETARYPT() {}
+
+// TODO(asm-port): Implement label AS_TAPEPNT from
+// SourceMaterial/Combo/asrom.lst.
+void AS_TAPEPNT() {}
 
 void AS_SAVE() {
   // Source:

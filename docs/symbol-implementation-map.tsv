@@ -953,10 +953,10 @@ asrom	AS_L_DEL_5	0xf377	AS_LIST
 asrom	AS_L_DEL_6	0xf388	AS_LIST
 asrom	AS_GR	0xf390	AS_TEXT
 asrom	AS_TEXT	0xf399	AS_HTAB
-asrom	AS_STORE	0xf39f	-
-asrom	AS_L_STORE_1	0xf3af	-
-asrom	AS_RECALL	0xf3bc	-
-asrom	AS_L_RECALL_1	0xf3d2	-
+asrom	AS_STORE	0xf39f	AS_STORE
+asrom	AS_L_STORE_1	0xf3af	AS_L_STORE_1
+asrom	AS_RECALL	0xf3bc	AS_RECALL
+asrom	AS_L_RECALL_1	0xf3d2	AS_L_RECALL_1
 asrom	AS_HGR2	0xf3d8	AS_HGR
 asrom	AS_HGR	0xf3e2	AS_HGR, STHPG
 asrom	AS_SETHPG	0xf3ea	AS_HCOLOR
