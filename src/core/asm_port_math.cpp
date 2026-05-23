@@ -140,7 +140,42 @@ void AS_L_L_1() {
 // AS_Labels: AS_SHIFT_RIGHT_4 (inclusive) .. AS_SHIFT_RIGHT_5 (exclusive)
 // Name normalization: none (assembler label AS_SHIFT_RIGHT_4 kept verbatim).
 void AS_SHIFT_RIGHT_4() {
-  // TODO(asm-port): model ROM Y-controlled short right-shift count precisely.
+  // Model the short-shift loop entered after AS_L/AS_L_L_1.
+  // Carry into the first ROR is the current low bit from byte1.
+  bool carry =
+      (variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 1u)) & 0x01u) != 0u;
+
+  auto ror_with_carry = [&carry](std::uint8_t value) -> std::uint8_t {
+    const bool newCarry = (value & 0x01u) != 0u;
+    const std::uint8_t result = static_cast<std::uint8_t>((value >> 1u) | (carry ? 0x80u : 0x00u));
+    carry = newCarry;
+    return result;
+  };
+
+  auto byte2 =
+      variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 2u));
+  auto byte3 =
+      variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 3u));
+  auto byte4 =
+      variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 4u));
+  auto extension = variables_const().AS_FAC_EXTENSION;
+
+  byte2 = ror_with_carry(byte2);
+  byte3 = ror_with_carry(byte3);
+  byte4 = ror_with_carry(byte4);
+  extension = ror_with_carry(extension);
+
+  variables().writeByte(static_cast<std::uint16_t>(g_shiftBase + 2u), byte2);
+  variables().writeByte(static_cast<std::uint16_t>(g_shiftBase + 3u), byte3);
+  variables().writeByte(static_cast<std::uint16_t>(g_shiftBase + 4u), byte4);
+  variables().AS_FAC_EXTENSION = extension;
+
+  g_shiftNegativeCount = static_cast<std::int8_t>(g_shiftNegativeCount + 1);
+  if (g_shiftNegativeCount != 0) {
+    AS_L();
+    return;
+  }
+
   AS_SHIFT_RIGHT_5();
 }
 
