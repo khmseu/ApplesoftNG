@@ -1,3 +1,4 @@
+#include "core/asm_port_statements.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_clear.hpp"
 #include "core/asm_port_error.hpp"

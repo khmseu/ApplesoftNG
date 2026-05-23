@@ -1,5 +1,6 @@
 #pragma once
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_core.hpp"
 #include "core/asm_port_token_address_table.hpp"
 #include <cstdint>
 
@@ -65,7 +66,6 @@ void AS_USR();
 void AS_USR_impl();
 std::uint8_t MON_GETLN();
 std::uint8_t MON_KEYIN();
-void MON_OLDBRK();
 void MON_COUT1(std::uint8_t a);
 } // namespace applesoft::asm_port
 
