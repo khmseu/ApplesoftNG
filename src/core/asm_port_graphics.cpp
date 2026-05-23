@@ -37,22 +37,20 @@ void AS_INVERSE() {
   variables().AS_FLASH_BIT = 0x00u;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FLASH (inclusive) .. AS_HIMEM (exclusive)
+// Name normalization: none (assembler label AS_FLASH kept verbatim).
 void AS_FLASH() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FLASH (inclusive) .. AS_COLOR (exclusive)
-  // Name normalization: none (assembler label AS_FLASH kept verbatim).
-
   variables().MON_INVFLG = 0x7fu;
   variables().AS_FLASH_BIT = 0x40u;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: SETCOL (inclusive) .. SCRN (exclusive)
+// Name normalization: SETCOL -> MON_SETCOL (monitor label gets MON_ prefix).
 void MON_SETCOL(std::uint8_t color) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: SETCOL (inclusive) .. SCRN (exclusive)
-  // Name normalization: SETCOL -> MON_SETCOL (monitor label gets MON_ prefix).
-
   // Monitor stores a 4-bit color and mirrors it into both nibbles (17*A mod
   // 16).
   const std::uint8_t nibble = static_cast<std::uint8_t>(color & 0x0fu);
