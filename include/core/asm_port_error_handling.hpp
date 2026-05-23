@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/asm_port_math.hpp"
+
 #include <cstdint>
 #include <string_view>
 
@@ -20,8 +22,6 @@ std::uint8_t AS_MEMERR();
 // AS_Line 1356)
 void AS_PRINT_ERROR_LINNUM();
 void AS_PRINT_ERROR_LINNUM(std::string_view prefix);
-
-void AS_FIN();
 
 // Target: SYNER1 (Source:
 // SourceMaterial/Combo/asrom.lst

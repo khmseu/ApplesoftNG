@@ -56,7 +56,7 @@ bool AS_ISCNTC();
 void AS_CRDO();
 void AS_LINPRT();
 void MON_COUT(std::uint8_t value);
-void AS_OUTDO(std::uint8_t value);
+std::uint8_t AS_OUTDO(std::uint8_t value);
 bool AS_FL1(std::uint16_t startAddress);
 void AS_RESTORE();
 void AS_STKINI();

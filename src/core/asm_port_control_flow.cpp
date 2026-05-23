@@ -5,6 +5,7 @@
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_gtforpnt.hpp"
 #include "core/asm_port_inlin2.hpp"
+#include "core/asm_port_local_utils.hpp"
 #include "core/asm_port_stack.hpp"
 #include "core/asm_port_token_address_table.hpp"
 #include "core/io_ports.hpp"
@@ -55,7 +56,7 @@ void AS_ADDON(std::uint8_t offset);
 bool AS_ISCNTC();
 void AS_OUTSP();
 void AS_LINPRT();
-void AS_OUTDO(std::uint8_t value);
+std::uint8_t AS_OUTDO(std::uint8_t value);
 std::uint8_t CurrentStatementChar();
 bool IsRunningMode();
 bool IsTraceEnabled();
@@ -281,10 +282,6 @@ void PushRoundedFacAndDispatch() {
   }
   // Other indirect targets used by this FOR/STEP helper are not ported yet;
   // return to caller.
-}
-
-constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
-  return static_cast<std::uint8_t>(lhs + rhs);
 }
 
 std::uint16_t readStackWordAt(std::uint8_t x, std::uint8_t lowOffset,
@@ -653,7 +650,7 @@ void AS_FOR() {
   const auto gtforpntResult =
       AS_GTFORPNT(theStack().readStackPointer(), gtforpntState);
   if (gtforpntResult.found) {
-    theStack().setStackPointer(add_u8(gtforpntResult.x, 15u));
+    theStack().setStackPointer(local_utils::add_u8(gtforpntResult.x, 15u));
   }
 
   theStack().popReturnAddress();
@@ -720,7 +717,8 @@ void AS_NEXT() {
   // AS_FCOMP2). Stack offsets follow ROM comments; helpers are placeholders
   // until stack memory and AS_FAC math ports are fully wired.
   variables().AS_INDEX = static_cast<std::uint16_t>(
-      0x0100u + add_u8(gtforpntResult.x, kStepValueOffsetInForFrame));
+      0x0100u +
+      local_utils::add_u8(gtforpntResult.x, kStepValueOffsetInForFrame));
   AS_LOAD_FAC_FROM_YA();
   variables().AS_FAC_SIGN =
       theStack().readByteAt(gtforpntResult.x, 9u); // AS_FAC_SIGN
@@ -728,8 +726,8 @@ void AS_NEXT() {
   AS_SETFOR();
   // Assembly: stx DEST (X = frame_x + 10) then ldy #>STACK; jsr FCOMP2.
   // Set AS_DEST to the full 16-bit address of the end value in the FOR frame.
-  variables().AS_DEST =
-      static_cast<std::uint16_t>(0x0100u + add_u8(gtforpntResult.x, 10u));
+  variables().AS_DEST = static_cast<std::uint16_t>(
+      0x0100u + local_utils::add_u8(gtforpntResult.x, 10u));
   AS_FCOMP2();
 
   if (!AS_NEXT_shouldTerminateLoop(gtforpntResult.x)) {
@@ -746,7 +744,7 @@ void AS_NEXT() {
 
   // AS_L_NEXT_3_2: pop AS_FOR frame, then continue AS_NEWSTT unless another
   // variable follows in AS_NEXT var-list (AS_NEXT I,J,...).
-  theStack().setStackPointer(add_u8(gtforpntResult.x, 18u));
+  theStack().setStackPointer(local_utils::add_u8(gtforpntResult.x, 18u));
 
   if (AS_CHRGOT() != static_cast<std::uint8_t>(',')) {
     AS_NEWSTT();

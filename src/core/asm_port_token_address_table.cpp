@@ -12,7 +12,7 @@ namespace applesoft::asm_port {
 
 std::uint8_t AS_CHRGET();
 
-bool AS_CLEAR();
+void AS_CLEAR();
 bool AS_NEW();
 void AS_LIST();
 void AS_RESTORE();

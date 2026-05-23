@@ -1,24 +1,22 @@
 #include "core/asm_port_gtforpnt.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_local_utils.hpp"
 
 namespace applesoft::asm_port {
 namespace {
 
 constexpr std::uint8_t kFrameSize = 18;
 
-std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
-  return static_cast<std::uint8_t>(lhs + rhs);
-}
-
 std::uint8_t stack_at(const AS_GTFORPNTState &state, std::uint8_t x,
                       std::uint8_t plus) {
-  return state.stackPage[add_u8(x, plus)];
+  return state.stackPage[local_utils::add_u8(x, plus)];
 }
 
 std::uint16_t stack_word_at(const AS_GTFORPNTState &state, std::uint8_t x,
                             std::uint8_t plus) {
-  return ApplesoftVariables::makeWord(stack_at(state, x, plus),
-                                      stack_at(state, x, add_u8(plus, 1u)));
+  return ApplesoftVariables::makeWord(
+      stack_at(state, x, plus),
+      stack_at(state, x, local_utils::add_u8(plus, 1u)));
 }
 
 } // namespace
@@ -30,7 +28,7 @@ std::uint16_t stack_word_at(const AS_GTFORPNTState &state, std::uint8_t x,
 AS_GTFORPNTResult AS_GTFORPNT(std::uint8_t stackPointer,
                               AS_GTFORPNTState &state) {
   // TSX + 4: skip return address and caller context to first candidate frame.
-  std::uint8_t x = add_u8(stackPointer, 4u);
+  std::uint8_t x = local_utils::add_u8(stackPointer, 4u);
 
   while (x != 0) {
     // FRAME MARKER at AS_STACK+1,X must be AS_TOKEN_FOR ($81).
@@ -49,7 +47,7 @@ AS_GTFORPNTResult AS_GTFORPNT(std::uint8_t stackPointer,
     }
 
     // Advance to next frame candidate, wrapping in 8-bit space exactly as 6502.
-    x = add_u8(x, kFrameSize);
+    x = local_utils::add_u8(x, kFrameSize);
   }
 
   return AS_GTFORPNTResult{false, x};

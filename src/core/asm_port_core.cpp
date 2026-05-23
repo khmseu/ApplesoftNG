@@ -4,6 +4,7 @@
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_handling.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_local_utils.hpp"
 #include "core/asm_port_mathtbl.hpp"
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_reason.hpp"
@@ -41,9 +42,6 @@ void MON_OLDBRK();
 void MON_REGDSP();
 void MON_COUT(std::uint8_t a); // Defined in asm_port_outdo.cpp
 
-constexpr std::uint8_t add_u8(std::uint8_t lhs, std::uint8_t rhs) {
-  return static_cast<std::uint8_t>(lhs + rhs);
-}
 void AS_GETARY();
 void AS_GETARY2();
 void AS_FIND_ARRAY_ELEMENT();
@@ -1212,9 +1210,9 @@ void AS_ARRAY() {
       // (AS_FAC+3/+4).
       const std::uint8_t x = theStack().readStackPointer();
       const std::uint16_t stackPlus2 =
-          static_cast<std::uint16_t>(0x0100u + add_u8(x, 2u));
+          static_cast<std::uint16_t>(0x0100u + local_utils::add_u8(x, 2u));
       const std::uint16_t stackPlus1 =
-          static_cast<std::uint16_t>(0x0100u + add_u8(x, 1u));
+          static_cast<std::uint16_t>(0x0100u + local_utils::add_u8(x, 1u));
       theStack().pushByte(ReadProgramByte(stackPlus2));
       theStack().pushByte(ReadProgramByte(stackPlus1));
       WriteProgramByte(stackPlus2, variables_const().AS_FAC[3]);

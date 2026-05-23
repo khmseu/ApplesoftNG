@@ -1,10 +1,15 @@
 #pragma once
 
+#include "core/asm_port_chrget.hpp"
+#include "core/asm_port_clear.hpp"
 #include "core/asm_port_control_flow.hpp"
 #include "core/asm_port_core.hpp"
+#include "core/asm_port_error_handling.hpp"
 #include "core/asm_port_parser.hpp"
+#include "core/asm_port_print.hpp"
 #include "core/asm_port_qt_error.hpp"
 #include "core/asm_port_statements.hpp"
+#include "platform/asm_port_outdo.hpp"
 
 #include <cstdint>
 #include <string_view>
@@ -31,18 +36,10 @@ struct ProgramPointer {
   }
 };
 
-std::uint8_t AS_CHRGET();
-std::uint8_t AS_CHRGOT();
-
-void AS_ERROR(std::uint8_t error_code_offset);
-
 void AS_PRINT_ERROR_LINUM(
     std::string_view prefix = AS_QT_ERROR(AS_QT_ERROR_INDEX));
 
 // Helper stubs for error printing and restart handling.
-void AS_CRDO();
 void AS_INPRT();
-void AS_STKINI();
-void AS_OUTQUES();
 
 } // namespace applesoft::asm_port

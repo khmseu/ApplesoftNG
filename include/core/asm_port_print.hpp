@@ -1,14 +1,11 @@
 #pragma once
 
+#include "core/asm_port_strlt2.hpp"
+
 #include <cstdint>
 #include <string_view>
 
 namespace applesoft::asm_port {
-
-// AS_FREFAC: dereference the string descriptor at AS_FAC[3]/AS_FAC[4],
-// optionally release the temporary descriptor, store the data pointer in
-// AS_INDEX, and return the string length.
-std::uint8_t AS_FREFAC();
 
 // Prints the string whose descriptor is in AS_FAC[3]/AS_FAC[4] by calling
 // AS_FREFAC to obtain the data pointer (stored in AS_INDEX) and length, then

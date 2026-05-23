@@ -1,10 +1,11 @@
 #pragma once
 
+#include "core/asm_port_nxin.hpp"
+
 #include <cstdint>
 
 namespace applesoft::asm_port {
 void AS_INPUT();
-void AS_NXIN();
 void AS_READ();
 void AS_INPUT_FLAG_ZERO(std::uint16_t input_ptr);
 void AS_PROCESS_INPUT_LIST(std::uint16_t input_ptr, std::uint8_t input_flag);
