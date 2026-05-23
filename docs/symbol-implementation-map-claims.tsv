@@ -2,7 +2,9 @@ function	file	line	claim_raw	claim_start_label	claim_end_label	mapped_module	map
 AS_BLTU	src/core/asm_port_bltu.cpp	23	AS_BLTU (inclusive) .. AS_BLTU2 (exclusive)	AS_BLTU	AS_BLTU2	asrom	AS_BLTU	0xd393	AS_BLTU2	0xd39a	resolved-range	ok
 AS_BLTU2	src/core/asm_port_bltu.cpp	42	AS_BLTU2 (inclusive) .. AS_CHKMEM (exclusive)	AS_BLTU2	AS_CHKMEM	asrom	AS_BLTU2	0xd39a	AS_CHKMEM	0xd3d6	resolved-range	ok
 AS_CHKMEM	src/core/asm_port_chkmem.cpp	8	AS_CHKMEM (inclusive) .. AS_REASON (exclusive)	AS_CHKMEM	AS_REASON	asrom	AS_CHKMEM	0xd3d6	AS_REASON	0xd3e3	resolved-range	ok
-AS_CHRGET_INTERNAL	src/core/asm_port_chrget.cpp	14	AS_GENERIC_CHRGET (inclusive) .. AS_GENERIC_END (exclusive)	AS_GENERIC_CHRGET	AS_GENERIC_END	asrom	AS_GENERIC_CHRGET	0xf10b	AS_GENERIC_END	0xf128	resolved-range	ok
+AS_CHRGET_INTERNAL	src/core/asm_port_chrget.cpp	31	AS_GENERIC_CHRGET (inclusive) .. AS_GENERIC_END (exclusive)	AS_GENERIC_CHRGET	AS_GENERIC_END	asrom	AS_GENERIC_CHRGET	0xf10b	AS_GENERIC_END	0xf128	resolved-range	ok
+AS_CHRGET	src/core/asm_port_chrget.cpp	75	AS_CHRGET (inclusive) .. AS_CHRGOT (exclusive)	AS_CHRGET	AS_CHRGOT	asrom	AS_CHRGET	0x00b1	AS_CHRGOT	0x00b7	resolved-range	ok
+AS_CHRGOT	src/core/asm_port_chrget.cpp	81	AS_CHRGOT (inclusive) .. AS_RNDSEED (exclusive)	AS_CHRGOT	AS_RNDSEED	asrom	AS_CHRGOT	0x00b7	AS_RNDSEED	0x00c9	resolved-range	ok
 AS_CLEAR	src/core/asm_port_clear.cpp	9	AS_CLEAR (inclusive) .. AS_CLEARC (exclusive)	AS_CLEAR	AS_CLEARC	asrom	AS_CLEAR	0xd66a	AS_CLEARC	0xd66c	resolved-range	ok
 AS_CLEARC	src/core/asm_port_clear.cpp	17	AS_CLEARC (inclusive) .. AS_STKINI (exclusive)	AS_CLEARC	AS_STKINI	asrom	AS_CLEARC	0xd66c	AS_STKINI	0xd683	resolved-range	ok
 AS_STKINI	src/core/asm_port_clear.cpp	29	AS_STKINI (inclusive) .. AS_STXTPT (exclusive)	AS_STKINI	AS_STXTPT	asrom	AS_STKINI	0xd683	AS_STXTPT	0xd697	resolved-range	ok
@@ -409,8 +411,6 @@ AS_OUTDO	src/platform/asm_port_outdo.cpp	165	AS_OUTDO (inclusive) .. AS_INPUTERR
 AS_OUTSP	src/platform/asm_port_outdo.cpp	179	AS_OUTSP (inclusive) .. AS_OUTQUES (exclusive)	AS_OUTSP	AS_OUTQUES	asrom	AS_OUTSP	0xdb57	AS_OUTQUES	0xdb5a	resolved-range	ok
 AS_OUTQUES	src/platform/asm_port_outdo.cpp	185	AS_OUTQUES (inclusive) .. AS_OUTDO (exclusive)	AS_OUTQUES	AS_OUTDO	asrom	AS_OUTQUES	0xdb5a	AS_OUTDO	0xdb5c	resolved-range	ok
 copy_page_backward	src/core/asm_port_bltu.cpp	7									unclaimed	no-label-range-claim
-AS_CHRGET	src/core/asm_port_chrget.cpp	69									unclaimed	no-label-range-claim
-AS_CHRGOT	src/core/asm_port_chrget.cpp	71									unclaimed	no-label-range-claim
 ApplyFacSign	src/core/asm_port_control_flow.cpp	113									unclaimed	no-label-range-claim
 SetBranchTargetToAS_STEP	src/core/asm_port_control_flow.cpp	124									unclaimed	no-label-range-claim
 AS_LOAD_FAC_FROM_YA	src/core/asm_port_control_flow.cpp	126									unclaimed	no-label-range-claim

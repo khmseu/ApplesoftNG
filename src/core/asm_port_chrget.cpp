@@ -11,20 +11,24 @@ std::uint8_t ReadProgramByte(std::uint16_t address);
 /**
  * @brief AS_CHRGET_INTERNAL
  *
- * AS_Labels: AS_GENERIC_CHRGET (inclusive) .. AS_GENERIC_END (exclusive)
- *
  * Source: SourceMaterial/Combo/asrom.lst
- * Historical implementation (AS_GENERIC_CHRGET):
+ * Historical implementation:
  * 210b: e6 b8     inc AS_TXTPTR
  * 210d: d0 02     bne +2
  * 210f: e6 b9     inc AS_TXTPTR+1
  * 2111: ad .. ..  lda AS_TXTPTR_VALUE
  * 2114: c9 3a     cmp #':'        ; End of statement
- * 2116: b0 0a     bcs RTS         ; >= ':' (incl. lowercase/tokens) -> Not a
- * digit 2118: c9 20     cmp #' '        ; Space 211a: f0 ef     beq AS_CHRGET
- * ; Skip spaces 211c: 38        sec 211d: e9 30     sbc #'0'        ; Digit
- * check 211f: 38        sec 2120: e9 d0     sbc #$d0        ; Final range check
- * / flag setting 2122: 60        rts
+ * 2116: b0 0a     bcs RTS
+ *              ; >= ':' (incl. lowercase/tokens) -> Not a digit
+ * 2118: c9 20     cmp #' '        ; Space
+ * 211a: f0 ef     beq AS_CHRGET   ; Skip spaces
+ * 211c: 38        sec
+ * 211d: e9 30     sbc #'0'        ; Digit check
+ * 211f: 38        sec
+ * 2120: e9 d0     sbc #$d0        ; Final range check / flag setting
+ * 2122: 60        rts
+
+ * AS_Labels: AS_GENERIC_CHRGET (inclusive) .. AS_GENERIC_END (exclusive)
  */
 static std::uint8_t AS_CHRGET_INTERNAL(bool increment) {
   std::uint16_t txtptr = variables_const().AS_TXTPTR;
@@ -66,8 +70,16 @@ static std::uint8_t AS_CHRGET_INTERNAL(bool increment) {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CHRGET (inclusive) .. AS_CHRGOT (exclusive)
+// Name normalization: none (assembler label AS_CHRGET kept verbatim).
 std::uint8_t AS_CHRGET() { return AS_CHRGET_INTERNAL(true); }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CHRGOT (inclusive) .. AS_RNDSEED (exclusive)
+// Name normalization: none (assembler label AS_CHRGOT kept verbatim).
 std::uint8_t AS_CHRGOT() { return AS_CHRGET_INTERNAL(false); }
 
 } // namespace applesoft::asm_port
