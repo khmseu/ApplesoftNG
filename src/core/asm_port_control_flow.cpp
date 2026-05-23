@@ -74,6 +74,7 @@ void AS_GOTO();
 void AS_POP();
 void AS_RETURN();
 std::uint16_t AS_PTRGET();
+void AS_JSYN();
 void AS_PULL3();
 std::uint8_t AS_REMN();
 std::uint8_t AS_DATAN();
@@ -584,6 +585,15 @@ void AS_RESUME() {
   variables().AS_TXTPTR = variables_const().AS_ERRPOS;
   theStack().setStackPointer(variables_const().AS_ERRSTK);
   AS_NEWSTT();
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_JSYN (inclusive) .. AS_DEL (exclusive)
+// Name normalization: none (assembler label AS_JSYN kept verbatim).
+void AS_JSYN() {
+  // ROM uses an unconditional jump to AS_SYNERR.
+  AS_SYNERR();
 }
 
 // AS_Labels: AS_ONERR (inclusive) .. AS_HANDLERR (exclusive)
