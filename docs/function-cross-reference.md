@@ -159,7 +159,6 @@
 | AS_GETARY2                          | real   | 5    | 6       | src/core/asm_port_core.cpp                | 698  |
 | AS_GETARYPT                         | real   | 4    | 5       | src/core/asm_port_statements.cpp          | 892  |
 | AS_GETBYT                           | real   | 3    | 28      | src/core/asm_port_parser.cpp              | 204  |
-| AS_GETLNZ                           | real   | 4    | 5       | src/platform/asm_port_getln.cpp           | 79   |
 | AS_GETSPA                           | real   | 18   | 4       | src/core/asm_port_strlt2.cpp              | 356  |
 | AS_GETSTR                           | real   | 3    | 6       | src/core/asm_port_strlt2.cpp              | 751  |
 | AS_GET_Handler                      | real   | 1    | 0       | src/core/asm_port_token_address_table.cpp | 148  |
@@ -447,7 +446,7 @@
 | AS_VLIN_Handler                     | real   | 1    | 0       | src/core/asm_port_token_address_table.cpp | 93   |
 | AS_VTAB                             | real   | 6    | 4       | src/core/asm_port_graphics.cpp            | 1075 |
 | AS_VTAB_Handler                     | real   | 1    | 0       | src/core/asm_port_token_address_table.cpp | 124  |
-| AS_WAIT                             | real   | 16   | 5       | src/core/asm_port_statements.cpp          | 171  |
+| AS_WAIT                             | real   | 16   | 4       | src/core/asm_port_statements.cpp          | 171  |
 | AS_WAIT_Handler                     | real   | 1    | 0       | src/core/asm_port_token_address_table.cpp | 143  |
 | AS_XDRAW                            | real   | 2    | 5       | src/core/asm_port_graphics.cpp            | 1021 |
 | AS_XDRAW1                           | real   | 1    | 1       | src/core/asm_port_graphics.cpp            | 1002 |
@@ -455,13 +454,10 @@
 | AS_ZERO_FAC                         | real   | 1    | 5       | src/core/asm_port_math.cpp                | 988  |
 | ClearErrFlag                        | real   | 1    | 3       | src/core/asm_port_core.cpp                | 114  |
 | clear_AS_FNCNAM_hi                  | real   | 2    | 1       | src/core/asm_port_strlt2.cpp              | 93   |
-| CLREOL                              | real   | 7    | 3       | src/platform/asm_port_getln.cpp           | 58   |
 | CompareArgAndFacStrings             | real   | 33   | 2       | src/core/asm_port_core.cpp                | 2129 |
 | computeTextRowBase                  | real   | 10   | 3       | src/platform/asm_port_outdo.cpp           | 14   |
 | consumeKeyboardAS_Latch             | real   | 3    | 2       | src/platform/asm_port_outdo.cpp           | 65   |
 | copy_page_backward                  | real   | 7    | 2       | src/core/asm_port_bltu.cpp                | 7    |
-| COUT                                | real   | 1    | 6       | src/platform/asm_port_getln.cpp           | 37   |
-| CROUT                               | real   | 1    | 4       | src/platform/asm_port_getln.cpp           | 73   |
 | CurrentStatementChar                | real   | 1    | 4       | src/core/asm_port_parser.cpp              | 320  |
 | DeleteExistingAS_Line               | real   | 15   | 1       | src/core/asm_port_statements.cpp          | 429  |
 | doubleToFac                         | real   | 23   | 14      | src/core/asm_port_mathtbl.cpp             | 76   |
@@ -492,13 +488,16 @@
 | MON_BELL_impl                       | real   | 2    | 2       | src/core/asm_port_core.cpp                | 205  |
 | MON_BREAK                           | real   | 2    | 1       | src/core/asm_port_core.cpp                | 2073 |
 | MON_ClearColumns                    | real   | 7    | 1       | src/core/asm_port_graphics.cpp            | 228  |
-| MON_CLREOL                          | real   | 8    | 1       | src/core/asm_port_graphics.cpp            | 309  |
+| MON_CLREOL                          | real   | 8    | 4       | src/core/asm_port_graphics.cpp            | 309  |
+| MON_CLREOL                          | real   | 7    | 4       | src/platform/asm_port_getln.cpp           | 52   |
 | MON_CLRSCR                          | real   | 1    | 2       | src/core/asm_port_graphics.cpp            | 243  |
-| MON_COUT                            | real   | 2    | 19      | src/platform/asm_port_outdo.cpp           | 144  |
+| MON_COUT                            | real   | 2    | 22      | src/platform/asm_port_outdo.cpp           | 144  |
 | MON_COUT1                           | real   | 3    | 2       | src/platform/asm_port_outdo.cpp           | 125  |
-| MON_CROUT                           | real   | 2    | 3       | src/core/asm_port_core.cpp                | 251  |
+| MON_CROUT                           | real   | 2    | 7       | src/core/asm_port_core.cpp                | 251  |
+| MON_CROUT                           | real   | 1    | 7       | src/platform/asm_port_getln.cpp           | 67   |
 | MON_GBASCALC                        | real   | 11   | 2       | src/core/asm_port_graphics.cpp            | 249  |
-| MON_GETLN                           | real   | 19   | 2       | src/platform/asm_port_getln.cpp           | 129  |
+| MON_GETLN                           | real   | 19   | 2       | src/platform/asm_port_getln.cpp           | 123  |
+| MON_GETLNZ                          | real   | 4    | 5       | src/platform/asm_port_getln.cpp           | 73   |
 | MON_HEADR                           | real   | 6    | 5       | src/core/asm_port_statements.cpp          | 1124 |
 | MON_HLINE                           | real   | 8    | 3       | src/core/asm_port_graphics.cpp            | 195  |
 | MON_HOME                            | real   | 17   | 5       | src/core/asm_port_graphics.cpp            | 276  |
@@ -511,6 +510,7 @@
 | MON_LFB60                           | real   | 20   | 3       | src/core/asm_port_core.cpp                | 218  |
 | MON_LFB78                           | real   | 15   | 1       | src/platform/asm_port_outdo.cpp           | 70   |
 | MON_MON                             | real   | 3    | 2       | src/core/asm_port_core.cpp                | 308  |
+| MON_NOTCR                           | real   | 25   | 3       | src/platform/asm_port_getln.cpp           | 86   |
 | MON_NXTA1                           | real   | 5    | 2       | src/core/asm_port_statements.cpp          | 1189 |
 | MON_NXTCOL                          | real   | 5    | 2       | src/core/asm_port_graphics.cpp            | 268  |
 | MON_OLDBRK                          | real   | 3    | 2       | src/core/asm_port_core.cpp                | 427  |
@@ -524,6 +524,7 @@
 | MON_RD3                             | real   | 22   | 2       | src/core/asm_port_statements.cpp          | 1134 |
 | MON_RDBIT                           | real   | 2    | 4       | src/core/asm_port_statements.cpp          | 1171 |
 | MON_RDBYTE                          | real   | 8    | 3       | src/core/asm_port_statements.cpp          | 1177 |
+| MON_RDCHAR                          | real   | 7    | 2       | src/platform/asm_port_getln.cpp           | 37   |
 | MON_RDKEY                           | real   | 16   | 2       | src/core/asm_port_inlin2.cpp              | 77   |
 | MON_READ                            | real   | 5    | 7       | src/core/asm_port_statements.cpp          | 1028 |
 | MON_REGDSP                          | real   | 21   | 3       | src/core/asm_port_core.cpp                | 440  |
@@ -539,9 +540,8 @@
 | MON_TABV                            | real   | 14   | 9       | src/core/asm_port_graphics.cpp            | 74   |
 | MON_VIDOUT                          | real   | 30   | 2       | src/platform/asm_port_outdo.cpp           | 88   |
 | MON_VLINE                           | real   | 9    | 2       | src/core/asm_port_graphics.cpp            | 212  |
-| MON_WAIT                            | real   | 8    | 1       | src/platform/asm_port_outdo.cpp           | 130  |
+| MON_WAIT                            | real   | 8    | 2       | src/platform/asm_port_outdo.cpp           | 130  |
 | MON_WRITE                           | real   | 21   | 5       | src/core/asm_port_statements.cpp          | 987  |
-| NOTCR                               | real   | 25   | 3       | src/platform/asm_port_getln.cpp           | 92   |
 | parseNumericInputAndStore           | real   | 3    | 1       | src/core/asm_port_input.cpp               | 96   |
 | parseStringInputAndStore            | real   | 22   | 1       | src/core/asm_port_input.cpp               | 51   |
 | PeekTopControlTokenAfterAS_GTFORPNT | real   | 1    | 1       | src/core/asm_port_control_flow.cpp        | 377  |
@@ -552,7 +552,6 @@
 | PushFacSignReturnAddress            | real   | 6    | 1       | src/core/asm_port_control_flow.cpp        | 259  |
 | PushForPntFrame                     | real   | 4    | 2       | src/core/asm_port_control_flow.cpp        | 644  |
 | PushRoundedFacAndDispatch           | real   | 10   | 1       | src/core/asm_port_control_flow.cpp        | 274  |
-| RDCHAR                              | real   | 7    | 3       | src/platform/asm_port_getln.cpp           | 43   |
 | ReadAS_LineNumberFromTextPointer    | real   | 6    | 2       | src/core/asm_port_control_flow.cpp        | 902  |
 | readLine                            | real   | 3    | 1       | src/platform/console.cpp                  | 6    |
 | readPackedFloat                     | real   | 14   | 1       | src/core/asm_port_unfnc.cpp               | 100  |

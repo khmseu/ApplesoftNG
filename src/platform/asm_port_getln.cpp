@@ -32,15 +32,9 @@ std::uint8_t read_screen_char_via_28_y() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: COUT (inclusive) .. COUT1 (exclusive)
-// Name normalization: none (assembler label COUT kept verbatim).
-void COUT(std::uint8_t value) { MON_COUT(value); }
-
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: RDCHAR (inclusive) .. NOTCR (exclusive)
-// Name normalization: none (assembler label RDCHAR kept verbatim).
-std::uint8_t RDCHAR() {
+// AS_Labels: MON_RDCHAR (inclusive) .. MON_NOTCR (exclusive)
+// Name normalization: none (assembler label MON_RDCHAR kept verbatim).
+std::uint8_t MON_RDCHAR() {
   // ESC ($9B) branches back through ESC to read another key; model as a loop.
   constexpr std::uint8_t kEsc = 0x9bu;
   while (true) {
@@ -53,9 +47,9 @@ std::uint8_t RDCHAR() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: CLREOL (inclusive) .. AS_WAIT (exclusive)
-// Name normalization: none (assembler label CLREOL kept verbatim).
-void CLREOL() {
+// AS_Labels: MON_CLREOL (inclusive) .. MON_WAIT (exclusive)
+// Name normalization: none (assembler label MON_CLREOL kept verbatim).
+void MON_CLREOL() {
   constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
   const std::uint8_t columnStart = variables_const().MON_CH;
   const std::uint8_t width = variables_const().MON_WNDWDTH;
@@ -68,18 +62,18 @@ void CLREOL() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: CROUT (inclusive) .. PRA1 (exclusive)
-// Name normalization: none (assembler label CROUT kept verbatim).
-void CROUT() { COUT(0x8du); }
+// AS_Labels: MON_CROUT (inclusive) .. MON_PRA1 (exclusive)
+// Name normalization: none (assembler label MON_CROUT kept verbatim).
+void MON_CROUT() { MON_COUT(0x8du); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_GETLNZ (inclusive) .. BCKSPC (exclusive)
-// Name normalization: none (assembler label AS_GETLNZ kept verbatim).
-std::uint8_t AS_GETLNZ() {
+// AS_Labels: MON_GETLNZ (inclusive) .. MON_BCKSPC (exclusive)
+// Name normalization: none (assembler label MON_GETLNZ kept verbatim).
+std::uint8_t MON_GETLNZ() {
   constexpr std::uint8_t kInitialBufferIndex = 1u;
-  CROUT();
-  COUT(read_prompt_char());
+  MON_CROUT();
+  MON_COUT(read_prompt_char());
   // AS_GETLNZ falls through into AS_GETLN, which immediately executes `ldx
   // #$01`.
   return kInitialBufferIndex;
@@ -87,9 +81,9 @@ std::uint8_t AS_GETLNZ() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: NOTCR (inclusive) .. AS_GETLNZ (exclusive)
-// Name normalization: none (assembler label NOTCR kept verbatim).
-void NOTCR(std::uint8_t &x) {
+// AS_Labels: MON_NOTCR (inclusive) .. MON_GETLNZ (exclusive)
+// Name normalization: none (assembler label MON_NOTCR kept verbatim).
+void MON_NOTCR(std::uint8_t &x) {
   constexpr std::uint8_t kBackspace = 0x88u;
   constexpr std::uint8_t kCtrlX = 0x98u;
   constexpr std::uint8_t kMargin = 0xf8u;
@@ -101,12 +95,12 @@ void NOTCR(std::uint8_t &x) {
   // slot. The subsequent ++x wrap to 0 intentionally triggers the
   // cancel/restart path.
   const std::uint8_t current = read_input_buffer(x);
-  COUT(current);
+  MON_COUT(current);
   variables().MON_INVFLG = savedInv;
 
   if (current == kBackspace || current == kCtrlX) {
     if (x == 0u) {
-      x = AS_GETLNZ();
+      x = MON_GETLNZ();
       return;
     }
     --x;
@@ -119,8 +113,8 @@ void NOTCR(std::uint8_t &x) {
 
   ++x;
   if (x == 0u) {
-    COUT(kCancelSlash);
-    x = AS_GETLNZ();
+    MON_COUT(kCancelSlash);
+    x = MON_GETLNZ();
   }
 }
 
@@ -129,16 +123,16 @@ void NOTCR(std::uint8_t &x) {
 std::uint8_t MON_GETLN() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_GETLN (inclusive) .. CROUT (exclusive)
-  // Name normalization: AS_GETLN -> MON_GETLN (monitor label gets MON_ prefix).
+  // AS_Labels: MON_GETLN (inclusive) .. MON_CROUT (exclusive)
+  // Name normalization: none (assembler label MON_GETLN kept verbatim).
   constexpr std::uint8_t kCtrlU = 0x95u;
   constexpr std::uint8_t kCarriageReturn = 0x8du;
   constexpr std::uint8_t kAS_LowercaseThreshold = 0xe0u;
 
-  std::uint8_t x = AS_GETLNZ();
+  std::uint8_t x = MON_GETLNZ();
 
   while (true) {
-    std::uint8_t ch = RDCHAR();
+    std::uint8_t ch = MON_RDCHAR();
     if (ch == kCtrlU) {
       ch = read_screen_char_via_28_y();
     }
@@ -149,11 +143,11 @@ std::uint8_t MON_GETLN() {
 
     write_input_buffer(x, ch);
     if (ch == kCarriageReturn) {
-      CLREOL();
+      MON_CLREOL();
       return x;
     }
 
-    NOTCR(x);
+    MON_NOTCR(x);
   }
 }
 
