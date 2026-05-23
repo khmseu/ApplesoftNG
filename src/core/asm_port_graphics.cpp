@@ -276,8 +276,8 @@ void MON_NXTCOL() {
 void MON_HOME() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: HOME (inclusive) .. CR (exclusive)
-  // Name normalization: HOME -> MON_HOME (monitor label gets MON_ prefix).
+  // AS_Labels: MON_HOME (inclusive) .. MON_CLREOL (exclusive)
+  // Name normalization: none (assembler label MON_HOME kept verbatim).
   //
   // Monitor HOME initializes cursor to top-left of current window and clears
   // the window to blanks (high-bit set AS_ASCII space).
@@ -370,20 +370,10 @@ void MON_SETGR() {
   MON_TABV(23u);
 }
 
-void HOME() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: MON_HOME (inclusive) .. AS_ROT (exclusive)
-  // Name normalization: HOME statement maps to MON_HOME monitor routine
-  // ($FC58).
-
-  MON_HOME();
-}
-
 void AS_GR() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_GR (inclusive) .. AS_TEXT (exclusive)
+  // AS_Labels: AS_GR (inclusive) .. AS_STORE (exclusive)
   // Name normalization: none (assembler label AS_GR kept verbatim).
   //
   // lda AS_SW_LORES ($c056): soft-switch read activates lo-res graphics mode.
@@ -444,7 +434,7 @@ void AS_HGR2() {
 void AS_HGR() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_HGR (inclusive) .. AS_SETHPG (exclusive)
+  // AS_Labels: AS_HGR (inclusive) .. AS_HCLR (exclusive)
   // Name normalization: none (assembler label AS_HGR kept verbatim).
 
   // AS_HGR lda #$20 ; bit AS_SW_LOWSCR ; bit AS_SW_MIXSET
@@ -531,7 +521,7 @@ void AS_HCOLOR() {
 void AS_ROT() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_ROT (inclusive) .. AS_SCALE (exclusive)
+  // AS_Labels: AS_ROT (inclusive) .. AS_DRWPNT (exclusive)
   // Name normalization: none (assembler label AS_ROT kept verbatim).
 
   const std::uint8_t val = AS_GETBYT();
@@ -822,7 +812,7 @@ void AS_DRWPNT() {
 void AS_LRUD4();
 void AS_LRUD3();
 
-void AS_MOVE_UP() {
+void AS_MOVE_UP_OR_DOWN() {
   // Ported from MOVE_UP in monitor/paddles.o65.lst
   // Decrement HGR_Y (ABCDEFGH) logic
   // Simplified: Apple II hi-res vertical lines are complex,
@@ -863,7 +853,7 @@ void AS_MOVE_RIGHT() {
   AS_HPOSN({x, y, true});
 }
 
-void AS_MOVE_LEFT() {
+void AS_MOVE_LEFT_OR_RIGHT() {
   std::uint16_t x = variables_const().AS_HGR_X;
   if (x > 0) {
     x--;
@@ -888,7 +878,7 @@ void AS_LRUD4() {
   // 03 -- LEFT
   switch (dir) {
   case 0:
-    AS_MOVE_UP();
+    AS_MOVE_UP_OR_DOWN();
     break;
   case 1:
     AS_MOVE_DOWN();
@@ -897,7 +887,7 @@ void AS_LRUD4() {
     AS_MOVE_RIGHT();
     break;
   case 3:
-    AS_MOVE_LEFT();
+    AS_MOVE_LEFT_OR_RIGHT();
     break;
   }
 }
@@ -933,7 +923,7 @@ void AS_LRUD1() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_MOVE_LEFT_OR_RIGHT (inclusive) .. AS_HGLIN (exclusive)
+// AS_Labels: AS_MOVE_LEFT_OR_RIGHT (inclusive) .. AS_CON_04 (exclusive)
 // Name normalization: movement and LRUD sublabels map to this helper cluster.
 void AS_LRUDX1() {
   if (ApplesoftVariables::highByte(variables_const().AS_HGR_DX) & 0x04u) {

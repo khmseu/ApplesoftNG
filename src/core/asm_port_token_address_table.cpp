@@ -42,7 +42,7 @@ void AS_HCOLOR();
 void AS_HPLOT();
 void AS_DRAW();
 void AS_XDRAW();
-void HOME();
+void MON_HOME();
 void AS_SHLOAD();
 void AS_ROT();
 void AS_SCALE();
@@ -98,7 +98,7 @@ static void AS_HPLOT_Handler() { AS_HPLOT(); }
 static void AS_DRAW_Handler() { AS_DRAW(); }
 static void AS_XDRAW_Handler() { AS_XDRAW(); }
 static void AS_HTAB_Handler() { AS_HTAB(); }
-static void HOME_Handler() { HOME(); }
+static void HOME_Handler() { MON_HOME(); }
 static void AS_ROT_Handler() { AS_ROT(); }
 static void AS_SCALE_Handler() { AS_SCALE(); }
 static void AS_SHLOAD_Handler() { AS_SHLOAD(); }
