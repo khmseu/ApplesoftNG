@@ -1,9 +1,16 @@
 #include "core/asm_port_statements.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_chrget.hpp"
 #include "core/asm_port_clear.hpp"
+#include "core/asm_port_control_flow.hpp"
 #include "core/asm_port_error.hpp"
+#include "core/asm_port_error_handling.hpp"
+#include "core/asm_port_graphics.hpp"
+#include "core/asm_port_parser.hpp"
+#include "core/asm_port_print.hpp"
 #include "core/asm_port_token_name_table.hpp"
 #include "core/io_ports.hpp"
+#include "platform/asm_port_outdo.hpp"
 
 #include <cstdint>
 #include <optional>
@@ -14,12 +21,8 @@ namespace applesoft::asm_port {
 constexpr std::size_t kTokenCount = 107;
 constexpr std::uint8_t kTokenBase = 0x80u;
 
-void SetTextPointer(std::uint16_t address);
-void AS_RESTART();
 void MON_WRITE();
 void MON_READ();
-void MON_INPORT(std::uint8_t slot);
-void MON_OUTPORT(std::uint8_t slot);
 void MON_RD2();
 void MON_RD3();
 void MON_RD2BIT();
@@ -35,9 +38,7 @@ void AS_FIX_LINKS();
 void AS_VARTIO();
 void AS_PROGIO();
 std::uint16_t AS_PTRGET();
-void AS_SYNCHR(std::uint8_t expected);
 void AS_FRMEVL();
-void AS_FRMNUM();
 bool AS_CHKVAL(std::uint8_t savedValTyp);
 void AS_ROUND_FAC();
 void AS_AYINT();
@@ -49,18 +50,9 @@ void AS_LET2(std::uint8_t savedValTypPlus1);
 void AS_PUTSTR();
 void AS_LINGET();
 bool AS_FNDLIN();
-std::uint8_t AS_CHRGOT();
-std::uint8_t AS_CHRGET();
 bool IsStatementEndOfParsedInput();
 bool AS_ISCNTC();
-void AS_CRDO();
-void AS_LINPRT();
-void MON_COUT(std::uint8_t value);
-std::uint8_t AS_OUTDO(std::uint8_t value);
 bool AS_FL1(std::uint16_t startAddress);
-void AS_STKINI();
-std::uint8_t ReadProgramByte(std::uint16_t address);
-void WriteProgramByte(std::uint16_t address, std::uint8_t value);
 bool AS_NEW_impl();
 void AS_SCRTCH_impl();
 bool AS_SETPTRS_impl();
@@ -68,7 +60,6 @@ bool AS_CLEAR_impl();
 void AS_CLEARC_impl();
 void AS_STXTPT_impl();
 void AS_GO_TO_LINE();
-void AS_GETADR();
 void AS_SNGFLT(std::uint8_t value);
 std::uint8_t AS_GTNUM();
 std::uint8_t AS_COMBYTE();
@@ -76,7 +67,6 @@ void AS_RTS_10();
 void AS_L_STORE_1();
 void AS_L_RECALL_1();
 void AS_GETARY2();
-std::uint8_t AS_MEMERR();
 void AS_GETARYPT();
 void AS_TAPEPNT();
 
