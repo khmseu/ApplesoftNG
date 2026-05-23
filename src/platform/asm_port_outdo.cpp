@@ -1,11 +1,11 @@
 #include "platform/asm_port_outdo.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_graphics.hpp"
 #include "core/io_ports.hpp"
 #include "core/jump_table.hpp"
 #include <cstdint>
 
 namespace applesoft::asm_port {
-void MON_TABV(std::uint8_t row_zero_based);
 namespace {
 using MonitorOutputRoutine = void (*)(std::uint8_t);
 constexpr std::uint16_t kMonitorCout1Vector = 0xfd62u;
