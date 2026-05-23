@@ -120,11 +120,11 @@ void MON_NOTCR(std::uint8_t &x) {
 
 } // namespace
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_GETLN (inclusive) .. MON_CROUT (exclusive)
+// Name normalization: none (assembler label MON_GETLN kept verbatim).
 std::uint8_t MON_GETLN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: MON_GETLN (inclusive) .. MON_CROUT (exclusive)
-  // Name normalization: none (assembler label MON_GETLN kept verbatim).
   constexpr std::uint8_t kCtrlU = 0x95u;
   constexpr std::uint8_t kCarriageReturn = 0x8du;
   constexpr std::uint8_t kAS_LowercaseThreshold = 0xe0u;

@@ -405,7 +405,7 @@ MON_CLREOL	src/platform/asm_port_getln.cpp	50	MON_CLREOL (inclusive) .. MON_WAIT
 MON_CROUT	src/platform/asm_port_getln.cpp	65	MON_CROUT (inclusive) .. MON_PRA1 (exclusive)	MON_CROUT	MON_PRA1	asrom	MON_CROUT	0xfd8e	MON_PRA1	0xfd92	resolved-range	ok
 MON_GETLNZ	src/platform/asm_port_getln.cpp	71	MON_GETLNZ (inclusive) .. MON_BCKSPC (exclusive)	MON_GETLNZ	MON_BCKSPC	asrom	MON_GETLNZ	0xfd67	MON_BCKSPC	0xfd71	resolved-range	ok
 MON_NOTCR	src/platform/asm_port_getln.cpp	84	MON_NOTCR (inclusive) .. MON_GETLNZ (exclusive)	MON_NOTCR	MON_GETLNZ	asrom	MON_NOTCR	0xfd3d	MON_GETLNZ	0xfd67	resolved-range	ok
-MON_GETLN	src/platform/asm_port_getln.cpp	126	MON_GETLN (inclusive) .. MON_CROUT (exclusive)	MON_GETLN	MON_CROUT	asrom	MON_GETLN	0xfd6a	MON_CROUT	0xfd8e	resolved-range	ok
+MON_GETLN	src/platform/asm_port_getln.cpp	125	MON_GETLN (inclusive) .. MON_CROUT (exclusive)	MON_GETLN	MON_CROUT	asrom	MON_GETLN	0xfd6a	MON_CROUT	0xfd8e	resolved-range	ok
 MON_LFB78	src/platform/asm_port_outdo.cpp	73	MON_LFB78 (inclusive) .. MON_LFB97 (exclusive)	MON_LFB78	MON_LFB97	asrom	MON_LFB78	0xfb78	MON_LFB97	0xfb97	resolved-range	ok
 MON_VIDOUT	src/platform/asm_port_outdo.cpp	95	MON_VIDOUT (inclusive) .. MON_ESC1 (exclusive)	MON_VIDOUT	MON_ESC1	asrom	MON_VIDOUT	0xfbfd	MON_ESC1	0xfc2c	resolved-range	ok
 MON_COUT1	src/platform/asm_port_outdo.cpp	133	MON_COUT1 (inclusive) .. MON_BL1 (exclusive)	MON_COUT1	MON_BL1	asrom	MON_COUT1	0xfdf0	MON_BL1	0xfe00	resolved-range	ok
