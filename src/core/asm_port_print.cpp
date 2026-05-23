@@ -265,12 +265,11 @@ void AS_FOUT_1() {
 // and return the result clamped to a byte (0-255) in the X register equivalent.
 // After this call, AS_CHRGOT() returns the character immediately following the
 // expression (expected to be ')' by the callers in this file).
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GTBYTC (inclusive) .. AS_GETBYT (exclusive)
+// Name normalization: AS_GTBYTC_PRINT maps to AS_GTBYTC.
 static std::uint8_t AS_GTBYTC_PRINT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_GTBYTC (inclusive) .. AS_GETBYT (exclusive)
-  // Name normalization: none (assembler label AS_GTBYTC kept verbatim).
-
   AS_CHRGET();
   return AS_GETBYT();
 }

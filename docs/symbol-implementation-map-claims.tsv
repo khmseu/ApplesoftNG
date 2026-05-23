@@ -279,16 +279,16 @@ AS_NAMOK	src/core/asm_port_parser.cpp	426	AS_NAMOK (inclusive) .. AS_BASIC (excl
 AS_INPRT	src/core/asm_port_print.cpp	223	AS_INPRT (inclusive) .. AS_GO_STROUT (exclusive)	AS_INPRT	AS_GO_STROUT	asrom	AS_INPRT	0xed19	AS_GO_STROUT	0xed31	resolved-range	ok
 AS_FOUT	src/core/asm_port_print.cpp	248	AS_FOUT (inclusive) .. AS_SQR (exclusive)	AS_FOUT	AS_SQR	asrom	AS_FOUT	0xed34	AS_SQR	0xee8d	resolved-range	ok
 AS_FOUT_1	src/core/asm_port_print.cpp	257	AS_FOUT_1 (inclusive) .. AS_FOUT_3 (exclusive)	AS_FOUT_1	AS_FOUT_3	asrom	AS_FOUT_1	0xed36	AS_FOUT_3	0xee17	resolved-range	ok
-AS_STRPRT	src/core/asm_port_print.cpp	271	AS_GTBYTC (inclusive) .. AS_GETBYT (exclusive)	AS_GTBYTC	AS_GETBYT	asrom	AS_GTBYTC	0xe6f5	AS_GETBYT	0xe6f8	resolved-range	ok
-AS_STRPRT	src/core/asm_port_print.cpp	294	AS_STRPRT (inclusive) .. AS_OUTSP (exclusive)	AS_STRPRT	AS_OUTSP	asrom	AS_STRPRT	0xdb3d	AS_OUTSP	0xdb57	resolved-range	ok
-AS_STROUT	src/core/asm_port_print.cpp	320	AS_STROUT (inclusive) .. AS_STRPRT (exclusive)	AS_STROUT	AS_STRPRT	asrom	AS_STROUT	0xdb3a	AS_STRPRT	0xdb3d	resolved-range	ok
-AS_PR_STRING	src/core/asm_port_print.cpp	406	AS_PR_STRING (inclusive) .. AS_PRINT (exclusive)	AS_PR_STRING	AS_PRINT	asrom	AS_PR_STRING	0xdacf	AS_PRINT	0xdad5	resolved-range	ok
-AS_PRINT	src/core/asm_port_print.cpp	428	AS_PRINT (inclusive) .. AS_PRINT2 (exclusive)	AS_PRINT	AS_PRINT2	asrom	AS_PRINT	0xdad5	AS_PRINT2	0xdad7	resolved-range	ok
-AS_PRINT2	src/core/asm_port_print.cpp	446	AS_PRINT2 (inclusive) .. AS_CRDO (exclusive)	AS_PRINT2	AS_CRDO	asrom	AS_PRINT2	0xdad7	AS_CRDO	0xdafb	resolved-range	ok
-AS_CRDO	src/core/asm_port_print.cpp	462	AS_CRDO (inclusive) .. AS_NEGATE (exclusive)	AS_CRDO	AS_NEGATE	asrom	AS_CRDO	0xdafb	AS_NEGATE	0xdb00	resolved-range	ok
-AS_NEGATE	src/core/asm_port_print.cpp	479	AS_NEGATE (inclusive) .. AS_PR_COMMA (exclusive)	AS_NEGATE	AS_PR_COMMA	asrom	AS_NEGATE	0xdb00	AS_PR_COMMA	0xdb03	resolved-range	ok
-AS_PR_COMMA	src/core/asm_port_print.cpp	495	AS_PR_COMMA (inclusive) .. AS_PR_TAB_OR_SPC (exclusive)	AS_PR_COMMA	AS_PR_TAB_OR_SPC	asrom	AS_PR_COMMA	0xdb03	AS_PR_TAB_OR_SPC	0xdb16	resolved-range	ok
-AS_PR_TAB_OR_SPC	src/core/asm_port_print.cpp	525	AS_PR_TAB_OR_SPC (inclusive) .. AS_STROUT (exclusive)	AS_PR_TAB_OR_SPC	AS_STROUT	asrom	AS_PR_TAB_OR_SPC	0xdb16	AS_STROUT	0xdb3a	resolved-range	ok
+AS_GTBYTC_PRINT	src/core/asm_port_print.cpp	270	AS_GTBYTC (inclusive) .. AS_GETBYT (exclusive)	AS_GTBYTC	AS_GETBYT	asrom	AS_GTBYTC	0xe6f5	AS_GETBYT	0xe6f8	resolved-range	ok
+AS_STRPRT	src/core/asm_port_print.cpp	293	AS_STRPRT (inclusive) .. AS_OUTSP (exclusive)	AS_STRPRT	AS_OUTSP	asrom	AS_STRPRT	0xdb3d	AS_OUTSP	0xdb57	resolved-range	ok
+AS_STROUT	src/core/asm_port_print.cpp	319	AS_STROUT (inclusive) .. AS_STRPRT (exclusive)	AS_STROUT	AS_STRPRT	asrom	AS_STROUT	0xdb3a	AS_STRPRT	0xdb3d	resolved-range	ok
+AS_PR_STRING	src/core/asm_port_print.cpp	405	AS_PR_STRING (inclusive) .. AS_PRINT (exclusive)	AS_PR_STRING	AS_PRINT	asrom	AS_PR_STRING	0xdacf	AS_PRINT	0xdad5	resolved-range	ok
+AS_PRINT	src/core/asm_port_print.cpp	427	AS_PRINT (inclusive) .. AS_PRINT2 (exclusive)	AS_PRINT	AS_PRINT2	asrom	AS_PRINT	0xdad5	AS_PRINT2	0xdad7	resolved-range	ok
+AS_PRINT2	src/core/asm_port_print.cpp	445	AS_PRINT2 (inclusive) .. AS_CRDO (exclusive)	AS_PRINT2	AS_CRDO	asrom	AS_PRINT2	0xdad7	AS_CRDO	0xdafb	resolved-range	ok
+AS_CRDO	src/core/asm_port_print.cpp	461	AS_CRDO (inclusive) .. AS_NEGATE (exclusive)	AS_CRDO	AS_NEGATE	asrom	AS_CRDO	0xdafb	AS_NEGATE	0xdb00	resolved-range	ok
+AS_NEGATE	src/core/asm_port_print.cpp	478	AS_NEGATE (inclusive) .. AS_PR_COMMA (exclusive)	AS_NEGATE	AS_PR_COMMA	asrom	AS_NEGATE	0xdb00	AS_PR_COMMA	0xdb03	resolved-range	ok
+AS_PR_COMMA	src/core/asm_port_print.cpp	494	AS_PR_COMMA (inclusive) .. AS_PR_TAB_OR_SPC (exclusive)	AS_PR_COMMA	AS_PR_TAB_OR_SPC	asrom	AS_PR_COMMA	0xdb03	AS_PR_TAB_OR_SPC	0xdb16	resolved-range	ok
+AS_PR_TAB_OR_SPC	src/core/asm_port_print.cpp	524	AS_PR_TAB_OR_SPC (inclusive) .. AS_STROUT (exclusive)	AS_PR_TAB_OR_SPC	AS_STROUT	asrom	AS_PR_TAB_OR_SPC	0xdb16	AS_STROUT	0xdb3a	resolved-range	ok
 AS_QT_ERROR	src/core/asm_port_qt_error.cpp	3	AS_QT_ERROR (inclusive) .. AS_GTFORPNT (exclusive)	AS_QT_ERROR	AS_GTFORPNT	asrom	AS_QT_ERROR	0xd350	AS_GTFORPNT	0xd365	resolved-range	ok
 AS_REASON	src/core/asm_port_reason.cpp	26	AS_REASON (inclusive) .. AS_MEMERR (exclusive)	AS_REASON	AS_MEMERR	asrom	AS_REASON	0xd3e3	AS_MEMERR	0xd410	resolved-range	ok
 AS_NEW_impl	src/core/asm_port_statements.cpp	83	AS_NEW (inclusive) .. AS_SCRTCH (exclusive)	AS_NEW	AS_SCRTCH	asrom	AS_NEW	0xd649	AS_SCRTCH	0xd64b	resolved-range	ok
@@ -491,9 +491,8 @@ facToDouble	src/core/asm_port_print.cpp	25									unclaimed	no-label-range-clai
 foutImpl	src/core/asm_port_print.cpp	51									unclaimed	no-label-range-claim
 PrintDecimalUnsigned	src/core/asm_port_print.cpp	204									unclaimed	no-label-range-claim
 AS_LINPRT	src/core/asm_port_print.cpp	219									unclaimed	no-label-range-claim
-AS_GTBYTC_PRINT	src/core/asm_port_print.cpp	268									unclaimed	no-label-range-claim
-PrintNumericExpression	src/core/asm_port_print.cpp	341									unclaimed	no-label-range-claim
-print_list_loop	src/core/asm_port_print.cpp	351									unclaimed	no-label-range-claim
+PrintNumericExpression	src/core/asm_port_print.cpp	340									unclaimed	no-label-range-claim
+print_list_loop	src/core/asm_port_print.cpp	350									unclaimed	no-label-range-claim
 has_room	src/core/asm_port_reason.cpp	9									unclaimed	no-label-range-claim
 invokeGarbageCollector	src/core/asm_port_reason.cpp	14									unclaimed	no-label-range-claim
 AS_NEW	src/core/asm_port_statements.cpp	117									unclaimed	no-label-range-claim
