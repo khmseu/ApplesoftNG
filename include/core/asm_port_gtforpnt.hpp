@@ -7,11 +7,6 @@
 
 namespace applesoft::asm_port {
 
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_GTFORPNT (inclusive) .. AS_BLTU (exclusive)
-// Name normalization: none (assembler label AS_GTFORPNT kept verbatim).
-
 inline constexpr std::uint8_t AS_TOKEN_FOR = 0x81;
 
 // Minimal state needed by AS_GTFORPNT while broader runtime memory wiring is
