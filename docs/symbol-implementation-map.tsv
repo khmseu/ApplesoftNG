@@ -1124,10 +1124,10 @@ asrom	MON_PREAD	0xfb1e	MON_PREAD
 asrom	MON_PREAD2	0xfb25	MON_PREAD
 asrom	MON_RTS2D	0xfb2e	MON_PREAD
 asrom	MON_INIT	0xfb2f	MON_INIT
-asrom	MON_SETTXT	0xfb39	-
-asrom	MON_SETGR	0xfb40	-
-asrom	MON_SETWND	0xfb4b	-
-asrom	MON_TABV	0xfb5b	-
+asrom	MON_SETTXT	0xfb39	MON_SETTXT
+asrom	MON_SETGR	0xfb40	MON_SETGR
+asrom	MON_SETWND	0xfb4b	MON_SETGR
+asrom	MON_TABV	0xfb5b	MON_TABV
 asrom	MON_LFB60	0xfb60	-
 asrom	MON_LFB65	0xfb65	-
 asrom	MON_LFB78	0xfb78	-

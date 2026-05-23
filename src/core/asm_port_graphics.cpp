@@ -64,17 +64,10 @@ void MON_SETCOL(std::uint8_t color) {
   variables().MON_COLOR = packed;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_TABV (inclusive) .. MON_LFB60 (exclusive)
 void MON_TABV(std::uint8_t row_zero_based) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: TABV (inclusive) .. external AS_VTAB jump target (exclusive)
-  // Name normalization: TABV -> MON_TABV (monitor label gets MON_ prefix).
-  //
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_VTAB (inclusive) .. ESC1 (exclusive)
-  // Name normalization: AS_VTAB logic inlined into MON_TABV.
-
   // display1 TABV: sta CV ; jmp AS_VTAB
   variables().MON_CV = row_zero_based;
 
@@ -89,11 +82,12 @@ void MON_TABV(std::uint8_t row_zero_based) {
   if (carryFromAS_Lsr) {
     basl = static_cast<std::uint8_t>(basl + 0x80u);
   }
-  const std::uint8_t baslBase = basl;
-  basl = static_cast<std::uint8_t>((basl << 2u) | baslBase);
-  basl = static_cast<std::uint8_t>(basl + variables_const().MON_WNDLFT);
-
+  variables().MON_BASL = basl;
   variables().MON_BASL = ApplesoftVariables::makeWord(basl, bash);
+
+  const std::uint8_t windLeft = variables_const().MON_WNDLFT;
+  variables().MON_BASL =
+      static_cast<std::uint8_t>(variables_const().MON_BASL + windLeft);
 }
 
 namespace {
@@ -329,11 +323,10 @@ void MON_CLREOL() {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_SETTXT (inclusive) .. MON_SETGR (exclusive)
 void MON_SETTXT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: SETTXT (inclusive) .. SETGR (exclusive)
-  // Name normalization: SETTXT -> MON_SETTXT (monitor label gets MON_ prefix).
   //
   // ROM fall-through: SETTXT unconditionally branches to SETWND; modeled
   // directly here by writing the window fields and tabbing to row 23.
@@ -349,13 +342,15 @@ void MON_SETTXT() {
   MON_TABV(23u);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_SETGR (inclusive) .. MON_SETWND (exclusive)
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_SETWND (inclusive) .. MON_TABV (exclusive)
 void MON_SETGR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: SETGR (inclusive) .. SETWND (exclusive)
-  // Name normalization: SETGR -> MON_SETGR (monitor label gets MON_ prefix).
   //
-  // Falls through into SETWND in ROM; modeled here by writing the window
+  // Falls through into MON_SETWND in ROM; modeled here by writing the window
   // fields and tabbing to row 23.
 
   (void)variables_const().readByte(IOPorts::ADDR_AS_SW_TXTCLR);
