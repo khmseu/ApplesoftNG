@@ -1164,12 +1164,11 @@ void AS_PTRGET3() {
 // Name normalization: none (assembler label AS_PTRGET2 kept verbatim).
 void AS_PTRGET2() { AS_PTRGET3(); }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PTRGET (inclusive) .. AS_PTRGET2 (exclusive)
+// Name normalization: none (assembler label AS_PTRGET kept verbatim).
 std::uint16_t AS_PTRGET() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PTRGET (inclusive) .. AS_PTRGET2 (exclusive)
-  // Name normalization: none (assembler label AS_PTRGET kept verbatim).
-
   AS_CHRGOT();
   variables().AS_DIMFLG = 0u; // AS_DIMFLG
   AS_PTRGET3();

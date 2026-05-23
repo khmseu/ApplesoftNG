@@ -203,11 +203,11 @@ void AS_FRM_ELEMENT() {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FRM_VARIABLE (inclusive) .. AS_SCREEN (exclusive)
+// Name normalization: none (assembler label AS_FRM_VARIABLE kept verbatim).
 void AS_FRM_VARIABLE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FRM_VARIABLE (inclusive) .. AS_SCREEN (exclusive)
-  // Name normalization: none (assembler label AS_FRM_VARIABLE kept verbatim).
   //
   // AS_VARPNT is the logical value pointer returned by AS_PTRGET; numeric
   // variables load through AS_LOAD_FAC_FROM_YA, while integer variables are
@@ -238,11 +238,11 @@ void AS_FRM_VARIABLE() {
   variables().AS_FAC[4] = valuePtr.read(4u);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NOT_ (inclusive) .. AS_FN_ (exclusive)
+// Name normalization: none (assembler label AS_NOT_ kept verbatim).
 void AS_NOT_() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_NOT_ (inclusive) .. AS_FN_ (exclusive)
-  // Name normalization: none (assembler label AS_NOT_ kept verbatim).
   //
   // Applesoft NOT returns true when FAC is zero and false otherwise; the code
   // path is identical to the existing AS_EQUOP truth test.
@@ -274,11 +274,11 @@ void AS_FN_() {
   AS_PARCHK();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FRMEVL_2 (inclusive) .. AS_FRM_RELATIONAL (exclusive)
+// Name normalization: none (assembler label AS_FRMEVL_2 kept verbatim).
 void AS_FRMEVL_2() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FRMEVL_2 (inclusive) .. AS_FRM_RELATIONAL (exclusive)
-  // Name normalization: none (assembler label AS_FRMEVL_2 kept verbatim).
   //
   // This slice scans chained relational operators and builds AS_CPRTYP bits:
   // > => 0x01, = => 0x02, < => 0x04.
@@ -313,12 +313,12 @@ struct SubstringSetupResult {
   std::uint8_t sourceAS_Length;
 };
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SUBSTRING_SETUP (inclusive) .. AS_LEN (exclusive)
+// Name normalization: none (assembler label AS_SUBSTRING_SETUP kept
+// verbatim).
 bool AS_SUBSTRING_SETUP(SubstringSetupResult &out) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SUBSTRING_SETUP (inclusive) .. AS_LEN (exclusive)
-  // Name normalization: none (assembler label AS_SUBSTRING_SETUP kept
-  // verbatim).
   AS_CHKCLS();
 
   const std::uint8_t first = variables_const().AS_FAC[4];

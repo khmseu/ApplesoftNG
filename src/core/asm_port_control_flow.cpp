@@ -123,13 +123,13 @@ void ApplyFacSign() {
 
 void SetBranchTargetToAS_STEP() { variables().AS_INDEX = kStepLabelAddress; }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_LOAD_FAC_FROM_YA (inclusive) .. AS_STORE_FAC_IN_TEMP2_ROUNDED
+// (exclusive) This function ports only AS_LOAD_FAC_FROM_YA;
+// AS_STORE_FAC_IN_TEMP2_ROUNDED starts at the exclusive end label. Name
+// normalization: none (assembler label AS_LOAD_FAC_FROM_YA kept verbatim).
 void AS_LOAD_FAC_FROM_YA() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_LOAD_FAC_FROM_YA (inclusive) .. AS_STORE_FAC_IN_TEMP2_ROUNDED
-  // (exclusive) This function ports only AS_LOAD_FAC_FROM_YA;
-  // AS_STORE_FAC_IN_TEMP2_ROUNDED starts at the exclusive end label. Name
-  // normalization: none (assembler label AS_LOAD_FAC_FROM_YA kept verbatim).
   // Caller precondition: AS_INDEX points to the packed 5-byte source value.
   const ProgramPointer source{variables_const().AS_INDEX};
   variables().AS_FAC[4] = source.read(4u);
@@ -146,43 +146,37 @@ void AS_LOAD_FAC_FROM_YA() {
   variables().AS_FAC_EXTENSION = 0u;
 }
 
+// AS_Labels: AS_SIGN2 (inclusive) .. AS_SGN (exclusive)
+// MSBIT to carry, then return -1 if carry set, +1 if carry clear.
 std::int8_t AS_SIGN2(std::uint8_t sign) {
-  // AS_Labels: AS_SIGN2 (inclusive) .. AS_SGN (exclusive)
-  // MSBIT to carry, then return -1 if carry set, +1 if carry clear.
   if ((sign & 0x80u) != 0u) {
     return -1;
   }
   return 1;
 }
 
-std::int8_t AS_SIGN1() {
-  // AS_Labels: AS_SIGN1 (inclusive) .. AS_SIGN2 (exclusive)
-  return AS_SIGN2(variables_const().AS_FAC_SIGN);
-}
+// AS_Labels: AS_SIGN1 (inclusive) .. AS_SIGN2 (exclusive)
+std::int8_t AS_SIGN1() { return AS_SIGN2(variables_const().AS_FAC_SIGN); }
 
+// AS_Labels: AS_SIGN (inclusive) .. AS_SIGN2 (exclusive)
 std::int8_t AS_SIGN() {
-  // AS_Labels: AS_SIGN (inclusive) .. AS_SIGN2 (exclusive)
   if (variables_const().AS_FAC[0] == 0u) {
     return 0; // Numbers are effectively zero
   }
   return AS_SIGN1();
 }
 
-std::int8_t AS_L_FCOMP2_2(std::uint8_t signByte) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_L_FCOMP2_2 (inclusive) .. AS_QINT (exclusive)
-  // Name normalization: none (assembler label AS_L_FCOMP2_2 kept verbatim).
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_L_FCOMP2_2 (inclusive) .. AS_QINT (exclusive)
+// Name normalization: none (assembler label AS_L_FCOMP2_2 kept verbatim).
+std::int8_t AS_L_FCOMP2_2(std::uint8_t signByte) { return AS_SIGN2(signByte); }
 
-  return AS_SIGN2(signByte);
-}
-
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_L_FCOMP2_1 (inclusive) .. AS_L_FCOMP2_2 (exclusive)
+// Name normalization: none (assembler label AS_L_FCOMP2_1 kept verbatim).
 std::int8_t AS_L_FCOMP2_1(bool compareCarrySet) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_L_FCOMP2_1 (inclusive) .. AS_L_FCOMP2_2 (exclusive)
-  // Name normalization: none (assembler label AS_L_FCOMP2_1 kept verbatim).
-
   std::uint8_t signByte = variables_const().AS_FAC_SIGN;
   if (compareCarrySet) {
     signByte ^= 0xffu;
@@ -192,13 +186,13 @@ std::int8_t AS_L_FCOMP2_1(bool compareCarrySet) {
 
 } // namespace
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FCOMP2 (inclusive) .. AS_L_FCOMP2_1 (exclusive)
+// Name normalization: none (assembler label AS_FCOMP2 kept verbatim).
+// Pointer candidate: DEST ($60/$61) is one unified pointer to the packed
+// comparand.
 void AS_FCOMP2() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FCOMP2 (inclusive) .. AS_L_FCOMP2_1 (exclusive)
-  // Name normalization: none (assembler label AS_FCOMP2 kept verbatim).
-  // Pointer candidate: DEST ($60/$61) is one unified pointer to the packed
-  // comparand.
 
   const auto comparand = variables_const().pointer(variables_const().AS_DEST);
   const std::uint8_t comparandExponent = comparand.read(0u);
@@ -336,11 +330,11 @@ bool isDigit(std::uint8_t ch) { return ch >= '0' && ch <= '9'; }
 
 } // namespace
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SETFOR (inclusive) .. AS_COPY_ARG_TO_FAC (exclusive)
+// Name normalization: none (assembler label AS_SETFOR kept verbatim).
 void AS_SETFOR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SETFOR (inclusive) .. AS_COPY_ARG_TO_FAC (exclusive)
-  // Name normalization: none (assembler label AS_SETFOR kept verbatim).
   AS_ROUND_FAC();
 
   const ProgramPointer forVariablePtr{variables_const().AS_FORPNT};
@@ -613,33 +607,28 @@ void AS_ONERR() {
   AS_ADDON(AS_REMN());
 }
 
-void AS_RTS_5() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_RTS_5 (inclusive) .. AS_RETURN (exclusive)
-  // Name normalization: RTS_5 -> AS_RTS_5 virtual Applesoft prefix only.
-  // ROM label RTS_5 is a shared return target for AS_GOTO and AS_POP.
-  return;
-}
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_RTS_5 (inclusive) .. AS_RETURN (exclusive)
+// Name normalization: RTS_5 -> AS_RTS_5 virtual Applesoft prefix only.
+// ROM label RTS_5 is a shared return target for AS_GOTO and AS_POP.
+void AS_RTS_5() { return; }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PULL3 (inclusive) .. AS_IF (exclusive)
+// Name normalization: none (assembler label AS_PULL3 kept verbatim).
 void AS_PULL3() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PULL3 (inclusive) .. AS_IF (exclusive)
-  // Name normalization: none (assembler label AS_PULL3 kept verbatim).
   [[maybe_unused]] const std::uint8_t pulled1 = theStack().popByte();
   [[maybe_unused]] const std::uint8_t pulled2 = theStack().popByte();
   [[maybe_unused]] const std::uint8_t pulled3 = theStack().popByte();
 }
 
-std::uint8_t AS_REMN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_REMN (inclusive) .. AS_PULL3 (exclusive)
-  // Name normalization: none (assembler label AS_REMN kept verbatim).
-
-  return ScanAheadOffset(0);
-}
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_REMN (inclusive) .. AS_PULL3 (exclusive)
+// Name normalization: none (assembler label AS_REMN kept verbatim).
+std::uint8_t AS_REMN() { return ScanAheadOffset(0); }
 
 void PushForPntFrame() {
   theStack().pushByte(
@@ -689,11 +678,11 @@ void AS_FOR() {
   PushRoundedFacAndDispatch();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_NEXT (inclusive) .. AS_FRMNUM (exclusive)
+// Name normalization: none (assembler label AS_NEXT kept verbatim).
 void AS_NEXT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_NEXT (inclusive) .. AS_FRMNUM (exclusive)
-  // Name normalization: none (assembler label AS_NEXT kept verbatim).
 
   // d0 04 / AS_NEXT_1 jsr AS_PTRGET / AS_NEXT_2 sta AS_FORPNT, sty AS_FORPNT+1
   // No-variable AS_NEXT case is represented by AS_FORPNT+1 = 0.
@@ -815,6 +804,7 @@ void AS_RETURN() {
 }
 
 // AS_Labels: AS_STEP (inclusive) .. AS_NEWSTT (exclusive)
+// AS_Labels: AS_STEP (inclusive) .. AS_NEWSTT (exclusive)
 void AS_STEP() {
   constexpr std::uint8_t kAS_TOKEN_STEP = 0xc7u;
 
@@ -835,6 +825,7 @@ void AS_STEP() {
   AS_NEWSTT();
 }
 
+// AS_Labels: AS_NEWSTT (inclusive) .. AS_TRACE_ (exclusive)
 // AS_Labels: AS_NEWSTT (inclusive) .. AS_TRACE_ (exclusive)
 void AS_NEWSTT() {
   variables().AS_REMSTK = theStack().readStackPointer();
@@ -862,6 +853,7 @@ void AS_NEWSTT() {
 }
 
 // AS_Labels: AS_TRACE_ (inclusive) .. AS_GOEND (exclusive)
+// AS_Labels: AS_TRACE_ (inclusive) .. AS_GOEND (exclusive)
 void AS_TRACE_() {
   if (IsTraceEnabled()) {
     if (IsRunningMode()) {
@@ -876,15 +868,13 @@ void AS_TRACE_() {
   AS_NEWSTT();
 }
 
-void AS_GOEND() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_GOEND (inclusive) .. AS_EXECUTE_STATEMENT (exclusive)
-  // Name normalization: none (assembler label AS_GOEND kept verbatim).
-  // End-of-program path in AS_NEWSTT jumps into AS_END4 with carry clear, which
-  // restarts without printing BREAK. Model that directly here.
-  AS_RESTART();
-}
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_GOEND (inclusive) .. AS_EXECUTE_STATEMENT (exclusive)
+// Name normalization: none (assembler label AS_GOEND kept verbatim).
+// End-of-program path in AS_NEWSTT jumps into AS_END4 with carry clear, which
+// restarts without printing BREAK. Model that directly here.
+void AS_GOEND() { AS_RESTART(); }
 
 bool IsEndOfAS_LineAtTextPointer() {
   // Source: AS_NEWSTT inline — ldy #0 / lda (AS_TXTPTR),Y: end-of-statement
@@ -921,30 +911,17 @@ void AdvanceTextPointerToNextAS_Line() {
 }
 
 bool IsRunningMode() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_TRACE_ (inclusive) .. AS_EXECUTE_STATEMENT (exclusive)
-  // Name normalization: helper name chosen for the inline AS_TRACE_ predicate.
-  // AS_TRACE_ checks AS_CURLIN+1 and only traces when non-zero (running mode).
   return ApplesoftVariables::highByte(variables_const().AS_CURLIN) != 0u;
 }
 
-bool IsTraceEnabled() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_TRACE_ (inclusive) .. AS_EXECUTE_STATEMENT (exclusive)
-  // Name normalization: helper name chosen for the inline AS_TRACE_ predicate.
-  // `bit AS_TRCFLG` + `bpl` means tracing is enabled when AS_TRCFLG bit 7 is
-  // set.
-  return (variables_const().AS_TRCFLG & 0x80u) != 0u;
-}
+bool IsTraceEnabled() { return (variables_const().AS_TRCFLG & 0x80u) != 0u; }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_EXECUTE_STATEMENT (inclusive) .. AS_EXECUTE_STATEMENT_1
+// (exclusive) Name normalization: none (assembler label AS_EXECUTE_STATEMENT
+// kept verbatim).
 void AS_EXECUTE_STATEMENT() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_EXECUTE_STATEMENT (inclusive) .. AS_EXECUTE_STATEMENT_1
-  // (exclusive) Name normalization: none (assembler label AS_EXECUTE_STATEMENT
-  // kept verbatim).
 
   if (CurrentStatementChar() == 0) {
     // EMPTY STATEMENT: fall through to caller behavior.
@@ -954,12 +931,12 @@ void AS_EXECUTE_STATEMENT() {
   AS_EXECUTE_STATEMENT_1();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_EXECUTE_STATEMENT_1 (inclusive) .. AS_COLON_ (exclusive)
+// Name normalization: none (assembler label AS_EXECUTE_STATEMENT_1 kept
+// verbatim).
 void AS_EXECUTE_STATEMENT_1() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_EXECUTE_STATEMENT_1 (inclusive) .. AS_COLON_ (exclusive)
-  // Name normalization: none (assembler label AS_EXECUTE_STATEMENT_1 kept
-  // verbatim).
 
   const std::uint8_t ch = CurrentStatementChar();
   if ((ch & 0x80u) == 0u) {
@@ -979,11 +956,11 @@ void AS_EXECUTE_STATEMENT_1() {
   handler();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_COLON_ (inclusive) .. AS_RESTORE (exclusive)
+// Name normalization: none (assembler label AS_COLON_ kept verbatim).
 void AS_COLON_() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_COLON_ (inclusive) .. AS_RESTORE (exclusive)
-  // Name normalization: none (assembler label AS_COLON_ kept verbatim).
 
   if (CurrentStatementChar() == static_cast<std::uint8_t>(':')) {
     AS_TRACE_();
@@ -993,11 +970,11 @@ void AS_COLON_() {
   AS_SYNERR();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_IF (inclusive) .. AS_REM (exclusive)
+// Name normalization: none (assembler label AS_IF kept verbatim).
 void AS_IF() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_IF (inclusive) .. AS_REM (exclusive)
-  // Name normalization: none (assembler label AS_IF kept verbatim).
 
   constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
   constexpr std::uint8_t kAS_TOKEN_THEN = 0xc4u;

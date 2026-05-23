@@ -120,11 +120,11 @@ bool AS_SETPTRS() { return AS_SETPTRS_impl(); }
 
 void AS_SCRTCH() { AS_SCRTCH_impl(); }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_RUN (inclusive) .. AS_GOSUB (exclusive)
+// Name normalization: none (assembler label AS_RUN kept verbatim).
 void AS_RUN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_RUN (inclusive) .. AS_GOSUB (exclusive)
-  // Name normalization: none (assembler label AS_RUN kept verbatim).
   std::uint8_t curlinHi =
       ApplesoftVariables::highByte(variables_const().AS_CURLIN);
   ApplesoftVariables::setHighByte(variables().AS_CURLIN,
@@ -189,14 +189,12 @@ void AS_WAIT() {
   }
 }
 
-void AS_RTS_10() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_RTS_10 (inclusive) .. AS_FADDH (exclusive)
-  // Name normalization: RTS_10 -> AS_RTS_10 virtual Applesoft prefix only.
-  // ROM label RTS_10 is a shared return target for AS_WAIT.
-  return;
-}
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_RTS_10 (inclusive) .. AS_FADDH (exclusive)
+// Name normalization: RTS_10 -> AS_RTS_10 virtual Applesoft prefix only.
+// ROM label RTS_10 is a shared return target for AS_WAIT.
+void AS_RTS_10() { return; }
 
 struct TokenMatch {
   std::uint8_t code;
@@ -288,40 +286,40 @@ std::uint8_t ScanAheadOffsetForData(std::uint8_t terminator) {
   }
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_ADDON (inclusive) .. AS_DATAN (exclusive)
+// Name normalization: none (assembler label AS_ADDON kept verbatim).
 void AS_ADDON(std::uint8_t offset) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_ADDON (inclusive) .. AS_DATAN (exclusive)
-  // Name normalization: none (assembler label AS_ADDON kept verbatim).
 
   const std::uint16_t textPtr = variables_const().AS_TXTPTR;
   variables().AS_TXTPTR = static_cast<std::uint16_t>(textPtr + offset);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_DATAN (inclusive) .. AS_REMN (exclusive)
+// Name normalization: none (assembler label AS_DATAN kept verbatim).
 std::uint8_t AS_DATAN() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_DATAN (inclusive) .. AS_REMN (exclusive)
-  // Name normalization: none (assembler label AS_DATAN kept verbatim).
 
   return ScanAheadOffsetForData(static_cast<std::uint8_t>(':'));
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_DATA (inclusive) .. AS_ADDON (exclusive)
+// Name normalization: none (assembler label AS_DATA kept verbatim).
 void AS_DATA() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_DATA (inclusive) .. AS_ADDON (exclusive)
-  // Name normalization: none (assembler label AS_DATA kept verbatim).
 
   const std::uint8_t offset = AS_DATAN();
   AS_ADDON(offset);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_LET (inclusive) .. AS_LET2 (exclusive)
+// Name normalization: none (assembler label AS_LET kept verbatim).
 void AS_LET() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_LET (inclusive) .. AS_LET2 (exclusive)
-  // Name normalization: none (assembler label AS_LET kept verbatim).
 
   constexpr std::uint8_t kTOKEN_EQUAL = 0xd0;
 
@@ -345,11 +343,11 @@ void AS_LET() {
   AS_LET2(savedValTypPlus1);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_LET2 (inclusive) .. AS_PUTSTR (exclusive)
+// Name normalization: none (assembler label AS_LET2 kept verbatim).
 void AS_LET2(std::uint8_t savedValTypPlus1) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_LET2 (inclusive) .. AS_PUTSTR (exclusive)
-  // Name normalization: none (assembler label AS_LET2 kept verbatim).
 
   // Positive means real variable; ROM jumps directly to AS_SETFOR.
   if ((savedValTypPlus1 & 0x80u) == 0u) {
@@ -366,11 +364,11 @@ void AS_LET2(std::uint8_t savedValTypPlus1) {
   forPtrByte.write(variables_const().AS_FAC[4], 1u);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PUTSTR (inclusive) .. AS_PR_STRING (exclusive)
+// Name normalization: none (assembler label AS_PUTSTR kept verbatim).
 void AS_PUTSTR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PUTSTR (inclusive) .. AS_PR_STRING (exclusive)
-  // Name normalization: none (assembler label AS_PUTSTR kept verbatim).
 
   constexpr std::uint8_t kAS_FAC_PLUS_3 =
       static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_FAC + 3u);
@@ -608,12 +606,11 @@ void WriteForwardPointer(std::uint16_t current, std::uint16_t next) {
                         ApplesoftVariables::highByte(next));
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FIX_LINKS (inclusive) .. AS_INLIN (exclusive)
+// Name normalization: none (assembler label AS_FIX_LINKS kept verbatim).
 void AS_FIX_LINKS() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FIX_LINKS (inclusive) .. AS_INLIN (exclusive)
-  // Name normalization: none (assembler label AS_FIX_LINKS kept verbatim).
-
   AS_SETPTRS();
 
   std::uint16_t current = GetTextTablePointer();
@@ -639,12 +636,11 @@ bool AS_FNDLIN() {
   return AS_FL1(variables_const().AS_TXTTAB);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_FL1 (inclusive) .. AS_NEW (exclusive)
+// Name normalization: none (assembler label AS_FL1 kept verbatim).
 bool AS_FL1(std::uint16_t startAddress) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_FL1 (inclusive) .. AS_NEW (exclusive)
-  // Name normalization: none (assembler label AS_FL1 kept verbatim).
-
   const std::uint8_t targetAS_Lo =
       ApplesoftVariables::lowByte(variables_const().AS_LINNUM);
   const std::uint8_t targetHi =
@@ -687,11 +683,11 @@ bool AS_FL1(std::uint8_t startAS_Lo, std::uint8_t startHi) {
   return AS_FL1(ApplesoftVariables::makeWord(startAS_Lo, startHi));
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_DEL (inclusive) .. AS_GR (exclusive)
+// Name normalization: none (assembler label AS_DEL kept verbatim).
 void AS_DEL() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_DEL (inclusive) .. AS_GR (exclusive)
-  // Name normalization: none (assembler label AS_DEL kept verbatim).
 
   const std::uint16_t prgend = variables_const().AS_PRGEND;
   variables().AS_VARTAB = prgend;
@@ -916,11 +912,11 @@ void AS_TAPEPNT() {
   variables().MON_A1 = variables_const().AS_ARYPNT;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_SAVE (inclusive) .. AS_LOAD (exclusive)
+// Name normalization: none (assembler label AS_SAVE kept verbatim).
 void AS_SAVE() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_SAVE (inclusive) .. AS_LOAD (exclusive)
-  // Name normalization: none (assembler label AS_SAVE kept verbatim).
 
   const std::uint16_t programEnd = variables_const().AS_PRGEND;
   const std::uint16_t textTable = variables_const().AS_TXTTAB;
@@ -934,11 +930,11 @@ void AS_SAVE() {
   MON_WRITE();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_LOAD (inclusive) .. AS_VARTIO (exclusive)
+// Name normalization: none (assembler label AS_LOAD kept verbatim).
 void AS_LOAD() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_LOAD (inclusive) .. AS_VARTIO (exclusive)
-  // Name normalization: none (assembler label AS_LOAD kept verbatim).
 
   AS_VARTIO();
   MON_READ();
@@ -961,11 +957,11 @@ void AS_LOAD() {
   AS_FIX_LINKS();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_VARTIO (inclusive) .. AS_PROGIO (exclusive)
+// Name normalization: none (assembler label AS_VARTIO kept verbatim).
 void AS_VARTIO() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_VARTIO (inclusive) .. AS_PROGIO (exclusive)
-  // Name normalization: none (assembler label AS_VARTIO kept verbatim).
 
   constexpr std::uint8_t kAS_LINNUM = ApplesoftVariables::ZP_AS_LINNUM;
   constexpr std::uint8_t kAS_TEMPPT = ApplesoftVariables::ZP_AS_TEMPPT;
@@ -974,11 +970,11 @@ void AS_VARTIO() {
   variables().AS_LOCK = 0x00;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PROGIO (inclusive) .. AS_RUN (exclusive)
+// Name normalization: none (assembler label AS_PROGIO kept verbatim).
 void AS_PROGIO() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PROGIO (inclusive) .. AS_RUN (exclusive)
-  // Name normalization: none (assembler label AS_PROGIO kept verbatim).
 
   variables().MON_A1 = variables_const().AS_TXTTAB;
   variables().MON_A2 = variables_const().AS_VARTAB;
@@ -1042,11 +1038,11 @@ void MON_READ() {
   MON_RD2();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CALL (inclusive) .. AS_IN_NUMBER (exclusive)
+// Name normalization: none (assembler label AS_CALL kept verbatim).
 void AS_CALL() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_CALL (inclusive) .. AS_IN_NUMBER (exclusive)
-  // Name normalization: none (assembler label AS_CALL kept verbatim).
   //
   // Execute machine language subroutine at expression address.
   // Evaluates the numeric expression to a 16-bit address, then performs
@@ -1060,21 +1056,21 @@ void AS_CALL() {
   callRoutine();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_IN_NUMBER (inclusive) .. AS_PR_NUMBER (exclusive)
+// Name normalization: none (assembler label AS_IN_NUMBER kept verbatim).
 void AS_IN_NUMBER() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_IN_NUMBER (inclusive) .. AS_PR_NUMBER (exclusive)
-  // Name normalization: none (assembler label AS_IN_NUMBER kept verbatim).
 
   const std::uint8_t slot = AS_GETBYT();
   MON_INPORT(slot);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_PR_NUMBER (inclusive) .. AS_PLOTFNS (exclusive)
+// Name normalization: none (assembler label AS_PR_NUMBER kept verbatim).
 void AS_PR_NUMBER() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_PR_NUMBER (inclusive) .. AS_PLOTFNS (exclusive)
-  // Name normalization: none (assembler label AS_PR_NUMBER kept verbatim).
 
   const std::uint8_t slot = AS_GETBYT();
   MON_OUTPORT(slot);
