@@ -33,4 +33,6 @@ std::uint8_t AS_GETSTR();
 
 void AS_ASC();
 
+void AS_CAT();
+
 } // namespace applesoft::asm_port

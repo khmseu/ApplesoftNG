@@ -143,7 +143,6 @@ void AS_CHECK_BUMP();
 void AS_CHECK_EXIT();
 void AS_MOVE_HIGHEST_STRING_TO_TOP();
 void AS_PUTNEW();
-void AS_CAT();
 void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length);
 void AS_MOVSTR_1(std::uint8_t length);
 std::uint8_t AS_FRESTR();

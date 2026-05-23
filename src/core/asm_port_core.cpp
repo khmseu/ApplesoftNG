@@ -43,7 +43,6 @@ void write_AS_LASTOP(std::uint8_t value) {
 
 extern std::uint8_t gJerErrorCode;
 static std::int8_t CompareArgAndFacStrings();
-void AS_CAT();
 extern std::int8_t gNumericCompareResult;
 extern bool gNumericCompareCarry;
 extern std::uint8_t gFloatInput;
