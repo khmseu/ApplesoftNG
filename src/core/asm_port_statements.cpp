@@ -75,6 +75,7 @@ std::uint8_t AS_COMBYTE();
 void AS_RTS_10();
 void AS_L_STORE_1();
 void AS_L_RECALL_1();
+void AS_GETARY2();
 std::uint8_t AS_MEMERR();
 void AS_GETARYPT();
 void AS_TAPEPNT();
@@ -899,9 +900,21 @@ void AS_GETARYPT() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_TAPEPNT (inclusive) .. AS_GETARYPT (exclusive)
 // Name normalization: none (assembler label AS_TAPEPNT kept verbatim).
-// TODO(asm-port): Implement label AS_TAPEPNT behavior from
-// SourceMaterial/Combo/asrom.lst.
-void AS_TAPEPNT() {}
+void AS_TAPEPNT() {
+  const std::uint16_t lowtr = variables_const().AS_LOWTR;
+  const std::uint16_t linnum = variables_const().AS_LINNUM;
+
+  // MON_A2 points to LOWTR + LINNUM for tape block transfer bounds.
+  variables().MON_A2 = static_cast<std::uint16_t>(lowtr + linnum);
+
+  // ROM loads descriptor byte at LOWTR+4 before GETARY2.
+  variables().AS_NUMDIM =
+      variables_const().readByte(static_cast<std::uint16_t>(lowtr + 4u));
+  AS_GETARY2();
+
+  // HIGHDS ($94/$95) maps to AS_ARYPNT in current variable modeling.
+  variables().MON_A1 = variables_const().AS_ARYPNT;
+}
 
 void AS_SAVE() {
   // Source:
