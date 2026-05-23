@@ -21,15 +21,7 @@ struct Inlin2Result {
 
 // MON_RDKEY is a monitor alias for RDKEY.
 std::uint8_t MON_RDKEY();
-
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_INLIN2 (inclusive) .. AS_INCHR (exclusive)
-// Name normalization: none (assembler label AS_INLIN2 kept verbatim).
 Inlin2Result AS_INLIN2(std::uint8_t x);
-
-// AS_Labels: AS_INCHR (inclusive) .. AS_PARSE_INPUT_LINE (exclusive)
-// Name normalization: none (assembler label AS_INCHR kept verbatim).
 std::uint8_t AS_INCHR();
 
 // MON_KEYIN - $fd1b

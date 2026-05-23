@@ -6,7 +6,7 @@ namespace applesoft::asm_port {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_INLIN (inclusive) .. AS_INCHR (exclusive)
+// AS_Labels: AS_INLIN (inclusive) .. AS_INLIN2 (exclusive)
 // Name normalization: none (assembler label AS_INLIN kept verbatim).
 Inlin2Result AS_INLIN() {
   // AS_INLIN loads X with $80 (null prompt) and falls through to AS_INLIN2.

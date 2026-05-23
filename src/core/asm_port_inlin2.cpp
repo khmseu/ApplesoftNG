@@ -39,7 +39,7 @@ std::uint16_t readZeroPageWord(std::uint8_t address) {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: KEYIN (inclusive) .. ESC (exclusive)
+// AS_Labels: MON_KEYIN (inclusive) .. MON_ESC (exclusive)
 // Name normalization: KEYIN helper target kept internal; public entry is
 // useMonitorInputVector.
 std::uint8_t MON_KEYIN() {
@@ -72,7 +72,7 @@ std::uint8_t MON_KEYIN() {
 // All monitor labels carry a virtual MON_ prefix in C++; RDKEY -> MON_RDKEY.
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: RDKEY (inclusive) .. RDCHAR (exclusive)
+// AS_Labels: MON_RDKEY (inclusive) .. MON_RDCHAR (exclusive)
 // Name normalization: monitor label RDKEY mapped to MON_RDKEY in C++.
 std::uint8_t MON_RDKEY() {
 
@@ -101,6 +101,10 @@ std::uint8_t MON_RDKEY() {
   return keyboardValue;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_INLIN2 (inclusive) .. AS_INCHR (exclusive)
+// Name normalization: none (assembler label AS_INLIN2 kept verbatim).
 Inlin2Result AS_INLIN2(std::uint8_t x) {
   // AS_READ A AS_LINE, AND AS_STRIP OFF AS_SIGN BITS.
   write_MON_PROMPT(x);

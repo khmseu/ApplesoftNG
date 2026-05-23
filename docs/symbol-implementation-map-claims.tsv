@@ -185,10 +185,11 @@ AS_PLOT	src/core/asm_port_graphics.cpp	1231	AS_PLOT (inclusive) .. AS_HLIN (excl
 AS_HLIN	src/core/asm_port_graphics.cpp	1250	AS_HLIN (inclusive) .. AS_VLIN (exclusive)	AS_HLIN	AS_VLIN	asrom	AS_HLIN	0xf232	AS_VLIN	0xf241	resolved-range	ok
 AS_VLIN	src/core/asm_port_graphics.cpp	1269	AS_VLIN (inclusive) .. AS_COLOR (exclusive)	AS_VLIN	AS_COLOR	asrom	AS_VLIN	0xf241	AS_COLOR	0xf24f	resolved-range	ok
 AS_GTFORPNT	src/core/asm_port_gtforpnt.cpp	28	AS_GTFORPNT (inclusive) .. AS_BLTU (exclusive)	AS_GTFORPNT	AS_BLTU	asrom	AS_GTFORPNT	0xd365	AS_BLTU	0xd393	resolved-range	ok
-AS_INLIN	src/core/asm_port_inlin.cpp	9	AS_INLIN (inclusive) .. AS_INCHR (exclusive)	AS_INLIN	AS_INCHR	asrom	AS_INLIN	0xd52c	AS_INCHR	0xd553	resolved-range	ok
-MON_KEYIN	src/core/asm_port_inlin2.cpp	42	KEYIN (inclusive) .. ESC (exclusive)	KEYIN	ESC						unresolved	no-module-match
-MON_RDKEY	src/core/asm_port_inlin2.cpp	75	RDKEY (inclusive) .. RDCHAR (exclusive)	RDKEY	RDCHAR						unresolved	no-module-match
-AS_INCHR	src/core/asm_port_inlin2.cpp	132	AS_INCHR (inclusive) .. AS_PARSE_INPUT_LINE (exclusive)	AS_INCHR	AS_PARSE_INPUT_LINE	asrom	AS_INCHR	0xd553	AS_PARSE_INPUT_LINE	0xd559	resolved-range	ok
+AS_INLIN	src/core/asm_port_inlin.cpp	9	AS_INLIN (inclusive) .. AS_INLIN2 (exclusive)	AS_INLIN	AS_INLIN2	asrom	AS_INLIN	0xd52c	AS_INLIN2	0xd52e	resolved-range	ok
+MON_KEYIN	src/core/asm_port_inlin2.cpp	42	MON_KEYIN (inclusive) .. MON_ESC (exclusive)	MON_KEYIN	MON_ESC	asrom	MON_KEYIN	0xfd1b	MON_ESC	0xfd2f	resolved-range	ok
+MON_RDKEY	src/core/asm_port_inlin2.cpp	75	MON_RDKEY (inclusive) .. MON_RDCHAR (exclusive)	MON_RDKEY	MON_RDCHAR	asrom	MON_RDKEY	0xfd0c	MON_RDCHAR	0xfd35	resolved-range	ok
+AS_INLIN2	src/core/asm_port_inlin2.cpp	106	AS_INLIN2 (inclusive) .. AS_INCHR (exclusive)	AS_INLIN2	AS_INCHR	asrom	AS_INLIN2	0xd52e	AS_INCHR	0xd553	resolved-range	ok
+AS_INCHR	src/core/asm_port_inlin2.cpp	136	AS_INCHR (inclusive) .. AS_PARSE_INPUT_LINE (exclusive)	AS_INCHR	AS_PARSE_INPUT_LINE	asrom	AS_INCHR	0xd553	AS_PARSE_INPUT_LINE	0xd559	resolved-range	ok
 parseStringInputAndStore	src/core/asm_port_input.cpp	48	L_INSTART_1 (inclusive) .. L_INSTART_5 (exclusive)	L_INSTART_1	L_INSTART_5						unresolved	no-module-match
 parseNumericInputAndStore	src/core/asm_port_input.cpp	93	L_INSTART_5 (inclusive) .. INPUT_MORE (exclusive)	L_INSTART_5	INPUT_MORE						unresolved	no-module-match
 AS_FINDATA	src/core/asm_port_input.cpp	111	AS_FINDATA (inclusive) .. AS_INPDONE (exclusive)	AS_FINDATA	AS_INPDONE	asrom	AS_FINDATA	0xdca0	AS_INPDONE	0xdcc6	resolved-range	ok
@@ -471,7 +472,6 @@ write_AS_INPUT_BUFFER	src/core/asm_port_inlin2.cpp	17									unclaimed	no-label
 read_AS_INPUT_BUFFER_minus_1	src/core/asm_port_inlin2.cpp	21									unclaimed	no-label-range-claim
 write_AS_INPUT_BUFFER_minus_1	src/core/asm_port_inlin2.cpp	27									unclaimed	no-label-range-claim
 readZeroPageWord	src/core/asm_port_inlin2.cpp	33									unclaimed	no-label-range-claim
-AS_INLIN2	src/core/asm_port_inlin2.cpp	104									unclaimed	no-label-range-claim
 AS_CHRGET_INPUT	src/core/asm_port_input.cpp	44									unclaimed	no-label-range-claim
 AS_FLOAT	src/core/asm_port_math.cpp	202									unclaimed	no-label-range-claim
 AS_INCREMENT_MANTISSA	src/core/asm_port_math.cpp	545									unclaimed	no-label-range-claim
