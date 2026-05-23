@@ -20,12 +20,11 @@ void invokeGarbageCollector(AS_REASONState &state) {
 
 } // namespace
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_REASON (inclusive) .. AS_MEMERR (exclusive)
+// Name normalization: none (assembler label AS_REASON kept verbatim).
 AS_REASONResult AS_REASON(AS_REASONState &state) {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: AS_REASON (inclusive) .. AS_MEMERR (exclusive)
-  // Name normalization: none (assembler label AS_REASON kept verbatim).
-
   if (has_room(state)) {
     return AS_REASONResult{true, state.a, state.y, state.x};
   }
