@@ -5,11 +5,6 @@
 
 namespace applesoft::asm_port {
 
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_REASON (inclusive) .. AS_MEMERR (exclusive)
-// Name normalization: none (assembler label AS_REASON kept verbatim).
-
 struct AS_REASONState {
   // Target address in A/Y on entry and return.
   std::uint8_t a = 0;
