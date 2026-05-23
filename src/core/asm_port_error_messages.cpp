@@ -1,8 +1,3 @@
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_ERROR_MESSAGES (inclusive) .. AS_QT_ERROR (exclusive)
-// Name normalization: none
-//
 // In ROM, error messages are stored as packed bytes with bit 7 set on the last
 // character of each message, and callers index by byte offset. This conversion
 // preserves lookup semantics by taking the original offset and returning the
@@ -12,6 +7,10 @@
 
 namespace applesoft::asm_port {
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_ERROR_MESSAGES (inclusive) .. AS_QT_ERROR (exclusive)
+// Name normalization: none (assembler label AS_ERROR_MESSAGES kept verbatim).
 std::string_view AS_ERROR_MESSAGES(std::uint8_t offset) {
   switch (offset) {
   case AS_ERR_NOFOR:

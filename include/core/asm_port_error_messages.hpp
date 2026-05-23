@@ -5,11 +5,6 @@
 
 namespace applesoft::asm_port {
 
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_ERROR_MESSAGES (inclusive) .. AS_QT_ERROR (exclusive)
-// Name normalization: none (assembler label AS_ERROR_MESSAGES kept verbatim).
-
 // Original byte offsets into the packed AS_ERROR_MESSAGES table.
 inline constexpr std::uint8_t AS_ERR_NOFOR = 0x00;
 inline constexpr std::uint8_t AS_ERR_SYNTAX = 0x10;
