@@ -1,7 +1,10 @@
 #include "core/asm_port_print.hpp"
 
 #include "core/applesoft_variables.hpp"
-#include "core/asm_port_error.hpp"
+#include "core/asm_port_chrget.hpp"
+#include "core/asm_port_core.hpp"
+#include "core/asm_port_error_handling.hpp"
+#include "core/asm_port_parser.hpp"
 #include "core/asm_port_qt_error.hpp"
 #include "core/asm_port_strlit.hpp"
 #include "platform/asm_port_outdo.hpp"
@@ -193,14 +196,6 @@ static void foutImpl(std::uint16_t startAddress) {
   variables().AS_STRNG2 = static_cast<std::uint16_t>(startAddress + len);
 }
 
-std::uint8_t AS_CHRGET();
-std::uint8_t AS_CHRGOT();
-std::uint8_t AS_GETBYT();
-void AS_FRMEVL();
-bool IsDirectMode();
-void AS_RESTART();
-void AS_SYNERR();
-
 static void PrintDecimalUnsigned(std::uint16_t value) {
   char digits[5];
   std::uint8_t length = 0;
@@ -273,9 +268,6 @@ static std::uint8_t AS_GTBYTC_PRINT() {
   AS_CHRGET();
   return AS_GETBYT();
 }
-
-// Forward declaration to the real implementation in asm_port_strlt2.cpp.
-extern std::uint8_t AS_FREFAC();
 
 // ---------------------------------------------------------------------------
 // Token constants used in AS_PRINT2.

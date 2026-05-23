@@ -58,7 +58,6 @@ void AS_LINPRT();
 void MON_COUT(std::uint8_t value);
 std::uint8_t AS_OUTDO(std::uint8_t value);
 bool AS_FL1(std::uint16_t startAddress);
-void AS_RESTORE();
 void AS_STKINI();
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
