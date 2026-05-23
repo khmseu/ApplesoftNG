@@ -1206,9 +1206,9 @@ asrom	MON_ADD	0xfdd1	-
 asrom	MON_PRBYTE	0xfdda	-
 asrom	MON_PRHEX	0xfde3	-
 asrom	MON_PRHEXZ	0xfde5	-
-asrom	MON_COUT	0xfded	-
-asrom	MON_COUT1	0xfdf0	-
-asrom	MON_COUTZ	0xfdf6	-
+asrom	MON_COUT	0xfded	MON_COUT
+asrom	MON_COUT1	0xfdf0	MON_COUT1
+asrom	MON_COUTZ	0xfdf6	MON_COUT1
 asrom	MON_BL1	0xfe00	-
 asrom	MON_BLANK	0xfe04	-
 asrom	MON_STOR	0xfe0b	-

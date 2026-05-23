@@ -118,6 +118,10 @@ void MON_VIDOUT(std::uint8_t a) {
   }
 }
 } // namespace
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_COUT1 (inclusive) .. MON_BL1 (exclusive)
 void MON_COUT1(std::uint8_t a) {
   if (a >= 0xa0u)
     a &= variables_const().MON_INVFLG;
@@ -133,6 +137,10 @@ void MON_WAIT(std::uint8_t a) {
     outer = static_cast<std::uint8_t>(outer - 1u);
   } while (outer != 0u);
 }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_COUT (inclusive) .. MON_COUT1 (exclusive)
 void MON_COUT(std::uint8_t a) {
   ApplesoftNG::ExternalJumpDispatcher::JumpFromWord(
       ApplesoftVariables::ZP_MON_CSW, a);

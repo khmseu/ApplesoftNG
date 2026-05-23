@@ -2047,7 +2047,7 @@ class MON_M6502VEC {
 public:
   // Source:
   // SourceMaterial/Combo/asrom.lst
-  // AS_Labels: M6502VEC (inclusive) .. end of listing (exclusive)
+  // AS_Labels: MON_M6502VEC (inclusive) .. MON_[end] (exclusive)
   // Name normalization: M6502VEC -> MON_M6502VEC (monitor label gets MON_
   // prefix).
   //
