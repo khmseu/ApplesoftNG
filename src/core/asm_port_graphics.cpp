@@ -410,7 +410,7 @@ void AS_HTAB() {
 }
 
 void AS_HCOLOR();
-void STHPG();
+static void STHPG();
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -441,7 +441,7 @@ void AS_HGR() {
 // AS_Labels: AS_SETHPG (inclusive) .. AS_HCLR (exclusive)
 // Name normalization: AS_SETHPG -> STHPG (normalize based on typical 5-char
 // limit or SET.. prefix).
-void STHPG() {
+static void STHPG() {
   // AS_SETHPG sta AS_HGR_PAGE ; lda AS_SW_HIRES ; lda AS_SW_TXTCLR
   // (Note: AS_HGR_PAGE already set by AS_HGR/AS_HGR2 in this port to simplify).
   ioPorts().readByte(IOPorts::ADDR_AS_SW_HIRES);
@@ -584,7 +584,7 @@ void AS_HPOSN(const HiResCoordinates &point) {
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_HFNS (inclusive) .. AS_GGERR (exclusive)
-HiResCoordinates AS_HFNS() {
+static HiResCoordinates AS_HFNS() {
   // Parses hi-res coordinates from TXTPTR and validates range X<280, Y<192.
 
   constexpr std::uint16_t kMaxXExclusive = 280u;
@@ -620,7 +620,7 @@ void AS_GGERR() { AS_GOERR(); }
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_HPLOT0 (inclusive) .. AS_MOVE_LEFT_OR_RIGHT (exclusive)
-void AS_HPLOT0(const HiResCoordinates &point) {
+static void AS_HPLOT0(const HiResCoordinates &point) {
   // Plots one hi-res pixel using current HGR bit pattern.
 
   AS_HPOSN(point);
@@ -642,7 +642,8 @@ void AS_HPLOT0(const HiResCoordinates &point) {
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_HGLIN (inclusive) .. AS_DRAW0 (exclusive)
-void AS_HGLIN(const HiResCoordinates &start, const HiResCoordinates &target) {
+static void AS_HGLIN(const HiResCoordinates &start,
+                     const HiResCoordinates &target) {
   // Draws a line from current point to target point.
   // Mirrors key ROM line-state bookkeeping in
   // HGR_DX/HGR_DY/HGR_E/HGR_QUADRANT/HGR_COUNT.

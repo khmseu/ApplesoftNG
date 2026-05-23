@@ -36,8 +36,11 @@ DECL_RE = re.compile(
 # Single-line definition starter matcher.
 DEF_HEAD_RE = re.compile(
     r"^\s*[A-Za-z_:\d][A-Za-z0-9_:\d<>,\s\*&~]*"
-    r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\([^;{}]*\)\s*\{\s*$"
+    r"\b(?:(?P<scope>[A-Za-z_][A-Za-z0-9_:]*)::)?"
+    r"(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*\([^;{}]*\)\s*\{\s*$"
 )
+
+CLASS_OR_STRUCT_START_RE = re.compile(r"^\s*(class|struct)\b[^;]*\{\s*$")
 
 SKIP_NAMES = {
     "if",
@@ -61,12 +64,38 @@ def read_lines(path: Path) -> List[str]:
 def build_header_decl_index() -> Dict[str, List[DeclLocation]]:
     index: Dict[str, List[DeclLocation]] = {}
     for header in sorted(INCLUDE.rglob("*.hpp")):
+        depth = 0
+        class_stack: List[int] = []
+
         for line_no, line in enumerate(read_lines(header), 1):
+            open_count = line.count("{")
+            close_count = line.count("}")
+
+            if CLASS_OR_STRUCT_START_RE.match(line):
+                # Track class/struct scope depth so member declarations are
+                # excluded from free-function ownership checks.
+                class_stack.append(depth + open_count)
+
+            in_class_scope = bool(class_stack)
+
+            if in_class_scope:
+                depth += open_count - close_count
+                while class_stack and depth < class_stack[-1]:
+                    class_stack.pop()
+                continue
+
             m = DECL_RE.match(line)
             if not m:
+                depth += open_count - close_count
+                while class_stack and depth < class_stack[-1]:
+                    class_stack.pop()
                 continue
             name = m.group(1)
             index.setdefault(name, []).append(DeclLocation(header=header, line=line_no))
+
+            depth += open_count - close_count
+            while class_stack and depth < class_stack[-1]:
+                class_stack.pop()
     return index
 
 
@@ -97,7 +126,21 @@ def collect_exported_defs(cpp: Path) -> Set[str]:
         m = DEF_HEAD_RE.match(line)
         if not m:
             continue
-        name = m.group(1)
+        if stripped.startswith("static "):
+            continue
+
+        # Member/qualified definitions (Type::method) are out of scope.
+        # DEF_HEAD_RE is intentionally broad and can greedily consume scope
+        # qualifiers into the return-type segment, so also check whether the
+        # function name is directly preceded by "::" in the original line.
+        name_start = m.start("name")
+        is_qualified_member = (
+            name_start >= 2 and line[name_start - 2 : name_start] == "::"
+        )
+        if m.group("scope") is not None or is_qualified_member:
+            continue
+
+        name = m.group("name")
         if name in SKIP_NAMES:
             continue
         if name.startswith("~"):

@@ -9,25 +9,25 @@ namespace applesoft::asm_port {
 extern std::uint8_t ReadProgramByte(std::uint16_t address);
 extern void AS_ERROR(std::uint8_t error_code);
 extern void AS_LOAD_ARG_FROM_YA();
-extern void AS_COPY_ARG_TO_FAC();
+static void AS_COPY_ARG_TO_FAC();
 extern std::uint8_t gFloatInput;
 
 // Forward declarations of subroutines used within AS_FADD/AS_FSUB
-void AS_SHIFT_RIGHT();
-void AS_SHIFT_RIGHT_1();
-void AS_SHIFT_RIGHT_2();
-void AS_SHIFT_RIGHT_5();
-void AS_L();
-void AS_L_L_1();
-void AS_SHIFT_RIGHT_4();
-void AS_COMPLEMENT_FAC();
-void AS_COMPLEMENT_FAC_MANTISSA();
+static void AS_SHIFT_RIGHT();
+static void AS_SHIFT_RIGHT_1();
+static void AS_SHIFT_RIGHT_2();
+static void AS_SHIFT_RIGHT_5();
+static void AS_L();
+static void AS_L_L_1();
+static void AS_SHIFT_RIGHT_4();
+static void AS_COMPLEMENT_FAC();
+static void AS_COMPLEMENT_FAC_MANTISSA();
 void AS_RTS_12();
 void AS_OVERFLOW();
 void AS_NORMALIZE_FAC_2();
 void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount);
-void AS_NORMALIZE_FAC_5(bool carry = false);
-void AS_NORMALIZE_FAC_6();
+static void AS_NORMALIZE_FAC_5(bool carry = false);
+static void AS_NORMALIZE_FAC_6();
 void AS_ZERO_FAC();
 void AS_ROUND_FAC();
 void AS_COPY_FAC_TO_ARG_ROUNDED();
@@ -39,14 +39,14 @@ void AS_DIVIDE_FAC_BY_TEN();
 void AS_ADD_EXPONENTS();
 void AS_ADD_EXPONENTS_1();
 void AS_NEGATE_FAC();
-void AS_INCREMENT_FAC_MANTISSA();
-void AS_INCREMENT_MANTISSA();
-void AS_FADD_4();
-void AS_L_FADD_3_1(std::uint16_t minuendBase, std::uint16_t subtrahendBase);
-void AS_NORMALIZE_FAC_1(bool carrySet);
-void AS_STA_IN_FAC_SIGN_AND_EXP();
+static void AS_INCREMENT_FAC_MANTISSA();
+static void AS_INCREMENT_MANTISSA();
+static void AS_FADD_4();
+static void AS_L_FADD_3_1(std::uint16_t minuendBase, std::uint16_t subtrahendBase);
+static void AS_NORMALIZE_FAC_1(bool carrySet);
+static void AS_STA_IN_FAC_SIGN_AND_EXP();
 void AS_STA_IN_FAC_SIGN();
-void AS_NORMALIZE_FAC_3(std::uint8_t &shiftCount);
+static void AS_NORMALIZE_FAC_3(std::uint8_t &shiftCount);
 
 namespace {
 // Shared shift context for the AS_SHIFT_RIGHT label family.
@@ -58,7 +58,7 @@ std::uint16_t g_shiftBase = 0x0061u; // AS_RESULT-1
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_SHIFT_RIGHT_1 (inclusive) .. AS_SHIFT_RIGHT_2 (exclusive)
 // Name normalization: none (assembler label AS_SHIFT_RIGHT_1 kept verbatim).
-void AS_SHIFT_RIGHT_1() {
+static void AS_SHIFT_RIGHT_1() {
   g_shiftBase = 0x0061u; // AS_RESULT-1
   AS_SHIFT_RIGHT_2();
 }
@@ -67,7 +67,7 @@ void AS_SHIFT_RIGHT_1() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_SHIFT_RIGHT_2 (inclusive) .. AS_SHIFT_RIGHT (exclusive)
 // Name normalization: none (assembler label AS_SHIFT_RIGHT_2 kept verbatim).
-void AS_SHIFT_RIGHT_2() {
+static void AS_SHIFT_RIGHT_2() {
   const std::uint8_t b4 =
       variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 4u));
   variables().AS_FAC_EXTENSION = b4;
@@ -89,7 +89,7 @@ void AS_SHIFT_RIGHT_2() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_SHIFT_RIGHT (inclusive) .. AS_L (exclusive)
 // Name normalization: none (assembler label AS_SHIFT_RIGHT kept verbatim).
-void AS_SHIFT_RIGHT() {
+static void AS_SHIFT_RIGHT() {
   g_shiftNegativeCount = static_cast<std::int8_t>(g_shiftNegativeCount + 8);
   if (g_shiftNegativeCount <= 0) {
     AS_SHIFT_RIGHT_2();
@@ -109,7 +109,7 @@ void AS_SHIFT_RIGHT() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_L (inclusive) .. AS_L_L_1 (exclusive)
 // Name normalization: none (assembler label AS_L kept verbatim).
-void AS_L() {
+static void AS_L() {
   auto byte1 =
       variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 1u));
   const bool oldSign = (byte1 & 0x80u) != 0u;
@@ -125,7 +125,7 @@ void AS_L() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_L_L_1 (inclusive) .. AS_SHIFT_RIGHT_4 (exclusive)
 // Name normalization: none (assembler label AS_L_L_1 kept verbatim).
-void AS_L_L_1() {
+static void AS_L_L_1() {
   auto byte1 =
       variables_const().readByte(static_cast<std::uint16_t>(g_shiftBase + 1u));
   const bool carryIn = (byte1 & 0x01u) != 0u;
@@ -139,7 +139,7 @@ void AS_L_L_1() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_SHIFT_RIGHT_4 (inclusive) .. AS_SHIFT_RIGHT_5 (exclusive)
 // Name normalization: none (assembler label AS_SHIFT_RIGHT_4 kept verbatim).
-void AS_SHIFT_RIGHT_4() {
+static void AS_SHIFT_RIGHT_4() {
   // Model the short-shift loop entered after AS_L/AS_L_L_1.
   // Carry into the first ROR is the current low bit from byte1.
   bool carry = (variables_const().readByte(
@@ -185,7 +185,7 @@ void AS_SHIFT_RIGHT_4() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_SHIFT_RIGHT_5 (inclusive) .. AS_LOG (exclusive)
 // Name normalization: none (assembler label AS_SHIFT_RIGHT_5 kept verbatim).
-void AS_SHIFT_RIGHT_5() {
+static void AS_SHIFT_RIGHT_5() {
   // Return path with carry clear; this label is followed by ROM constant tables
   // (AS_CON_ONE, AS_POLY_LOG, AS_CON_SQR_HALF, AS_CON_SQR_TWO,
   // AS_CON_NEG_HALF, AS_CON_LOG_TWO) before AS_LOG.
@@ -250,7 +250,7 @@ void AS_FSUBT() {
  * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_FADD_1 (inclusive) .. AS_FADD (exclusive)
  */
-bool AS_FADD_1() {
+static bool AS_FADD_1() {
   AS_SHIFT_RIGHT();
 
   // ROM sequence is `bcc AS_FADD_3` here (annotated as always-taken in the
@@ -294,7 +294,7 @@ void AS_FADDT() {
  * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_FADD_2 (inclusive) .. AS_FADD_3 (exclusive)
  */
-void AS_FADD_2(std::uint8_t exponent) {
+static void AS_FADD_2(std::uint8_t exponent) {
   if (exponent == 0)
     return;
 
@@ -319,7 +319,7 @@ void AS_FADD_2(std::uint8_t exponent) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FADD_3 (inclusive) .. AS_L_FADD_3_1 (exclusive)
 // Name normalization: none (assembler label AS_FADD_3 kept verbatim).
-void AS_FADD_3(std::uint16_t adjustedAddress) {
+static void AS_FADD_3(std::uint16_t adjustedAddress) {
   const std::uint8_t sgnComparison = variables_const().AS_SGNCPR;
   if ((sgnComparison & 0x80u) == 0u) {
     // Out-of-window continuation: add mantissas in AS_FADD_4.
@@ -339,7 +339,7 @@ void AS_FADD_3(std::uint16_t adjustedAddress) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_L_FADD_3_1 (inclusive) .. AS_NORMALIZE_FAC_1 (exclusive)
 // Name normalization: none (assembler label AS_L_FADD_3_1 kept verbatim).
-void AS_L_FADD_3_1(std::uint16_t minuendBase, std::uint16_t subtrahendBase) {
+static void AS_L_FADD_3_1(std::uint16_t minuendBase, std::uint16_t subtrahendBase) {
   // Pointer candidates lifted:
   // - FAC bytes ($9e..$a1) and ARG bytes ($a6..$a9) are addressed through
   //   unified base pointers rather than split byte variables.
@@ -374,7 +374,7 @@ void AS_L_FADD_3_1(std::uint16_t minuendBase, std::uint16_t subtrahendBase) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_NORMALIZE_FAC_1 (inclusive) .. AS_NORMALIZE_FAC_2 (exclusive)
 // Name normalization: none (assembler label AS_NORMALIZE_FAC_1 kept verbatim).
-void AS_NORMALIZE_FAC_1(bool carrySet) {
+static void AS_NORMALIZE_FAC_1(bool carrySet) {
   if (!carrySet) {
     AS_COMPLEMENT_FAC();
   }
@@ -385,7 +385,7 @@ void AS_NORMALIZE_FAC_1(bool carrySet) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FADD_4 (inclusive) .. AS_NORMALIZE_FAC_3 (exclusive)
 // Name normalization: none (assembler label AS_FADD_4 kept verbatim).
-void AS_FADD_4() {
+static void AS_FADD_4() {
   std::uint16_t sum = static_cast<std::uint16_t>(
       variables_const().AS_FAC_EXTENSION + variables_const().AS_ARG_EXTENSION);
   variables().AS_FAC_EXTENSION = static_cast<std::uint8_t>(sum & 0xffu);
@@ -410,7 +410,7 @@ void AS_FADD_4() {
 // AS_Labels: AS_COMPLEMENT_FAC (inclusive) .. AS_COMPLEMENT_FAC_MANTISSA
 // (exclusive) Name normalization: none (assembler label AS_COMPLEMENT_FAC kept
 // verbatim).
-void AS_COMPLEMENT_FAC() {
+static void AS_COMPLEMENT_FAC() {
   variables().AS_FAC_SIGN =
       static_cast<std::uint8_t>(variables_const().AS_FAC_SIGN ^ 0xffu);
   AS_COMPLEMENT_FAC_MANTISSA();
@@ -421,7 +421,7 @@ void AS_COMPLEMENT_FAC() {
 // AS_Labels: AS_COMPLEMENT_FAC_MANTISSA (inclusive) ..
 // AS_INCREMENT_FAC_MANTISSA (exclusive) Name normalization: none (assembler
 // label AS_COMPLEMENT_FAC_MANTISSA kept verbatim).
-void AS_COMPLEMENT_FAC_MANTISSA() {
+static void AS_COMPLEMENT_FAC_MANTISSA() {
   variables().AS_FAC[1] =
       static_cast<std::uint8_t>(variables_const().AS_FAC[1] ^ 0xffu);
   variables().AS_FAC[2] =
@@ -542,7 +542,7 @@ void AS_ROUND_FAC() {
 /**
  * AS_INCREMENT_MANTISSA: Increment AS_FAC mantissa and re-normalize if carry
  */
-void AS_INCREMENT_MANTISSA() {
+static void AS_INCREMENT_MANTISSA() {
   AS_INCREMENT_FAC_MANTISSA();
   if (variables_const().AS_FAC[1] == 0) {
     // High byte zeroed by carry overflow: shift right and adjust exponent.
@@ -559,7 +559,7 @@ void AS_INCREMENT_MANTISSA() {
 // AS_Labels: AS_INCREMENT_FAC_MANTISSA (inclusive) .. AS_RTS_12 (exclusive)
 // Name normalization: none (assembler label AS_INCREMENT_FAC_MANTISSA kept
 // verbatim).
-void AS_INCREMENT_FAC_MANTISSA() {
+static void AS_INCREMENT_FAC_MANTISSA() {
   for (int i = 4; i >= 1; --i) {
     std::uint8_t val = variables_const().AS_FAC[i] + 1;
     variables().AS_FAC[i] = val;
@@ -826,7 +826,7 @@ void AS_LOAD_ARG_FROM_YA(std::uint16_t address) {
  * SourceMaterial/Combo/asrom.lst
  * AS_Labels: AS_COPY_ARG_TO_FAC (inclusive) .. AS_MFA (exclusive)
  */
-void AS_COPY_ARG_TO_FAC() {
+static void AS_COPY_ARG_TO_FAC() {
   std::uint8_t arg_sign = variables_const().AS_ARG[5];
   variables().AS_FAC_SIGN = arg_sign;
 
@@ -911,7 +911,7 @@ void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_NORMALIZE_FAC_3 (inclusive) .. AS_NORMALIZE_FAC_4 (exclusive)
 // Name normalization: none (assembler label AS_NORMALIZE_FAC_3 kept verbatim).
-void AS_NORMALIZE_FAC_3(std::uint8_t &shiftCount) {
+static void AS_NORMALIZE_FAC_3(std::uint8_t &shiftCount) {
   ++shiftCount;
 
   const bool c0 = (variables_const().AS_FAC_EXTENSION & 0x80u) != 0u;
@@ -938,7 +938,7 @@ void AS_NORMALIZE_FAC_3(std::uint8_t &shiftCount) {
 // Post-addition normalisation: if the mantissa addition produced a carry
 // (overflow), delegate to AS_NORMALIZE_FAC_6 to right-shift and increment
 // the exponent. If carry=false, returns immediately (bcc RTS_11 path).
-void AS_NORMALIZE_FAC_5(bool carry) {
+static void AS_NORMALIZE_FAC_5(bool carry) {
   // bcc RTS_11: if no carry, return.
   if (carry) {
     AS_NORMALIZE_FAC_6();
@@ -952,7 +952,7 @@ void AS_NORMALIZE_FAC_5(bool carry) {
 //
 // Mantissa carry handler: increment FAC exponent; shift mantissa right by 1
 // bit (with carry=1 into MSB), restoring normalised form.
-void AS_NORMALIZE_FAC_6() {
+static void AS_NORMALIZE_FAC_6() {
   // inc FAC
   const std::uint8_t newExp =
       static_cast<std::uint8_t>(variables_const().AS_FAC[0] + 1u);
@@ -993,7 +993,7 @@ void AS_ZERO_FAC() { AS_STA_IN_FAC_SIGN_AND_EXP(); }
 // AS_Labels: AS_STA_IN_FAC_SIGN_AND_EXP (inclusive) .. AS_STA_IN_FAC_SIGN
 // (exclusive) Name normalization: none (assembler label
 // AS_STA_IN_FAC_SIGN_AND_EXP kept verbatim).
-void AS_STA_IN_FAC_SIGN_AND_EXP() {
+static void AS_STA_IN_FAC_SIGN_AND_EXP() {
   variables().AS_FAC[0] = 0u;
   AS_STA_IN_FAC_SIGN();
 }

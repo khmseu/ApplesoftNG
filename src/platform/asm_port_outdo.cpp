@@ -11,7 +11,7 @@ using MonitorOutputRoutine = void (*)(std::uint8_t);
 constexpr std::uint16_t kMonitorCout1Vector = 0xfd62u;
 void MON_VIDOUT(std::uint8_t a);
 } // namespace
-std::uint16_t computeTextRowBase(std::uint8_t row_zero_based) {
+static std::uint16_t computeTextRowBase(std::uint8_t row_zero_based) {
   const bool carryFromAS_Lsr = (row_zero_based & 0x01u) != 0u;
   const std::uint8_t bash =
       static_cast<std::uint8_t>(((row_zero_based >> 1u) & 0x03u) | 0x04u);
@@ -24,7 +24,7 @@ std::uint16_t computeTextRowBase(std::uint8_t row_zero_based) {
   return ApplesoftVariables::makeWord(basl, bash);
 }
 void setCursorRow(std::uint8_t row_zero_based) { MON_TABV(row_zero_based); }
-void scrollWindowUp() {
+static void scrollWindowUp() {
   constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
   const std::uint8_t top = variables_const().MON_WNDTOP;
   const std::uint8_t bottom = variables_const().MON_WNDBTM;
@@ -45,7 +45,7 @@ void scrollWindowUp() {
     variables().writeByte(static_cast<std::uint16_t>(lastRowBase + col),
                           kBlank);
 }
-void advanceCursorToNextAS_Line(bool resetColumn) {
+static void advanceCursorToNextAS_Line(bool resetColumn) {
   const std::uint8_t top = variables_const().MON_WNDTOP;
   const std::uint8_t bottom = variables_const().MON_WNDBTM;
   std::uint8_t row = variables_const().MON_CV;
@@ -62,7 +62,7 @@ void advanceCursorToNextAS_Line(bool resetColumn) {
     row = static_cast<std::uint8_t>(row + 1u);
   setCursorRow(row);
 }
-void consumeKeyboardAS_Latch(std::uint8_t keycode) {
+static void consumeKeyboardAS_Latch(std::uint8_t keycode) {
   (void)ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD_STROBE);
   ioPorts().writeByte(IOPorts::ADDR_AS_KEYBOARD,
                       static_cast<std::uint8_t>(keycode & 0x7fu));
@@ -72,7 +72,7 @@ void consumeKeyboardAS_Latch(std::uint8_t keycode) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: MON_LFB78 (inclusive) .. MON_LFB97 (exclusive)
 // Name normalization: none (assembler label MON_LFB78 kept verbatim).
-void MON_LFB78(std::uint8_t a) {
+static void MON_LFB78(std::uint8_t a) {
   constexpr std::uint8_t kCarriageReturn = 0x8du;
   constexpr std::uint8_t kCtrlS = 0x93u;
   constexpr std::uint8_t kCtrlC = 0x83u;
@@ -141,7 +141,7 @@ void MON_COUT1(std::uint8_t a) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: MON_WAIT (inclusive) .. MON_NXTA4 (exclusive)
 // Name normalization: none (assembler label MON_WAIT kept verbatim).
-void MON_WAIT(std::uint8_t a) {
+static void MON_WAIT(std::uint8_t a) {
   volatile std::uint8_t outer = a;
   do {
     volatile std::uint8_t inner = outer;

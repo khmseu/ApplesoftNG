@@ -203,22 +203,23 @@ struct TokenMatch {
   std::string_view name;
 };
 
-std::uint8_t read_AS_INPUT_BUFFER(std::uint8_t index) {
+static std::uint8_t read_AS_INPUT_BUFFER(std::uint8_t index) {
   return variables_const().pointer(0x0200u).read(index);
 }
 
-void write_AS_INPUT_BUFFER_minus_5(std::uint8_t index, std::uint8_t value) {
+static void write_AS_INPUT_BUFFER_minus_5(std::uint8_t index,
+                                          std::uint8_t value) {
   variables().pointer(0x01fbu).write(value, index);
 }
 
-void SetTextPointerToInputBufferMinus1() {
+static void SetTextPointerToInputBufferMinus1() {
   // Sets TXTPTR to the byte just before the input buffer ($01FF), matching the
   // ROM convention where CHRGET advances past this address to reach the first
   // byte of INPUT_BUFFER at $0200.
   SetTextPointer(ApplesoftVariables::ADDR_AS_INPUT_BUFFER_MINUS_1);
 }
 
-std::optional<TokenMatch> MatchToken(std::uint8_t index) {
+static std::optional<TokenMatch> MatchToken(std::uint8_t index) {
   std::optional<TokenMatch> best;
 
   for (std::size_t i = 0; i < kTokenCount; ++i) {
@@ -261,7 +262,7 @@ std::optional<TokenMatch> MatchToken(std::uint8_t index) {
   return best;
 }
 
-std::uint8_t ScanAheadOffsetForData(std::uint8_t terminator) {
+static std::uint8_t ScanAheadOffsetForData(std::uint8_t terminator) {
   variables().AS_CHARAC = terminator;
   std::uint8_t offset = 0;
   variables().AS_ENDCHR = 0;
@@ -425,7 +426,7 @@ void AS_PUTSTR() {
   }
 }
 
-void DeleteExistingAS_Line() {
+static void DeleteExistingAS_Line() {
   // C++ helper: implements the inline delete/shift block of AS_NUMBERED_LINE
   // (d471–d4b4), extracted for clarity.  Not a ROM entry point.
 
@@ -454,7 +455,7 @@ void DeleteExistingAS_Line() {
 // AS_Labels: AS_PUT_NEW_LINE (inclusive) .. AS_FIX_LINKS (exclusive)
 // Name normalization: renamed to InsertNewAS_Line in C++; corresponds to
 // AS_PUT_NEW_LINE at d4b5.
-void InsertNewAS_Line() {
+static void InsertNewAS_Line() {
   constexpr std::uint16_t kTokenBuf =
       static_cast<std::uint16_t>(ApplesoftVariables::ADDR_AS_INPUT_BUFFER - 5u);
 
@@ -589,7 +590,7 @@ std::uint16_t GetTextTablePointer() { return variables_const().AS_TXTTAB; }
 
 bool IsEndOfProgram(std::uint16_t current) { return current == 0u; }
 
-std::uint16_t AdvanceToNextAS_Line(std::uint16_t current) {
+static std::uint16_t AdvanceToNextAS_Line(std::uint16_t current) {
   // The original AS_FIX_LINKS routine scans from the current line until it
   // finds the end-of-line marker, then computes the address of the next line.
   std::uint16_t offset = 4u;
@@ -601,7 +602,7 @@ std::uint16_t AdvanceToNextAS_Line(std::uint16_t current) {
   return static_cast<std::uint16_t>(current + offset + 1u);
 }
 
-void WriteForwardPointer(std::uint16_t current, std::uint16_t next) {
+static void WriteForwardPointer(std::uint16_t current, std::uint16_t next) {
   variables().writeByte(current, ApplesoftVariables::lowByte(next));
   variables().writeByte(static_cast<std::uint16_t>(current + 1u),
                         ApplesoftVariables::highByte(next));

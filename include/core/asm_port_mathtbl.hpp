@@ -33,6 +33,9 @@ inline constexpr std::size_t AS_M_NEG_IDX = 7; // token $CF...207...>
 inline constexpr std::size_t AS_MEQUU_IDX = 8; // token $D0...208...=
 inline constexpr std::size_t AS_M_REL_IDX = 9; // token $D1...209...<
 
+void AS_NEGOP();
+void AS_EQUOP();
+
 /// AS_Look up the math operator table entry for the given index (index = token
 /// - 0xC8). Maps tokens $C8 (+) through $D1 (<), i.e. indices 0-9. Returns a
 /// MathTblEntry; the caller is responsible for invoking entry.handler.
