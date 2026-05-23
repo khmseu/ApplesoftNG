@@ -799,23 +799,23 @@ asrom	AS_QINT_2	0xec12	AS_GETADR, AS_LOG
 asrom	AS_INT	0xec23	AS_INT_fn, AS_LOG
 asrom	AS_QINT_3	0xec40	AS_LOG
 asrom	AS_RTS_17	0xec49	AS_LOG
-asrom	AS_FIN	0xec4a	AS_LOG
-asrom	AS_L_FIN_1	0xec4e	AS_LOG
-asrom	AS_L_FIN_2	0xec5d	AS_LOG
-asrom	AS_FIN_1	0xec61	AS_LOG
-asrom	AS_FIN_2	0xec64	AS_LOG
-asrom	AS_FIN_3	0xec66	AS_LOG
-asrom	AS_L_FIN_3_1	0xec85	AS_LOG
-asrom	AS_FIN_4	0xec87	AS_LOG
-asrom	AS_FIN_5	0xec8a	AS_LOG
-asrom	AS_FIN_6	0xec8c	AS_LOG
-asrom	AS_FIN_10	0xec98	AS_LOG
-asrom	AS_FIN_7	0xec9e	AS_LOG
-asrom	AS_FIN_8	0xeca0	AS_LOG
-asrom	AS_L_FIN_8_13	0xeca9	AS_LOG
-asrom	AS_L_FIN_8_14	0xecb2	AS_LOG
-asrom	AS_L_FIN_8_15	0xecb9	AS_LOG
-asrom	AS_L_FIN_8_16	0xecbe	AS_LOG
+asrom	AS_FIN	0xec4a	AS_FIN, AS_LOG
+asrom	AS_L_FIN_1	0xec4e	AS_FIN, AS_LOG
+asrom	AS_L_FIN_2	0xec5d	AS_FIN, AS_LOG
+asrom	AS_FIN_1	0xec61	AS_FIN, AS_LOG
+asrom	AS_FIN_2	0xec64	AS_FIN, AS_LOG
+asrom	AS_FIN_3	0xec66	AS_FIN, AS_LOG
+asrom	AS_L_FIN_3_1	0xec85	AS_FIN, AS_LOG
+asrom	AS_FIN_4	0xec87	AS_FIN, AS_LOG
+asrom	AS_FIN_5	0xec8a	AS_FIN, AS_LOG
+asrom	AS_FIN_6	0xec8c	AS_FIN, AS_LOG
+asrom	AS_FIN_10	0xec98	AS_FIN, AS_LOG
+asrom	AS_FIN_7	0xec9e	AS_FIN, AS_LOG
+asrom	AS_FIN_8	0xeca0	AS_FIN, AS_LOG
+asrom	AS_L_FIN_8_13	0xeca9	AS_FIN, AS_LOG
+asrom	AS_L_FIN_8_14	0xecb2	AS_FIN, AS_LOG
+asrom	AS_L_FIN_8_15	0xecb9	AS_FIN, AS_LOG
+asrom	AS_L_FIN_8_16	0xecbe	AS_FIN, AS_LOG
 asrom	AS_FIN_9	0xecc1	AS_LOG
 asrom	AS_L_FIN_9_1	0xecc8	AS_LOG
 asrom	AS_ADDACC	0xecd5	AS_LOG

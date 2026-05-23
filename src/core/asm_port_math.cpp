@@ -616,6 +616,7 @@ void AS_ADDACC_WITH_DIGIT(std::uint8_t digit);
  * AS_FIN ($1C4A)
  * Port of Convert String to FP Value in AS_FAC.
  */
+// AS_Labels: AS_FIN (inclusive) .. AS_FIN_9 (exclusive)
 void AS_FIN() {
   // Clear working area ($99...$A3)
   // $99: AS_TMPEXP

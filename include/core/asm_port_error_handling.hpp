@@ -21,7 +21,6 @@ std::uint8_t AS_MEMERR();
 void AS_PRINT_ERROR_LINNUM();
 void AS_PRINT_ERROR_LINNUM(std::string_view prefix);
 
-// AS_Labels: AS_FIN (inclusive) .. AS_FIN_9 (exclusive)
 void AS_FIN();
 
 // Target: SYNER1 (Source:
