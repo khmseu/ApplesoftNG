@@ -3,6 +3,7 @@
 #include "core/asm_port_core.hpp"
 #include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_token_address_table.hpp"
+#include "core/asm_port_unfnc.hpp"
 #include "platform/asm_port_getln.hpp"
 #include "platform/asm_port_outdo.hpp"
 #include <cstdint>
@@ -61,11 +62,6 @@ public:
 #include <functional>
 #include <stdexcept>
 #include <string>
-
-namespace applesoft::asm_port {
-void AS_USR();
-void AS_USR_impl();
-} // namespace applesoft::asm_port
 
 namespace ApplesoftNG {
 

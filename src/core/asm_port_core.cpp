@@ -83,7 +83,7 @@ std::uint8_t MON_SCRN(std::uint8_t row, std::uint8_t column);
 std::uint8_t AS_FREFAC();
 std::uint8_t AS_FRETMP(std::uint16_t descriptorAddress);
 void AS_GARBAG();
-std::int8_t CompareArgAndFacStrings();
+static std::int8_t CompareArgAndFacStrings();
 void AS_GOTO();
 void AS_NEWSTT();
 void AS_PRINT_ERROR_LINNUM();
@@ -101,7 +101,7 @@ extern bool gNumericCompareCarry;
 extern std::uint8_t gFloatInput;
 extern std::uint8_t gPendingErrorCode;
 void AS_SNTXERR();
-FrmevlStackFrame AS_FRM_STACK_1(std::uint8_t precedence);
+static FrmevlStackFrame AS_FRM_STACK_1(std::uint8_t precedence);
 bool AS_NOTMATH(std::uint8_t token);
 std::uint8_t AS_FRM_PERFORM_1(const FrmevlStackFrame &lhsFrame,
                               std::uint8_t cprtypForFrame,
@@ -1938,7 +1938,7 @@ void AS_SNTXERR() { AS_SYNERR(); }
 //
 // The three ROM entry points build one logical left-hand operand frame. The
 // C++ port keeps that state in a unified object instead of split stack bytes.
-FrmevlStackFrame AS_FRM_STACK_1(std::uint8_t precedence) {
+static FrmevlStackFrame AS_FRM_STACK_1(std::uint8_t precedence) {
   AS_ROUND_FAC();
 
   return {
@@ -2124,7 +2124,7 @@ std::int8_t AS_FCOMP(std::uint16_t argAddress) {
 // Name normalization: CompareArgAndFacStrings is the C++ helper name for the
 // STRCMP_1/STRCMP_2 loop. Pointer candidates lifted: ARG+3/+4 and FAC+1/+2
 // are the two unified string-data pointers.
-std::int8_t CompareArgAndFacStrings() {
+static std::int8_t CompareArgAndFacStrings() {
 
   const std::uint8_t argLength = variables_const().AS_ARG[0];
   const std::uint8_t facLength = variables_const().AS_FAC[0];

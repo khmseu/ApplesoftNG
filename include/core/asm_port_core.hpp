@@ -71,6 +71,7 @@ std::uint8_t MON_PREAD();
 void SetTextPointer(std::uint16_t address);
 void ClearErrFlag();
 void MarkDirectMode();
+void SetPendingErrorCode(std::uint8_t errorCode);
 std::uint8_t ReadProgramByte(std::uint16_t address);
 void WriteProgramByte(std::uint16_t address, std::uint8_t value);
 bool IsOnErr();

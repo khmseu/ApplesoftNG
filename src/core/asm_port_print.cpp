@@ -201,7 +201,7 @@ bool IsDirectMode();
 void AS_RESTART();
 void AS_SYNERR();
 
-void PrintDecimalUnsigned(std::uint16_t value) {
+static void PrintDecimalUnsigned(std::uint16_t value) {
   char digits[5];
   std::uint8_t length = 0;
 

@@ -311,7 +311,7 @@ void AS_POS() { AS_SNGFLT(variables_const().MON_CH); }
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_SQR (inclusive) .. AS_RND (exclusive)
 // Name normalization: none (assembler label AS_SQR kept verbatim).
-static void AS_SQR() {
+void AS_SQR() {
 
   const double input = facToDouble();
   if (input < 0.0) {
@@ -330,7 +330,7 @@ static void AS_SQR() {
 // zero argument returns the current seed unchanged; a negative argument
 // reseeds the generator from the argument value; positive arguments advance
 // the sequence.
-static void AS_RND() {
+void AS_RND() {
 
   constexpr std::uint16_t kRndSeedAddress = ApplesoftVariables::ZP_AS_RNDSEED;
 
@@ -361,7 +361,7 @@ static void AS_RND() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_LOG (inclusive) .. AS_EXP (exclusive)
 // Name normalization: none (assembler label AS_LOG kept verbatim).
-static void AS_LOG() {
+void AS_LOG() {
 
   const double input = facToDouble();
   if (input <= 0.0) {
@@ -375,7 +375,7 @@ static void AS_LOG() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_EXP (inclusive) .. AS_COS (exclusive)
 // Name normalization: none (assembler label AS_EXP kept verbatim).
-static void AS_EXP() {
+void AS_EXP() {
 
   const double input = facToDouble();
   const double result = std::exp(input);

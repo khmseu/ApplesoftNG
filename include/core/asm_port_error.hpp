@@ -39,7 +39,4 @@ struct ProgramPointer {
 void AS_PRINT_ERROR_LINUM(
     std::string_view prefix = AS_QT_ERROR(AS_QT_ERROR_INDEX));
 
-// Helper stubs for error printing and restart handling.
-void AS_INPRT();
-
 } // namespace applesoft::asm_port

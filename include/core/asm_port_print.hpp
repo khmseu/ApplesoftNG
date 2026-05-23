@@ -41,6 +41,12 @@ void AS_PRINT2(std::uint8_t a);
 // AS_NEGATE (modeled as a call in C++).
 void AS_CRDO();
 
+// Prints the current line number in decimal.
+void AS_LINPRT();
+
+// Prints the " IN "+line-number error prefix.
+void AS_INPRT();
+
 // Returns a ^ $ff.  In the original source this is reachable as a fall-through
 // from AS_CRDO and is commented "<<< WHY??? >>>".
 std::uint8_t AS_NEGATE(std::uint8_t a);

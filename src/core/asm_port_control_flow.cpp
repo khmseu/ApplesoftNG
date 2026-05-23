@@ -50,7 +50,7 @@ void AS_FRMNUM();
 void AS_FRMEVL();
 void AS_CHKNUM();
 void AS_FADD();
-void PushForPntFrame();
+static void PushForPntFrame();
 std::uint8_t AS_GETBYT();
 void AS_ADDON(std::uint8_t offset);
 bool AS_ISCNTC();
@@ -131,7 +131,7 @@ void SetBranchTargetToAS_STEP() { variables().AS_INDEX = kStepLabelAddress; }
 // (exclusive) This function ports only AS_LOAD_FAC_FROM_YA;
 // AS_STORE_FAC_IN_TEMP2_ROUNDED starts at the exclusive end label. Name
 // normalization: none (assembler label AS_LOAD_FAC_FROM_YA kept verbatim).
-void AS_LOAD_FAC_FROM_YA() {
+static void AS_LOAD_FAC_FROM_YA() {
   // Caller precondition: AS_INDEX points to the packed 5-byte source value.
   const ProgramPointer source{variables_const().AS_INDEX};
   variables().AS_FAC[4] = source.read(4u);
@@ -357,7 +357,7 @@ void WriteProgramByte(std::uint16_t address, std::uint8_t value);
 
 bool gReturnFromPopContext = false;
 
-bool ReturnWasFromAS_POPContext() {
+static bool ReturnWasFromAS_POPContext() {
   if (!gReturnFromPopContext) {
     return false;
   }
@@ -366,7 +366,7 @@ bool ReturnWasFromAS_POPContext() {
   return true;
 }
 
-std::uint8_t PeekTopControlTokenAfterAS_GTFORPNT() {
+static std::uint8_t PeekTopControlTokenAfterAS_GTFORPNT() {
   return theStack().readByteAt(theStack().readStackPointer(), 1u);
 }
 
@@ -628,7 +628,7 @@ void AS_PULL3() {
 // Name normalization: none (assembler label AS_REMN kept verbatim).
 std::uint8_t AS_REMN() { return ScanAheadOffset(0); }
 
-void PushForPntFrame() {
+static void PushForPntFrame() {
   theStack().pushByte(
       ApplesoftVariables::highByte(variables_const().AS_FORPNT));
   theStack().pushByte(ApplesoftVariables::lowByte(variables_const().AS_FORPNT));

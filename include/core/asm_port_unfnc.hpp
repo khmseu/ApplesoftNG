@@ -15,6 +15,16 @@ using AS_UNFNC_fn = void (*)();
 /// -1). The caller is responsible for invoking the returned pointer.
 AS_UNFNC_fn AS_UNFNC(std::size_t index);
 
+void AS_ABS();
+void AS_EXP();
+void AS_INT_fn();
+void AS_LOG();
+void AS_PDL();
+void AS_RND();
+void AS_SGN();
+void AS_SQR();
+void AS_USR();
+void AS_USR_impl();
 void AS_VAL();
 
 } // namespace applesoft::asm_port
