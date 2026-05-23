@@ -1019,13 +1019,11 @@ void MON_WRITE() {
   MON_BELL();
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_READ (inclusive) .. MON_RD2 (exclusive)
+// Name normalization: none (assembler label MON_READ kept verbatim).
 void MON_READ() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // MON_Labels: READ (inclusive) .. RD2 (exclusive)
-  // Name normalization: none (assembler label READ is prefixed with MON_ in
-  // C++).
-
   // FIND TAPEIN EDGE, DELAY 3.5 SECONDS, INIT CHKSUM=$FF, FIND EDGE AGAIN.
   MON_RD2BIT();
   MON_HEADR(0x16u);
@@ -1076,13 +1074,11 @@ void AS_PR_NUMBER() {
 
 // Monitor tape I/O and debug helpers (stubs for incremental porting).
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_RD2 (inclusive) .. MON_RD3 (exclusive)
+// Name normalization: none (assembler label MON_RD2 kept verbatim).
 void MON_RD2() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // MON_Labels: RD2 (inclusive) .. RD3 (exclusive)
-  // Name normalization: none (assembler label RD2 is prefixed with MON_ in
-  // C++).
-
   // LOOK FOR SYNC BIT (SHORT 0): loop while carry remains set.
   std::uint8_t attempts = 0x24u;
   while (attempts != 0u) {
@@ -1125,13 +1121,11 @@ void MON_HEADR(std::uint8_t delay_code) {
   (void)sink;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_RD3 (inclusive) .. MON_PRERR (exclusive)
+// Name normalization: none (assembler label MON_RD3 kept verbatim).
 void MON_RD3() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // MON_Labels: RD3 (inclusive) .. PRERR (exclusive)
-  // Name normalization: none (assembler label RD3 is prefixed with MON_ in
-  // C++).
-
   constexpr std::uint8_t kReadLoopIndex = 0x3bu;
   constexpr std::uint8_t kCompensatedIndex = 0x35u;
 
@@ -1218,13 +1212,11 @@ void MON_RESTORE() {
   variables().MON_DEBUG_REG_Y = saved_reg_y;
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_PRERR (inclusive) .. MON_BELL (exclusive)
+// Name normalization: none (assembler label MON_PRERR kept verbatim).
 void MON_PRERR() {
-  // Source:
-  // SourceMaterial/Combo/asrom.lst
-  // MON_Labels: PRERR (inclusive) .. BELL (exclusive)
-  // Name normalization: none (assembler label PRERR is prefixed with MON_ in
-  // C++).
-  //
   // PRINT "ERR", THEN BELL.
   MON_COUT(0xc5u); // 'E' with high bit set
   MON_COUT(0xd2u); // 'R' with high bit set

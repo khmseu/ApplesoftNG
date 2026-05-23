@@ -327,14 +327,14 @@ AS_LOAD	src/core/asm_port_statements.cpp	935	AS_LOAD (inclusive) .. AS_VARTIO (e
 AS_VARTIO	src/core/asm_port_statements.cpp	962	AS_VARTIO (inclusive) .. AS_PROGIO (exclusive)	AS_VARTIO	AS_PROGIO	asrom	AS_VARTIO	0xd8f0	AS_PROGIO	0xd901	resolved-range	ok
 AS_PROGIO	src/core/asm_port_statements.cpp	975	AS_PROGIO (inclusive) .. AS_RUN (exclusive)	AS_PROGIO	AS_RUN	asrom	AS_PROGIO	0xd901	AS_RUN	0xd912	resolved-range	ok
 MON_WRITE	src/core/asm_port_statements.cpp	985	MON_WRITE (inclusive) .. MON_BELL (exclusive)	MON_WRITE	MON_BELL	asrom	MON_WRITE	0xfecd	MON_BELL	0xff3a	resolved-range	ok
-AS_CALL	src/core/asm_port_statements.cpp	1025	READ (inclusive) .. RD2 (exclusive)	READ	RD2						unresolved	no-module-match
-AS_CALL	src/core/asm_port_statements.cpp	1041	AS_CALL (inclusive) .. AS_IN_NUMBER (exclusive)	AS_CALL	AS_IN_NUMBER	asrom	AS_CALL	0xf1d5	AS_IN_NUMBER	0xf1de	resolved-range	ok
-AS_IN_NUMBER	src/core/asm_port_statements.cpp	1059	AS_IN_NUMBER (inclusive) .. AS_PR_NUMBER (exclusive)	AS_IN_NUMBER	AS_PR_NUMBER	asrom	AS_IN_NUMBER	0xf1de	AS_PR_NUMBER	0xf1e5	resolved-range	ok
-AS_PR_NUMBER	src/core/asm_port_statements.cpp	1069	AS_PR_NUMBER (inclusive) .. AS_PLOTFNS (exclusive)	AS_PR_NUMBER	AS_PLOTFNS	asrom	AS_PR_NUMBER	0xf1e5	AS_PLOTFNS	0xf1ec	resolved-range	ok
-MON_RD2BIT	src/core/asm_port_statements.cpp	1082	RD2 (inclusive) .. RD3 (exclusive)	RD2	RD3						unresolved	no-module-match
-MON_RDBIT	src/core/asm_port_statements.cpp	1131	RD3 (inclusive) .. PRERR (exclusive)	RD3	PRERR						unresolved	no-module-match
-MON_RESTORE	src/core/asm_port_statements.cpp	1195	MON_RESTORE (inclusive) .. MON_SAVE (exclusive)	MON_RESTORE	MON_SAVE	asrom	MON_RESTORE	0xff3f	MON_SAVE	0xff4a	resolved-range	ok
-MON_PRERR	src/core/asm_port_statements.cpp	1224	PRERR (inclusive) .. BELL (exclusive)	PRERR	BELL						unresolved	no-module-match
+MON_READ	src/core/asm_port_statements.cpp	1024	MON_READ (inclusive) .. MON_RD2 (exclusive)	MON_READ	MON_RD2	asrom	MON_READ	0xfefd	MON_RD2	0xff0a	resolved-range	ok
+AS_CALL	src/core/asm_port_statements.cpp	1039	AS_CALL (inclusive) .. AS_IN_NUMBER (exclusive)	AS_CALL	AS_IN_NUMBER	asrom	AS_CALL	0xf1d5	AS_IN_NUMBER	0xf1de	resolved-range	ok
+AS_IN_NUMBER	src/core/asm_port_statements.cpp	1057	AS_IN_NUMBER (inclusive) .. AS_PR_NUMBER (exclusive)	AS_IN_NUMBER	AS_PR_NUMBER	asrom	AS_IN_NUMBER	0xf1de	AS_PR_NUMBER	0xf1e5	resolved-range	ok
+AS_PR_NUMBER	src/core/asm_port_statements.cpp	1067	AS_PR_NUMBER (inclusive) .. AS_PLOTFNS (exclusive)	AS_PR_NUMBER	AS_PLOTFNS	asrom	AS_PR_NUMBER	0xf1e5	AS_PLOTFNS	0xf1ec	resolved-range	ok
+MON_RD2	src/core/asm_port_statements.cpp	1079	MON_RD2 (inclusive) .. MON_RD3 (exclusive)	MON_RD2	MON_RD3	asrom	MON_RD2	0xff0a	MON_RD3	0xff16	resolved-range	ok
+MON_RD3	src/core/asm_port_statements.cpp	1126	MON_RD3 (inclusive) .. MON_PRERR (exclusive)	MON_RD3	MON_PRERR	asrom	MON_RD3	0xff16	MON_PRERR	0xff2d	resolved-range	ok
+MON_RESTORE	src/core/asm_port_statements.cpp	1189	MON_RESTORE (inclusive) .. MON_SAVE (exclusive)	MON_RESTORE	MON_SAVE	asrom	MON_RESTORE	0xff3f	MON_SAVE	0xff4a	resolved-range	ok
+MON_PRERR	src/core/asm_port_statements.cpp	1217	MON_PRERR (inclusive) .. MON_BELL (exclusive)	MON_PRERR	MON_BELL	asrom	MON_PRERR	0xff2d	MON_BELL	0xff3a	resolved-range	ok
 AS_STR	src/core/asm_port_strlit.cpp	21	AS_STR (inclusive) .. AS_STRINI (exclusive)	AS_STR	AS_STRINI	asrom	AS_STR	0xe3c5	AS_STRINI	0xe3d5	resolved-range	ok
 AS_STRLIT	src/core/asm_port_strlit.cpp	35	AS_STRLIT (inclusive) .. AS_STRLT2 (exclusive)	AS_STRLIT	AS_STRLT2	asrom	AS_STRLIT	0xe3e7	AS_STRLT2	0xe3ed	resolved-range	ok
 AS_FRM_ELEMENT	src/core/asm_port_strlt2.cpp	153	AS_FRM_ELEMENT (inclusive) .. AS_NOT_ (exclusive)	AS_FRM_ELEMENT	AS_NOT_	asrom	AS_FRM_ELEMENT	0xde60	AS_NOT_	0xde90	resolved-range	ok
@@ -506,12 +506,11 @@ GetTextTablePointer	src/core/asm_port_statements.cpp	587									unclaimed	no-la
 IsEndOfProgram	src/core/asm_port_statements.cpp	589									unclaimed	no-label-range-claim
 AdvanceToNextAS_Line	src/core/asm_port_statements.cpp	591									unclaimed	no-label-range-claim
 WriteForwardPointer	src/core/asm_port_statements.cpp	603									unclaimed	no-label-range-claim
-MON_READ	src/core/asm_port_statements.cpp	1022									unclaimed	no-label-range-claim
-MON_RD2	src/core/asm_port_statements.cpp	1079									unclaimed	no-label-range-claim
-MON_HEADR	src/core/asm_port_statements.cpp	1118									unclaimed	no-label-range-claim
-MON_RD3	src/core/asm_port_statements.cpp	1128									unclaimed	no-label-range-claim
-MON_RDBYTE	src/core/asm_port_statements.cpp	1171									unclaimed	no-label-range-claim
-MON_NXTA1	src/core/asm_port_statements.cpp	1183									unclaimed	no-label-range-claim
+MON_RD2BIT	src/core/asm_port_statements.cpp	1101									unclaimed	no-label-range-claim
+MON_HEADR	src/core/asm_port_statements.cpp	1114									unclaimed	no-label-range-claim
+MON_RDBIT	src/core/asm_port_statements.cpp	1159									unclaimed	no-label-range-claim
+MON_RDBYTE	src/core/asm_port_statements.cpp	1165									unclaimed	no-label-range-claim
+MON_NXTA1	src/core/asm_port_statements.cpp	1177									unclaimed	no-label-range-claim
 write_AS_CHARAC	src/core/asm_port_strlit.cpp	13									unclaimed	no-label-range-claim
 write_AS_ENDCHR	src/core/asm_port_strlit.cpp	15									unclaimed	no-label-range-claim
 read_AS_CHARAC	src/core/asm_port_strlt2.cpp	42									unclaimed	no-label-range-claim
