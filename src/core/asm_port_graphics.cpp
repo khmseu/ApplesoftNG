@@ -16,6 +16,10 @@ std::uint8_t AS_GETBYT();
 void AS_IQERR();
 void AS_GOERR();
 std::uint8_t AS_CHRGOT();
+void MON_READ();
+void MON_RD2BIT();
+void MON_RD2();
+void MON_HEADR(std::uint8_t delay_code);
 void AS_SYNCHR(std::uint8_t expected);
 void AS_HCLR();
 void AS_BKGND();
@@ -1026,9 +1030,36 @@ void AS_XDRAW() {
 // AS_Labels: AS_SHLOAD (inclusive) .. AS_TAPEPNT (exclusive)
 // Name normalization: none (assembler label AS_SHLOAD kept verbatim).
 void AS_SHLOAD() {
-  // TODO(asm-port): Implement full cassette-backed SHLOAD behavior.
-  // Runtime currently has no complete cassette shape-table path.
-  AS_ERROR(AS_ERR_UNDEFSTAT);
+  // Read 2-byte shape table length into AS_LINNUM via monitor tape path.
+  variables().MON_A1 = ApplesoftVariables::ZP_AS_LINNUM;
+  variables().MON_A2 =
+      static_cast<std::uint16_t>(ApplesoftVariables::ZP_AS_LINNUM + 1u);
+  MON_READ();
+
+  // Destination ends at HIMEM-1 and starts at HIMEM-AS_LINNUM.
+  const std::uint16_t memsiz = variables_const().AS_MEMSIZ;
+  const std::uint16_t linnum = variables_const().AS_LINNUM;
+  variables().MON_A2 = static_cast<std::uint16_t>(memsiz - 1u);
+
+  const std::uint16_t loadStart = static_cast<std::uint16_t>(memsiz - linnum);
+  const std::uint8_t loadStartHi = ApplesoftVariables::highByte(loadStart);
+  const std::uint8_t streendHi =
+      ApplesoftVariables::highByte(variables_const().AS_STREND);
+  if (loadStartHi < streendHi) {
+    AS_MEMERR();
+    return;
+  }
+
+  variables().AS_MEMSIZ = loadStart;
+  variables().AS_FRETOP = loadStart;
+  variables().MON_A1 = loadStart;
+  variables().AS_HGR_SHAPE_PNTR = loadStart;
+
+  // Jump to monitor READ2 entry: header delay, edge sync, and bulk read.
+  MON_RD2BIT();
+  MON_HEADR(0x03u);
+  MON_RD2BIT();
+  MON_RD2();
 }
 
 void AS_COLOR() {
