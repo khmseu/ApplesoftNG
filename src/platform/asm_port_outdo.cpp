@@ -67,6 +67,11 @@ void consumeKeyboardAS_Latch(std::uint8_t keycode) {
   ioPorts().writeByte(IOPorts::ADDR_AS_KEYBOARD,
                       static_cast<std::uint8_t>(keycode & 0x7fu));
 }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_LFB78 (inclusive) .. MON_LFB97 (exclusive)
+// Name normalization: none (assembler label MON_LFB78 kept verbatim).
 void MON_LFB78(std::uint8_t a) {
   constexpr std::uint8_t kCarriageReturn = 0x8du;
   constexpr std::uint8_t kCtrlS = 0x93u;
@@ -85,6 +90,10 @@ void MON_LFB78(std::uint8_t a) {
   MON_VIDOUT(a);
 }
 namespace {
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_VIDOUT (inclusive) .. MON_ESC1 (exclusive)
+// Name normalization: none (assembler label MON_VIDOUT kept verbatim).
 void MON_VIDOUT(std::uint8_t a) {
   const std::uint8_t ch = static_cast<std::uint8_t>(a & 0x7fu);
   switch (ch) {
@@ -127,6 +136,11 @@ void MON_COUT1(std::uint8_t a) {
     a &= variables_const().MON_INVFLG;
   MON_LFB78(a);
 }
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_WAIT (inclusive) .. MON_NXTA4 (exclusive)
+// Name normalization: none (assembler label MON_WAIT kept verbatim).
 void MON_WAIT(std::uint8_t a) {
   volatile std::uint8_t outer = a;
   do {

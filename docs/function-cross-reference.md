@@ -308,9 +308,9 @@
 | AS_ONGOTO                           | real   | 21   | 4       | src/core/asm_port_control_flow.cpp        | 1045 |
 | AS_OR                               | real   | 5    | 6       | src/core/asm_port_core.cpp                | 1001 |
 | AS_OR_op                            | real   | 1    | 1       | src/core/asm_port_mathtbl.cpp             | 357  |
-| AS_OUTDO                            | real   | 7    | 17      | src/platform/asm_port_outdo.cpp           | 153  |
-| AS_OUTQUES                          | real   | 1    | 7       | src/platform/asm_port_outdo.cpp           | 173  |
-| AS_OUTSP                            | real   | 1    | 5       | src/platform/asm_port_outdo.cpp           | 167  |
+| AS_OUTDO                            | real   | 7    | 17      | src/platform/asm_port_outdo.cpp           | 167  |
+| AS_OUTQUES                          | real   | 1    | 7       | src/platform/asm_port_outdo.cpp           | 187  |
+| AS_OUTSP                            | real   | 1    | 5       | src/platform/asm_port_outdo.cpp           | 181  |
 | AS_OVERFLOW                         | real   | 1    | 5       | src/core/asm_port_math.cpp                | 581  |
 | AS_PARCHK                           | real   | 3    | 6       | src/core/asm_port_parser.cpp              | 94   |
 | AS_PARSE_INPUT_LINE                 | real   | 50   | 7       | src/core/asm_port_statements.cpp          | 509  |
@@ -491,8 +491,8 @@
 | MON_CLREOL                          | real   | 8    | 4       | src/core/asm_port_graphics.cpp            | 309  |
 | MON_CLREOL                          | real   | 7    | 4       | src/platform/asm_port_getln.cpp           | 52   |
 | MON_CLRSCR                          | real   | 1    | 2       | src/core/asm_port_graphics.cpp            | 243  |
-| MON_COUT                            | real   | 2    | 22      | src/platform/asm_port_outdo.cpp           | 144  |
-| MON_COUT1                           | real   | 3    | 2       | src/platform/asm_port_outdo.cpp           | 125  |
+| MON_COUT                            | real   | 2    | 22      | src/platform/asm_port_outdo.cpp           | 158  |
+| MON_COUT1                           | real   | 3    | 2       | src/platform/asm_port_outdo.cpp           | 134  |
 | MON_CROUT                           | real   | 2    | 7       | src/core/asm_port_core.cpp                | 251  |
 | MON_CROUT                           | real   | 1    | 7       | src/platform/asm_port_getln.cpp           | 67   |
 | MON_GBASCALC                        | real   | 11   | 2       | src/core/asm_port_graphics.cpp            | 249  |
@@ -508,7 +508,7 @@
 | MON_IRQ                             | real   | 10   | 3       | src/core/asm_port_core.cpp                | 2087 |
 | MON_KEYIN                           | real   | 20   | 0       | src/core/asm_port_inlin2.cpp              | 45   |
 | MON_LFB60                           | real   | 20   | 3       | src/core/asm_port_core.cpp                | 218  |
-| MON_LFB78                           | real   | 15   | 1       | src/platform/asm_port_outdo.cpp           | 70   |
+| MON_LFB78                           | real   | 15   | 2       | src/platform/asm_port_outdo.cpp           | 75   |
 | MON_MON                             | real   | 3    | 2       | src/core/asm_port_core.cpp                | 308  |
 | MON_NOTCR                           | real   | 25   | 3       | src/platform/asm_port_getln.cpp           | 86   |
 | MON_NXTA1                           | real   | 5    | 2       | src/core/asm_port_statements.cpp          | 1189 |
@@ -538,9 +538,9 @@
 | MON_SETTXT                          | real   | 6    | 5       | src/core/asm_port_graphics.cpp            | 333  |
 | MON_SETVID                          | real   | 1    | 2       | src/core/asm_port_core.cpp                | 193  |
 | MON_TABV                            | real   | 14   | 9       | src/core/asm_port_graphics.cpp            | 74   |
-| MON_VIDOUT                          | real   | 30   | 2       | src/platform/asm_port_outdo.cpp           | 88   |
+| MON_VIDOUT                          | real   | 30   | 3       | src/platform/asm_port_outdo.cpp           | 97   |
 | MON_VLINE                           | real   | 9    | 2       | src/core/asm_port_graphics.cpp            | 212  |
-| MON_WAIT                            | real   | 8    | 2       | src/platform/asm_port_outdo.cpp           | 130  |
+| MON_WAIT                            | real   | 8    | 3       | src/platform/asm_port_outdo.cpp           | 144  |
 | MON_WRITE                           | real   | 21   | 5       | src/core/asm_port_statements.cpp          | 987  |
 | parseNumericInputAndStore           | real   | 3    | 1       | src/core/asm_port_input.cpp               | 96   |
 | parseStringInputAndStore            | real   | 22   | 1       | src/core/asm_port_input.cpp               | 51   |
