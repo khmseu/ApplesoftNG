@@ -1,16 +1,20 @@
 #include "core/asm_port_input.hpp"
 
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_chrget.hpp"
 #include "core/asm_port_clear.hpp"
-#include "core/asm_port_error.hpp"
+#include "core/asm_port_control_flow.hpp"
+#include "core/asm_port_core.hpp"
+#include "core/asm_port_error_handling.hpp"
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_inlin.hpp"
 #include "core/asm_port_inlin2.hpp"
-#include "core/asm_port_input.hpp"
 #include "core/asm_port_math.hpp"
 #include "core/asm_port_nxin.hpp"
+#include "core/asm_port_parser.hpp"
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_stack.hpp"
+#include "core/asm_port_statements.hpp"
 #include "core/asm_port_strlt2.hpp"
 #include "core/asm_port_strtxt.hpp"
 #include "platform/asm_port_outdo.hpp"
@@ -19,18 +23,6 @@
 #include <string_view>
 
 namespace applesoft::asm_port {
-
-void AS_CONTROL_C_TYPED();
-void AS_HANDLERR();
-void AS_SYNERR();
-void AS_ERRDIR();
-void AS_SYNCHR(std::uint8_t expected);
-void SetPendingErrorCode(std::uint8_t errorCode);
-
-std::uint8_t AS_DATAN();
-void AS_ADDON(std::uint8_t offset);
-void AS_PUTSTR();
-void AS_LET2(std::uint8_t savedValTypPlus1);
 
 namespace {
 

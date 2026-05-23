@@ -1,31 +1,18 @@
 #include "core/asm_port_graphics.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_chrget.hpp"
+#include "core/asm_port_clear.hpp"
 #include "core/asm_port_error.hpp"
+#include "core/asm_port_error_handling.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_parser.hpp"
+#include "core/asm_port_print.hpp"
+#include "core/asm_port_statements.hpp"
 #include "core/io_ports.hpp"
 
 #include <cstdint>
 
 namespace applesoft::asm_port {
-
-void AS_CRDO();
-void AS_FRMNUM();
-void AS_GETADR();
-std::uint8_t AS_MEMERR();
-void AS_CLEARC();
-std::uint8_t AS_GETBYT();
-void AS_IQERR();
-void AS_GOERR();
-std::uint8_t AS_CHRGOT();
-void MON_READ();
-void MON_RD2BIT();
-void MON_RD2();
-void MON_HEADR(std::uint8_t delay_code);
-void AS_SYNCHR(std::uint8_t expected);
-void AS_HCLR();
-void AS_BKGND();
-void AS_L_BKGND_1();
-void AS_SHLOAD();
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
