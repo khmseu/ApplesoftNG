@@ -9,6 +9,7 @@
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_core.hpp"
 #include "core/asm_port_math.hpp"
 
 #include <cmath>
@@ -16,11 +17,6 @@
 
 namespace applesoft::asm_port {
 
-void AS_OR();
-void AS_RELOPS();
-void AS_SNGFLT(std::uint8_t value);
-void AS_ANDOP();
-void AS_NORMALIZE_FAC_2();
 static void AS_COPY_RESULT_INTO_FAC(); // forward declaration (defined below)
 
 // ---------------------------------------------------------------------------
