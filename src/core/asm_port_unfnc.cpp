@@ -21,85 +21,35 @@
 #include "core/asm_port_strlt2.hpp"
 #include "core/jump_table.hpp"
 
-#include <cmath>
-
 namespace applesoft::asm_port {
 
 static void AS_L_VAL_1();
 static void AS_L_VAL_2();
+static void AS_SIN();
 
 namespace {
-
-static double facToDouble() {
-  const auto &cv = variables_const();
-  if (cv.AS_FAC[0] == 0u) {
-    return 0.0;
-  }
-
-  const std::uint32_t mantissa =
-      (static_cast<std::uint32_t>(cv.AS_FAC[1]) << 24u) |
-      (static_cast<std::uint32_t>(cv.AS_FAC[2]) << 16u) |
-      (static_cast<std::uint32_t>(cv.AS_FAC[3]) << 8u) |
-      static_cast<std::uint32_t>(cv.AS_FAC[4]);
-  const double fraction = static_cast<double>(mantissa) / 4294967296.0;
-  const double value =
-      std::ldexp(fraction, static_cast<int>(cv.AS_FAC[0]) - 128);
-  return (cv.AS_FAC_SIGN != 0u) ? -value : value;
-}
-
-static void doubleToFac(double value) {
-  auto &vars = variables();
-
-  if (value == 0.0) {
-    vars.AS_FAC[0] = 0u;
-    vars.AS_FAC[1] = 0u;
-    vars.AS_FAC[2] = 0u;
-    vars.AS_FAC[3] = 0u;
-    vars.AS_FAC[4] = 0u;
-    vars.AS_FAC_SIGN = 0u;
-    vars.AS_FAC_EXTENSION = 0u;
-    return;
-  }
-
-  const bool negative = std::signbit(value);
-  value = std::fabs(value);
-
-  int exponent2 = 0;
-  const double fraction = std::frexp(value, &exponent2);
-  std::uint8_t exponent8 =
-      static_cast<std::uint8_t>(static_cast<int>(exponent2) + 128);
-
-  std::uint64_t mantissa = static_cast<std::uint64_t>(std::ldexp(fraction, 32));
-  if (mantissa >= 0x1'0000'0000ull) {
-    mantissa >>= 1u;
-    ++exponent8;
-  }
-
-  if (exponent8 == 0u) {
-    vars.AS_FAC[0] = 0u;
-    vars.AS_FAC[1] = 0u;
-    vars.AS_FAC[2] = 0u;
-    vars.AS_FAC[3] = 0u;
-    vars.AS_FAC[4] = 0u;
-    vars.AS_FAC_SIGN = 0u;
-    vars.AS_FAC_EXTENSION = 0u;
-    return;
-  }
-
-  vars.AS_FAC[0] = exponent8;
-  vars.AS_FAC[1] = static_cast<std::uint8_t>((mantissa >> 24u) & 0xffu);
-  vars.AS_FAC[2] = static_cast<std::uint8_t>((mantissa >> 16u) & 0xffu);
-  vars.AS_FAC[3] = static_cast<std::uint8_t>((mantissa >> 8u) & 0xffu);
-  vars.AS_FAC[4] = static_cast<std::uint8_t>(mantissa & 0xffu);
-  vars.AS_FAC_SIGN = negative ? 0xffu : 0u;
-  vars.AS_FAC_EXTENSION = 0u;
-}
-
 constexpr std::size_t kMathMulIdx = 2u;
+constexpr std::size_t kMathDivIdx = 3u;
 constexpr std::size_t kMathPowIdx = 4u;
+constexpr std::uint16_t kAsTemp1Address = 0x0093u;
+constexpr std::uint16_t kAsTemp2Address = 0x0098u;
+constexpr std::uint16_t kAsTemp3Address = 0x008au;
 constexpr std::uint16_t kAsConHalfAddress = 0xee64u;
+constexpr std::uint16_t kAsConOneAddress = 0xe913u;
 constexpr std::uint16_t kAsConRnd1Address = 0xefa6u;
 constexpr std::uint16_t kAsConRnd2Address = 0xefaau;
+constexpr std::uint16_t kAsConPiHalfAddress = 0xf066u;
+constexpr std::uint16_t kAsConPiDoubleAddress = 0xf06bu;
+constexpr std::uint16_t kAsQuarterAddress = 0xf070u;
+constexpr std::uint16_t kAsPolySinAddress = 0xf075u;
+constexpr std::uint16_t kAsPolyAtnAddress = 0xf0ceu;
+constexpr std::uint16_t kAsConSqrHalfAddress = 0xe92du;
+constexpr std::uint16_t kAsConSqrTwoAddress = 0xe932u;
+constexpr std::uint16_t kAsConNegHalfAddress = 0xe937u;
+constexpr std::uint16_t kAsConLogTwoAddress = 0xe93cu;
+constexpr std::uint16_t kAsPolyLogAddress = 0xe918u;
+constexpr std::uint16_t kAsConLogEAddress = 0xeedbu;
+constexpr std::uint16_t kAsPolyExpAddress = 0xeee0u;
 
 static void loadArgFromPacked(std::uint16_t address) {
   const auto source = variables_const().pointer(address);
@@ -131,6 +81,37 @@ static void loadFacFromPacked(std::uint16_t address) {
 static void storeFacToPackedRounded(std::uint16_t address) {
   variables().AS_VARPNT = address;
   AS_STORE_FACDB_YX_ROUNDED();
+}
+
+static void AS_POLYNOMIAL(std::uint16_t tableAddress) {
+  storeFacToPackedRounded(kAsTemp2Address);
+
+  const auto table = variables_const().pointer(tableAddress);
+  std::uint8_t remainingTerms = table.read(0u);
+  std::uint16_t coefficientAddress =
+      static_cast<std::uint16_t>(tableAddress + 1u);
+
+  loadFacFromPacked(coefficientAddress);
+  while (remainingTerms != 0u) {
+    loadArgFromPacked(kAsTemp2Address);
+    AS_MATHTBL(kMathMulIdx).handler();
+
+    coefficientAddress = static_cast<std::uint16_t>(coefficientAddress + 5u);
+    loadArgFromPacked(coefficientAddress);
+    AS_FADDT();
+    --remainingTerms;
+  }
+}
+
+static void AS_POLYNOMIAL_ODD(std::uint16_t tableAddress) {
+  storeFacToPackedRounded(kAsTemp1Address);
+  loadArgFromPacked(kAsTemp1Address);
+  AS_MATHTBL(kMathMulIdx).handler();
+
+  AS_POLYNOMIAL(tableAddress);
+
+  loadArgFromPacked(kAsTemp1Address);
+  AS_MATHTBL(kMathMulIdx).handler();
 }
 
 static std::int8_t AS_SIGN_FAC() {
@@ -344,50 +325,175 @@ void AS_RND() {
 // AS_Labels: AS_LOG (inclusive) .. AS_EXP (exclusive)
 // Name normalization: none (assembler label AS_LOG kept verbatim).
 void AS_LOG() {
-
-  const double input = facToDouble();
-  if (input <= 0.0) {
+  const std::int8_t facSign = AS_SIGN_FAC();
+  if (facSign <= 0) {
     AS_ERROR(AS_ERR_ILLQTY);
     return;
   }
 
-  doubleToFac(std::log(input));
+  const std::int8_t unbiasedExponent =
+      static_cast<std::int8_t>(variables_const().AS_FAC[0] - 0x7fu);
+
+  variables().AS_FAC[0] = 0x80u;
+
+  loadArgFromPacked(kAsConSqrHalfAddress);
+  AS_FADDT();
+
+  loadArgFromPacked(kAsConSqrTwoAddress);
+  AS_MATHTBL(kMathDivIdx).handler();
+
+  loadArgFromPacked(kAsConOneAddress);
+  AS_FSUBT();
+
+  AS_POLYNOMIAL_ODD(kAsPolyLogAddress);
+
+  loadArgFromPacked(kAsConNegHalfAddress);
+  AS_FADDT();
+
+  storeFacToPackedRounded(kAsTemp3Address);
+  AS_FLOAT(unbiasedExponent);
+  loadArgFromPacked(kAsTemp3Address);
+  AS_FADDT();
+
+  loadArgFromPacked(kAsConLogTwoAddress);
+  AS_MATHTBL(kMathMulIdx).handler();
 }
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_EXP (inclusive) .. AS_COS (exclusive)
 // Name normalization: none (assembler label AS_EXP kept verbatim).
 void AS_EXP() {
+  loadArgFromPacked(kAsConLogEAddress);
+  AS_MATHTBL(kMathMulIdx).handler();
 
-  const double input = facToDouble();
-  const double result = std::exp(input);
-  if (!std::isfinite(result)) {
+  // EXP range gate used in ROM before extracting integer/fractional parts.
+  if (variables_const().AS_FAC[0] >= 0x88u) {
+    if ((variables_const().AS_FAC_SIGN & 0x80u) != 0u) {
+      AS_ZERO_FAC();
+      return;
+    }
     AS_ERROR(AS_ERR_OVERFLOW);
     return;
   }
 
-  doubleToFac(result);
+  storeFacToPackedRounded(kAsTemp3Address);
+
+  AS_INT_fn();
+  const std::int8_t integralPart =
+      static_cast<std::int8_t>(variables_const().AS_CHARAC);
+
+  loadArgFromPacked(kAsTemp3Address);
+  AS_FSUBT();
+  AS_NEGOP();
+
+  AS_POLYNOMIAL(kAsPolyExpAddress);
+
+  const std::int16_t adjustedExponent =
+      static_cast<std::int16_t>(variables_const().AS_FAC[0]) + integralPart;
+  if (adjustedExponent <= 0) {
+    AS_ZERO_FAC();
+    return;
+  }
+  if (adjustedExponent > 0xff) {
+    AS_ERROR(AS_ERR_OVERFLOW);
+    return;
+  }
+
+  variables().AS_FAC[0] = static_cast<std::uint8_t>(adjustedExponent);
 }
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_COS (inclusive) .. AS_SIN (exclusive)
 // Name normalization: none (assembler label AS_COS kept verbatim).
-static void AS_COS() { doubleToFac(std::cos(facToDouble())); }
+static void AS_COS() {
+  // ROM identity: COS(X) = SIN(X + PI/2).
+  loadArgFromPacked(kAsConPiHalfAddress);
+  AS_FADDT();
+  AS_SIN();
+}
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_SIN (inclusive) .. AS_TAN (exclusive)
 // Name normalization: none (assembler label AS_SIN kept verbatim).
-static void AS_SIN() { doubleToFac(std::sin(facToDouble())); }
+static void AS_SIN() {
+  // Reduce angle to a circle fraction: X / (2*PI).
+  AS_COPY_FAC_TO_ARG_ROUNDED();
+  loadFacFromPacked(kAsConPiDoubleAddress);
+  AS_MATHTBL(kMathDivIdx).handler();
+
+  // Keep only fractional part.
+  AS_COPY_FAC_TO_ARG_ROUNDED();
+  AS_INT_fn();
+  variables().AS_SGNCPR = 0u;
+  AS_FSUBT();
+
+  // Fold into first quarter before polynomial approximation.
+  loadArgFromPacked(kAsQuarterAddress);
+  AS_FSUBT();
+
+  const bool savedSignNegative = (variables_const().AS_FAC_SIGN & 0x80u) != 0u;
+  if (savedSignNegative) {
+    AS_FADDH();
+    if ((variables_const().AS_FAC_SIGN & 0x80u) == 0u) {
+      AS_NEGOP();
+    }
+  } else {
+    AS_NEGOP();
+  }
+
+  loadArgFromPacked(kAsQuarterAddress);
+  AS_FADDT();
+
+  if (savedSignNegative) {
+    AS_NEGOP();
+  }
+
+  AS_POLYNOMIAL_ODD(kAsPolySinAddress);
+}
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_TAN (inclusive) .. AS_ATN (exclusive)
 // Name normalization: none (assembler label AS_TAN kept verbatim).
-static void AS_TAN() { doubleToFac(std::tan(facToDouble())); }
+static void AS_TAN() {
+  // TAN(X) = SIN(X) / COS(X), preserving FAC/ARG packed-float operations.
+  storeFacToPackedRounded(kAsTemp1Address);
+
+  AS_SIN();
+  storeFacToPackedRounded(kAsTemp3Address);
+
+  loadFacFromPacked(kAsTemp1Address);
+  AS_COS();
+
+  loadArgFromPacked(kAsTemp3Address);
+  AS_MATHTBL(kMathDivIdx).handler();
+}
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_ATN (inclusive) .. AS_GENERIC_CHRGET (exclusive)
 // Name normalization: none (assembler label AS_ATN kept verbatim).
-static void AS_ATN() { doubleToFac(std::atan(facToDouble())); }
+static void AS_ATN() {
+  const bool startedNegative = (variables_const().AS_FAC_SIGN & 0x80u) != 0u;
+  if (startedNegative) {
+    AS_NEGOP();
+  }
+
+  const bool wasAtLeastOne = variables_const().AS_FAC[0] >= 0x81u;
+  if (wasAtLeastOne) {
+    loadArgFromPacked(kAsConOneAddress);
+    AS_MATHTBL(kMathDivIdx).handler();
+  }
+
+  AS_POLYNOMIAL_ODD(kAsPolyAtnAddress);
+
+  if (wasAtLeastOne) {
+    loadArgFromPacked(kAsConPiHalfAddress);
+    AS_FSUBT();
+  }
+
+  if (startedNegative) {
+    AS_NEGOP();
+  }
+}
 static void AS_PEEK_fn() { AS_PEEK(); }
 // AS_Labels: AS_VAL (inclusive) .. AS_L_VAL_1 (exclusive)
 // Name normalization: none (assembler label AS_VAL kept verbatim).
