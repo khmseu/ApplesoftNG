@@ -21,7 +21,6 @@ namespace applesoft::asm_port {
 constexpr std::size_t kTokenCount = 107;
 constexpr std::uint8_t kTokenBase = 0x80u;
 
-bool AS_FNDLIN();
 bool IsStatementEndOfParsedInput();
 bool AS_ISCNTC();
 bool AS_FL1(std::uint16_t startAddress);
