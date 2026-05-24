@@ -11,8 +11,9 @@
 namespace applesoft::asm_port {
 
 template <typename T> class ApplesoftDualPointer {
-  static_assert(!std::is_class_v<T>,
-                "ApplesoftDualPointer<T> requires a non-class data type");
+  static_assert(
+      std::is_trivially_copyable_v<T>,
+      "ApplesoftDualPointer<T> requires a trivially copyable data type");
 
 public:
   static ApplesoftDualPointer emulated(std::uint16_t address) {

@@ -1809,7 +1809,7 @@ void AS_FRMEVL() {
 
         const std::uint16_t txtptr = variables_const().AS_TXTPTR;
         variables().AS_TXTPTR = static_cast<std::uint16_t>(txtptr - 1u);
-        pendingEntry = AS_MATHTBL(AS_M_REL_IDX);
+        pendingEntry = AS_MATHTBL(AS_MATHTBL_ptr(AS_M_REL_IDX));
         lastOpOffset =
             static_cast<std::uint8_t>(AS_M_REL_IDX * kMathTableEntrySize);
       } else {
@@ -1824,7 +1824,7 @@ void AS_FRMEVL() {
         if (mathIndex > AS_M_REL_IDX) {
           return;
         }
-        pendingEntry = AS_MATHTBL(mathIndex);
+        pendingEntry = AS_MATHTBL(AS_MATHTBL_ptr(mathIndex));
         lastOpOffset =
             static_cast<std::uint8_t>(mathIndex * kMathTableEntrySize);
       }

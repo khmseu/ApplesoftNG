@@ -347,7 +347,8 @@ void AS_EQUOP() {
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_MATHTBL (inclusive) .. AS_TOKEN_NAME_TABLE (exclusive)
-MathTblEntry AS_MATHTBL(std::size_t index) {
+// Name normalization: minimal suffix required for C++ overload disambiguation.
+ApplesoftDualPointer<const MathTblEntry> AS_MATHTBL_ptr(std::size_t index) {
   static constexpr MathTblEntry table[] = {
       {AS_P_ADD, AS_FADDT},  // [0] M_ADD  $C8...200...+
       {AS_P_ADD, AS_FSUBT},  // [1]        $C9...201...-
@@ -361,7 +362,16 @@ MathTblEntry AS_MATHTBL(std::size_t index) {
       {AS_P_REL,
        AS_RELOPS}, // [9] AS_M_REL  $D1...209...< (dispatches to core AS_RELOPS)
   };
-  return table[index];
+
+  return ApplesoftDualPointer<const MathTblEntry>::native(&table[index]);
+}
+
+MathTblEntry AS_MATHTBL(ApplesoftDualPointer<const MathTblEntry> entry_ptr) {
+  return entry_ptr.reference();
+}
+
+MathTblEntry AS_MATHTBL(std::size_t index) {
+  return AS_MATHTBL(AS_MATHTBL_ptr(index));
 }
 
 } // namespace applesoft::asm_port

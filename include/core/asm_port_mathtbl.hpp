@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/applesoft_dual_pointer.hpp"
+
 #include <cstddef>
 #include <cstdint>
 
@@ -40,5 +42,11 @@ void AS_EQUOP();
 /// - 0xC8). Maps tokens $C8 (+) through $D1 (<), i.e. indices 0-9. Returns a
 /// MathTblEntry; the caller is responsible for invoking entry.handler.
 MathTblEntry AS_MATHTBL(std::size_t index);
+
+/// Canonical label API for AS_MATHTBL lookup.
+ApplesoftDualPointer<const MathTblEntry> AS_MATHTBL_ptr(std::size_t index);
+
+/// Decode MathTblEntry from canonical dual-pointer input.
+MathTblEntry AS_MATHTBL(ApplesoftDualPointer<const MathTblEntry> entry_ptr);
 
 } // namespace applesoft::asm_port

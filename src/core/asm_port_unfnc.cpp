@@ -94,7 +94,7 @@ static void AS_POLYNOMIAL(std::uint16_t tableAddress) {
   loadFacFromPacked(coefficientAddress);
   while (remainingTerms != 0u) {
     loadArgFromPacked(kAsTemp2Address);
-    AS_MATHTBL(kMathMulIdx).handler();
+    AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
 
     coefficientAddress = static_cast<std::uint16_t>(coefficientAddress + 5u);
     loadArgFromPacked(coefficientAddress);
@@ -106,12 +106,12 @@ static void AS_POLYNOMIAL(std::uint16_t tableAddress) {
 static void AS_POLYNOMIAL_ODD(std::uint16_t tableAddress) {
   storeFacToPackedRounded(kAsTemp1Address);
   loadArgFromPacked(kAsTemp1Address);
-  AS_MATHTBL(kMathMulIdx).handler();
+  AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
 
   AS_POLYNOMIAL(tableAddress);
 
   loadArgFromPacked(kAsTemp1Address);
-  AS_MATHTBL(kMathMulIdx).handler();
+  AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
 }
 
 static std::int8_t AS_SIGN_FAC() {
@@ -282,7 +282,7 @@ void AS_POS() { AS_SNGFLT(variables_const().MON_CH); }
 void AS_SQR() {
   AS_COPY_FAC_TO_ARG_ROUNDED();
   loadFacFromPacked(kAsConHalfAddress);
-  AS_MATHTBL(kMathPowIdx).handler();
+  AS_MATHTBL(AS_MATHTBL_ptr(kMathPowIdx)).handler();
 }
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -305,7 +305,7 @@ void AS_RND() {
     }
 
     loadArgFromPacked(kAsConRnd1Address);
-    AS_MATHTBL(kMathMulIdx).handler();
+    AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
     loadArgFromPacked(kAsConRnd2Address);
     AS_FADDT();
   }
@@ -340,7 +340,7 @@ void AS_LOG() {
   AS_FADDT();
 
   loadArgFromPacked(kAsConSqrTwoAddress);
-  AS_MATHTBL(kMathDivIdx).handler();
+  AS_MATHTBL(AS_MATHTBL_ptr(kMathDivIdx)).handler();
 
   loadArgFromPacked(kAsConOneAddress);
   AS_FSUBT();
@@ -356,7 +356,7 @@ void AS_LOG() {
   AS_FADDT();
 
   loadArgFromPacked(kAsConLogTwoAddress);
-  AS_MATHTBL(kMathMulIdx).handler();
+  AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
 }
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -364,7 +364,7 @@ void AS_LOG() {
 // Name normalization: none (assembler label AS_EXP kept verbatim).
 void AS_EXP() {
   loadArgFromPacked(kAsConLogEAddress);
-  AS_MATHTBL(kMathMulIdx).handler();
+  AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
 
   // EXP range gate used in ROM before extracting integer/fractional parts.
   if (variables_const().AS_FAC[0] >= 0x88u) {
@@ -419,7 +419,7 @@ static void AS_SIN() {
   // Reduce angle to a circle fraction: X / (2*PI).
   AS_COPY_FAC_TO_ARG_ROUNDED();
   loadFacFromPacked(kAsConPiDoubleAddress);
-  AS_MATHTBL(kMathDivIdx).handler();
+  AS_MATHTBL(AS_MATHTBL_ptr(kMathDivIdx)).handler();
 
   // Keep only fractional part.
   AS_COPY_FAC_TO_ARG_ROUNDED();
@@ -465,7 +465,7 @@ static void AS_TAN() {
   AS_COS();
 
   loadArgFromPacked(kAsTemp3Address);
-  AS_MATHTBL(kMathDivIdx).handler();
+  AS_MATHTBL(AS_MATHTBL_ptr(kMathDivIdx)).handler();
 }
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -480,7 +480,7 @@ static void AS_ATN() {
   const bool wasAtLeastOne = variables_const().AS_FAC[0] >= 0x81u;
   if (wasAtLeastOne) {
     loadArgFromPacked(kAsConOneAddress);
-    AS_MATHTBL(kMathDivIdx).handler();
+    AS_MATHTBL(AS_MATHTBL_ptr(kMathDivIdx)).handler();
   }
 
   AS_POLYNOMIAL_ODD(kAsPolyAtnAddress);

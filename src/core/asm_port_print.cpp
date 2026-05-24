@@ -90,7 +90,7 @@ static void foutImpl(std::uint16_t startAddress) {
     const std::uint8_t facExponent = variables_const().AS_FAC[0];
     if (facExponent <= 0x80u) {
       loadArgFromPacked(kAsConBillionAddress);
-      AS_MATHTBL(kMathMulIdx).handler();
+      AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
       tmpexp = -9;
     }
     variables().AS_TMPEXP = static_cast<std::uint8_t>(tmpexp);
