@@ -21,7 +21,6 @@ namespace applesoft::asm_port {
 constexpr std::size_t kTokenCount = 107;
 constexpr std::uint8_t kTokenBase = 0x80u;
 
-void AS_FRMEVL();
 bool AS_CHKVAL(std::uint8_t savedValTyp);
 void AS_ROUND_FAC();
 void AS_AYINT();
