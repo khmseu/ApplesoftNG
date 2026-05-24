@@ -7,9 +7,9 @@
 
 #include "core/asm_port_mathtbl.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_core.hpp"
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_messages.hpp"
-#include "core/asm_port_core.hpp"
 #include "core/asm_port_math.hpp"
 
 #include <cmath>

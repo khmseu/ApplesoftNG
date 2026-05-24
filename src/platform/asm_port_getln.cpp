@@ -1,7 +1,7 @@
 #include "platform/asm_port_getln.hpp"
 #include "core/applesoft_variables.hpp"
-#include "core/asm_port_inlin2.hpp"
 #include "core/asm_port_core.hpp"
+#include "core/asm_port_inlin2.hpp"
 #include "platform/asm_port_outdo.hpp"
 
 #include <cstdint>

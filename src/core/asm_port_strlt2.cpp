@@ -1,12 +1,12 @@
 #include "core/asm_port_strlt2.hpp"
 
 #include "core/applesoft_variables.hpp"
-#include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_chrget.hpp"
 #include "core/asm_port_core.hpp"
 #include "core/asm_port_error_handling.hpp"
-#include "core/asm_port_mathtbl.hpp"
+#include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_math.hpp"
+#include "core/asm_port_mathtbl.hpp"
 #include "core/asm_port_parser.hpp"
 #include "core/asm_port_strtxt.hpp"
 
