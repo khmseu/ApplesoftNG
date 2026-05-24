@@ -112,7 +112,7 @@ void write_AS_FAC_descriptor_address(std::uint16_t value) {
 std::uint8_t g_jerr_error = AS_ERR_FRMCPX;
 
 static void AS_JERR();
-void AS_PUTEMP(std::uint8_t tempDescriptorAddress);
+static void AS_PUTEMP(std::uint8_t tempDescriptorAddress);
 std::uint16_t AS_GETSPA(std::uint8_t length);
 void AS_FRM_VARIABLE();
 void AS_NOT_();
@@ -657,7 +657,7 @@ static void AS_JERR() { AS_ERROR(g_jerr_error); }
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_PUTEMP (inclusive) .. AS_GETSPA (exclusive)
 // Name normalization: none (assembler label AS_PUTEMP kept verbatim).
-void AS_PUTEMP(std::uint8_t tempDescriptorAddress) {
+static void AS_PUTEMP(std::uint8_t tempDescriptorAddress) {
   auto tempDescriptor = variables().pointer(tempDescriptorAddress);
   const auto &vars = variables_const();
   tempDescriptor.write(vars.AS_FAC[0]);
