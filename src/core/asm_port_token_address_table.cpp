@@ -4,73 +4,18 @@
 
 #include "core/asm_port_token_address_table.hpp"
 #include "core/applesoft_variables.hpp"
-#include "core/asm_port_error.hpp"
+#include "core/asm_port_chrget.hpp"
+#include "core/asm_port_clear.hpp"
+#include "core/asm_port_control_flow.hpp"
+#include "core/asm_port_input.hpp"
+#include "core/asm_port_error_handling.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_graphics.hpp"
+#include "core/asm_port_print.hpp"
+#include "core/asm_port_statements.hpp"
 #include "core/jump_table.hpp"
 
 namespace applesoft::asm_port {
-
-std::uint8_t AS_CHRGET();
-
-void AS_CLEAR();
-bool AS_NEW();
-void AS_LIST();
-void AS_RESTORE();
-void AS_STOP();
-void AS_ENDX();
-void AS_NEXT();
-void AS_CONT();
-void AS_LOAD();
-void AS_SAVE();
-void AS_RUN();
-void AS_GOSUB();
-void AS_GOTO();
-void AS_POP();
-void AS_DATA();
-void AS_GET();
-void AS_INPUT();
-void AS_READ();
-void AS_DIM();
-void AS_DEL();
-void AS_LET();
-void AS_PR_NUMBER();
-void AS_IN_NUMBER();
-void AS_PLOT();
-void AS_HLIN();
-void AS_VLIN();
-void AS_HCOLOR();
-void AS_HPLOT();
-void AS_DRAW();
-void AS_XDRAW();
-void MON_HOME();
-void AS_SHLOAD();
-void AS_ROT();
-void AS_SCALE();
-void AS_HGR2();
-void AS_HGR();
-void AS_IF();
-void AS_REM();
-void AS_ONGOTO();
-void AS_ONERR();
-void AS_RESUME();
-void AS_RECALL();
-void AS_STORE();
-void AS_DEF();
-void AS_POKE();
-void AS_WAIT();
-void AS_PRINT(std::uint8_t a);
-void AS_CALL();
-void AS_NORMAL();
-void AS_INVERSE();
-void AS_FLASH();
-void AS_COLOR();
-void AS_VTAB();
-void AS_HIMEM();
-void AS_LOMEM();
-void AS_SPEED();
-void AS_GR();
-void AS_TEXT();
-void AS_HTAB();
 
 // ---------------------------------------------------------------------------
 // Stub implementations for statement handlers not yet ported.
