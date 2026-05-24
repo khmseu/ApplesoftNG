@@ -120,7 +120,7 @@ static void AS_FIND_HIGHEST_STRING();
 static void AS_CHECK_SIMPLE_VARIABLE();
 static void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset);
 static void AS_CHECK_BUMP();
-void AS_CHECK_EXIT();
+static void AS_CHECK_EXIT();
 void AS_MOVE_HIGHEST_STRING_TO_TOP();
 void AS_PUTNEW();
 void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length);
@@ -490,7 +490,7 @@ static void AS_CHECK_BUMP() {
 // AS_Labels: AS_CHECK_EXIT (inclusive) .. AS_MOVE_HIGHEST_STRING_TO_TOP
 // (exclusive) Name normalization: none (assembler label AS_CHECK_EXIT kept
 // verbatim).
-void AS_CHECK_EXIT() {
+static void AS_CHECK_EXIT() {
   // ROM epilogue: ldx INDEX+1 ; ldy #0 ; rts.
   // This port models the return-register outcomes as local values because
   // callers in the current C++ path consume AS_INDEX directly.
