@@ -4,44 +4,59 @@
 #include "core/asm_port_chrget.hpp"
 #include "core/asm_port_core.hpp"
 #include "core/asm_port_error_handling.hpp"
+#include "core/asm_port_math.hpp"
+#include "core/asm_port_mathtbl.hpp"
 #include "core/asm_port_parser.hpp"
 #include "core/asm_port_qt_error.hpp"
 #include "core/asm_port_strlit.hpp"
 #include "platform/asm_port_outdo.hpp"
 
-#include <cmath>
 #include <cstdint>
-#include <cstdio>
 
 namespace applesoft::asm_port {
-// ---------------------------------------------------------------------------
-// facToDouble: convert Applesoft 5-byte FAC to native double.
-//
-// Applesoft float format:
-//   FAC[0] = biased exponent (excess-128); 0 means value is zero
-//   FAC[1..4] = mantissa, with implicit leading 1 (bit 7 of FAC[1] = MSB)
-//   FAC_SIGN = 0x00 for positive, 0xFF for negative
-//
-// Value = (-1)^sign * 2^(exp-128) * (0.mantissa_with_leading_1)
-// i.e.  value = (-1)^sign * 2^(exp-129) * (1 + mantissa/2^31)
-// ---------------------------------------------------------------------------
-static double facToDouble() {
-  const auto &cv = variables_const();
-  const std::uint8_t exp8 = cv.AS_FAC[0];
-  if (exp8 == 0u)
-    return 0.0;
-  const std::uint32_t mantissa =
-      (static_cast<std::uint32_t>(cv.AS_FAC[1]) << 24u) |
-      (static_cast<std::uint32_t>(cv.AS_FAC[2]) << 16u) |
-      (static_cast<std::uint32_t>(cv.AS_FAC[3]) << 8u) |
-      static_cast<std::uint32_t>(cv.AS_FAC[4]);
-  // Mantissa has implicit leading 1 at bit 31; actual fraction = mantissa/2^32
-  // biased exponent: real exponent = exp8 - 128; value = 2^(exp8-128) *
-  // (mant/2^32)
-  const double fraction = static_cast<double>(mantissa) / 4294967296.0; // /2^32
-  const double value = std::ldexp(fraction, static_cast<int>(exp8) - 128);
-  return (cv.AS_FAC_SIGN != 0u) ? -value : value;
+namespace {
+
+constexpr std::size_t kMathMulIdx = 2u;
+
+constexpr std::uint16_t kAsCon99999999p9Address = 0xed0au;
+constexpr std::uint16_t kAsCon999999999Address = 0xed0fu;
+constexpr std::uint16_t kAsConBillionAddress = 0xed14u;
+
+static void loadArgFromPacked(std::uint16_t address) {
+  const auto source = variables_const().pointer(address);
+  const std::uint8_t signPackedMantissa = source.read(1u);
+
+  auto &vars = variables();
+  vars.AS_ARG[0] = source.read(0u);
+  vars.AS_ARG[1] = static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
+  vars.AS_ARG[2] = source.read(2u);
+  vars.AS_ARG[3] = source.read(3u);
+  vars.AS_ARG[4] = source.read(4u);
+  vars.AS_ARG[5] = signPackedMantissa;
 }
+
+static std::uint32_t facIntegerMantissa() {
+  const auto &cv = variables_const();
+  return (static_cast<std::uint32_t>(cv.AS_FAC[1]) << 24u) |
+         (static_cast<std::uint32_t>(cv.AS_FAC[2]) << 16u) |
+         (static_cast<std::uint32_t>(cv.AS_FAC[3]) << 8u) |
+         static_cast<std::uint32_t>(cv.AS_FAC[4]);
+}
+
+static void appendExponent(char *buf, std::uint8_t &len, std::int8_t expon) {
+  if (expon == 0) {
+    return;
+  }
+
+  std::uint8_t magnitude =
+      static_cast<std::uint8_t>(expon < 0 ? -expon : expon);
+  buf[len++] = 'E';
+  buf[len++] = (expon < 0) ? '-' : '+';
+  buf[len++] = static_cast<char>('0' + (magnitude / 10u));
+  buf[len++] = static_cast<char>('0' + (magnitude % 10u));
+}
+
+} // namespace
 
 // ---------------------------------------------------------------------------
 // foutImpl: core float-to-string conversion, matching Applesoft FOUT/FOUT_1.
@@ -52,141 +67,95 @@ static double facToDouble() {
 // address of the last non-null character.
 // ---------------------------------------------------------------------------
 static void foutImpl(std::uint16_t startAddress) {
-  // Each byte is written to 0x0100+index (the 6502 stack page).
-  // The assembly writes to STACK-1,Y where Y is 1-based; we use 0-based index
-  // into the stack page (0x0100 = index 0, 0x0101 = index 1, ...).
-  //
-  // We build into a local buffer then copy, to avoid partial writes on error.
-  constexpr std::uint8_t kMaxLen = 20u; // sufficient for any Applesoft number
-  char buf[kMaxLen + 1u];
+  constexpr std::uint8_t kMaxLen = 20u;
+  char buf[kMaxLen + 1u]{};
   std::uint8_t len = 0u;
 
-  auto emit = [&](char c) {
-    if (len < kMaxLen)
-      buf[len++] = c;
-  };
+  std::uint8_t y = static_cast<std::uint8_t>(startAddress - 0x0100u);
+  --y; // FOUT_1 does DEY before sign handling.
 
-  const double val = facToDouble();
-  const bool isNeg = val < 0.0;
-  const double absVal = isNeg ? -val : val;
-
-  if (isNeg)
-    emit('-');
-
-  if (absVal == 0.0) {
-    emit('0');
-  } else {
-    // Determine the power-of-10 exponent (floor of log10).
-    // TMPEXP in ROM = number of digits before decimal point minus 1.
-    // Applesoft uses exactly 9 significant digits.
-    // Decimal form when -2 <= tmpexp <= 9 (i.e. 0.01 <= |val| < 1e10).
-    // Outside that range, exponential form "d.xxxxxxxxE±yy".
-    constexpr int kDigits = 9;
-    // Compute tmpexp: floor(log10(absVal)).
-    int tmpexp = 0;
-    if (absVal != 0.0) {
-      tmpexp = static_cast<int>(std::floor(std::log10(absVal)));
-    }
-    // Normalise to 9-digit integer: absVal / 10^(tmpexp-8) rounded.
-    // After QINT the ROM has a 32-bit integer in FAC[1..4].
-    double scaled =
-        absVal * std::pow(10.0, static_cast<double>(kDigits - 1 - tmpexp));
-    // Round to nearest integer.
-    long long iVal = static_cast<long long>(scaled + 0.5);
-    // Clamp to [100000000, 999999999].
-    if (iVal >= 1000000000LL) {
-      iVal /= 10;
-      tmpexp++;
-    }
-    if (iVal < 100000000LL && iVal > 0) {
-      iVal *= 10;
-      tmpexp--;
-    }
-    // expon = tmpexp - (kDigits-1), adjusted to 0 for decimal form.
-    // Applesoft's EXPON = TMPEXP + 10 - 2 - (digits before decimal point)
-    // We need to decide: decimal or exponential form?
-    // Decimal form: tmpexp in [-2, 9].
-    const bool decimalForm = (tmpexp >= -2 && tmpexp <= 9);
-    // Build 9-digit string, with decimal point inserted.
-    char digits[kDigits + 1];
-    std::snprintf(digits, sizeof(digits), "%09lld",
-                  static_cast<long long>(iVal < 0 ? 0 : iVal));
-    if (decimalForm) {
-      // dotPos: number of digits before the decimal point.
-      // tmpexp==0 means value is 1.xxxxxxxx (1 digit before dot).
-      // tmpexp==1 means 2 digits before dot, etc.
-      const int dotPos = tmpexp + 1; // digits before decimal point
-      if (dotPos <= 0) {
-        // Value like 0.0x...  => "0." followed by (-dotPos) zeros then digits
-        emit('0');
-        emit('.');
-        for (int z = 0; z < -dotPos; ++z)
-          emit('0');
-        for (int d = 0; d < kDigits; ++d)
-          emit(digits[d]);
-      } else {
-        // dotPos >= 1: emit dotPos digits, then '.', then rest
-        for (int d = 0; d < kDigits; ++d) {
-          if (d == dotPos)
-            emit('.');
-          emit(digits[d]);
-        }
-        // If dotPos >= kDigits, no decimal point was emitted (pure integer).
-      }
-    } else {
-      // Exponential form: "d.xxxxxxxxE±yy"
-      emit(digits[0]);
-      emit('.');
-      for (int d = 1; d < kDigits; ++d)
-        emit(digits[d]);
-      // E value = tmpexp
-      const int eVal = tmpexp;
-      emit('E');
-      if (eVal < 0) {
-        emit('-');
-        const int absE = -eVal;
-        emit(static_cast<char>('0' + absE / 10));
-        emit(static_cast<char>('0' + absE % 10));
-      } else {
-        emit('+');
-        emit(static_cast<char>('0' + eVal / 10));
-        emit(static_cast<char>('0' + eVal % 10));
-      }
-    }
-    // Strip trailing zeros and trailing decimal point.
-    // Only strip within the mantissa (not from E notation digits).
-    if (decimalForm) {
-      // Walk back from end, removing '0' and possibly '.'.
-      while (len > 0u && buf[len - 1u] == '0')
-        --len;
-      if (len > 0u && buf[len - 1u] == '.')
-        --len;
-      // Handle negative: if we stripped everything after '-', that shouldn't
-      // happen for non-zero absVal, but guard anyway.
-    } else {
-      // For exponential: strip trailing zeros from mantissa only.
-      // Find 'E' position.
-      std::uint8_t ePos = 0u;
-      for (std::uint8_t i = 0u; i < len; ++i) {
-        if (buf[i] == 'E') {
-          ePos = i;
-          break;
-        }
-      }
-      // Trim zeros before ePos.
-      std::uint8_t mantEnd = ePos;
-      while (mantEnd > 0u && buf[mantEnd - 1u] == '0')
-        --mantEnd;
-      if (mantEnd > 0u && buf[mantEnd - 1u] == '.')
-        --mantEnd;
-      // Shift E-part to follow mantissa.
-      const std::uint8_t tailLen = static_cast<std::uint8_t>(len - ePos);
-      for (std::uint8_t i = 0u; i < tailLen; ++i)
-        buf[mantEnd + i] = buf[ePos + i];
-      len = static_cast<std::uint8_t>(mantEnd + tailLen);
-    }
+  if ((variables_const().AS_FAC_SIGN & 0x80u) != 0u) {
+    ++y;
+    buf[len++] = '-';
   }
-  buf[len] = '\0';
+  variables().AS_FAC_SIGN = static_cast<std::uint8_t>('-');
+  variables().AS_STRNG2 = y;
+
+  ++y;
+  if (variables_const().AS_FAC[0] == 0u) {
+    buf[len++] = '0';
+    buf[len] = '\0';
+  } else {
+    std::int8_t tmpexp = 0;
+    const std::uint8_t facExponent = variables_const().AS_FAC[0];
+    if (facExponent <= 0x80u) {
+      loadArgFromPacked(kAsConBillionAddress);
+      AS_MATHTBL(kMathMulIdx).handler();
+      tmpexp = -9;
+    }
+    variables().AS_TMPEXP = static_cast<std::uint8_t>(tmpexp);
+
+    while (true) {
+      const std::int8_t cmpHigh = AS_FCOMP(kAsCon999999999Address);
+      if (cmpHigh == 0) {
+        break;
+      }
+      if (cmpHigh > 0) {
+        AS_DIV10();
+        ++tmpexp;
+        continue;
+      }
+
+      const std::int8_t cmpLow = AS_FCOMP(kAsCon99999999p9Address);
+      if (cmpLow < 0) {
+        AS_MUL10();
+        --tmpexp;
+        continue;
+      }
+      break;
+    }
+
+    AS_FADDH();
+    AS_QINT();
+
+    std::int8_t expon = 0;
+    std::int8_t decimalIndex = 1;
+    if (tmpexp >= -10 && tmpexp <= 0) {
+      decimalIndex = static_cast<std::int8_t>(tmpexp + 9);
+    } else {
+      expon = static_cast<std::int8_t>(tmpexp + 8);
+      decimalIndex = 1;
+    }
+
+    std::uint32_t value = facIntegerMantissa();
+    char digits[9];
+    for (int i = 8; i >= 0; --i) {
+      digits[i] = static_cast<char>('0' + (value % 10u));
+      value /= 10u;
+    }
+
+    std::uint8_t dotPos = static_cast<std::uint8_t>(decimalIndex);
+    if (dotPos > 9u) {
+      dotPos = 9u;
+    }
+
+    for (std::uint8_t i = 0u; i < 9u; ++i) {
+      buf[len++] = digits[i];
+      if (i + 1u == dotPos && i != 8u) {
+        buf[len++] = '.';
+      }
+    }
+
+    while (len > 0u && buf[len - 1u] == '0') {
+      --len;
+    }
+    if (len > 0u && buf[len - 1u] == '.') {
+      --len;
+    }
+
+    appendExponent(buf, len, expon);
+    buf[len] = '\0';
+  }
 
   // Write to the selected destination start address.
   for (std::uint8_t i = 0u; i <= len; ++i) {
