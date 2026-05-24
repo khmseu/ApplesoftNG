@@ -113,7 +113,7 @@ std::uint8_t g_jerr_error = AS_ERR_FRMCPX;
 
 static void AS_JERR();
 static void AS_PUTEMP(std::uint8_t tempDescriptorAddress);
-std::uint16_t AS_GETSPA(std::uint8_t length);
+static std::uint16_t AS_GETSPA(std::uint8_t length);
 void AS_FRM_VARIABLE();
 void AS_NOT_();
 void AS_FIND_HIGHEST_STRING();
@@ -332,7 +332,7 @@ void SUBSTRING_BUILD(std::uint8_t leftStart, std::uint8_t copyAS_Length) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_GETSPA (inclusive) .. AS_GARBAG (exclusive)
 // Name normalization: none (assembler label AS_GETSPA kept verbatim).
-std::uint16_t AS_GETSPA(std::uint8_t length) {
+static std::uint16_t AS_GETSPA(std::uint8_t length) {
   // lsr AS_GARFLG: clear sign bit while preserving lower bits.
   write_AS_GARFLG(static_cast<std::uint8_t>(read_AS_GARFLG() >> 1u));
 
