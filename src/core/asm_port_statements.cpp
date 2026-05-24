@@ -21,7 +21,6 @@ namespace applesoft::asm_port {
 constexpr std::size_t kTokenCount = 107;
 constexpr std::uint8_t kTokenBase = 0x80u;
 
-void MON_WRITE();
 void MON_READ();
 void MON_RD2();
 void MON_RD3();
