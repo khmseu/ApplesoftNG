@@ -28,28 +28,17 @@ public:
 
   bool isNative() const noexcept { return kind_ == Kind::Native; }
 
-  T &reference() const {
-    T *ptr = nullptr;
-    if (kind_ == Kind::Native) {
-      ptr = pointer_;
-    } else {
-      ptr = emulatedTypedPointerOrThrow(emulatedAddress_);
-    }
-    if (ptr == nullptr) {
-      throw std::runtime_error(
-          "ApplesoftDualPointer: cannot dereference null pointer");
-    }
-    return *ptr;
-  }
+  T &reference() const { return *nativePointer(); }
 
-  T *nativePointerOrThrow() const {
-    if (!isNative()) {
-      throw std::runtime_error(
-          "ApplesoftDualPointer: value does not hold a native pointer");
+  T *nativePointer() const {
+    if (kind_ == Kind::Emulated) {
+      return emulatedTypedPointerOrThrow(emulatedAddress_);
     }
+
     if (pointer_ == nullptr) {
       throw std::runtime_error("ApplesoftDualPointer: native pointer is null");
     }
+
     return pointer_;
   }
 

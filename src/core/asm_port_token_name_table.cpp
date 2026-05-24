@@ -62,7 +62,7 @@ AS_TOKEN_NAME_TABLE(ApplesoftDualPointer<const std::uint8_t> token_ptr) {
     return {};
   }
 
-  const std::uint8_t *bytes = token_ptr.nativePointerOrThrow();
+  const std::uint8_t *bytes = token_ptr.nativePointer();
   if (bytes == nullptr || bytes[0] == 0u) {
     return {};
   }

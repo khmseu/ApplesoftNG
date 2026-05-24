@@ -42,7 +42,7 @@ static void loadArgFromPacked(std::uint16_t address) {
 static void
 loadArgFromPacked(ApplesoftDualPointer<const std::uint8_t> packedPointer) {
   if (packedPointer.isNative()) {
-    loadArgFromPacked(packedPointer.nativePointerOrThrow());
+    loadArgFromPacked(packedPointer.nativePointer());
     return;
   }
   loadArgFromPacked(packedPointer.emulatedPointerOrThrow());

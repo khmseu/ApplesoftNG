@@ -44,7 +44,7 @@ AS_QT_ERROR(ApplesoftDualPointer<const std::uint8_t> text_ptr) {
     return {};
   }
 
-  const std::uint8_t *bytes = text_ptr.nativePointerOrThrow();
+  const std::uint8_t *bytes = text_ptr.nativePointer();
   if (bytes == nullptr || bytes[0] == 0u) {
     return {};
   }

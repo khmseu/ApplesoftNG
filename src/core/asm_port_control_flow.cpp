@@ -72,7 +72,7 @@ static void AS_LOAD_FAC_FROM_YA() {
 static void
 AS_LOAD_FAC_FROM_YA(ApplesoftDualPointer<const std::uint8_t> packedPointer) {
   if (packedPointer.isNative()) {
-    const std::uint8_t *source = packedPointer.nativePointerOrThrow();
+    const std::uint8_t *source = packedPointer.nativePointer();
     variables().AS_FAC[4] = source[4u];
     variables().AS_FAC[3] = source[3u];
     variables().AS_FAC[2] = source[2u];

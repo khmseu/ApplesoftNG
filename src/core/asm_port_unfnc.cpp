@@ -61,7 +61,7 @@ static void loadArgFromPacked(std::uint16_t address) {
 static void
 loadArgFromPacked(ApplesoftDualPointer<const std::uint8_t> packedPointer) {
   if (packedPointer.isNative()) {
-    loadArgFromPacked(packedPointer.nativePointerOrThrow());
+    loadArgFromPacked(packedPointer.nativePointer());
     return;
   }
   loadArgFromPacked(packedPointer.emulatedPointerOrThrow());
@@ -91,7 +91,7 @@ static void loadFacFromPacked(std::uint16_t address) {
 static void
 loadFacFromPacked(ApplesoftDualPointer<const std::uint8_t> packedPointer) {
   if (packedPointer.isNative()) {
-    loadFacFromPacked(packedPointer.nativePointerOrThrow());
+    loadFacFromPacked(packedPointer.nativePointer());
     return;
   }
   loadFacFromPacked(packedPointer.emulatedPointerOrThrow());
@@ -130,8 +130,8 @@ static void AS_POLYNOMIAL(ApplesoftDualPointer<const std::uint8_t> table) {
 
   storeFacToPackedRounded(kAsTemp2Address);
 
-  const std::uint8_t *coefficient = table.nativePointerOrThrow() + 1u;
-  std::uint8_t remainingTerms = table.nativePointerOrThrow()[0u];
+  const std::uint8_t *coefficient = table.nativePointer() + 1u;
+  std::uint8_t remainingTerms = table.nativePointer()[0u];
 
   loadFacFromPacked(coefficient);
   while (remainingTerms != 0u) {

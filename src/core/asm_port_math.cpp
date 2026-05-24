@@ -200,7 +200,7 @@ void AS_LOAD_ARG_FROM_YA() {
 void AS_LOAD_ARG_FROM_YA(
     ApplesoftDualPointer<const std::uint8_t> packedPointer) {
   if (packedPointer.isNative()) {
-    const std::uint8_t *source = packedPointer.nativePointerOrThrow();
+    const std::uint8_t *source = packedPointer.nativePointer();
     const std::uint8_t signPackedMantissa = source[1u];
 
     auto &vars = variables();

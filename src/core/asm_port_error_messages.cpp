@@ -74,7 +74,7 @@ AS_ERROR_MESSAGES(ApplesoftDualPointer<const std::uint8_t> message_ptr) {
     return {};
   }
 
-  const std::uint8_t *bytes = message_ptr.nativePointerOrThrow();
+  const std::uint8_t *bytes = message_ptr.nativePointer();
   if (bytes == nullptr || bytes[0] == 0u) {
     return {};
   }

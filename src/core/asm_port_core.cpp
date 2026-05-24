@@ -2117,7 +2117,7 @@ comparePackedFacAgainstNative(const std::uint8_t *comparand) {
 
 std::int8_t AS_FCOMP(ApplesoftDualPointer<const std::uint8_t> argPointer) {
   if (argPointer.isNative()) {
-    return comparePackedFacAgainstNative(argPointer.nativePointerOrThrow());
+    return comparePackedFacAgainstNative(argPointer.nativePointer());
   }
 
   return AS_FCOMP(argPointer.emulatedPointerOrThrow());

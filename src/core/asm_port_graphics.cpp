@@ -928,7 +928,7 @@ void AS_DRAW1_Internal(bool xdraw) {
   variables().AS_HGR_QUADRANT = static_cast<std::uint8_t>(rotation >> 4u);
 
   std::uint8_t trigIndex = rotation & 0x0Fu;
-  const std::uint8_t *cosineTable = AS_COSINE_TABLE().nativePointerOrThrow();
+  const std::uint8_t *cosineTable = AS_COSINE_TABLE().nativePointer();
   ApplesoftVariables::setLowByte(variables().AS_HGR_DX, cosineTable[trigIndex]);
   variables().AS_HGR_DY =
       static_cast<std::uint8_t>(cosineTable[15 - trigIndex] + 1u);
