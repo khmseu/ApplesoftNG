@@ -114,7 +114,7 @@ std::uint8_t g_jerr_error = AS_ERR_FRMCPX;
 static void AS_JERR();
 static void AS_PUTEMP(std::uint8_t tempDescriptorAddress);
 static std::uint16_t AS_GETSPA(std::uint8_t length);
-void AS_FRM_VARIABLE();
+static void AS_FRM_VARIABLE();
 void AS_NOT_();
 void AS_FIND_HIGHEST_STRING();
 void AS_CHECK_SIMPLE_VARIABLE();
@@ -186,7 +186,7 @@ void AS_FRM_ELEMENT() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_FRM_VARIABLE (inclusive) .. AS_SCREEN (exclusive)
 // Name normalization: none (assembler label AS_FRM_VARIABLE kept verbatim).
-void AS_FRM_VARIABLE() {
+static void AS_FRM_VARIABLE() {
   //
   // AS_VARPNT is the logical value pointer returned by AS_PTRGET; numeric
   // variables load through AS_LOAD_FAC_FROM_YA, while integer variables are
