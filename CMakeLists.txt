@@ -32,6 +32,7 @@ set(SOURCES
     src/core/asm_port_token_name_table.cpp
     src/core/asm_port_error_messages.cpp
     src/core/asm_port_qt_error.cpp
+    src/core/asm_port_rom_constants.cpp
     src/core/asm_port_gtforpnt.cpp
     src/core/asm_port_bltu.cpp
     src/core/asm_port_chkmem.cpp

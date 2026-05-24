@@ -16,10 +16,13 @@
 #include "core/asm_port_math.hpp"
 #include "core/asm_port_mathtbl.hpp"
 #include "core/asm_port_parser.hpp"
+#include "core/asm_port_rom_constants.hpp"
 #include "core/asm_port_statements.hpp"
 #include "core/asm_port_strlit.hpp"
 #include "core/asm_port_strlt2.hpp"
 #include "core/jump_table.hpp"
+
+#include <cstdint>
 
 namespace applesoft::asm_port {
 
@@ -34,48 +37,64 @@ constexpr std::size_t kMathPowIdx = 4u;
 constexpr std::uint16_t kAsTemp1Address = 0x0093u;
 constexpr std::uint16_t kAsTemp2Address = 0x0098u;
 constexpr std::uint16_t kAsTemp3Address = 0x008au;
-constexpr std::uint16_t kAsConHalfAddress = 0xee64u;
-constexpr std::uint16_t kAsConOneAddress = 0xe913u;
-constexpr std::uint16_t kAsConRnd1Address = 0xefa6u;
-constexpr std::uint16_t kAsConRnd2Address = 0xefaau;
-constexpr std::uint16_t kAsConPiHalfAddress = 0xf066u;
-constexpr std::uint16_t kAsConPiDoubleAddress = 0xf06bu;
-constexpr std::uint16_t kAsQuarterAddress = 0xf070u;
-constexpr std::uint16_t kAsPolySinAddress = 0xf075u;
-constexpr std::uint16_t kAsPolyAtnAddress = 0xf0ceu;
-constexpr std::uint16_t kAsConSqrHalfAddress = 0xe92du;
-constexpr std::uint16_t kAsConSqrTwoAddress = 0xe932u;
-constexpr std::uint16_t kAsConNegHalfAddress = 0xe937u;
-constexpr std::uint16_t kAsConLogTwoAddress = 0xe93cu;
-constexpr std::uint16_t kAsPolyLogAddress = 0xe918u;
-constexpr std::uint16_t kAsConLogEAddress = 0xeedbu;
-constexpr std::uint16_t kAsPolyExpAddress = 0xeee0u;
+
+static void loadArgFromPacked(const std::uint8_t *source) {
+  const std::uint8_t signPackedMantissa = source[1u];
+
+  auto &vars = variables();
+  vars.AS_ARG[0] = source[0u];
+  vars.AS_ARG[1] = static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
+  vars.AS_ARG[2] = source[2u];
+  vars.AS_ARG[3] = source[3u];
+  vars.AS_ARG[4] = source[4u];
+  vars.AS_ARG[5] = signPackedMantissa;
+}
 
 static void loadArgFromPacked(std::uint16_t address) {
   const auto source = variables_const().pointer(address);
-  const std::uint8_t signPackedMantissa = source.read(1u);
+  const std::uint8_t packed[5] = {source.read(0u), source.read(1u),
+                                  source.read(2u), source.read(3u),
+                                  source.read(4u)};
+  loadArgFromPacked(packed);
+}
+
+static void
+loadArgFromPacked(ApplesoftDualPointer<const std::uint8_t> packedPointer) {
+  if (packedPointer.isNative()) {
+    loadArgFromPacked(packedPointer.nativePointerOrThrow());
+    return;
+  }
+  loadArgFromPacked(packedPointer.emulatedPointerOrThrow());
+}
+
+static void loadFacFromPacked(const std::uint8_t *source) {
+  const std::uint8_t signPackedMantissa = source[1u];
 
   auto &vars = variables();
-  vars.AS_ARG[0] = source.read(0u);
-  vars.AS_ARG[1] = static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
-  vars.AS_ARG[2] = source.read(2u);
-  vars.AS_ARG[3] = source.read(3u);
-  vars.AS_ARG[4] = source.read(4u);
-  vars.AS_ARG[5] = signPackedMantissa;
+  vars.AS_FAC[0] = source[0u];
+  vars.AS_FAC[1] = static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
+  vars.AS_FAC[2] = source[2u];
+  vars.AS_FAC[3] = source[3u];
+  vars.AS_FAC[4] = source[4u];
+  vars.AS_FAC_SIGN = signPackedMantissa;
+  vars.AS_FAC_EXTENSION = 0u;
 }
 
 static void loadFacFromPacked(std::uint16_t address) {
   const auto source = variables_const().pointer(address);
-  const std::uint8_t signPackedMantissa = source.read(1u);
+  const std::uint8_t packed[5] = {source.read(0u), source.read(1u),
+                                  source.read(2u), source.read(3u),
+                                  source.read(4u)};
+  loadFacFromPacked(packed);
+}
 
-  auto &vars = variables();
-  vars.AS_FAC[0] = source.read(0u);
-  vars.AS_FAC[1] = static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
-  vars.AS_FAC[2] = source.read(2u);
-  vars.AS_FAC[3] = source.read(3u);
-  vars.AS_FAC[4] = source.read(4u);
-  vars.AS_FAC_SIGN = signPackedMantissa;
-  vars.AS_FAC_EXTENSION = 0u;
+static void
+loadFacFromPacked(ApplesoftDualPointer<const std::uint8_t> packedPointer) {
+  if (packedPointer.isNative()) {
+    loadFacFromPacked(packedPointer.nativePointerOrThrow());
+    return;
+  }
+  loadFacFromPacked(packedPointer.emulatedPointerOrThrow());
 }
 
 static void storeFacToPackedRounded(std::uint16_t address) {
@@ -103,7 +122,42 @@ static void AS_POLYNOMIAL(std::uint16_t tableAddress) {
   }
 }
 
+static void AS_POLYNOMIAL(ApplesoftDualPointer<const std::uint8_t> table) {
+  if (table.isEmulated()) {
+    AS_POLYNOMIAL(table.emulatedPointerOrThrow());
+    return;
+  }
+
+  storeFacToPackedRounded(kAsTemp2Address);
+
+  const std::uint8_t *coefficient = table.nativePointerOrThrow() + 1u;
+  std::uint8_t remainingTerms = table.nativePointerOrThrow()[0u];
+
+  loadFacFromPacked(coefficient);
+  while (remainingTerms != 0u) {
+    loadArgFromPacked(kAsTemp2Address);
+    AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
+
+    coefficient += 5u;
+    loadArgFromPacked(coefficient);
+    AS_FADDT();
+    --remainingTerms;
+  }
+}
+
 static void AS_POLYNOMIAL_ODD(std::uint16_t tableAddress) {
+  storeFacToPackedRounded(kAsTemp1Address);
+  loadArgFromPacked(kAsTemp1Address);
+  AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
+
+  AS_POLYNOMIAL(tableAddress);
+
+  loadArgFromPacked(kAsTemp1Address);
+  AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
+}
+
+static void
+AS_POLYNOMIAL_ODD(ApplesoftDualPointer<const std::uint8_t> tableAddress) {
   storeFacToPackedRounded(kAsTemp1Address);
   loadArgFromPacked(kAsTemp1Address);
   AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
@@ -281,7 +335,7 @@ void AS_POS() { AS_SNGFLT(variables_const().MON_CH); }
 // Name normalization: none (assembler label AS_SQR kept verbatim).
 void AS_SQR() {
   AS_COPY_FAC_TO_ARG_ROUNDED();
-  loadFacFromPacked(kAsConHalfAddress);
+  loadFacFromPacked(AS_CON_HALF());
   AS_MATHTBL(AS_MATHTBL_ptr(kMathPowIdx)).handler();
 }
 // Source:
@@ -304,9 +358,9 @@ void AS_RND() {
       return;
     }
 
-    loadArgFromPacked(kAsConRnd1Address);
+    loadArgFromPacked(AS_CON_RND_1());
     AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
-    loadArgFromPacked(kAsConRnd2Address);
+    loadArgFromPacked(AS_CON_RND_2());
     AS_FADDT();
   }
 
@@ -336,18 +390,18 @@ void AS_LOG() {
 
   variables().AS_FAC[0] = 0x80u;
 
-  loadArgFromPacked(kAsConSqrHalfAddress);
+  loadArgFromPacked(AS_CON_SQR_HALF());
   AS_FADDT();
 
-  loadArgFromPacked(kAsConSqrTwoAddress);
+  loadArgFromPacked(AS_CON_SQR_TWO());
   AS_MATHTBL(AS_MATHTBL_ptr(kMathDivIdx)).handler();
 
-  loadArgFromPacked(kAsConOneAddress);
+  loadArgFromPacked(AS_CON_ONE());
   AS_FSUBT();
 
-  AS_POLYNOMIAL_ODD(kAsPolyLogAddress);
+  AS_POLYNOMIAL_ODD(AS_POLY_LOG());
 
-  loadArgFromPacked(kAsConNegHalfAddress);
+  loadArgFromPacked(AS_CON_NEG_HALF());
   AS_FADDT();
 
   storeFacToPackedRounded(kAsTemp3Address);
@@ -355,7 +409,7 @@ void AS_LOG() {
   loadArgFromPacked(kAsTemp3Address);
   AS_FADDT();
 
-  loadArgFromPacked(kAsConLogTwoAddress);
+  loadArgFromPacked(AS_CON_LOG_TWO());
   AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
 }
 // Source:
@@ -363,7 +417,7 @@ void AS_LOG() {
 // AS_Labels: AS_EXP (inclusive) .. AS_COS (exclusive)
 // Name normalization: none (assembler label AS_EXP kept verbatim).
 void AS_EXP() {
-  loadArgFromPacked(kAsConLogEAddress);
+  loadArgFromPacked(AS_CON_LOG_E());
   AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
 
   // EXP range gate used in ROM before extracting integer/fractional parts.
@@ -386,7 +440,7 @@ void AS_EXP() {
   AS_FSUBT();
   AS_NEGOP();
 
-  AS_POLYNOMIAL(kAsPolyExpAddress);
+  AS_POLYNOMIAL(AS_POLY_EXP());
 
   const std::int16_t adjustedExponent =
       static_cast<std::int16_t>(variables_const().AS_FAC[0]) + integralPart;
@@ -407,7 +461,7 @@ void AS_EXP() {
 // Name normalization: none (assembler label AS_COS kept verbatim).
 static void AS_COS() {
   // ROM identity: COS(X) = SIN(X + PI/2).
-  loadArgFromPacked(kAsConPiHalfAddress);
+  loadArgFromPacked(AS_CON_PI_HALF());
   AS_FADDT();
   AS_SIN();
 }
@@ -418,7 +472,7 @@ static void AS_COS() {
 static void AS_SIN() {
   // Reduce angle to a circle fraction: X / (2*PI).
   AS_COPY_FAC_TO_ARG_ROUNDED();
-  loadFacFromPacked(kAsConPiDoubleAddress);
+  loadFacFromPacked(AS_CON_PI_DOUB());
   AS_MATHTBL(AS_MATHTBL_ptr(kMathDivIdx)).handler();
 
   // Keep only fractional part.
@@ -428,7 +482,7 @@ static void AS_SIN() {
   AS_FSUBT();
 
   // Fold into first quarter before polynomial approximation.
-  loadArgFromPacked(kAsQuarterAddress);
+  loadArgFromPacked(AS_QUARTER());
   AS_FSUBT();
 
   const bool savedSignNegative = (variables_const().AS_FAC_SIGN & 0x80u) != 0u;
@@ -441,14 +495,14 @@ static void AS_SIN() {
     AS_NEGOP();
   }
 
-  loadArgFromPacked(kAsQuarterAddress);
+  loadArgFromPacked(AS_QUARTER());
   AS_FADDT();
 
   if (savedSignNegative) {
     AS_NEGOP();
   }
 
-  AS_POLYNOMIAL_ODD(kAsPolySinAddress);
+  AS_POLYNOMIAL_ODD(AS_POLY_SIN());
 }
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -479,14 +533,14 @@ static void AS_ATN() {
 
   const bool wasAtLeastOne = variables_const().AS_FAC[0] >= 0x81u;
   if (wasAtLeastOne) {
-    loadArgFromPacked(kAsConOneAddress);
+    loadArgFromPacked(AS_CON_ONE());
     AS_MATHTBL(AS_MATHTBL_ptr(kMathDivIdx)).handler();
   }
 
-  AS_POLYNOMIAL_ODD(kAsPolyAtnAddress);
+  AS_POLYNOMIAL_ODD(AS_POLY_ATN());
 
   if (wasAtLeastOne) {
-    loadArgFromPacked(kAsConPiHalfAddress);
+    loadArgFromPacked(AS_CON_PI_HALF());
     AS_FSUBT();
   }
 

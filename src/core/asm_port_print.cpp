@@ -8,6 +8,7 @@
 #include "core/asm_port_mathtbl.hpp"
 #include "core/asm_port_parser.hpp"
 #include "core/asm_port_qt_error.hpp"
+#include "core/asm_port_rom_constants.hpp"
 #include "core/asm_port_strlit.hpp"
 #include "platform/asm_port_outdo.hpp"
 
@@ -18,21 +19,33 @@ namespace {
 
 constexpr std::size_t kMathMulIdx = 2u;
 
-constexpr std::uint16_t kAsCon99999999p9Address = 0xed0au;
-constexpr std::uint16_t kAsCon999999999Address = 0xed0fu;
-constexpr std::uint16_t kAsConBillionAddress = 0xed14u;
+static void loadArgFromPacked(const std::uint8_t *source) {
+  const std::uint8_t signPackedMantissa = source[1u];
+
+  auto &vars = variables();
+  vars.AS_ARG[0] = source[0u];
+  vars.AS_ARG[1] = static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
+  vars.AS_ARG[2] = source[2u];
+  vars.AS_ARG[3] = source[3u];
+  vars.AS_ARG[4] = source[4u];
+  vars.AS_ARG[5] = signPackedMantissa;
+}
 
 static void loadArgFromPacked(std::uint16_t address) {
   const auto source = variables_const().pointer(address);
-  const std::uint8_t signPackedMantissa = source.read(1u);
+  const std::uint8_t packed[5] = {source.read(0u), source.read(1u),
+                                  source.read(2u), source.read(3u),
+                                  source.read(4u)};
+  loadArgFromPacked(packed);
+}
 
-  auto &vars = variables();
-  vars.AS_ARG[0] = source.read(0u);
-  vars.AS_ARG[1] = static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
-  vars.AS_ARG[2] = source.read(2u);
-  vars.AS_ARG[3] = source.read(3u);
-  vars.AS_ARG[4] = source.read(4u);
-  vars.AS_ARG[5] = signPackedMantissa;
+static void
+loadArgFromPacked(ApplesoftDualPointer<const std::uint8_t> packedPointer) {
+  if (packedPointer.isNative()) {
+    loadArgFromPacked(packedPointer.nativePointerOrThrow());
+    return;
+  }
+  loadArgFromPacked(packedPointer.emulatedPointerOrThrow());
 }
 
 static std::uint32_t facIntegerMantissa() {
@@ -89,14 +102,14 @@ static void foutImpl(std::uint16_t startAddress) {
     std::int8_t tmpexp = 0;
     const std::uint8_t facExponent = variables_const().AS_FAC[0];
     if (facExponent <= 0x80u) {
-      loadArgFromPacked(kAsConBillionAddress);
+      loadArgFromPacked(AS_CON_BILLION());
       AS_MATHTBL(AS_MATHTBL_ptr(kMathMulIdx)).handler();
       tmpexp = -9;
     }
     variables().AS_TMPEXP = static_cast<std::uint8_t>(tmpexp);
 
     while (true) {
-      const std::int8_t cmpHigh = AS_FCOMP(kAsCon999999999Address);
+      const std::int8_t cmpHigh = AS_FCOMP(AS_CON_999999999());
       if (cmpHigh == 0) {
         break;
       }
@@ -106,7 +119,7 @@ static void foutImpl(std::uint16_t startAddress) {
         continue;
       }
 
-      const std::int8_t cmpLow = AS_FCOMP(kAsCon99999999p9Address);
+      const std::int8_t cmpLow = AS_FCOMP(AS_CON_99999999P9());
       if (cmpLow < 0) {
         AS_MUL10();
         --tmpexp;

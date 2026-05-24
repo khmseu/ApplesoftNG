@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/applesoft_dual_pointer.hpp"
+
 #include <cstdint>
 
 namespace applesoft::asm_port {
@@ -63,6 +65,7 @@ void AS_FRMEVL();
 void AS_SNTXERR();
 bool AS_NOTMATH(std::uint8_t token);
 std::int8_t AS_FCOMP(std::uint16_t argAddress);
+std::int8_t AS_FCOMP(ApplesoftDualPointer<const std::uint8_t> argPointer);
 
 std::uint8_t MON_SCRN(std::uint8_t row, std::uint8_t column);
 void MON_IRQ();

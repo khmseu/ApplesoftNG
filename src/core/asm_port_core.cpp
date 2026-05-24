@@ -2048,6 +2048,81 @@ std::int8_t AS_FCOMP(std::uint16_t argAddress) {
   return gNumericCompareResult;
 }
 
+static std::int8_t
+comparePackedFacAgainstNative(const std::uint8_t *comparand) {
+  const std::uint8_t comparandExponent = comparand[0u];
+  if (comparandExponent == 0u) {
+    return 0;
+  }
+
+  const std::uint8_t comparandMantissaHighWithSign = comparand[1u];
+  if (((comparandMantissaHighWithSign ^ variables_const().AS_FAC_SIGN) &
+       0x80u) != 0u) {
+    return (variables_const().AS_FAC[0] == 0u)
+               ? 0
+               : (((variables_const().AS_FAC_SIGN & 0x80u) != 0u) ? -1 : 1);
+  }
+
+  const std::uint8_t facExponent = variables_const().AS_FAC[0];
+  bool compareCarrySet = comparandExponent >= facExponent;
+  if (comparandExponent != facExponent) {
+    std::uint8_t signByte = variables_const().AS_FAC_SIGN;
+    if (compareCarrySet) {
+      signByte ^= 0xffu;
+    }
+    return ((signByte & 0x80u) != 0u) ? -1 : 1;
+  }
+
+  const std::uint8_t normalizedComparandMantissaHigh =
+      static_cast<std::uint8_t>(comparandMantissaHighWithSign | 0x80u);
+  const std::uint8_t facMantissaHigh = variables_const().AS_FAC[1];
+  compareCarrySet = normalizedComparandMantissaHigh >= facMantissaHigh;
+  if (normalizedComparandMantissaHigh != facMantissaHigh) {
+    std::uint8_t signByte = variables_const().AS_FAC_SIGN;
+    if (compareCarrySet) {
+      signByte ^= 0xffu;
+    }
+    return ((signByte & 0x80u) != 0u) ? -1 : 1;
+  }
+
+  for (std::uint16_t offset = 2u; offset <= 3u; ++offset) {
+    const std::uint8_t comparandMantissaByte = comparand[offset];
+    const std::uint8_t facMantissaByte = variables_const().AS_FAC[offset];
+    compareCarrySet = comparandMantissaByte >= facMantissaByte;
+    if (comparandMantissaByte != facMantissaByte) {
+      std::uint8_t signByte = variables_const().AS_FAC_SIGN;
+      if (compareCarrySet) {
+        signByte ^= 0xffu;
+      }
+      return ((signByte & 0x80u) != 0u) ? -1 : 1;
+    }
+  }
+
+  const std::uint8_t facExtension = variables_const().AS_FAC_EXTENSION;
+  const std::uint8_t comparandExtension = comparand[4u];
+  const std::uint8_t facMantissaLow = variables_const().AS_FAC[4];
+  compareCarrySet =
+      (0x7fu > facExtension) ||
+      ((0x7fu == facExtension) && (comparandExtension >= facMantissaLow));
+  if ((0x7fu == facExtension) && (comparandExtension == facMantissaLow)) {
+    return 0;
+  }
+
+  std::uint8_t signByte = variables_const().AS_FAC_SIGN;
+  if (compareCarrySet) {
+    signByte ^= 0xffu;
+  }
+  return ((signByte & 0x80u) != 0u) ? -1 : 1;
+}
+
+std::int8_t AS_FCOMP(ApplesoftDualPointer<const std::uint8_t> argPointer) {
+  if (argPointer.isNative()) {
+    return comparePackedFacAgainstNative(argPointer.nativePointerOrThrow());
+  }
+
+  return AS_FCOMP(argPointer.emulatedPointerOrThrow());
+}
+
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: STRCMP_1 (inclusive) .. PDL (exclusive)

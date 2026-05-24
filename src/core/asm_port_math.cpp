@@ -3,6 +3,7 @@
 #include "core/asm_port_chrget.hpp"
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_handling.hpp"
+#include "core/asm_port_rom_constants.hpp"
 #include <cstdint>
 
 namespace applesoft::asm_port {
@@ -196,6 +197,25 @@ void AS_LOAD_ARG_FROM_YA() {
   AS_LOAD_ARG_FROM_YA(address);
 }
 
+void AS_LOAD_ARG_FROM_YA(
+    ApplesoftDualPointer<const std::uint8_t> packedPointer) {
+  if (packedPointer.isNative()) {
+    const std::uint8_t *source = packedPointer.nativePointerOrThrow();
+    const std::uint8_t signPackedMantissa = source[1u];
+
+    auto &vars = variables();
+    vars.AS_ARG[0] = source[0u];
+    vars.AS_ARG[1] = static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
+    vars.AS_ARG[2] = source[2u];
+    vars.AS_ARG[3] = source[3u];
+    vars.AS_ARG[4] = source[4u];
+    vars.AS_ARG[5] = signPackedMantissa;
+    return;
+  }
+
+  AS_LOAD_ARG_FROM_YA(packedPointer.emulatedPointerOrThrow());
+}
+
 void AS_FLOAT() { AS_FLOAT(static_cast<std::int8_t>(gFloatInput)); }
 
 /**
@@ -208,8 +228,7 @@ void AS_FADDH() {
   // ROM sequence loads YA with AS_CON_HALF ($EE64) then jumps to AS_FADD.
   // Using the unified 16-bit pointer keeps the literal split-byte load
   // together.
-  constexpr std::uint16_t kASConHalfAddress = 0xee64u;
-  AS_LOAD_ARG_FROM_YA(kASConHalfAddress);
+  AS_LOAD_ARG_FROM_YA(AS_CON_HALF());
   AS_FADDT();
 }
 

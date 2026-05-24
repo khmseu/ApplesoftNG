@@ -11,6 +11,7 @@
 #include "core/asm_port_math.hpp"
 #include "core/asm_port_parser.hpp"
 #include "core/asm_port_print.hpp"
+#include "core/asm_port_rom_constants.hpp"
 #include "core/asm_port_stack.hpp"
 #include "core/asm_port_statements.hpp"
 #include "core/asm_port_token_address_table.hpp"
@@ -730,9 +731,10 @@ void AS_RETURN() {
 void AS_STEP() {
   constexpr std::uint8_t kAS_TOKEN_STEP = 0xc7u;
 
+  const std::uint8_t *source = AS_CON_ONE().nativePointerOrThrow();
   for (std::uint8_t i = 0; i < kPackedFloatByteCount; ++i) {
     WriteProgramByte(static_cast<std::uint16_t>(kConOneScratchAddress + i),
-                     kConOnePacked[i]);
+                     source[i]);
   }
   variables().AS_INDEX = kConOneScratchAddress;
   AS_LOAD_FAC_FROM_YA();
