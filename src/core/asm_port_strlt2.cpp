@@ -3,39 +3,20 @@
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_messages.hpp"
+#include "core/asm_port_chrget.hpp"
+#include "core/asm_port_core.hpp"
+#include "core/asm_port_error_handling.hpp"
+#include "core/asm_port_mathtbl.hpp"
+#include "core/asm_port_math.hpp"
+#include "core/asm_port_parser.hpp"
+#include "core/asm_port_strtxt.hpp"
 
 #include <algorithm>
 #include <cstdint>
 
 namespace applesoft::asm_port {
 
-void AS_CHKSTR();
-void AS_GARBAG();
-void AS_STRINI(std::uint8_t length);
-void AS_STRSPA(std::uint8_t length);
-void AS_MOVINS();
-std::uint8_t AS_FRETMP(std::uint16_t descriptorAddress);
-bool AS_FRETMS(std::uint16_t descriptorAddress);
-std::uint8_t AS_GETBYT();
-void AS_IQERR();
 void AS_GOIQ();
-void AS_CHKCLS();
-void AS_CONINT();
-void AS_SNGFLT(std::uint8_t value);
-void AS_FRMEVL();
-std::uint8_t AS_CHRGOT();
-std::uint8_t AS_CHRGET();
-void AS_FIN();
-bool AS_ISLETC();
-std::uint16_t AS_PTRGET();
-void AS_NEGATE_FAC();
-void AS_EQUOP();
-void AS_FUNCT();
-void AS_UNARY();
-void AS_PARCHK();
-void AS_GIVAYF(std::int16_t value);
-void AS_STRTXT();
-void AS_SYNERR();
 
 namespace {
 
