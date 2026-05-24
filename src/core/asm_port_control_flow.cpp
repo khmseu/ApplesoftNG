@@ -30,14 +30,8 @@ constexpr std::uint8_t AS_RESTART_PROMPT = ']' | 0x80u;
 namespace {
 
 constexpr std::uint16_t kStepLabelAddress = 0x07afu;
-constexpr std::uint16_t kConOneScratchAddress = 0xe913u;
 constexpr std::uint8_t kPackedFloatByteCount = 5u;
 constexpr std::uint8_t kStepValueOffsetInForFrame = 4u;
-// Applesoft packed float for 1.0:
-// exponent=0x81 (biased exponent for 2^0), then sign-packed high mantissa, mid
-// mantissa, low mantissa, extension byte.
-constexpr std::uint8_t kConOnePacked[kPackedFloatByteCount] = {
-    0x81u, 0x00u, 0x00u, 0x00u, 0x00u};
 
 void ApplyFacSign() {
   const std::uint8_t facSign = variables_const().AS_FAC_SIGN;
@@ -73,6 +67,27 @@ static void AS_LOAD_FAC_FROM_YA() {
   variables().AS_FAC[1] = static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
   variables().AS_FAC[0] = source.read(0u);
   variables().AS_FAC_EXTENSION = 0u;
+}
+
+static void
+AS_LOAD_FAC_FROM_YA(ApplesoftDualPointer<const std::uint8_t> packedPointer) {
+  if (packedPointer.isNative()) {
+    const std::uint8_t *source = packedPointer.nativePointerOrThrow();
+    variables().AS_FAC[4] = source[4u];
+    variables().AS_FAC[3] = source[3u];
+    variables().AS_FAC[2] = source[2u];
+
+    const std::uint8_t signPackedMantissa = source[1u];
+    variables().AS_FAC_SIGN = signPackedMantissa;
+    variables().AS_FAC[1] =
+        static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
+    variables().AS_FAC[0] = source[0u];
+    variables().AS_FAC_EXTENSION = 0u;
+    return;
+  }
+
+  variables().AS_INDEX = packedPointer.emulatedPointerOrThrow();
+  AS_LOAD_FAC_FROM_YA();
 }
 
 // AS_Labels: AS_SIGN2 (inclusive) .. AS_SGN (exclusive)
@@ -731,13 +746,7 @@ void AS_RETURN() {
 void AS_STEP() {
   constexpr std::uint8_t kAS_TOKEN_STEP = 0xc7u;
 
-  const std::uint8_t *source = AS_CON_ONE().nativePointerOrThrow();
-  for (std::uint8_t i = 0; i < kPackedFloatByteCount; ++i) {
-    WriteProgramByte(static_cast<std::uint16_t>(kConOneScratchAddress + i),
-                     source[i]);
-  }
-  variables().AS_INDEX = kConOneScratchAddress;
-  AS_LOAD_FAC_FROM_YA();
+  AS_LOAD_FAC_FROM_YA(AS_CON_ONE());
   if (AS_CHRGOT() == kAS_TOKEN_STEP) {
     AS_CHRGET();
     AS_FRMNUM();

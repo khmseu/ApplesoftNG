@@ -8,7 +8,6 @@
 namespace applesoft::asm_port {
 namespace {
 using MonitorOutputRoutine = void (*)(std::uint8_t);
-constexpr std::uint16_t kMonitorCout1Vector = 0xfd62u;
 } // namespace
 static std::uint16_t computeTextRowBase(std::uint8_t row_zero_based) {
   const bool carryFromAS_Lsr = (row_zero_based & 0x01u) != 0u;
