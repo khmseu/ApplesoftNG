@@ -2,15 +2,12 @@
 """
 Regenerate docs/function-cross-reference.md from C++ source files.
 
-Scans all src/**/*.cpp files for function definitions with bodies,
-classifies each as 'real' or 'stub', and writes a sorted Markdown table
-to docs/function-cross-reference.md.
+Uses libclang (python bindings) with compile_commands.json to discover function
+definitions, then classifies each as 'real' or 'stub', and writes a sorted
+Markdown table.
 
-Inclusion rules
----------------
-- Every function definition that has a body `{ … }` is included,
-  regardless of name, static qualifier, or enclosing namespace.
-- Forward declarations (ending with `;`) are skipped.
+This avoids brittle return-type regex parsing and correctly handles templated
+and scoped return types (for example ApplesoftDualPointer<const std::uint8_t>).
 
 Stub classification
 -------------------
@@ -29,6 +26,27 @@ import re
 import sys
 from pathlib import Path
 
+from clang import cindex
+
+
+def _configure_libclang() -> None:
+    """Pin bindings to libclang-18 to avoid mixed-version runtime issues."""
+    if cindex.Config.library_file:
+        return
+
+    candidates = [
+        "/usr/lib/llvm-18/lib/libclang.so.1",
+        "/usr/lib/llvm-18/lib/libclang.so",
+        "/usr/lib/x86_64-linux-gnu/libclang-18.so.1",
+    ]
+    for candidate in candidates:
+        if Path(candidate).is_file():
+            cindex.Config.set_library_file(candidate)
+            return
+
+
+_configure_libclang()
+
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
@@ -36,25 +54,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SRC_ROOT = REPO_ROOT / "src"
 OUTPUT = REPO_ROOT / "docs" / "function-cross-reference.md"
-
-# Matches the start of a function definition at the beginning of a line.
-# Groups: (1) optional 'static ', (2) function name
-FUNC_START_RE = re.compile(
-    r"^(static\s+)?"
-    r"(?:"
-    r"void"
-    r"|bool"
-    r"|int"
-    r"|std::u?int(?:8|16|32|64)_t"
-    r"|std::string"
-    r"|Inlin2Result"
-    r"|InlinResult"
-    r"|[A-Za-z_][A-Za-z0-9_]*"
-    r")"
-    r"\s+"
-    r"([A-Za-z_][A-Za-z0-9_]*)"
-    r"\s*\("
-)
+COMPILE_COMMANDS_DIR = REPO_ROOT / "build"
 
 # Stub-only return patterns (body contains nothing else meaningful).
 _STUB_RETURN_RE = re.compile(
@@ -104,6 +104,118 @@ def _read_body(lines: list[str], start_line: int) -> tuple[str, int]:
             return "".join(body_parts), i
 
     raise ValueError("unterminated")
+
+
+def _collect_preceding_comments(lines: list[str], line_index: int) -> str:
+    """Collect consecutive // comment lines immediately above line_index."""
+    j = line_index - 1
+    comment_parts: list[str] = []
+    while j >= 0 and lines[j].lstrip().startswith("//"):
+        comment_parts.append(lines[j])
+        j -= 1
+    return "".join(reversed(comment_parts))
+
+
+# ---------------------------------------------------------------------------
+# Clang extraction
+# ---------------------------------------------------------------------------
+
+
+def _resolve(path_str: str) -> Path:
+    """Resolve a path best-effort without failing hard on missing files."""
+    try:
+        return Path(path_str).resolve()
+    except OSError:
+        return Path(path_str)
+
+
+def _compile_args_for_file(
+    db: cindex.CompilationDatabase | None, cpp_file: Path
+) -> list[str]:
+    """Build parser args from compile_commands for a specific source file."""
+    if db is None:
+        return ["-std=c++23", f"-I{REPO_ROOT / 'include'}"]
+
+    commands = db.getCompileCommands(str(cpp_file))
+    if not commands:
+        return ["-std=c++23", f"-I{REPO_ROOT / 'include'}"]
+
+    command = commands[0]
+    args = list(command.arguments)
+    if args:
+        args = args[1:]  # Drop compiler executable.
+
+    filtered: list[str] = []
+    skip_next = False
+    source = str(cpp_file)
+
+    for arg in args:
+        if skip_next:
+            skip_next = False
+            continue
+
+        if arg in {"-c", "-o", "-MF", "-MT", "-MQ"}:
+            skip_next = True
+            continue
+
+        if arg == source:
+            continue
+
+        filtered.append(arg)
+
+    return filtered
+
+
+def _function_defs_via_clang(cpp_file: Path) -> list[tuple[str, int]]:
+    """Return (function_name, 1-based line) definitions discovered by libclang."""
+    db: cindex.CompilationDatabase | None = None
+    try:
+        db = cindex.CompilationDatabase.fromDirectory(str(COMPILE_COMMANDS_DIR))
+    except Exception:
+        db = None
+
+    args = _compile_args_for_file(db, cpp_file)
+
+    index = cindex.Index.create()
+    try:
+        tu = index.parse(str(cpp_file), args=args)
+    except cindex.TranslationUnitLoadError as exc:
+        print(f"warning: cannot parse {cpp_file}: {exc}", file=sys.stderr)
+        return []
+
+    resolved_source = _resolve(str(cpp_file))
+    seen: set[tuple[str, int]] = set()
+    found: list[tuple[str, int]] = []
+
+    for cursor in tu.cursor.walk_preorder():
+        try:
+            kind = cursor.kind
+        except ValueError:
+            continue
+
+        if kind != cindex.CursorKind.FUNCTION_DECL:
+            continue
+        if not cursor.is_definition():
+            continue
+
+        loc = cursor.location
+        if loc is None or loc.file is None:
+            continue
+
+        if _resolve(loc.file.name) != resolved_source:
+            continue
+
+        if loc.line <= 0:
+            continue
+
+        key = (cursor.spelling, loc.line)
+        if key in seen:
+            continue
+
+        seen.add(key)
+        found.append(key)
+
+    return found
 
 
 # ---------------------------------------------------------------------------
@@ -180,7 +292,7 @@ def extract_functions(src_root: Path) -> list[tuple[str, int, str, str, int, int
     results: list[tuple[str, int, str, str, int, int]] = []
     all_names: list[str] = []
 
-    # First pass: collect all function names across all files.
+    # First pass: collect all call-like tokens for crude caller counts.
     for cpp_file in sorted(src_root.rglob("*.cpp")):
         try:
             text = cpp_file.read_text(encoding="utf-8")
@@ -198,43 +310,25 @@ def extract_functions(src_root: Path) -> list[tuple[str, int, str, str, int, int
             continue
 
         lines = text.splitlines(keepends=True)
+        defs = _function_defs_via_clang(cpp_file)
 
-        i = 0
-        while i < len(lines):
-            line = lines[i]
-            m = FUNC_START_RE.match(line)
-            if m:
-                func_name = m.group(2)
-
-                # Collect consecutive comment lines immediately before this line.
-                j = i - 1
-                comment_parts: list[str] = []
-                while j >= 0 and lines[j].lstrip().startswith("//"):
-                    comment_parts.append(lines[j])
-                    j -= 1
-                preceding = "".join(reversed(comment_parts))
-
-                # Try to read the body; skip forward declarations.
-                try:
-                    body, end_line = _read_body(lines, i)
-                except ValueError:
-                    i += 1
-                    continue
-
-                status = "stub" if _is_stub(body, preceding) else "real"
-                size = _get_size(body)
-
-                # Crude count of occurrences of func_name in all source files.
-                # Subtract 1 because its own definition matches.
-                caller_count = max(0, all_names.count(func_name) - 1)
-
-                results.append((rel, i + 1, func_name, status, size, caller_count))
-
-                # Jump past the consumed body.
-                i = end_line + 1
+        for name, lineno in defs:
+            line_index = lineno - 1
+            if line_index < 0 or line_index >= len(lines):
                 continue
 
-            i += 1
+            # Confirm this is a definition with a body and gather exact body span.
+            try:
+                body, _ = _read_body(lines, line_index)
+            except ValueError:
+                continue
+
+            preceding = _collect_preceding_comments(lines, line_index)
+            status = "stub" if _is_stub(body, preceding) else "real"
+            size = _get_size(body)
+            caller_count = max(0, all_names.count(name) - 1)
+
+            results.append((rel, lineno, name, status, size, caller_count))
 
     return results
 
