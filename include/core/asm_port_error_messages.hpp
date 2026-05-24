@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/applesoft_dual_pointer.hpp"
+
 #include <cstdint>
 #include <string_view>
 
@@ -27,5 +29,16 @@ inline constexpr std::uint8_t AS_ERR_UNDEFFUNC = 0xe0;
 /// Decode an Applesoft error message from its original table byte offset.
 /// Returns an empty string view for unknown offsets.
 std::string_view AS_ERROR_MESSAGES(std::uint8_t offset);
+
+/// Canonical label API for AS_ERROR_MESSAGES table access.
+/// Returns a pointer to immutable message bytes for the supplied ROM-table
+/// offset, or a null native pointer when the offset is unknown.
+ApplesoftDualPointer<const std::uint8_t>
+AS_ERROR_MESSAGES_ptr(std::uint8_t offset);
+
+/// Decode an Applesoft error message from canonical dual-pointer input.
+/// Returns an empty string view for null/empty input.
+std::string_view
+AS_ERROR_MESSAGES(ApplesoftDualPointer<const std::uint8_t> message_ptr);
 
 } // namespace applesoft::asm_port

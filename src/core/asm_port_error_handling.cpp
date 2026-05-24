@@ -27,7 +27,7 @@ void AS_ERROR(std::uint8_t error_code_offset) {
   AS_OUTQUES();
 
   // Print the message from AS_ERROR_MESSAGES
-  AS_STROUT(AS_ERROR_MESSAGES(error_code_offset));
+  AS_STROUT(AS_ERROR_MESSAGES(AS_ERROR_MESSAGES_ptr(error_code_offset)));
 
   AS_STKINI();
   AS_PRINT_ERROR_LINNUM();

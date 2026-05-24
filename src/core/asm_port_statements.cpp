@@ -163,7 +163,8 @@ static std::optional<TokenMatch> MatchToken(std::uint8_t index) {
   std::optional<TokenMatch> best;
 
   for (std::size_t i = 0; i < kTokenCount; ++i) {
-    const std::string_view token = AS_TOKEN_NAME_TABLE(i);
+    const std::string_view token =
+        AS_TOKEN_NAME_TABLE(AS_TOKEN_NAME_TABLE_ptr(i));
     if (token.empty()) {
       continue;
     }
@@ -737,7 +738,8 @@ void AS_LIST() {
       } else {
         // Expand token
         AS_OUTDO(' ');
-        std::string_view tokenName = AS_TOKEN_NAME_TABLE(ch - 0x80u);
+        std::string_view tokenName =
+            AS_TOKEN_NAME_TABLE(AS_TOKEN_NAME_TABLE_ptr(ch - 0x80u));
         for (char tc : tokenName) {
           AS_OUTDO(static_cast<std::uint8_t>(tc));
         }

@@ -5,51 +5,86 @@
 
 #include "core/asm_port_error_messages.hpp"
 
+#include <array>
+#include <cstring>
+
+namespace {
+
+using applesoft::asm_port::ApplesoftDualPointer;
+
+struct ErrorMessageEntry {
+  std::uint8_t offset;
+  const char *text;
+};
+
+constexpr std::array<ErrorMessageEntry, 17> kErrorMessageTable = {{
+    {applesoft::asm_port::AS_ERR_NOFOR, "AS_NEXT WITHOUT AS_FOR"},
+    {applesoft::asm_port::AS_ERR_SYNTAX, "SYNTAX"},
+    {applesoft::asm_port::AS_ERR_NOGOSUB, "AS_RETURN WITHOUT AS_GOSUB"},
+    {applesoft::asm_port::AS_ERR_NODATA, "OUT OF AS_DATA"},
+    {applesoft::asm_port::AS_ERR_ILLQTY, "ILLEGAL QUANTITY"},
+    {applesoft::asm_port::AS_ERR_OVERFLOW, "AS_OVERFLOW"},
+    {applesoft::asm_port::AS_ERR_MEMFULL, "OUT OF MEMORY"},
+    {applesoft::asm_port::AS_ERR_UNDEFSTAT, "UNDEF'D STATEMENT"},
+    {applesoft::asm_port::AS_ERR_BADSUBS, "BAD SUBSCRIPT"},
+    {applesoft::asm_port::AS_ERR_REDIMD, "REDIM'D AS_ARRAY"},
+    {applesoft::asm_port::AS_ERR_ZERODIV, "AS_DIVISION BY AS_ZERO"},
+    {applesoft::asm_port::AS_ERR_ILLDIR, "ILLEGAL DIRECT"},
+    {applesoft::asm_port::AS_ERR_BADTYPE, "TYPE MISMATCH"},
+    {applesoft::asm_port::AS_ERR_STRLONG, "AS_STRING TOO AS_LONG"},
+    {applesoft::asm_port::AS_ERR_FRMCPX, "AS_FORMULA TOO COMPLEX"},
+    {applesoft::asm_port::AS_ERR_CANTCONT, "CAN'T AS_CONTINUE"},
+    {applesoft::asm_port::AS_ERR_UNDEFFUNC, "UNDEF'D AS_FUNCTION"},
+}};
+
+const ErrorMessageEntry *findErrorMessage(std::uint8_t offset) {
+  for (const auto &entry : kErrorMessageTable) {
+    if (entry.offset == offset) {
+      return &entry;
+    }
+  }
+  return nullptr;
+}
+
+constexpr char kEmptyMessage[] = "";
+
+} // namespace
+
 namespace applesoft::asm_port {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_ERROR_MESSAGES (inclusive) .. AS_QT_ERROR (exclusive)
-// Name normalization: none (assembler label AS_ERROR_MESSAGES kept verbatim).
-std::string_view AS_ERROR_MESSAGES(std::uint8_t offset) {
-  switch (offset) {
-  case AS_ERR_NOFOR:
-    return "AS_NEXT WITHOUT AS_FOR";
-  case AS_ERR_SYNTAX:
-    return "SYNTAX";
-  case AS_ERR_NOGOSUB:
-    return "AS_RETURN WITHOUT AS_GOSUB";
-  case AS_ERR_NODATA:
-    return "OUT OF AS_DATA";
-  case AS_ERR_ILLQTY:
-    return "ILLEGAL QUANTITY";
-  case AS_ERR_OVERFLOW:
-    return "AS_OVERFLOW";
-  case AS_ERR_MEMFULL:
-    return "OUT OF MEMORY";
-  case AS_ERR_UNDEFSTAT:
-    return "UNDEF'D STATEMENT";
-  case AS_ERR_BADSUBS:
-    return "BAD SUBSCRIPT";
-  case AS_ERR_REDIMD:
-    return "REDIM'D AS_ARRAY";
-  case AS_ERR_ZERODIV:
-    return "AS_DIVISION BY AS_ZERO";
-  case AS_ERR_ILLDIR:
-    return "ILLEGAL DIRECT";
-  case AS_ERR_BADTYPE:
-    return "TYPE MISMATCH";
-  case AS_ERR_STRLONG:
-    return "AS_STRING TOO AS_LONG";
-  case AS_ERR_FRMCPX:
-    return "AS_FORMULA TOO COMPLEX";
-  case AS_ERR_CANTCONT:
-    return "CAN'T AS_CONTINUE";
-  case AS_ERR_UNDEFFUNC:
-    return "UNDEF'D AS_FUNCTION";
-  default:
+// Name normalization: minimal suffix required for C++ overload disambiguation.
+ApplesoftDualPointer<const std::uint8_t>
+AS_ERROR_MESSAGES_ptr(std::uint8_t offset) {
+  const ErrorMessageEntry *entry = findErrorMessage(offset);
+  if (entry == nullptr) {
+    return ApplesoftDualPointer<const std::uint8_t>::native(
+        reinterpret_cast<const std::uint8_t *>(kEmptyMessage));
+  }
+
+  return ApplesoftDualPointer<const std::uint8_t>::native(
+      reinterpret_cast<const std::uint8_t *>(entry->text));
+}
+
+std::string_view
+AS_ERROR_MESSAGES(ApplesoftDualPointer<const std::uint8_t> message_ptr) {
+  if (!message_ptr.isNative()) {
     return {};
   }
+
+  const std::uint8_t *bytes = message_ptr.nativePointerOrThrow();
+  if (bytes == nullptr || bytes[0] == 0u) {
+    return {};
+  }
+
+  const char *text = reinterpret_cast<const char *>(bytes);
+  return std::string_view(text, std::strlen(text));
+}
+
+std::string_view AS_ERROR_MESSAGES(std::uint8_t offset) {
+  return AS_ERROR_MESSAGES(AS_ERROR_MESSAGES_ptr(offset));
 }
 
 } // namespace applesoft::asm_port

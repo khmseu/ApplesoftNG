@@ -873,8 +873,8 @@ void AS_EXECUTE_STATEMENT_1() {
   }
 
   AS_CHRGET();
-  const AS_TOKEN_ADDRESS_TABLE_fn handler =
-      AS_TOKEN_ADDRESS_TABLE(static_cast<std::size_t>(tokenIndex));
+  const AS_TOKEN_ADDRESS_TABLE_fn handler = AS_TOKEN_ADDRESS_TABLE(
+      AS_TOKEN_ADDRESS_TABLE_ptr(static_cast<std::size_t>(tokenIndex)));
   handler();
 }
 
