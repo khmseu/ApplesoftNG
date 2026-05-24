@@ -123,7 +123,7 @@ static void AS_CHECK_BUMP();
 static void AS_CHECK_EXIT();
 static void AS_MOVE_HIGHEST_STRING_TO_TOP();
 static void AS_PUTNEW();
-void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length);
+static void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length);
 void AS_MOVSTR_1(std::uint8_t length);
 std::uint8_t AS_FRESTR();
 
@@ -586,7 +586,7 @@ static void AS_CAT_impl() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_MOVSTR (inclusive) .. AS_MOVSTR_1 (exclusive)
 // Name normalization: none (assembler label AS_MOVSTR kept verbatim).
-void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length) {
+static void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length) {
   // Pointer candidate lifted: AS_INDEX low/high is one conceptual source
   // pointer.
   write_AS_INDEX(ApplesoftVariables::makeWord(x, y));
