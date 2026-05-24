@@ -115,7 +115,7 @@ static void AS_JERR();
 static void AS_PUTEMP(std::uint8_t tempDescriptorAddress);
 static std::uint16_t AS_GETSPA(std::uint8_t length);
 static void AS_FRM_VARIABLE();
-void AS_NOT_();
+static void AS_NOT_();
 void AS_FIND_HIGHEST_STRING();
 void AS_CHECK_SIMPLE_VARIABLE();
 void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset);
@@ -221,7 +221,7 @@ static void AS_FRM_VARIABLE() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_NOT_ (inclusive) .. AS_FN_ (exclusive)
 // Name normalization: none (assembler label AS_NOT_ kept verbatim).
-void AS_NOT_() {
+static void AS_NOT_() {
   //
   // Applesoft NOT returns true when FAC is zero and false otherwise; the code
   // path is identical to the existing AS_EQUOP truth test.
