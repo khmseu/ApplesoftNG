@@ -21,7 +21,6 @@ namespace applesoft::asm_port {
 constexpr std::size_t kTokenCount = 107;
 constexpr std::uint8_t kTokenBase = 0x80u;
 
-void AS_CLEARC_impl();
 void AS_STXTPT_impl();
 
 // AS_Labels: AS_NEW (inclusive) .. AS_SCRTCH (exclusive)
