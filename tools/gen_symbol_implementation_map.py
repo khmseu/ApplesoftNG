@@ -17,12 +17,48 @@ from __future__ import annotations
 import argparse
 import csv
 import re
+import sys
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable
 
-from clang import cindex
+
+def _import_clang_cindex():
+    """Import clang.cindex with Ubuntu dist-packages fallback for venvs."""
+    try:
+        from clang import cindex as _cindex  # type: ignore
+
+        return _cindex
+    except ModuleNotFoundError:
+        pass
+
+    major = sys.version_info.major
+    minor = sys.version_info.minor
+    candidates = [
+        "/usr/lib/python3/dist-packages",
+        f"/usr/lib/python{major}/dist-packages",
+        f"/usr/lib/python{major}.{minor}/dist-packages",
+    ]
+    for candidate in candidates:
+        if Path(candidate).is_dir() and candidate not in sys.path:
+            sys.path.append(candidate)
+
+    try:
+        from clang import cindex as _cindex  # type: ignore
+
+        return _cindex
+    except ModuleNotFoundError as exc:
+        raise SystemExit(
+            "error: python clang bindings not found.\n"
+            "Install one of:\n"
+            "  - apt: python3-clang-18\n"
+            "  - venv: pip install clang\n"
+            "Or run this script with system python outside the venv."
+        ) from exc
+
+
+cindex = _import_clang_cindex()
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_SYM_ROOT = REPO_ROOT / "SourceMaterial" / "Combo"
@@ -70,9 +106,7 @@ def _resolve(path_str: str) -> Path:
         return Path(path_str)
 
 
-def _compile_args_for_file(
-    db: cindex.CompilationDatabase | None, cpp_file: Path
-) -> list[str]:
+def _compile_args_for_file(db: Any | None, cpp_file: Path) -> list[str]:
     """Build parser args from compile_commands for a specific source file."""
     if db is None:
         return ["-std=c++23", f"-I{REPO_ROOT / 'include'}"]
@@ -113,7 +147,7 @@ def _collect_function_definitions_by_file(
     """Collect free-function definitions in src_root using libclang."""
     by_file: dict[Path, list[FunctionDefinition]] = defaultdict(list)
 
-    db: cindex.CompilationDatabase | None = None
+    db: Any | None = None
     try:
         db = cindex.CompilationDatabase.fromDirectory(str(DEFAULT_COMPILE_COMMANDS_DIR))
     except Exception:

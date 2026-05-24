@@ -25,8 +25,44 @@ from __future__ import annotations
 import re
 import sys
 from pathlib import Path
+from typing import Any
 
-from clang import cindex
+
+def _import_clang_cindex():
+    """Import clang.cindex with Ubuntu dist-packages fallback for venvs."""
+    try:
+        from clang import cindex as _cindex  # type: ignore
+
+        return _cindex
+    except ModuleNotFoundError:
+        pass
+
+    major = sys.version_info.major
+    minor = sys.version_info.minor
+    candidates = [
+        "/usr/lib/python3/dist-packages",
+        f"/usr/lib/python{major}/dist-packages",
+        f"/usr/lib/python{major}.{minor}/dist-packages",
+    ]
+    for candidate in candidates:
+        if Path(candidate).is_dir() and candidate not in sys.path:
+            sys.path.append(candidate)
+
+    try:
+        from clang import cindex as _cindex  # type: ignore
+
+        return _cindex
+    except ModuleNotFoundError as exc:
+        raise SystemExit(
+            "error: python clang bindings not found.\n"
+            "Install one of:\n"
+            "  - apt: python3-clang-18\n"
+            "  - venv: pip install clang\n"
+            "Or run this script with system python outside the venv."
+        ) from exc
+
+
+cindex = _import_clang_cindex()
 
 
 def _configure_libclang() -> None:
@@ -129,9 +165,7 @@ def _resolve(path_str: str) -> Path:
         return Path(path_str)
 
 
-def _compile_args_for_file(
-    db: cindex.CompilationDatabase | None, cpp_file: Path
-) -> list[str]:
+def _compile_args_for_file(db: Any | None, cpp_file: Path) -> list[str]:
     """Build parser args from compile_commands for a specific source file."""
     if db is None:
         return ["-std=c++23", f"-I{REPO_ROOT / 'include'}"]
@@ -168,7 +202,7 @@ def _compile_args_for_file(
 
 def _function_defs_via_clang(cpp_file: Path) -> list[tuple[str, int]]:
     """Return (function_name, 1-based line) definitions discovered by libclang."""
-    db: cindex.CompilationDatabase | None = None
+    db: Any | None = None
     try:
         db = cindex.CompilationDatabase.fromDirectory(str(COMPILE_COMMANDS_DIR))
     except Exception:
