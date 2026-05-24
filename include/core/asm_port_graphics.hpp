@@ -1,5 +1,8 @@
 #pragma once
 
+#include "core/applesoft_dual_pointer.hpp"
+
+#include <cstddef>
 #include <cstdint>
 
 namespace applesoft::asm_port {
@@ -44,6 +47,7 @@ void AS_LRUD3_XORBIT();
 void AS_LRUD1();
 void AS_LRUDX1();
 void AS_DRAW1_Internal(bool xdraw);
+ApplesoftDualPointer<const std::uint8_t> AS_COSINE_TABLE();
 void AS_DRAW();
 void AS_XDRAW();
 void AS_SHLOAD();

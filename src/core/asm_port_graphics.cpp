@@ -14,6 +14,18 @@
 
 namespace applesoft::asm_port {
 
+namespace {
+
+constexpr std::uint8_t kCosineTable[] = {
+    0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5, 0xb4,
+    0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18, 0xff};
+
+} // namespace
+
+ApplesoftDualPointer<const std::uint8_t> AS_COSINE_TABLE() {
+  return ApplesoftDualPointer<const std::uint8_t>::native(kCosineTable);
+}
+
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_NORMAL (inclusive) .. AS_INVERSE (exclusive)
@@ -911,19 +923,15 @@ void AS_LRUDX1() {
   AS_LRUD4();
 }
 
-static constexpr std::uint8_t kCosineTable[] = {
-    0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5, 0xb4,
-    0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18, 0xff};
-
 void AS_DRAW1_Internal(bool xdraw) {
   std::uint8_t rotation = variables_const().AS_HGR_ROTATION;
   variables().AS_HGR_QUADRANT = static_cast<std::uint8_t>(rotation >> 4u);
 
   std::uint8_t trigIndex = rotation & 0x0Fu;
-  ApplesoftVariables::setLowByte(variables().AS_HGR_DX,
-                                 kCosineTable[trigIndex]);
+  const std::uint8_t *cosineTable = AS_COSINE_TABLE().nativePointerOrThrow();
+  ApplesoftVariables::setLowByte(variables().AS_HGR_DX, cosineTable[trigIndex]);
   variables().AS_HGR_DY =
-      static_cast<std::uint8_t>(kCosineTable[15 - trigIndex] + 1u);
+      static_cast<std::uint8_t>(cosineTable[15 - trigIndex] + 1u);
 
   variables().AS_HGR_COLLISIONS = 0u;
 
