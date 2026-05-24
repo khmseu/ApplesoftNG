@@ -24,7 +24,6 @@ constexpr std::uint8_t kTokenBase = 0x80u;
 bool AS_CLEAR_impl();
 void AS_CLEARC_impl();
 void AS_STXTPT_impl();
-void AS_TAPEPNT();
 
 // AS_Labels: AS_NEW (inclusive) .. AS_SCRTCH (exclusive)
 bool AS_NEW_impl() {
