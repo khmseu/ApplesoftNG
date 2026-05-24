@@ -121,7 +121,7 @@ AS_FRM_STACK_1	src/core/asm_port_core.cpp	1861	AS_FRM_STACK_1 (inclusive) .. AS_
 AS_NOTMATH	src/core/asm_port_core.cpp	1880	AS_NOTMATH (inclusive) .. AS_FRM_PERFORM_1 (exclusive)	AS_NOTMATH	AS_FRM_PERFORM_1	asrom	AS_NOTMATH	0xde35	AS_FRM_PERFORM_1	0xde3a	resolved-range	ok
 AS_FRM_PERFORM_1	src/core/asm_port_core.cpp	1902	AS_FRM_PERFORM_1 (inclusive) .. AS_FRM_ELEMENT (exclusive)	AS_FRM_PERFORM_1	AS_FRM_ELEMENT	asrom	AS_FRM_PERFORM_1	0xde3a	AS_FRM_ELEMENT	0xde60	resolved-range	ok
 MON_SCRN	src/core/asm_port_core.cpp	1935	MON_SCRN (inclusive) .. MON_INSDS1 (exclusive)	MON_SCRN	MON_INSDS1	asrom	MON_SCRN	0xf871	MON_INSDS1	0xf882	resolved-range	ok
-NMI_VECTOR	src/core/asm_port_core.cpp	1973	MON_M6502VEC (inclusive) .. MON_[end] (exclusive)	MON_M6502VEC	MON_						unresolved	no-module-match
+MON_BREAK	src/core/asm_port_core.cpp	1973	MON_M6502VEC (inclusive) .. MON_[end] (exclusive)	MON_M6502VEC	MON_						unresolved	no-module-match
 MON_IRQ	src/core/asm_port_core.cpp	2002	IRQ (inclusive) .. BREAK (exclusive)	IRQ	BREAK						unresolved	no-module-match
 AS_FCOMP	src/core/asm_port_core.cpp	2033	AS_FCOMP (inclusive) .. AS_FCOMP2 (exclusive)	AS_FCOMP	AS_FCOMP2	asrom	AS_FCOMP	0xebb2	AS_FCOMP2	0xebb4	resolved-range	ok
 CompareArgAndFacStrings	src/core/asm_port_core.cpp	2123	STRCMP_1 (inclusive) .. PDL (exclusive)	STRCMP_1	PDL						unresolved	no-module-match
@@ -129,7 +129,7 @@ MON_PREAD	src/core/asm_port_core.cpp	2169	MON_PREAD (inclusive) .. MON_INIT (exc
 AS_ERROR	src/core/asm_port_error_handling.cpp	16	AS_ERROR (inclusive) .. AS_PRINT_ERROR_LINNUM (exclusive)	AS_ERROR	AS_PRINT_ERROR_LINNUM	asrom	AS_ERROR	0xd412	AS_PRINT_ERROR_LINNUM	0xd431	resolved-range	ok
 AS_MEMERR	src/core/asm_port_error_handling.cpp	38	AS_MEMERR (inclusive) .. AS_ERROR (exclusive)	AS_MEMERR	AS_ERROR	asrom	AS_MEMERR	0xd410	AS_ERROR	0xd412	resolved-range	ok
 AS_PRINT_ERROR_LINNUM	src/core/asm_port_error_handling.cpp	47	AS_PRINT_ERROR_LINNUM (inclusive) .. AS_RESTART (exclusive)	AS_PRINT_ERROR_LINNUM	AS_RESTART	asrom	AS_PRINT_ERROR_LINNUM	0xd431	AS_RESTART	0xd43c	resolved-range	ok
-AS_ERROR_MESSAGES	src/core/asm_port_error_messages.cpp	57	AS_ERROR_MESSAGES (inclusive) .. AS_QT_ERROR (exclusive)	AS_ERROR_MESSAGES	AS_QT_ERROR	asrom	AS_ERROR_MESSAGES	0xd260	AS_QT_ERROR	0xd350	resolved-range	ok
+AS_ERROR_MESSAGES_ptr	src/core/asm_port_error_messages.cpp	57	AS_ERROR_MESSAGES (inclusive) .. AS_QT_ERROR (exclusive)	AS_ERROR_MESSAGES	AS_QT_ERROR	asrom	AS_ERROR_MESSAGES	0xd260	AS_QT_ERROR	0xd350	resolved-range	ok
 AS_NORMAL	src/core/asm_port_graphics.cpp	31	AS_NORMAL (inclusive) .. AS_INVERSE (exclusive)	AS_NORMAL	AS_INVERSE	asrom	AS_NORMAL	0xf273	AS_INVERSE	0xf277	resolved-range	ok
 AS_INVERSE	src/core/asm_port_graphics.cpp	40	AS_INVERSE (inclusive) .. AS_FLASH (exclusive)	AS_INVERSE	AS_FLASH	asrom	AS_INVERSE	0xf277	AS_FLASH	0xf280	resolved-range	ok
 AS_FLASH	src/core/asm_port_graphics.cpp	49	AS_FLASH (inclusive) .. AS_HIMEM (exclusive)	AS_FLASH	AS_HIMEM	asrom	AS_FLASH	0xf280	AS_HIMEM	0xf286	resolved-range	ok
@@ -398,8 +398,8 @@ AS_STRLT2	src/core/asm_port_strlt2.cpp	923	AS_STRLT2 (inclusive) .. AS_PUTNEW (e
 AS_POINT	src/core/asm_port_strtxt.cpp	19	AS_POINT (inclusive) .. AS_GTNUM (exclusive)	AS_POINT	AS_GTNUM	asrom	AS_POINT	0xe73d	AS_GTNUM	0xe746	resolved-range	ok
 AS_STRTXT	src/core/asm_port_strtxt.cpp	30	AS_STRTXT (inclusive) .. AS_NOT_ (exclusive)	AS_STRTXT	AS_NOT_	asrom	AS_STRTXT	0xde81	AS_NOT_	0xde90	resolved-range	ok
 AS_TRACE	src/core/asm_port_token_address_table.cpp	51	AS_TRACE (inclusive) .. AS_NORMAL (exclusive)	AS_TRACE	AS_NORMAL	asrom	AS_TRACE	0xf26d	AS_NORMAL	0xf273	resolved-range	ok
-AS_TOKEN_ADDRESS_TABLE	src/core/asm_port_token_address_table.cpp	170	AS_TOKEN_ADDRESS_TABLE (inclusive) .. AS_UNFNC (exclusive)	AS_TOKEN_ADDRESS_TABLE	AS_UNFNC	asrom	AS_TOKEN_ADDRESS_TABLE	0xd000	AS_UNFNC	0xd080	resolved-range	ok
-AS_TOKEN_NAME_TABLE	src/core/asm_port_token_name_table.cpp	46	AS_TOKEN_NAME_TABLE (inclusive) .. AS_ERROR_MESSAGES (exclusive)	AS_TOKEN_NAME_TABLE	AS_ERROR_MESSAGES	asrom	AS_TOKEN_NAME_TABLE	0xd0d0	AS_ERROR_MESSAGES	0xd260	resolved-range	ok
+AS_TOKEN_ADDRESS_TABLE_ptr	src/core/asm_port_token_address_table.cpp	170	AS_TOKEN_ADDRESS_TABLE (inclusive) .. AS_UNFNC (exclusive)	AS_TOKEN_ADDRESS_TABLE	AS_UNFNC	asrom	AS_TOKEN_ADDRESS_TABLE	0xd000	AS_UNFNC	0xd080	resolved-range	ok
+AS_TOKEN_NAME_TABLE_ptr	src/core/asm_port_token_name_table.cpp	46	AS_TOKEN_NAME_TABLE (inclusive) .. AS_ERROR_MESSAGES (exclusive)	AS_TOKEN_NAME_TABLE	AS_ERROR_MESSAGES	asrom	AS_TOKEN_NAME_TABLE	0xd0d0	AS_ERROR_MESSAGES	0xd260	resolved-range	ok
 loadArgFromPacked	src/core/asm_port_unfnc.cpp	3	AS_UNFNC (inclusive) .. AS_MATHTBL (exclusive)	AS_UNFNC	AS_MATHTBL	asrom	AS_UNFNC	0xd080	AS_MATHTBL	0xd0b2	resolved-range	ok
 AS_PDL	src/core/asm_port_unfnc.cpp	232	AS_PDL (inclusive) .. AS_NXDIM (exclusive)	AS_PDL	AS_NXDIM	asrom	AS_PDL	0xdfcd	AS_NXDIM	0xdfd6	resolved-range	ok
 AS_SGN	src/core/asm_port_unfnc.cpp	246	AS_SGN (inclusive) .. AS_ABS (exclusive)	AS_SGN	AS_ABS	asrom	AS_SGN	0xeb90	AS_ABS	0xebaf	resolved-range	ok
@@ -436,6 +436,8 @@ MON_COUT	src/platform/asm_port_outdo.cpp	154	MON_COUT (inclusive) .. MON_COUT1 (
 AS_OUTDO	src/platform/asm_port_outdo.cpp	162	AS_OUTDO (inclusive) .. AS_INPUTERR (exclusive)	AS_OUTDO	AS_INPUTERR	asrom	AS_OUTDO	0xdb5c	AS_INPUTERR	0xdb71	resolved-range	ok
 AS_OUTSP	src/platform/asm_port_outdo.cpp	176	AS_OUTSP (inclusive) .. AS_OUTQUES (exclusive)	AS_OUTSP	AS_OUTQUES	asrom	AS_OUTSP	0xdb57	AS_OUTQUES	0xdb5a	resolved-range	ok
 AS_OUTQUES	src/platform/asm_port_outdo.cpp	182	AS_OUTQUES (inclusive) .. AS_OUTDO (exclusive)	AS_OUTQUES	AS_OUTDO	asrom	AS_OUTQUES	0xdb5a	AS_OUTDO	0xdb5c	resolved-range	ok
+variables	src/core/applesoft_variables.cpp	13									unclaimed	no-label-range-claim
+variables_const	src/core/applesoft_variables.cpp	15									unclaimed	no-label-range-claim
 copy_page_backward	src/core/asm_port_bltu.cpp	7									unclaimed	no-label-range-claim
 ApplyFacSign	src/core/asm_port_control_flow.cpp	36									unclaimed	no-label-range-claim
 SetBranchTargetToAS_STEP	src/core/asm_port_control_flow.cpp	47									unclaimed	no-label-range-claim
@@ -467,12 +469,13 @@ IsDirectMode	src/core/asm_port_core.cpp	80									unclaimed	no-label-range-clai
 AS_GENERIC_END	src/core/asm_port_core.cpp	90									unclaimed	no-label-range-claim
 MON_BELL	src/core/asm_port_core.cpp	201									unclaimed	no-label-range-claim
 SetPendingErrorCode	src/core/asm_port_core.cpp	1277									unclaimed	no-label-range-claim
-RESET_VECTOR	src/core/asm_port_core.cpp	1985									unclaimed	no-label-range-claim
-IRQ_VECTOR	src/core/asm_port_core.cpp	1990									unclaimed	no-label-range-claim
-MON_BREAK	src/core/asm_port_core.cpp	1996									unclaimed	no-label-range-claim
+comparePackedFacAgainstNative	src/core/asm_port_core.cpp	2047									unclaimed	no-label-range-claim
 AS_SYNERR	src/core/asm_port_error_handling.cpp	66									unclaimed	no-label-range-claim
 AS_JER	src/core/asm_port_error_handling.cpp	71									unclaimed	no-label-range-claim
 AS_IQERR	src/core/asm_port_error_handling.cpp	73									unclaimed	no-label-range-claim
+findErrorMessage	src/core/asm_port_error_messages.cpp	40									unclaimed	no-label-range-claim
+AS_ERROR_MESSAGES	src/core/asm_port_error_messages.cpp	72									unclaimed	no-label-range-claim
+AS_ERROR_MESSAGES	src/core/asm_port_error_messages.cpp	86									unclaimed	no-label-range-claim
 AS_COSINE_TABLE	src/core/asm_port_graphics.cpp	25									unclaimed	no-label-range-claim
 MON_ClearColumns	src/core/asm_port_graphics.cpp	224									unclaimed	no-label-range-claim
 AS_MOVE_UP_OR_DOWN	src/core/asm_port_graphics.cpp	806									unclaimed	no-label-range-claim
@@ -507,6 +510,7 @@ AS_MATHTBL	src/core/asm_port_mathtbl.cpp	369									unclaimed	no-label-range-cl
 AS_MATHTBL	src/core/asm_port_mathtbl.cpp	373									unclaimed	no-label-range-claim
 loadArgFromPacked	src/core/asm_port_print.cpp	22									unclaimed	no-label-range-claim
 loadArgFromPacked	src/core/asm_port_print.cpp	34									unclaimed	no-label-range-claim
+loadArgFromPacked	src/core/asm_port_print.cpp	43									unclaimed	no-label-range-claim
 facIntegerMantissa	src/core/asm_port_print.cpp	51									unclaimed	no-label-range-claim
 appendExponent	src/core/asm_port_print.cpp	59									unclaimed	no-label-range-claim
 foutImpl	src/core/asm_port_print.cpp	82									unclaimed	no-label-range-claim
@@ -514,9 +518,11 @@ PrintDecimalUnsigned	src/core/asm_port_print.cpp	181									unclaimed	no-label-
 AS_LINPRT	src/core/asm_port_print.cpp	196									unclaimed	no-label-range-claim
 PrintNumericExpression	src/core/asm_port_print.cpp	314									unclaimed	no-label-range-claim
 print_list_loop	src/core/asm_port_print.cpp	324									unclaimed	no-label-range-claim
+AS_QT_ERROR	src/core/asm_port_qt_error.cpp	42									unclaimed	no-label-range-claim
 AS_QT_ERROR	src/core/asm_port_qt_error.cpp	56									unclaimed	no-label-range-claim
 has_room	src/core/asm_port_reason.cpp	9									unclaimed	no-label-range-claim
 invokeGarbageCollector	src/core/asm_port_reason.cpp	14									unclaimed	no-label-range-claim
+theStack	src/core/asm_port_stack.cpp	107									unclaimed	no-label-range-claim
 AS_NEW	src/core/asm_port_statements.cpp	58									unclaimed	no-label-range-claim
 AS_SETPTRS	src/core/asm_port_statements.cpp	60									unclaimed	no-label-range-claim
 AS_SCRTCH	src/core/asm_port_statements.cpp	62									unclaimed	no-label-range-claim
@@ -628,12 +634,18 @@ AS_PRINT_Handler	src/core/asm_port_token_address_table.cpp	90									unclaimed	
 AS_CLEAR_Handler	src/core/asm_port_token_address_table.cpp	91									unclaimed	no-label-range-claim
 AS_GET_Handler	src/core/asm_port_token_address_table.cpp	92									unclaimed	no-label-range-claim
 AS_NEW_Handler	src/core/asm_port_token_address_table.cpp	93									unclaimed	no-label-range-claim
+AS_TOKEN_ADDRESS_TABLE	src/core/asm_port_token_address_table.cpp	178									unclaimed	no-label-range-claim
+AS_TOKEN_ADDRESS_TABLE	src/core/asm_port_token_address_table.cpp	183									unclaimed	no-label-range-claim
+AS_TOKEN_NAME_TABLE	src/core/asm_port_token_name_table.cpp	60									unclaimed	no-label-range-claim
+AS_TOKEN_NAME_TABLE	src/core/asm_port_token_name_table.cpp	74									unclaimed	no-label-range-claim
 loadFacFromPacked	src/core/asm_port_unfnc.cpp	70									unclaimed	no-label-range-claim
 loadFacFromPacked	src/core/asm_port_unfnc.cpp	83									unclaimed	no-label-range-claim
+loadFacFromPacked	src/core/asm_port_unfnc.cpp	92									unclaimed	no-label-range-claim
 storeFacToPackedRounded	src/core/asm_port_unfnc.cpp	100									unclaimed	no-label-range-claim
 AS_POLYNOMIAL	src/core/asm_port_unfnc.cpp	105									unclaimed	no-label-range-claim
 AS_POLYNOMIAL	src/core/asm_port_unfnc.cpp	125									unclaimed	no-label-range-claim
 AS_POLYNOMIAL_ODD	src/core/asm_port_unfnc.cpp	148									unclaimed	no-label-range-claim
+AS_POLYNOMIAL_ODD	src/core/asm_port_unfnc.cpp	160									unclaimed	no-label-range-claim
 AS_SIGN_FAC	src/core/asm_port_unfnc.cpp	171									unclaimed	no-label-range-claim
 write_AS_DEST	src/core/asm_port_unfnc.cpp	180									unclaimed	no-label-range-claim
 AS_NORMALIZE_FAC_1	src/core/asm_port_unfnc.cpp	182									unclaimed	no-label-range-claim
@@ -646,6 +658,8 @@ AS_CHRSTR_fn	src/core/asm_port_unfnc.cpp	604									unclaimed	no-label-range-cl
 AS_LEFTSTR_fn	src/core/asm_port_unfnc.cpp	605									unclaimed	no-label-range-claim
 AS_RIGHTSTR_fn	src/core/asm_port_unfnc.cpp	606									unclaimed	no-label-range-claim
 AS_MIDSTR_fn	src/core/asm_port_unfnc.cpp	607									unclaimed	no-label-range-claim
+ioPorts	src/core/io_ports.cpp	11									unclaimed	no-label-range-claim
+ioPorts_const	src/core/io_ports.cpp	13									unclaimed	no-label-range-claim
 main	src/main.cpp	4									unclaimed	no-label-range-claim
 read_prompt_char	src/platform/asm_port_getln.cpp	12									unclaimed	no-label-range-claim
 write_input_buffer	src/platform/asm_port_getln.cpp	14									unclaimed	no-label-range-claim

@@ -22,11 +22,33 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
+from clang import cindex
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_SYM_ROOT = REPO_ROOT / "SourceMaterial" / "Combo"
 DEFAULT_SRC_ROOT = REPO_ROOT / "src"
+DEFAULT_COMPILE_COMMANDS_DIR = REPO_ROOT / "build"
 DEFAULT_OUT = REPO_ROOT / "docs" / "symbol-implementation-map.tsv"
 DEFAULT_LOG_OUT = REPO_ROOT / "docs" / "symbol-implementation-map-claims.tsv"
+
+
+def _configure_libclang() -> None:
+    """Pin bindings to libclang-18 to avoid mixed-version runtime issues."""
+    if cindex.Config.library_file:
+        return
+
+    candidates = [
+        "/usr/lib/llvm-18/lib/libclang-18.so.1",
+        "/usr/lib/llvm-18/lib/libclang-18.so",
+        "/usr/lib/x86_64-linux-gnu/libclang-18.so.1",
+    ]
+    for candidate in candidates:
+        if Path(candidate).is_file():
+            cindex.Config.set_library_file(candidate)
+            return
+
+
+_configure_libclang()
 
 # A symbol declaration line in a ca65/xa65 .sym file looks like:
 #   SYMBOL, 0x1234, 0, 0x0000
@@ -39,84 +61,113 @@ LABEL_TOKEN_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 
 IGNORED_CLAIM_TOKENS = {"inclusive", "exclusive", "t"}
 
-# Function definition heuristic: enough for this repository's free functions.
-FUNC_DEF_RE = re.compile(
-    r"^\s*(?:static\s+)?"
-    r"(?:inline\s+)?"
-    r"(?:constexpr\s+)?"
-    r"[A-Za-z_][A-Za-z0-9_:<>\s*&]*\s+"
-    r"([A-Za-z_][A-Za-z0-9_]*)\s*\([^;{}]*\)\s*(?:\{|$)"
-)
 
-FUNC_START_SKIP_PREFIXES = (
-    "return ",
-    "if ",
-    "for ",
-    "while ",
-    "switch ",
-    "case ",
-    "throw ",
-    "else",
-    "do ",
-    "break",
-    "continue",
-)
+def _resolve(path_str: str) -> Path:
+    """Resolve a path best-effort without failing hard on missing files."""
+    try:
+        return Path(path_str).resolve()
+    except OSError:
+        return Path(path_str)
 
 
-def _parse_function_definition_at(lines: list[str], start_idx: int) -> str | None:
-    """Parse a function definition that may span multiple lines."""
-    start_probe = lines[start_idx].strip()
-    if not start_probe or start_probe.startswith("//"):
-        return None
+def _compile_args_for_file(
+    db: cindex.CompilationDatabase | None, cpp_file: Path
+) -> list[str]:
+    """Build parser args from compile_commands for a specific source file."""
+    if db is None:
+        return ["-std=c++23", f"-I{REPO_ROOT / 'include'}"]
 
-    if "(" not in start_probe:
-        return None
+    commands = db.getCompileCommands(str(cpp_file))
+    if not commands:
+        return ["-std=c++23", f"-I{REPO_ROOT / 'include'}"]
 
-    lowered = start_probe.lower()
-    if lowered.startswith(FUNC_START_SKIP_PREFIXES):
-        return None
+    command = commands[0]
+    args = list(command.arguments)
+    if args:
+        args = args[1:]  # Drop compiler executable.
 
-    signature_prefix = start_probe.split("(", 1)[0]
-    if "=" in signature_prefix:
-        # Assignments/lambdas are not free-function definitions.
-        return None
+    filtered: list[str] = []
+    skip_next = False
+    source = str(cpp_file)
 
-    candidate_parts: list[str] = []
-    saw_open_brace = False
-    saw_open_paren = False
-
-    for j in range(start_idx, min(start_idx + 8, len(lines))):
-        probe = lines[j].strip()
-        if not probe:
-            continue
-        if probe.startswith("//"):
+    for arg in args:
+        if skip_next:
+            skip_next = False
             continue
 
-        candidate_parts.append(probe)
-        if "(" in probe:
-            saw_open_paren = True
+        if arg in {"-c", "-o", "-MF", "-MT", "-MQ"}:
+            skip_next = True
+            continue
 
-        if "{" in probe:
-            saw_open_brace = True
-            break
-        if probe.endswith(";"):
-            # Declaration/prototype, not a definition.
-            return None
+        if arg == source:
+            continue
 
-    if not saw_open_brace:
-        return None
-    if not saw_open_paren:
-        return None
+        filtered.append(arg)
 
-    candidate = " ".join(candidate_parts)
-    m = FUNC_DEF_RE.match(candidate)
-    if not m:
-        return None
+    return filtered
 
-    func_name = m.group(1)
-    if func_name in {"if", "for", "while", "switch", "return"}:
-        return None
-    return func_name
+
+def _collect_function_definitions_by_file(
+    src_root: Path,
+) -> dict[Path, list["FunctionDefinition"]]:
+    """Collect free-function definitions in src_root using libclang."""
+    by_file: dict[Path, list[FunctionDefinition]] = defaultdict(list)
+
+    db: cindex.CompilationDatabase | None = None
+    try:
+        db = cindex.CompilationDatabase.fromDirectory(str(DEFAULT_COMPILE_COMMANDS_DIR))
+    except Exception:
+        db = None
+
+    index = cindex.Index.create()
+
+    for cpp_path in sorted(src_root.rglob("*.cpp")):
+        args = _compile_args_for_file(db, cpp_path)
+        try:
+            tu = index.parse(str(cpp_path), args=args)
+        except cindex.TranslationUnitLoadError:
+            continue
+
+        resolved_cpp = _resolve(str(cpp_path))
+        seen: set[tuple[str, int]] = set()
+
+        for cursor in tu.cursor.walk_preorder():
+            try:
+                kind = cursor.kind
+            except ValueError:
+                continue
+
+            if kind != cindex.CursorKind.FUNCTION_DECL:
+                continue
+            if not cursor.is_definition():
+                continue
+
+            loc = cursor.location
+            if loc is None or loc.file is None:
+                continue
+
+            if _resolve(loc.file.name) != resolved_cpp:
+                continue
+
+            if loc.line <= 0:
+                continue
+
+            key = (cursor.spelling, loc.line)
+            if key in seen:
+                continue
+            seen.add(key)
+
+            by_file[cpp_path].append(
+                FunctionDefinition(
+                    file_path=cpp_path,
+                    line_number=loc.line,
+                    name=cursor.spelling,
+                )
+            )
+
+        by_file[cpp_path].sort(key=lambda d: d.line_number)
+
+    return by_file
 
 
 @dataclass(frozen=True)
@@ -193,54 +244,17 @@ def parse_sym_files(sym_root: Path) -> dict[str, list[Symbol]]:
     return by_module
 
 
-def _next_function_name(lines: list[str], start_idx: int) -> str | None:
-    for i in range(start_idx + 1, len(lines)):
-        line = lines[i]
-        # Skip other labels while searching for the next function to allow
-        # stacking multiple AS_Labels claims for one function.
-        if "AS_Labels:" in line or "MON_Labels:" in line:
-            continue
-
-        func_name = _parse_function_definition_at(lines, i)
-        if func_name:
-            return func_name
+def _next_function_name(defs: list[FunctionDefinition], line_number: int) -> str | None:
+    for definition in defs:
+        if definition.line_number > line_number:
+            return definition.name
     return None
 
 
-def _prev_function_name(lines: list[str], start_idx: int) -> str | None:
-    """Search backward from start_idx to find the enclosing function definition.
-
-    Tracks brace depth to ensure we find the function that CONTAINS start_idx,
-    not a function defined before it.
-    """
-    brace_depth = 0
-
-    for i in range(start_idx, -1, -1):
-        line = lines[i]
-
-        # Count braces in this line (right to left, since we're going backward).
-        for ch in reversed(line):
-            if ch == "}":
-                brace_depth += 1
-            elif ch == "{":
-                if brace_depth > 0:
-                    brace_depth -= 1
-                else:
-                    # We've found an unmatched opening brace.
-                    # This might be the start of the function we're in.
-                    m = FUNC_DEF_RE.match(line)
-                    if m:
-                        func_name = m.group(1)
-                        if func_name not in {"if", "for", "while", "switch", "return"}:
-                            return func_name
-                    # Otherwise, keep searching backward, but now we know we're
-                    # in a different function's scope.
-
-        # If we've closed all braces at or before this line, we've exited the
-        # function scope entirely; stop searching.
-        if brace_depth > 0 and line.strip() and "{" not in line:
-            continue
-
+def _prev_function_name(defs: list[FunctionDefinition], line_number: int) -> str | None:
+    for definition in reversed(defs):
+        if definition.line_number <= line_number:
+            return definition.name
     return None
 
 
@@ -280,10 +294,13 @@ def _extract_label_tokens(label_comment: str) -> tuple[str, str | None]:
     return (_pick_claim_label(tokens, prefer_last=False), None)
 
 
-def scan_label_claims(src_root: Path) -> list[LabelRangeClaim]:
+def scan_label_claims(
+    src_root: Path, defs_by_file: dict[Path, list[FunctionDefinition]]
+) -> list[LabelRangeClaim]:
     claims: list[LabelRangeClaim] = []
     for cpp_path in sorted(src_root.rglob("*.cpp")):
         lines = cpp_path.read_text(encoding="utf-8", errors="replace").splitlines()
+        file_defs = defs_by_file.get(cpp_path, [])
         for idx, line in enumerate(lines):
             pos = line.find("AS_Labels:")
             if pos < 0:
@@ -297,10 +314,10 @@ def scan_label_claims(src_root: Path) -> list[LabelRangeClaim]:
                 continue
 
             # Try forward search first (annotation before function def).
-            function_name = _next_function_name(lines, idx)
+            function_name = _next_function_name(file_defs, idx + 1)
             # If not found, try backward search (annotation inside function body).
             if not function_name:
-                function_name = _prev_function_name(lines, idx)
+                function_name = _prev_function_name(file_defs, idx + 1)
             if not function_name:
                 continue
 
@@ -326,19 +343,10 @@ class FunctionDefinition:
 
 def scan_all_function_definitions(src_root: Path) -> list[FunctionDefinition]:
     """Scan all C++ files for function definitions (not just those with label claims)."""
+    defs_by_file = _collect_function_definitions_by_file(src_root)
     definitions: list[FunctionDefinition] = []
-    for cpp_path in sorted(src_root.rglob("*.cpp")):
-        lines = cpp_path.read_text(encoding="utf-8", errors="replace").splitlines()
-        for idx in range(len(lines)):
-            func_name = _parse_function_definition_at(lines, idx)
-            if func_name:
-                definitions.append(
-                    FunctionDefinition(
-                        file_path=cpp_path,
-                        line_number=idx + 1,
-                        name=func_name,
-                    )
-                )
+    for cpp_path in sorted(defs_by_file.keys()):
+        definitions.extend(defs_by_file[cpp_path])
     return definitions
 
 
@@ -615,8 +623,11 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     symbols_by_module = parse_sym_files(args.sym_root)
-    claims = scan_label_claims(args.src_root)
-    all_functions = scan_all_function_definitions(args.src_root)
+    defs_by_file = _collect_function_definitions_by_file(args.src_root)
+    claims = scan_label_claims(args.src_root, defs_by_file)
+    all_functions: list[FunctionDefinition] = []
+    for cpp_path in sorted(defs_by_file.keys()):
+        all_functions.extend(defs_by_file[cpp_path])
     implementations, resolutions = apply_claims(
         symbols_by_module, claims, all_functions
     )

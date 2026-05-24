@@ -30,7 +30,6 @@ This project is a clone of the original Applesoft BASIC interpreter, implemented
   - `core_tests.cpp`: Unit tests for the core components.
 
 - **tools/**: Contains utility scripts.
-  - `source_importer.py`: Script for importing and processing original assembly sources.
 
 - **CMakeLists.txt**: Configuration file for CMake.
 
