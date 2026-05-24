@@ -119,7 +119,7 @@ static void AS_NOT_();
 static void AS_FIND_HIGHEST_STRING();
 static void AS_CHECK_SIMPLE_VARIABLE();
 static void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset);
-void AS_CHECK_BUMP();
+static void AS_CHECK_BUMP();
 void AS_CHECK_EXIT();
 void AS_MOVE_HIGHEST_STRING_TO_TOP();
 void AS_PUTNEW();
@@ -479,7 +479,7 @@ static void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_CHECK_BUMP (inclusive) .. AS_CHECK_EXIT (exclusive)
 // Name normalization: none (assembler label AS_CHECK_BUMP kept verbatim).
-void AS_CHECK_BUMP() {
+static void AS_CHECK_BUMP() {
   write_AS_INDEX(
       static_cast<std::uint16_t>(read_AS_INDEX() + read_AS_DSCLEN()));
   AS_CHECK_EXIT();
