@@ -9,7 +9,6 @@ namespace applesoft::asm_port {
 namespace {
 using MonitorOutputRoutine = void (*)(std::uint8_t);
 constexpr std::uint16_t kMonitorCout1Vector = 0xfd62u;
-void MON_VIDOUT(std::uint8_t a);
 } // namespace
 static std::uint16_t computeTextRowBase(std::uint8_t row_zero_based) {
   const bool carryFromAS_Lsr = (row_zero_based & 0x01u) != 0u;
@@ -70,31 +69,9 @@ static void consumeKeyboardAS_Latch(std::uint8_t keycode) {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: MON_LFB78 (inclusive) .. MON_LFB97 (exclusive)
-// Name normalization: none (assembler label MON_LFB78 kept verbatim).
-static void MON_LFB78(std::uint8_t a) {
-  constexpr std::uint8_t kCarriageReturn = 0x8du;
-  constexpr std::uint8_t kCtrlS = 0x93u;
-  constexpr std::uint8_t kCtrlC = 0x83u;
-  if (a == kCarriageReturn) {
-    std::uint8_t keycode = ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD);
-    if ((keycode & 0x80u) != 0u && keycode == kCtrlS) {
-      consumeKeyboardAS_Latch(keycode);
-      do {
-        keycode = ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD);
-      } while ((keycode & 0x80u) == 0u);
-      if (keycode != kCtrlC)
-        consumeKeyboardAS_Latch(keycode);
-    }
-  }
-  MON_VIDOUT(a);
-}
-namespace {
-// Source:
-// SourceMaterial/Combo/asrom.lst
 // AS_Labels: MON_VIDOUT (inclusive) .. MON_ESC1 (exclusive)
 // Name normalization: none (assembler label MON_VIDOUT kept verbatim).
-void MON_VIDOUT(std::uint8_t a) {
+static void MON_VIDOUT(std::uint8_t a) {
   const std::uint8_t ch = static_cast<std::uint8_t>(a & 0x7fu);
   switch (ch) {
   case 0x07u:
@@ -126,7 +103,28 @@ void MON_VIDOUT(std::uint8_t a) {
     break;
   }
 }
-} // namespace
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_LFB78 (inclusive) .. MON_LFB97 (exclusive)
+// Name normalization: none (assembler label MON_LFB78 kept verbatim).
+static void MON_LFB78(std::uint8_t a) {
+  constexpr std::uint8_t kCarriageReturn = 0x8du;
+  constexpr std::uint8_t kCtrlS = 0x93u;
+  constexpr std::uint8_t kCtrlC = 0x83u;
+  if (a == kCarriageReturn) {
+    std::uint8_t keycode = ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD);
+    if ((keycode & 0x80u) != 0u && keycode == kCtrlS) {
+      consumeKeyboardAS_Latch(keycode);
+      do {
+        keycode = ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD);
+      } while ((keycode & 0x80u) == 0u);
+      if (keycode != kCtrlC)
+        consumeKeyboardAS_Latch(keycode);
+    }
+  }
+  MON_VIDOUT(a);
+}
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
