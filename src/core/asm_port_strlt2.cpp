@@ -121,7 +121,7 @@ static void AS_CHECK_SIMPLE_VARIABLE();
 static void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset);
 static void AS_CHECK_BUMP();
 static void AS_CHECK_EXIT();
-void AS_MOVE_HIGHEST_STRING_TO_TOP();
+static void AS_MOVE_HIGHEST_STRING_TO_TOP();
 void AS_PUTNEW();
 void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length);
 void AS_MOVSTR_1(std::uint8_t length);
@@ -504,7 +504,7 @@ static void AS_CHECK_EXIT() {
 // AS_Labels: AS_MOVE_HIGHEST_STRING_TO_TOP (inclusive) .. AS_CAT (exclusive)
 // Name normalization: none (assembler label AS_MOVE_HIGHEST_STRING_TO_TOP kept
 // verbatim).
-void AS_MOVE_HIGHEST_STRING_TO_TOP() {
+static void AS_MOVE_HIGHEST_STRING_TO_TOP() {
   const std::uint16_t descriptorAddress = read_AS_FNCNAM();
   if (ApplesoftVariables::highByte(descriptorAddress) == 0u) {
     AS_CHECK_EXIT();
