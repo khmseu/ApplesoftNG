@@ -117,7 +117,7 @@ static std::uint16_t AS_GETSPA(std::uint8_t length);
 static void AS_FRM_VARIABLE();
 static void AS_NOT_();
 static void AS_FIND_HIGHEST_STRING();
-void AS_CHECK_SIMPLE_VARIABLE();
+static void AS_CHECK_SIMPLE_VARIABLE();
 void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset);
 void AS_CHECK_BUMP();
 void AS_CHECK_EXIT();
@@ -423,7 +423,7 @@ static void AS_FIND_HIGHEST_STRING() {
 // AS_Labels: AS_CHECK_SIMPLE_VARIABLE (inclusive) .. AS_CHECK_VARIABLE
 // (exclusive) Name normalization: none (assembler label
 // AS_CHECK_SIMPLE_VARIABLE kept verbatim).
-void AS_CHECK_SIMPLE_VARIABLE() {
+static void AS_CHECK_SIMPLE_VARIABLE() {
   const auto descriptor = variables_const().pointer(read_AS_INDEX());
   const std::uint8_t firstChar = descriptor.read(0u);
   if ((firstChar & 0x80u) != 0u) {
