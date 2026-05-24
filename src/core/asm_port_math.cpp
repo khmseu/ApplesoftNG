@@ -25,7 +25,6 @@ void AS_NORMALIZE_FAC_2();
 void AS_NORMALIZE_FAC_4(std::uint8_t shiftCount);
 static void AS_NORMALIZE_FAC_5(bool carry = false);
 static void AS_NORMALIZE_FAC_6();
-void AS_ZERO_FAC();
 void AS_ROUND_FAC();
 void AS_COPY_FAC_TO_ARG_ROUNDED();
 void AS_FLOAT();
