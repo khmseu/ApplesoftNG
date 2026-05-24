@@ -118,7 +118,7 @@ static void AS_FRM_VARIABLE();
 static void AS_NOT_();
 static void AS_FIND_HIGHEST_STRING();
 static void AS_CHECK_SIMPLE_VARIABLE();
-void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset);
+static void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset);
 void AS_CHECK_BUMP();
 void AS_CHECK_EXIT();
 void AS_MOVE_HIGHEST_STRING_TO_TOP();
@@ -444,7 +444,7 @@ static void AS_CHECK_SIMPLE_VARIABLE() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_CHECK_VARIABLE (inclusive) .. AS_CHECK_BUMP (exclusive)
 // Name normalization: none (assembler label AS_CHECK_VARIABLE kept verbatim).
-void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset) {
+static void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset) {
   const std::uint16_t descriptorAddress = read_AS_INDEX();
   const auto descriptor = variables_const().pointer(descriptorAddress);
   const std::uint8_t length = descriptor.read(descriptorOffset);
