@@ -187,7 +187,7 @@ void AS_LINPRT() { PrintDecimalUnsigned(variables_const().AS_CURLIN); }
 // AS_Labels: AS_INPRT (inclusive) .. AS_GO_STROUT (exclusive)
 // Name normalization: none (assembler label AS_INPRT kept verbatim).
 void AS_INPRT() {
-  const std::string_view prefix = AS_QT_ERROR(AS_QT_IN_INDEX);
+  const std::string_view prefix = AS_QT_ERROR(AS_QT_ERROR_ptr(AS_QT_IN_INDEX));
   for (const char ch : prefix) {
     AS_OUTDO(static_cast<std::uint8_t>(ch));
   }

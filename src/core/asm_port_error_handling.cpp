@@ -49,8 +49,8 @@ std::uint8_t AS_MEMERR() {
 // verbatim).
 void AS_PRINT_ERROR_LINNUM() {
   // AS_QT_ERROR(0) is " AS_ERROR" + BELL
-  AS_PRINT_ERROR_LINNUM(
-      std::string_view(AS_QT_ERROR(0))); // Use index 0 for " AS_ERROR"
+  AS_PRINT_ERROR_LINNUM(AS_QT_ERROR(
+      AS_QT_ERROR_ptr(AS_QT_ERROR_INDEX))); // Use index 0 for " AS_ERROR"
 }
 
 void AS_PRINT_ERROR_LINNUM(std::string_view prefix) {

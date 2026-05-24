@@ -347,7 +347,7 @@ void AS_END2_impl(bool shouldPrintBreak) {
 // AS_Labels: AS_END4 (inclusive) .. AS_CONT (exclusive)
 void AS_END4_impl(bool shouldPrintBreak) {
   if (shouldPrintBreak) {
-    AS_PRINT_ERROR_LINNUM(AS_QT_ERROR(AS_QT_BREAK_INDEX));
+    AS_PRINT_ERROR_LINNUM(AS_QT_ERROR(AS_QT_ERROR_ptr(AS_QT_BREAK_INDEX)));
     return;
   }
 
