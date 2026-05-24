@@ -15,7 +15,7 @@
 
 namespace applesoft::asm_port {
 
-void AS_GOIQ();
+static void AS_GOIQ();
 
 namespace {
 
@@ -756,7 +756,7 @@ void AS_ASC() {
 // Name normalization: none (assembler label AS_GOIQ kept verbatim).
 //
 // Illegal quantity error trampoline used by AS_ASC and numeric checks.
-void AS_GOIQ() { AS_IQERR(); }
+static void AS_GOIQ() { AS_IQERR(); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
