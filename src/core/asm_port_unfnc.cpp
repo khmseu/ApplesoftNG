@@ -9,11 +9,14 @@
 
 #include "core/asm_port_unfnc.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_chrget.hpp"
 #include "core/asm_port_core.hpp"
-#include "core/asm_port_error.hpp"
+#include "core/asm_port_error_handling.hpp"
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_math.hpp"
+#include "core/asm_port_mathtbl.hpp"
 #include "core/asm_port_parser.hpp"
+#include "core/asm_port_statements.hpp"
 #include "core/asm_port_strlit.hpp"
 #include "core/asm_port_strlt2.hpp"
 #include "core/jump_table.hpp"
@@ -24,6 +27,8 @@ namespace applesoft::asm_port {
 
 static void AS_L_VAL_1();
 static void AS_L_VAL_2();
+
+namespace {
 
 static double facToDouble() {
   const auto &cv = variables_const();
@@ -90,63 +95,52 @@ static void doubleToFac(double value) {
   vars.AS_FAC_EXTENSION = 0u;
 }
 
-static double readPackedFloat(std::uint16_t address) {
-  const auto packed = variables_const().pointer(address);
-  const std::uint8_t exponent = packed.read(0u);
-  if (exponent == 0u) {
-    return 0.0;
-  }
+constexpr std::size_t kMathMulIdx = 2u;
+constexpr std::size_t kMathPowIdx = 4u;
+constexpr std::uint16_t kAsConHalfAddress = 0xee64u;
+constexpr std::uint16_t kAsConRnd1Address = 0xefa6u;
+constexpr std::uint16_t kAsConRnd2Address = 0xefaau;
 
-  const std::uint8_t packedHigh = packed.read(1u);
-  const std::uint32_t mantissa =
-      (static_cast<std::uint32_t>(packedHigh | 0x80u) << 24u) |
-      (static_cast<std::uint32_t>(packed.read(2u)) << 16u) |
-      (static_cast<std::uint32_t>(packed.read(3u)) << 8u) |
-      static_cast<std::uint32_t>(packed.read(4u));
-  const double fraction = static_cast<double>(mantissa) / 4294967296.0;
-  const double value = std::ldexp(fraction, static_cast<int>(exponent) - 128);
-  return ((packedHigh & 0x80u) != 0u) ? -value : value;
+static void loadArgFromPacked(std::uint16_t address) {
+  const auto source = variables_const().pointer(address);
+  const std::uint8_t signPackedMantissa = source.read(1u);
+
+  auto &vars = variables();
+  vars.AS_ARG[0] = source.read(0u);
+  vars.AS_ARG[1] = static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
+  vars.AS_ARG[2] = source.read(2u);
+  vars.AS_ARG[3] = source.read(3u);
+  vars.AS_ARG[4] = source.read(4u);
+  vars.AS_ARG[5] = signPackedMantissa;
 }
 
-static void writePackedFloat(std::uint16_t address, double value) {
-  auto packed = variables().pointer(address);
+static void loadFacFromPacked(std::uint16_t address) {
+  const auto source = variables_const().pointer(address);
+  const std::uint8_t signPackedMantissa = source.read(1u);
 
-  if (value == 0.0) {
-    for (std::uint8_t i = 0u; i < 5u; ++i) {
-      packed.write(0u, i);
-    }
-    return;
-  }
-
-  const bool negative = std::signbit(value);
-  value = std::fabs(value);
-
-  int exponent2 = 0;
-  const double fraction = std::frexp(value, &exponent2);
-  std::uint8_t exponent8 =
-      static_cast<std::uint8_t>(static_cast<int>(exponent2) + 128);
-
-  std::uint64_t mantissa = static_cast<std::uint64_t>(std::ldexp(fraction, 32));
-  if (mantissa >= 0x1'0000'0000ull) {
-    mantissa >>= 1u;
-    ++exponent8;
-  }
-
-  if (exponent8 == 0u) {
-    for (std::uint8_t i = 0u; i < 5u; ++i) {
-      packed.write(0u, i);
-    }
-    return;
-  }
-
-  packed.write(exponent8, 0u);
-  packed.write(static_cast<std::uint8_t>(
-                   ((negative ? 0x80u : 0x00u) | ((mantissa >> 24u) & 0x7fu))),
-               1u);
-  packed.write(static_cast<std::uint8_t>((mantissa >> 16u) & 0xffu), 2u);
-  packed.write(static_cast<std::uint8_t>((mantissa >> 8u) & 0xffu), 3u);
-  packed.write(static_cast<std::uint8_t>(mantissa & 0xffu), 4u);
+  auto &vars = variables();
+  vars.AS_FAC[0] = source.read(0u);
+  vars.AS_FAC[1] = static_cast<std::uint8_t>(signPackedMantissa | 0x80u);
+  vars.AS_FAC[2] = source.read(2u);
+  vars.AS_FAC[3] = source.read(3u);
+  vars.AS_FAC[4] = source.read(4u);
+  vars.AS_FAC_SIGN = signPackedMantissa;
+  vars.AS_FAC_EXTENSION = 0u;
 }
+
+static void storeFacToPackedRounded(std::uint16_t address) {
+  variables().AS_VARPNT = address;
+  AS_STORE_FACDB_YX_ROUNDED();
+}
+
+static std::int8_t AS_SIGN_FAC() {
+  if (variables_const().AS_FAC[0] == 0u) {
+    return 0;
+  }
+  return ((variables_const().AS_FAC_SIGN & 0x80u) != 0u) ? -1 : 1;
+}
+
+} // namespace
 
 static void write_AS_DEST(std::uint16_t value) { variables().AS_DEST = value; }
 
@@ -305,14 +299,9 @@ void AS_POS() { AS_SNGFLT(variables_const().MON_CH); }
 // AS_Labels: AS_SQR (inclusive) .. AS_RND (exclusive)
 // Name normalization: none (assembler label AS_SQR kept verbatim).
 void AS_SQR() {
-
-  const double input = facToDouble();
-  if (input < 0.0) {
-    AS_ERROR(AS_ERR_ILLQTY);
-    return;
-  }
-
-  doubleToFac(std::sqrt(input));
+  AS_COPY_FAC_TO_ARG_ROUNDED();
+  loadFacFromPacked(kAsConHalfAddress);
+  AS_MATHTBL(kMathPowIdx).handler();
 }
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -324,31 +313,31 @@ void AS_SQR() {
 // reseeds the generator from the argument value; positive arguments advance
 // the sequence.
 void AS_RND() {
-
   constexpr std::uint16_t kRndSeedAddress = ApplesoftVariables::ZP_AS_RNDSEED;
 
-  const double argument = facToDouble();
-  double seed = readPackedFloat(kRndSeedAddress);
+  const std::int8_t argumentSign = AS_SIGN_FAC();
 
-  if (argument < 0.0) {
-    seed = std::fmod(std::fabs(argument), 1.0);
-    if (seed == 0.0) {
-      seed = 0.5;
+  if (argumentSign >= 0) {
+    loadFacFromPacked(kRndSeedAddress);
+    if (argumentSign == 0) {
+      return;
     }
-  } else if (argument == 0.0) {
-    doubleToFac(seed);
-    return;
-  } else {
-    std::uint64_t state =
-        static_cast<std::uint64_t>(std::ldexp(seed == 0.0 ? 0.5 : seed, 32));
-    state = static_cast<std::uint64_t>(state * 1664525u + 1013904223u);
-    seed =
-        static_cast<double>(static_cast<std::uint32_t>(state & 0xffff'ffffu)) /
-        4294967296.0;
+
+    loadArgFromPacked(kAsConRnd1Address);
+    AS_MATHTBL(kMathMulIdx).handler();
+    loadArgFromPacked(kAsConRnd2Address);
+    AS_FADDT();
   }
 
-  writePackedFloat(kRndSeedAddress, seed);
-  doubleToFac(seed);
+  const std::uint8_t originalLowMantissa = variables_const().AS_FAC[4];
+  variables().AS_FAC[4] = variables_const().AS_FAC[1];
+  variables().AS_FAC[1] = originalLowMantissa;
+
+  variables().AS_FAC_SIGN = 0u;
+  variables().AS_FAC_EXTENSION = variables_const().AS_FAC[0];
+  variables().AS_FAC[0] = 0x80u;
+  AS_NORMALIZE_FAC_2();
+  storeFacToPackedRounded(kRndSeedAddress);
 }
 // Source:
 // SourceMaterial/Combo/asrom.lst
