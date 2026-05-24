@@ -1,11 +1,17 @@
-// Source:
-// SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_CON_ONE (inclusive) .. AS_LOG (exclusive)
-// Name normalization: none
-
 #include "core/asm_port_rom_constants.hpp"
 
 namespace {
+
+constexpr std::uint8_t kMON_TITLE[] = {
+    static_cast<std::uint8_t>('A' | 0x80u),
+    static_cast<std::uint8_t>('P' | 0x80u),
+    static_cast<std::uint8_t>('P' | 0x80u),
+    static_cast<std::uint8_t>('L' | 0x80u),
+    static_cast<std::uint8_t>('E' | 0x80u),
+    static_cast<std::uint8_t>(' ' | 0x80u),
+    static_cast<std::uint8_t>(']' | 0x80u),
+    static_cast<std::uint8_t>('[' | 0x80u),
+};
 
 constexpr std::uint8_t kAS_CON_ONE[] = {0x81u, 0x00u, 0x00u, 0x00u, 0x00u};
 constexpr std::uint8_t kAS_POLY_LOG[] = {
@@ -48,78 +54,142 @@ constexpr std::uint8_t kAS_POLY_ATN[] = {
 
 namespace applesoft::asm_port {
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: MON_TITLE (inclusive) .. MON_XLTBL (exclusive)
+ApplesoftDualPointer<const std::uint8_t> MON_TITLE() {
+  return ApplesoftDualPointer<const std::uint8_t>::native(kMON_TITLE);
+}
+
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_ONE (inclusive) .. AS_POLY_LOG (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_ONE() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_ONE);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_POLY_LOG (inclusive) .. AS_CON_SQR_HALF (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_POLY_LOG() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_POLY_LOG);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_SQR_HALF (inclusive) .. AS_CON_SQR_TWO (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_SQR_HALF() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_SQR_HALF);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_SQR_TWO (inclusive) .. AS_CON_NEG_HALF (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_SQR_TWO() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_SQR_TWO);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_NEG_HALF (inclusive) .. AS_CON_LOG_TWO (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_NEG_HALF() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_NEG_HALF);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_LOG_TWO (inclusive) .. AS_LOG (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_LOG_TWO() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_LOG_TWO);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_99999999P9 (inclusive) .. AS_CON_999999999 (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_99999999P9() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_99999999P9);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_999999999 (inclusive) .. AS_CON_BILLION (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_999999999() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_999999999);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_BILLION (inclusive) .. AS_INPRT (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_BILLION() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_BILLION);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_HALF (inclusive) .. AS_DECTBL (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_HALF() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_HALF);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_LOG_E (inclusive) .. AS_POLY_EXP (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_LOG_E() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_LOG_E);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_POLY_EXP (inclusive) .. AS_EXP (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_POLY_EXP() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_POLY_EXP);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_RND_1 (inclusive) .. AS_CON_RND_2 (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_RND_1() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_RND_1);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_RND_2 (inclusive) .. AS_RND (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_RND_2() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_RND_2);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_PI_HALF (inclusive) .. AS_CON_PI_DOUB (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_PI_HALF() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_PI_HALF);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_CON_PI_DOUB (inclusive) .. AS_QUARTER (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_CON_PI_DOUB() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_CON_PI_DOUB);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_QUARTER (inclusive) .. AS_POLY_SIN (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_QUARTER() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_QUARTER);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_POLY_SIN (inclusive) .. AS_ATN (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_POLY_SIN() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_POLY_SIN);
 }
 
+// Source:
+// SourceMaterial/Combo/asrom.lst
+// AS_Labels: AS_POLY_ATN (inclusive) .. AS_GENERIC_CHRGET (exclusive)
 ApplesoftDualPointer<const std::uint8_t> AS_POLY_ATN() {
   return ApplesoftDualPointer<const std::uint8_t>::native(kAS_POLY_ATN);
 }

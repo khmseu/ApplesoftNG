@@ -6,6 +6,8 @@
 
 namespace applesoft::asm_port {
 
+ApplesoftDualPointer<const std::uint8_t> MON_TITLE();
+
 ApplesoftDualPointer<const std::uint8_t> AS_CON_ONE();
 ApplesoftDualPointer<const std::uint8_t> AS_POLY_LOG();
 ApplesoftDualPointer<const std::uint8_t> AS_CON_SQR_HALF();

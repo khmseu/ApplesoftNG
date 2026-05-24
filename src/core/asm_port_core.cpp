@@ -11,6 +11,7 @@
 #include "core/asm_port_parser.hpp"
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_reason.hpp"
+#include "core/asm_port_rom_constants.hpp"
 #include "core/asm_port_stack.hpp"
 #include "core/asm_port_statements.hpp"
 #include "core/asm_port_strlt2.hpp"
@@ -139,36 +140,30 @@ void MON_BELL_impl() {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: AS_LFB60 (inclusive) .. AS_LFB78 (exclusive)
-// Name normalization: AS_LFB60 -> MON_APPLEII (monitor label gets MON_ prefix).
+// AS_Labels: MON_APPLEII (inclusive) .. MON_STITLE (exclusive)
+// AS_Labels: MON_STITLE (inclusive) .. MON_VIDWAIT (exclusive)
+// Name normalization: none (assembler labels are valid C++ identifiers).
 //
-// Clears the monitor text window, then writes the 9-byte "<APPLE ]["
-// banner to screen memory at $040E..$0416.
+// Clears the monitor text window, then writes the 8-byte "APPLE ]["
+// banner to screen memory at $040F..$0416. The historical window also contains
+// post-RTS bytes at $FB6F..$FB77; these are modeled as non-entry helper logic
+// and intentionally not executed on the MON_APPLEII entry path.
 void MON_APPLEII() {
-
-  static constexpr std::array<std::uint8_t, 9> kAS_LFB08 = {
-      0x3cu,
-      static_cast<std::uint8_t>('A' | 0x80u),
-      static_cast<std::uint8_t>('P' | 0x80u),
-      static_cast<std::uint8_t>('P' | 0x80u),
-      static_cast<std::uint8_t>('L' | 0x80u),
-      static_cast<std::uint8_t>('E' | 0x80u),
-      static_cast<std::uint8_t>(' ' | 0x80u),
-      static_cast<std::uint8_t>(']' | 0x80u),
-      static_cast<std::uint8_t>('[' | 0x80u),
-  };
   constexpr std::uint16_t kBannerAddress = 0x040eu;
+  const std::uint8_t *title = MON_TITLE().nativePointer();
 
   MON_HOME();
 
-  for (std::uint8_t y = 8u;; --y) {
-    // AS_LFB65 copies the banner bytes in descending index order.
+  for (std::uint8_t y = 8u; y != 0u; --y) {
+    // MON_STITLE uses "lda MON_TITLE-1,Y", so title index is y-1.
     variables().writeByte(static_cast<std::uint16_t>(kBannerAddress + y),
-                          kAS_LFB08[y]);
-    if (y == 0u) {
-      break;
-    }
+                          title[y - 1u]);
   }
+
+  [[maybe_unused]] const auto MON_APPLEII_post_rts_bytes = [] {
+    const std::uint8_t value = variables_const().readByte(0x03f3u);
+    variables().writeByte(0x03f4u, static_cast<std::uint8_t>(value ^ 0xa5u));
+  };
 }
 
 // Source:
