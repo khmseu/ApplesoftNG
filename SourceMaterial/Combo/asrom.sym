@@ -47,7 +47,7 @@ MON_H2, 0x002c, 0, 0x0000
 MON_V2, 0x002d, 0, 0x0000
     asrom.s 6521 6538 7772 7781 8025 8028
 MON_MASK, 0x002e, 0, 0x0000
-    asrom.s 7754 7757 7980 8042 8055 9921 9930 9931 9936
+    asrom.s 7754 7757 7980 8042 8055 9923 9932 9933 9938
 MON_HMASK, 0x0030, 0, 0x0000
     asrom.s 6913 6929 6945 6949 6955 6972 6994 6999 7010 7187 7255
 MON_COLOR, 0x0030, 0, 0x0000
@@ -355,7 +355,7 @@ AS_XDRAW, 0xf76f, 0, 0x0000
 AS_HTAB, 0xf7e7, 0, 0x0000
     asrom.s 275
 MON_HOME, 0xfc58, 0, 0x0000
-    asrom.s 276 8857 9112
+    asrom.s 276 8859 9114
 AS_ROT, 0xf721, 0, 0x0000
     asrom.s 277
 AS_SCALE, 0xf727, 0, 0x0000
@@ -673,7 +673,7 @@ AS_L_INLIN2_2, 0xd541, 0, 0x0000
 AS_INCHR, 0xd553, 0, 0x0000
     asrom.s 2018
 MON_RDKEY, 0xfd0c, 0, 0x0000
-    asrom.s 9492 9497 1529 2652 8886
+    asrom.s 9494 9499 1529 2652 8888
 AS_PARSE, 0xd56c, 0, 0x0000
     asrom.s 1552 1541
 AS_NEWSTT, 0xd7d2, 0, 0x0000
@@ -841,11 +841,11 @@ AS_L_CONT_1, 0xd8a1, 0, 0x0000
 AS_VARTIO, 0xd8f0, 0, 0x0000
     asrom.s 7600 2079 2087
 MON_WRITE, 0xfecd, 0, 0x0000
-    asrom.s 10091 2080 2082 6815 6817
+    asrom.s 10093 2080 2082 6815 6817
 AS_PROGIO, 0xd901, 0, 0x0000
     asrom.s 2081 2098
 MON_READ, 0xfefd, 0, 0x0000
-    asrom.s 10093 2088 2099 6822 6832 7541
+    asrom.s 10095 2088 2099 6822 6832 7541
 AS_L_LOAD_1, 0xd8ed, 0, 0x0000
     asrom.s 2101
 AS_L_RUN_1, 0xd91b, 0, 0x0000
@@ -971,9 +971,9 @@ AS_L_STRPRT_1, 0xdb44, 0, 0x0000
 AS_L_OUTDO_1, 0xdb64, 0, 0x0000
     asrom.s 2539
 MON_COUT, 0xfded, 0, 0x0000
-    asrom.s 9798 9800 9804 9939 9941 9942 9945 2541 8034 8045 8048 8074 8398 8402 8404 9512 9528 9532 9678 9685 9702 9719 9736
+    asrom.s 9800 9802 9806 9941 9943 9944 9947 2541 8034 8045 8048 8074 8398 8402 8404 9514 9530 9534 9680 9687 9704 9721 9738
 MON_WAIT, 0xfca8, 0, 0x0000
-    asrom.s 2545 9058 9061
+    asrom.s 2545 9060 9063
 AS_INPUTERR, 0xdb71, 0, 0x0000
     asrom.s 2711
 AS_RESPERR, 0xdb87, 0, 0x0000
@@ -1215,6 +1215,7 @@ AS_BADNAM, 0xdff4, 0, 0x0000
 AS_PTRGET4, 0xe007, 0, 0x0000
     asrom.s 3352
 AS_BASIC, 0xe000, 0, 0x0000
+    asrom.s 8418
 AS_COLD_START, 0xf128, 0, 0x0000
     asrom.s 6372 6373 3356
 AS_BASIC2, 0xe003, 0, 0x0000
@@ -2072,7 +2073,7 @@ AS_L_SHLOAD_2, 0xf7a0, 0, 0x0000
 AS_L_SHLOAD_3, 0xf7a3, 0, 0x0000
     asrom.s 7558
 MON_RD2BIT, 0xfcfa, 0, 0x0000
-    asrom.s 9918 9922 7569 9343
+    asrom.s 9920 9924 7569 9345
 MON_READ2, 0xff02, 0, 0x0000
     asrom.s 7571
 AS_L_HTAB_1, 0xf7ec, 0, 0x0000
@@ -2097,7 +2098,7 @@ MON_CLRSCR, 0xf832, 0, 0x0000
 MON_CLRSC2, 0xf838, 0, 0x0000
     asrom.s 7779
 MON_CLRTOP, 0xf836, 0, 0x0000
-    asrom.s 8721
+    asrom.s 8723
 MON_CLRSC3, 0xf83c, 0, 0x0000
     asrom.s 7788
 MON_GBCALC, 0xf856, 0, 0x0000
@@ -2131,11 +2132,11 @@ MON_MNNDX1, 0xf8be, 0, 0x0000
 MON_MNNDX2, 0xf8c2, 0, 0x0000
     asrom.s 7996
 MON_INSTDSP, 0xf8d0, 0, 0x0000
-    asrom.s 9812
+    asrom.s 9814
 MON_PRNTOP, 0xf8d4, 0, 0x0000
     asrom.s 8016
 MON_PRBYTE, 0xfdda, 0, 0x0000
-    asrom.s 9796 9802 8011 8054 8066 8068 8406 9704
+    asrom.s 9798 9804 8011 8054 8066 8068 8406 9706
 MON_PRNTBL, 0xf8db, 0, 0x0000
     asrom.s 8019
 MON_PRBL2, 0xf94a, 0, 0x0000
@@ -2166,356 +2167,359 @@ MON_RELADR, 0xf938, 0, 0x0000
 MON_PCADJ3, 0xf956, 0, 0x0000
     asrom.s 8059
 MON_PRNTYX, 0xf940, 0, 0x0000
-    asrom.s 9682 8062
+    asrom.s 9684 8062
 MON_PRNTAX, 0xf941, 0, 0x0000
 MON_PRNTX, 0xf944, 0, 0x0000
 MON_PRBL3, 0xf94c, 0, 0x0000
 MON_PCADJ, 0xf953, 0, 0x0000
-    asrom.s 9813
+    asrom.s 9815
 MON_PCADJ2, 0xf954, 0, 0x0000
 MON_PCADJ4, 0xf95c, 0, 0x0000
     asrom.s 8085
 MON_RTS2, 0xf961, 0, 0x0000
     asrom.s 8088
 MON_IRQ, 0xfa40, 0, 0x0000
-    asrom.s 10211
+    asrom.s 10213
 MON_BREAK, 0xfa4c, 0, 0x0000
     asrom.s 8318
 MON_SAV1, 0xff4c, 0, 0x0000
     asrom.s 8322
 MON_OLDBRK, 0xfa59, 0, 0x0000
+    asrom.s 8417
 MON_RGDSP1, 0xfada, 0, 0x0000
     asrom.s 8329
 MON_MON, 0xff65, 0, 0x0000
-    asrom.s 9988 8330
+    asrom.s 9990 8330
 MON_RESET2, 0xfa62, 0, 0x0000
-    asrom.s 10209
+    asrom.s 10211
 MON_SETNORM, 0xfe84, 0, 0x0000
-    asrom.s 9974 10088 8333
+    asrom.s 9976 10090 8333
 MON_INIT, 0xfb2f, 0, 0x0000
-    asrom.s 9975 8334
+    asrom.s 9977 8334
 MON_SETVID, 0xfe93, 0, 0x0000
-    asrom.s 9976 8335
+    asrom.s 9978 8335
 MON_SETKBD, 0xfe89, 0, 0x0000
-    asrom.s 9977 8336
+    asrom.s 9979 8336
 MON_BELL, 0xff3a, 0, 0x0000
-    asrom.s 9979 8344 9523 9899 9937
-MON_LFAA6, 0xfaa6, 0, 0x0000
+    asrom.s 9981 8344 9525 9901 9939
+MON_PWRUP, 0xfaa6, 0, 0x0000
     asrom.s 8348
-MON_LFAA3, 0xfaa3, 0, 0x0000
+MON_NOFIX, 0xfaa3, 0, 0x0000
     asrom.s 8350 8353
-MON_LFA9B, 0xfa9b, 0, 0x0000
+MON_FIXSEV, 0xfa9b, 0, 0x0000
     asrom.s 8372
-MON_LFB60, 0xfb60, 0, 0x0000
+MON_APPLEII, 0xfb60, 0, 0x0000
     asrom.s 8359
-MON_LFAAB, 0xfaab, 0, 0x0000
+MON_SETPLP, 0xfaab, 0, 0x0000
     asrom.s 8364
-MON_LFAFC, 0xfafc, 0, 0x0000
+MON_PWRCON, 0xfafd, 0, 0x0000
     asrom.s 8361
-MON_LFABA, 0xfaba, 0, 0x0000
+MON_SLOOP, 0xfaba, 0, 0x0000
     asrom.s 8376
-MON_LFAC7, 0xfac7, 0, 0x0000
+MON_NXTBYT, 0xfac7, 0, 0x0000
     asrom.s 8379
-MON_LFB01, 0xfb01, 0, 0x0000
+MON_DISKID, 0xfb02, 0, 0x0000
     asrom.s 8375
 MON_REGDSP, 0xfad7, 0, 0x0000
-    asrom.s 9867
+    asrom.s 9869
 MON_CROUT, 0xfd8e, 0, 0x0000
-    asrom.s 9681 8391 9529
+    asrom.s 9683 8391 9531
 MON_RDSP1, 0xfae4, 0, 0x0000
     asrom.s 8408
 MON_RTBL, 0xfb19, 0, 0x0000
     asrom.s 8399
-MON_LFB08, 0xfb08, 0, 0x0000
-    asrom.s 8859
+MON_TITLE, 0xfb09, 0, 0x0000
+    asrom.s 8861
+MON_XLTBL, 0xfb11, 0, 0x0000
+    asrom.s 8886
 MON_PADDL0, 0xc064, 0, 0x0000
-    asrom.s 8572
+    asrom.s 8574
 MON_PTRIG, 0xc070, 0, 0x0000
-    asrom.s 8568
+    asrom.s 8570
 MON_PREAD2, 0xfb25, 0, 0x0000
-    asrom.s 8575
+    asrom.s 8577
 MON_RTS2D, 0xfb2e, 0, 0x0000
-    asrom.s 8573
+    asrom.s 8575
 MON_TXTCLR, 0xc050, 0, 0x0000
-    asrom.s 8719
+    asrom.s 8721
 MON_TXTSET, 0xc051, 0, 0x0000
-    asrom.s 8715
-MON_MIXSET, 0xc053, 0, 0x0000
-    asrom.s 8720
-MON_LOWSCR, 0xc054, 0, 0x0000
-    asrom.s 8711
-MON_LORES, 0xc056, 0, 0x0000
-    asrom.s 8710
-MON_TEXTBOTTOMLINES, 0x0004, 0, 0x0000
-    asrom.s 8722
-MON_SETWND, 0xfb4b, 0, 0x0000
     asrom.s 8717
+MON_MIXSET, 0xc053, 0, 0x0000
+    asrom.s 8722
+MON_LOWSCR, 0xc054, 0, 0x0000
+    asrom.s 8713
+MON_LORES, 0xc056, 0, 0x0000
+    asrom.s 8712
+MON_TEXTBOTTOMLINES, 0x0004, 0, 0x0000
+    asrom.s 8724
+MON_SETWND, 0xfb4b, 0, 0x0000
+    asrom.s 8719
 MON_VTAB, 0xfc22, 0, 0x0000
-    asrom.s 9133 9175 8735
-MON_LFB65, 0xfb65, 0, 0x0000
-    asrom.s 8862
-MON_LFB78, 0xfb78, 0, 0x0000
-    asrom.s 9748
-MON_LFB94, 0xfb94, 0, 0x0000
-    asrom.s 8869 8871 8873 8878
-MON_LFB88, 0xfb88, 0, 0x0000
-    asrom.s 8876
+    asrom.s 9135 9177 8737
+MON_STITLE, 0xfb65, 0, 0x0000
+    asrom.s 8864
+MON_VIDWAIT, 0xfb78, 0, 0x0000
+    asrom.s 9750
+MON_NOWAIT, 0xfb94, 0, 0x0000
+    asrom.s 8871 8873 8875 8880
+MON_KBDWAIT, 0xfb88, 0, 0x0000
+    asrom.s 8878
 MON_VIDOUT, 0xfbfd, 0, 0x0000
-    asrom.s 8880
-MON_LFB97, 0xfb97, 0, 0x0000
-    asrom.s 8885 8888 8890 8892
-MON_ESC1, 0xfc2c, 0, 0x0000
     asrom.s 8882
-MON_LFB9B, 0xfb9b, 0, 0x0000
-    asrom.s 8893
-MON_LFBA5, 0xfba5, 0, 0x0000
-    asrom.s 9494
+MON_ESCOLD, 0xfb97, 0, 0x0000
+    asrom.s 8887 8890 8892 8894
+MON_ESC1, 0xfc2c, 0, 0x0000
+    asrom.s 8884
+MON_ESCNOW, 0xfb9b, 0, 0x0000
+    asrom.s 8895
+MON_ESCNEW, 0xfba5, 0, 0x0000
+    asrom.s 9496
 MON_ASCBEL, 0x0087, 0, 0x0000
-    asrom.s 9055
+    asrom.s 9057
 MON_ASCBS, 0x0088, 0, 0x0000
-    asrom.s 9087
+    asrom.s 9089
 MON_SPKR, 0xc030, 0, 0x0000
-    asrom.s 9062
-MON_BASCALC, 0xfbc1, 0, 0x0000
-    asrom.s 9101
-MON_BSCLC2, 0xfbd0, 0, 0x0000
-    asrom.s 9044
-MON_BELL1, 0xfbd9, 0, 0x0000
-    asrom.s 9088
-MON_RTS2B, 0xfbef, 0, 0x0000
-    asrom.s 9056
-MON_BELL2, 0xfbe4, 0, 0x0000
     asrom.s 9064
+MON_BASCALC, 0xfbc1, 0, 0x0000
+    asrom.s 9103
+MON_BSCLC2, 0xfbd0, 0, 0x0000
+    asrom.s 9046
+MON_BELL1, 0xfbd9, 0, 0x0000
+    asrom.s 9090
+MON_RTS2B, 0xfbef, 0, 0x0000
+    asrom.s 9058
+MON_BELL2, 0xfbe4, 0, 0x0000
+    asrom.s 9066
 MON_STOADV, 0xfbf0, 0, 0x0000
-    asrom.s 9078 9081
+    asrom.s 9080 9083
 MON_ADVANCE, 0xfbf4, 0, 0x0000
-    asrom.s 9114
+    asrom.s 9116
 MON_CR, 0xfc62, 0, 0x0000
-    asrom.s 9074 9084
+    asrom.s 9076 9086
 MON_RTS3, 0xfbfc, 0, 0x0000
-    asrom.s 9091
+    asrom.s 9093
 MON_LF, 0xfc66, 0, 0x0000
-    asrom.s 9086 9117
+    asrom.s 9088 9119
 MON_BS, 0xfc10, 0, 0x0000
-    asrom.s 9115
+    asrom.s 9117
 MON_UP, 0xfc1a, 0, 0x0000
-    asrom.s 9118
+    asrom.s 9120
 MON_RTS4, 0xfc2b, 0, 0x0000
-    asrom.s 9121 9097
+    asrom.s 9123 9099
 MON_VTABZ, 0xfc24, 0, 0x0000
-    asrom.s 9126 9149 9154 9166
+    asrom.s 9128 9151 9156 9168
 MON_CLREOL, 0xfc9c, 0, 0x0000
-    asrom.s 9548 9120
+    asrom.s 9550 9122
 MON_CLREOP, 0xfc42, 0, 0x0000
 MON_CLEOP1, 0xfc46, 0, 0x0000
-    asrom.s 9132 9141
+    asrom.s 9134 9143
 MON_CLEOLZ, 0xfc9e, 0, 0x0000
-    asrom.s 9127 9174
+    asrom.s 9129 9176
 MON_SCROLL, 0xfc70, 0, 0x0000
 MON_SCRL1, 0xfc76, 0, 0x0000
-    asrom.s 9171
+    asrom.s 9173
 MON_SCRL3, 0xfc95, 0, 0x0000
-    asrom.s 9164
+    asrom.s 9166
 MON_SCRL2, 0xfc8c, 0, 0x0000
-    asrom.s 9170
+    asrom.s 9172
 MON_CLEOL2, 0xfca0, 0, 0x0000
-    asrom.s 9181
+    asrom.s 9183
 MON_WAIT2, 0xfca9, 0, 0x0000
-    asrom.s 9192
+    asrom.s 9194
 MON_WAIT3, 0xfcaa, 0, 0x0000
-    asrom.s 9189
+    asrom.s 9191
 MON_NXTA4, 0xfcb4, 0, 0x0000
-    asrom.s 9787 9805
+    asrom.s 9789 9807
 MON_NXTA1, 0xfcba, 0, 0x0000
-    asrom.s 9705 9893 9932 9198
+    asrom.s 9707 9895 9934 9200
 MON_RTS4B, 0xfcc8, 0, 0x0000
-    asrom.s 9205
+    asrom.s 9207
 MON_TAPEOUT, 0xc020, 0, 0x0000
-    asrom.s 9334
+    asrom.s 9336
 MON_TAPEIN, 0xc060, 0, 0x0000
-    asrom.s 9353
+    asrom.s 9355
 MON_HEADR, 0xfcc9, 0, 0x0000
-    asrom.s 9321 9323 9886 9920
+    asrom.s 9323 9325 9888 9922
 MON_ZERDLY, 0xfcdb, 0, 0x0000
-    asrom.s 9329 9320 9325
+    asrom.s 9331 9322 9327
 MON_WRBIT, 0xfcd6, 0, 0x0000
-    asrom.s 9902
+    asrom.s 9904
 MON_WRTAPE, 0xfce5, 0, 0x0000
-    asrom.s 9330
+    asrom.s 9332
 MON_ONEDLY, 0xfce2, 0, 0x0000
-    asrom.s 9333
+    asrom.s 9335
 MON_RDBYTE, 0xfcec, 0, 0x0000
-    asrom.s 9928 9935
+    asrom.s 9930 9937
 MON_RDBYT2, 0xfcee, 0, 0x0000
-    asrom.s 9348
+    asrom.s 9350
 MON_RDBIT, 0xfcfd, 0, 0x0000
-    asrom.s 9355 9924 9926 9351
+    asrom.s 9357 9926 9928 9353
 MON_KBD, 0xc000, 0, 0x0000
-    asrom.s 9483 9486
+    asrom.s 9485 9488
 MON_KBDSTRB, 0xc010, 0, 0x0000
-    asrom.s 9487
+    asrom.s 9489
 MON_KEYIN, 0xfd1b, 0, 0x0000
-    asrom.s 9484 9839
+    asrom.s 9486 9841
 MON_KEYIN2, 0xfd21, 0, 0x0000
-    asrom.s 9481
+    asrom.s 9483
 MON_ESC, 0xfd2f, 0, 0x0000
-    asrom.s 9499
+    asrom.s 9501
 MON_RDCHAR, 0xfd35, 0, 0x0000
-    asrom.s 9538
+    asrom.s 9540
 MON_NOTCR, 0xfd3d, 0, 0x0000
-    asrom.s 9547
+    asrom.s 9549
 MON_BCKSPC, 0xfd71, 0, 0x0000
-    asrom.s 9518
-MON_CANCEL, 0xfd62, 0, 0x0000
     asrom.s 9520
-MON_NOTCR1, 0xfd5f, 0, 0x0000
+MON_CANCEL, 0xfd62, 0, 0x0000
     asrom.s 9522
+MON_NOTCR1, 0xfd5f, 0, 0x0000
+    asrom.s 9524
 MON_NXTCHAR, 0xfd75, 0, 0x0000
-    asrom.s 9525
+    asrom.s 9527
 MON_GETLNZ, 0xfd67, 0, 0x0000
-    asrom.s 9535 9982
+    asrom.s 9537 9984
 MON_NXTCHAR1, 0xfd78, 0, 0x0000
 MON_CAPTST, 0xfd7e, 0, 0x0000
-    asrom.s 9540
+    asrom.s 9542
 MON_ADDINP, 0xfd84, 0, 0x0000
-    asrom.s 9543
+    asrom.s 9545
 MON_IOADR, 0xc000, 0, 0x0000
-    asrom.s 9848
+    asrom.s 9850
 MON_CTRL_B, 0x0082, 0, 0x0000
-    asrom.s 10059
+    asrom.s 10061
 MON_CTRL_C, 0x0083, 0, 0x0000
-    asrom.s 10043
-MON_CTRL_E, 0x0085, 0, 0x0000
     asrom.s 10045
+MON_CTRL_E, 0x0085, 0, 0x0000
+    asrom.s 10047
 MON_CTRL_K, 0x008b, 0, 0x0000
-    asrom.s 10052
+    asrom.s 10054
 MON_CTRL_P, 0x0090, 0, 0x0000
-    asrom.s 10058
+    asrom.s 10060
 MON_CTRL_Y, 0x0099, 0, 0x0000
-    asrom.s 10044 10048 10055
+    asrom.s 10046 10050 10057
 MON_PRA1, 0xfd92, 0, 0x0000
-    asrom.s 9700 9794
+    asrom.s 9702 9796
 MON_XAM8, 0xfda3, 0, 0x0000
-    asrom.s 9757
+    asrom.s 9759
 MON_MODSCHK, 0xfdad, 0, 0x0000
-    asrom.s 9706
+    asrom.s 9708
 MON_DATAOUT, 0xfdb6, 0, 0x0000
-    asrom.s 9699
+    asrom.s 9701
 MON_XAM, 0xfdb3, 0, 0x0000
-    asrom.s 9710
+    asrom.s 9712
 MON_RTS4C, 0xfdc5, 0, 0x0000
 MON_XAMPM, 0xfdc6, 0, 0x0000
-    asrom.s 9763
+    asrom.s 9765
 MON_ADD, 0xfdd1, 0, 0x0000
-    asrom.s 9714
+    asrom.s 9716
 MON_PRHEXZ, 0xfde5, 0, 0x0000
-    asrom.s 9731
+    asrom.s 9733
 MON_PRHEX, 0xfde3, 0, 0x0000
 MON_COUT1, 0xfdf0, 0, 0x0000
-    asrom.s 9844 9851
+    asrom.s 9846 9853
 MON_COUTZ, 0xfdf6, 0, 0x0000
-    asrom.s 9743
+    asrom.s 9745
 MON_BL1, 0xfe00, 0, 0x0000
-    asrom.s 9908
+    asrom.s 9910
 MON_BLANK, 0xfe04, 0, 0x0000
-    asrom.s 10097
+    asrom.s 10099
 MON_SETMDZ, 0xfe1d, 0, 0x0000
-    asrom.s 9760
+    asrom.s 9762
 MON_STOR, 0xfe0b, 0, 0x0000
 MON_RTS5, 0xfe17, 0, 0x0000
-    asrom.s 9768
+    asrom.s 9770
 MON_SETMODE, 0xfe18, 0, 0x0000
-    asrom.s 10084 10085 10094 10095
+    asrom.s 10086 10087 10096 10097
 MON_LT, 0xfe20, 0, 0x0000
-    asrom.s 10087
-MON_LT2, 0xfe22, 0, 0x0000
-    asrom.s 9782
-MON_MOVE, 0xfe2c, 0, 0x0000
-    asrom.s 9788 10086
-MON_VFY, 0xfe36, 0, 0x0000
-    asrom.s 9806 10079
-MON_VFYOK, 0xfe58, 0, 0x0000
-    asrom.s 9793
-MON_LIST1, 0xfe5e, 0, 0x0000
-    asrom.s 10090
-MON_A1PC, 0xfe75, 0, 0x0000
-    asrom.s 9863 9809
-MON_LIST2, 0xfe63, 0, 0x0000
-    asrom.s 9819
-MON_A1PCRTS, 0xfe7f, 0, 0x0000
-    asrom.s 9823
-MON_A1PCLP, 0xfe78, 0, 0x0000
-    asrom.s 9827
-MON_SETINV, 0xfe80, 0, 0x0000
     asrom.s 10089
+MON_LT2, 0xfe22, 0, 0x0000
+    asrom.s 9784
+MON_MOVE, 0xfe2c, 0, 0x0000
+    asrom.s 9790 10088
+MON_VFY, 0xfe36, 0, 0x0000
+    asrom.s 9808 10081
+MON_VFYOK, 0xfe58, 0, 0x0000
+    asrom.s 9795
+MON_LIST1, 0xfe5e, 0, 0x0000
+    asrom.s 10092
+MON_A1PC, 0xfe75, 0, 0x0000
+    asrom.s 9865 9811
+MON_LIST2, 0xfe63, 0, 0x0000
+    asrom.s 9821
+MON_A1PCRTS, 0xfe7f, 0, 0x0000
+    asrom.s 9825
+MON_A1PCLP, 0xfe78, 0, 0x0000
+    asrom.s 9829
+MON_SETINV, 0xfe80, 0, 0x0000
+    asrom.s 10091
 MON_SETIFLG, 0xfe86, 0, 0x0000
-    asrom.s 9831
+    asrom.s 9833
 MON_INPRT, 0xfe8d, 0, 0x0000
-    asrom.s 10080
-MON_IOPRT, 0xfe9b, 0, 0x0000
-    asrom.s 9840
-MON_OUTPRT, 0xfe97, 0, 0x0000
     asrom.s 10082
+MON_IOPRT, 0xfe9b, 0, 0x0000
+    asrom.s 9842
+MON_OUTPRT, 0xfe97, 0, 0x0000
+    asrom.s 10084
 MON_IOPRT1, 0xfea7, 0, 0x0000
-    asrom.s 9847
+    asrom.s 9849
 MON_IOPRT2, 0xfea9, 0, 0x0000
-    asrom.s 9850
+    asrom.s 9852
 MON_XBASIC, 0xfeb0, 0, 0x0000
-    asrom.s 10083
+    asrom.s 10085
 MON_BASCONT, 0xfeb3, 0, 0x0000
-    asrom.s 10075
-MON_GO, 0xfeb6, 0, 0x0000
-    asrom.s 10030 10092
-MON_RESTORE, 0xff3f, 0, 0x0000
-    asrom.s 9864
-MON_REGZ, 0xfebf, 0, 0x0000
     asrom.s 10077
+MON_GO, 0xfeb6, 0, 0x0000
+    asrom.s 10032 10094
+MON_RESTORE, 0xff3f, 0, 0x0000
+    asrom.s 9866
+MON_REGZ, 0xfebf, 0, 0x0000
+    asrom.s 10079
 MON_TRACE, 0xfec2, 0, 0x0000
-    asrom.s 10078
+    asrom.s 10080
 MON_STEPZ, 0xfec5, 0, 0x0000
-    asrom.s 10081
+    asrom.s 10083
 MON_USR, 0xfeca, 0, 0x0000
-    asrom.s 10076
+    asrom.s 10078
 MON_WR1, 0xfed4, 0, 0x0000
-    asrom.s 9896
+    asrom.s 9898
 MON_WRBYTE, 0xfeed, 0, 0x0000
-    asrom.s 9892 9898
+    asrom.s 9894 9900
 MON_WRBYT2, 0xfeef, 0, 0x0000
-    asrom.s 9903
+    asrom.s 9905
 MON_CRMON, 0xfef6, 0, 0x0000
-    asrom.s 10096
+    asrom.s 10098
 MON_MONZ, 0xff69, 0, 0x0000
-    asrom.s 9911
+    asrom.s 9913
 MON_RD2, 0xff0a, 0, 0x0000
-    asrom.s 9925
+    asrom.s 9927
 MON_RD3, 0xff16, 0, 0x0000
-    asrom.s 9934
+    asrom.s 9936
 MON_PRERR, 0xff2d, 0, 0x0000
 MON_RESTR1, 0xff44, 0, 0x0000
 MON_SAVE, 0xff4a, 0, 0x0000
 MON_RESET, 0xff59, 0, 0x0000
 MON_ZMODE, 0xffc7, 0, 0x0000
-    asrom.s 9983
+    asrom.s 9985
 MON_NXTITM, 0xff73, 0, 0x0000
-    asrom.s 9993
+    asrom.s 9995
 MON_GETNUM, 0xffa7, 0, 0x0000
-    asrom.s 9984
+    asrom.s 9986
 MON_CHRSRCH, 0xff7a, 0, 0x0000
-    asrom.s 9990
+    asrom.s 9992
 MON_CHRTBL, 0xffcc, 0, 0x0000
-    asrom.s 9989
-MON_TOSUB, 0xffbe, 0, 0x0000
     asrom.s 9991
+MON_TOSUB, 0xffbe, 0, 0x0000
+    asrom.s 9993
 MON_DIG, 0xff8a, 0, 0x0000
-    asrom.s 10023 10026
+    asrom.s 10025 10028
 MON_NXTBIT, 0xff90, 0, 0x0000
-    asrom.s 10006
-MON_NXTBAS, 0xff98, 0, 0x0000
-    asrom.s 10013
-MON_NXTBS2, 0xffa2, 0, 0x0000
     asrom.s 10008
+MON_NXTBAS, 0xff98, 0, 0x0000
+    asrom.s 10015
+MON_NXTBS2, 0xffa2, 0, 0x0000
+    asrom.s 10010
 MON_NXTCHR, 0xffad, 0, 0x0000
-    asrom.s 10014
+    asrom.s 10016
 MON_SUBTBL, 0xffe3, 0, 0x0000
-    asrom.s 10032
+    asrom.s 10034
 MON_M6502VEC, 0xfffa, 0, 0x0000

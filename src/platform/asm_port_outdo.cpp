@@ -105,9 +105,9 @@ static void MON_VIDOUT(std::uint8_t a) {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: MON_LFB78 (inclusive) .. MON_LFB97 (exclusive)
-// Name normalization: none (assembler label MON_LFB78 kept verbatim).
-static void MON_LFB78(std::uint8_t a) {
+// AS_Labels: MON_VIDWAIT (inclusive) .. MON_ESCOLD (exclusive)
+// Name normalization: none (assembler label MON_VIDWAIT kept verbatim).
+static void MON_VIDWAIT(std::uint8_t a) {
   constexpr std::uint8_t kCarriageReturn = 0x8du;
   constexpr std::uint8_t kCtrlS = 0x93u;
   constexpr std::uint8_t kCtrlC = 0x83u;
@@ -131,7 +131,7 @@ static void MON_LFB78(std::uint8_t a) {
 void MON_COUT1(std::uint8_t a) {
   if (a >= 0xa0u)
     a &= variables_const().MON_INVFLG;
-  MON_LFB78(a);
+  MON_VIDWAIT(a);
 }
 
 // Source:

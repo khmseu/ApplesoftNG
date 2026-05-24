@@ -68,7 +68,7 @@ void MON_SETCOL(std::uint8_t color) {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: MON_TABV (inclusive) .. MON_LFB60 (exclusive)
+// AS_Labels: MON_TABV (inclusive) .. MON_APPLEII (exclusive)
 void MON_TABV(std::uint8_t row_zero_based) {
   // display1 TABV: sta CV ; jmp AS_VTAB
   variables().MON_CV = row_zero_based;

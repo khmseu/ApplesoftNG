@@ -140,18 +140,18 @@ void MON_BELL_impl() {
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_LFB60 (inclusive) .. AS_LFB78 (exclusive)
-// Name normalization: AS_LFB60 -> MON_LFB60 (monitor label gets MON_ prefix).
+// Name normalization: AS_LFB60 -> MON_APPLEII (monitor label gets MON_ prefix).
 //
 // Clears the monitor text window, then writes the 9-byte "<APPLE ]["
 // banner to screen memory at $040E..$0416.
-void MON_LFB60() {
+void MON_APPLEII() {
 
   static constexpr std::array<std::uint8_t, 9> kAS_LFB08 = {
       0x3cu,
       static_cast<std::uint8_t>('A' | 0x80u),
       static_cast<std::uint8_t>('P' | 0x80u),
       static_cast<std::uint8_t>('P' | 0x80u),
-      static_cast<std::uint8_t>('AS_L' | 0x80u),
+      static_cast<std::uint8_t>('L' | 0x80u),
       static_cast<std::uint8_t>('E' | 0x80u),
       static_cast<std::uint8_t>(' ' | 0x80u),
       static_cast<std::uint8_t>(']' | 0x80u),
@@ -302,7 +302,7 @@ void MON_RESET2() {
     return;
   } else {
     // AS_LFAA6 path: install bootstrap bytes, then scan descending pages.
-    MON_LFB60();
+    MON_APPLEII();
 
     // AS_LFAAB loop copies indices 5..1 from AS_LFAFC to $03F4..$03F0.
     for (std::uint8_t x = 5u; x != 0u; --x) {

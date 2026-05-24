@@ -8345,38 +8345,38 @@ MON_RESET2   CLD
          LDA   $03F3
          EOR   #%10100101
          CMP   $03F4
-         BNE   MON_LFAA6
+         BNE   MON_PWRUP
          LDA   $03F2
-         BNE   MON_LFAA3
+         BNE   MON_NOFIX
          LDA   #$E0
          CMP   $03F3
-         BNE   MON_LFAA3
-MON_LFA9B    LDY   #$03
+         BNE   MON_NOFIX
+MON_FIXSEV    LDY   #$03
          STY   $03F2
          JMP   $E000
 
-MON_LFAA3    JMP   ($03F2)
-MON_LFAA6    JSR   MON_LFB60
+MON_NOFIX    JMP   ($03F2)
+MON_PWRUP    JSR   MON_APPLEII
          LDX   #$05
-MON_LFAAB    LDA   MON_LFAFC,X
+MON_SETPLP    LDA   MON_PWRCON-1,X
          STA   $03EF,X
          DEX
-         BNE   MON_LFAAB
+         BNE   MON_SETPLP
          LDA   #$C8
          STX   $00
          STA   $01
-MON_LFABA    LDY   #$07
+MON_SLOOP    LDY   #$07
          DEC   $01
          LDA   $01
          CMP   #$C0
-         BEQ   MON_LFA9B
+         BEQ   MON_FIXSEV
          STA   $07F8
-MON_LFAC7    LDA   ($00),Y
-         CMP   MON_LFB01,Y
-         BNE   MON_LFABA
+MON_NXTBYT    LDA   ($00),Y
+         CMP   MON_DISKID-1,Y
+         BNE   MON_SLOOP
          DEY
          DEY
-         BPL   MON_LFAC7
+         BPL   MON_NXTBYT
          JMP   ($0000)
          NOP
          NOP
@@ -8406,7 +8406,7 @@ MON_RDSP1    LDA   #(" "|%10000000)
          JSR   MON_PRBYTE
          INX
          BMI   MON_RDSP1
-MON_LFAFC    RTS
+    RTS
 
 
 
@@ -8414,10 +8414,12 @@ MON_LFAFC    RTS
 
 
 
-         .BYT $59,$FA,$00,$E0
-MON_LFB01    .BYT $45,$20,$FF,$00,$FF,$03,$FF
-MON_LFB08    .BYT $3C
-         .BYT ("A"|%10000000) 
+MON_PWRCON         .WORD MON_OLDBRK
+    .WORD AS_BASIC
+    .BYT $45
+MON_DISKID    .BYT $20,$FF,$00,$FF,$03,$FF
+    .BYT $3C
+MON_TITLE         .BYT ("A"|%10000000) 
 .BYT ("P"|%10000000) 
 .BYT ("P"|%10000000) 
 .BYT ("L"|%10000000) 
@@ -8425,7 +8427,7 @@ MON_LFB08    .BYT $3C
 .BYT (" "|%10000000) 
 .BYT ("]"|%10000000) 
 .BYT ("["|%10000000) 
-
+MON_XLTBL
          .BYT ("D"|%10000000) 
 .BYT ("B"|%10000000) 
 .BYT ("A"|%10000000) 
@@ -8854,43 +8856,43 @@ MON_TABV     STA   $25         ;VTABS TO ROW IN A-REG
 
 
 
-MON_LFB60   JSR     MON_HOME
+MON_APPLEII   JSR     MON_HOME
         LDY     #$08
-MON_LFB65   LDA     MON_LFB08,Y
+MON_STITLE   LDA     MON_TITLE-1,Y
         STA     $040E,Y
         DEY
-        BNE     MON_LFB65
+        BNE     MON_STITLE
         RTS
         LDA     $03F3
         EOR     #$A5
         STA     $03F4
         RTS
-MON_LFB78   CMP     #$8D
-        BNE     MON_LFB94
+MON_VIDWAIT   CMP     #$8D
+        BNE     MON_NOWAIT
         LDY     $C000
-        BPL     MON_LFB94
+        BPL     MON_NOWAIT
         CPY     #$93
-        BNE     MON_LFB94
+        BNE     MON_NOWAIT
         BIT     $C010
-MON_LFB88   LDY     $C000
-        BPL     MON_LFB88
+MON_KBDWAIT   LDY     $C000
+        BPL     MON_KBDWAIT
         CPY     #$83
-        BEQ     MON_LFB94
+        BEQ     MON_NOWAIT
         BIT     $C010
-MON_LFB94   JMP     MON_VIDOUT
-MON_LFB97   SEC
+MON_NOWAIT   JMP     MON_VIDOUT
+MON_ESCOLD   SEC
         JMP     MON_ESC1
-MON_LFB9B   TAY
-        LDA     $FA48,Y ; TODO
-        JSR     MON_LFB97
+MON_ESCNOW   TAY
+        LDA     MON_XLTBL-$C9,Y ; TODO
+        JSR     MON_ESCOLD
         JSR     MON_RDKEY
-MON_LFBA5   CMP     #$CE
-        BCS     MON_LFB97
+MON_ESCNEW   CMP     #$CE
+        BCS     MON_ESCOLD
         CMP     #$C9
-        BCC     MON_LFB97
+        BCC     MON_ESCOLD
         CMP     #$CC
-        BEQ     MON_LFB97
-        BNE     MON_LFB9B
+        BEQ     MON_ESCOLD
+        BNE     MON_ESCNOW
         NOP
         NOP
         NOP
@@ -9491,7 +9493,7 @@ MON_KEYIN2   BIT   MON_KBD        ;KEY DOWN?
 
 MON_ESC      JSR   MON_RDKEY      ;GET KEYCODE
 
-         JSR   MON_LFBA5
+         JSR   MON_ESCNEW
 
 
 MON_RDCHAR   JSR   MON_RDKEY      ;READ KEY
@@ -9745,7 +9747,7 @@ MON_COUT1    CMP   #(" "|%10000000)
 MON_COUTZ    STY   $35      ;SAV Y-REG
          PHA              ;SAV A-REG
 
-         JSR   MON_LFB78
+         JSR   MON_VIDWAIT
 
          PLA              ;RESTORE A-REG
          LDY   $35      ;  AND Y-REG
