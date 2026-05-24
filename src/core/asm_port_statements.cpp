@@ -21,7 +21,6 @@ namespace applesoft::asm_port {
 constexpr std::size_t kTokenCount = 107;
 constexpr std::uint8_t kTokenBase = 0x80u;
 
-void MON_PRERR();
 void MON_RESTORE();
 bool AS_SETPTRS();
 void AS_FIX_LINKS();
