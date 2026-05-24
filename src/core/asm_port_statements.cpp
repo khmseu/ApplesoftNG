@@ -24,7 +24,6 @@ constexpr std::uint8_t kTokenBase = 0x80u;
 bool AS_CLEAR_impl();
 void AS_CLEARC_impl();
 void AS_STXTPT_impl();
-void AS_SNGFLT(std::uint8_t value);
 std::uint8_t AS_GTNUM();
 std::uint8_t AS_COMBYTE();
 void AS_RTS_10();
