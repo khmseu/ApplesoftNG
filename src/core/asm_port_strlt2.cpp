@@ -1,7 +1,6 @@
 #include "core/asm_port_strlt2.hpp"
 
 #include "core/applesoft_variables.hpp"
-#include "core/asm_port_error.hpp"
 #include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_chrget.hpp"
 #include "core/asm_port_core.hpp"
@@ -676,7 +675,7 @@ void AS_PUTEMP(std::uint8_t tempDescriptorAddress) {
   write_AS_TEMPPT(static_cast<std::uint8_t>(tempDescriptorAddress + 3u));
 }
 
-void AS_STRLIT(std::uint16_t address);
+// void AS_STRLIT(std::uint16_t address);
 } // namespace
 
 // Source:
