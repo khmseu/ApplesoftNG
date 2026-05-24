@@ -24,7 +24,6 @@ constexpr std::uint8_t kTokenBase = 0x80u;
 bool AS_CLEAR_impl();
 void AS_CLEARC_impl();
 void AS_STXTPT_impl();
-void AS_L_RECALL_1();
 void AS_GETARY2();
 void AS_GETARYPT();
 void AS_TAPEPNT();
