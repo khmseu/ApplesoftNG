@@ -1,14 +1,12 @@
 #include "platform/asm_port_getln.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_inlin2.hpp"
+#include "core/asm_port_core.hpp"
 #include "platform/asm_port_outdo.hpp"
 
 #include <cstdint>
 
 namespace applesoft::asm_port {
-void MON_COUT(std::uint8_t a);
-// Implemented in src/core/asm_port_core.cpp (monitor BELL routine).
-void MON_BELL();
 namespace {
 
 std::uint8_t read_prompt_char() { return variables_const().MON_PROMPT; }
