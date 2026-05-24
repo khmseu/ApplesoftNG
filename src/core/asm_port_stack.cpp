@@ -1,13 +1,11 @@
 #include "core/asm_port_stack.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_core.hpp"
 
 #include <cassert>
 #include <cstdint>
 
 namespace applesoft::asm_port {
-
-std::uint8_t ReadProgramByte(std::uint16_t address);
-void WriteProgramByte(std::uint16_t address, std::uint8_t value);
 
 // --- Hardware stack ---
 
