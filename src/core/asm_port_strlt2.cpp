@@ -124,7 +124,7 @@ static void AS_CHECK_EXIT();
 static void AS_MOVE_HIGHEST_STRING_TO_TOP();
 static void AS_PUTNEW();
 static void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length);
-void AS_MOVSTR_1(std::uint8_t length);
+static void AS_MOVSTR_1(std::uint8_t length);
 std::uint8_t AS_FRESTR();
 
 // Source:
@@ -597,7 +597,7 @@ static void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_MOVSTR_1 (inclusive) .. AS_FRESTR (exclusive)
 // Name normalization: none (assembler label AS_MOVSTR_1 kept verbatim).
-void AS_MOVSTR_1(std::uint8_t length) {
+static void AS_MOVSTR_1(std::uint8_t length) {
   const std::uint16_t source = read_AS_INDEX();
   const std::uint16_t destination = read_AS_FRESPC();
 
