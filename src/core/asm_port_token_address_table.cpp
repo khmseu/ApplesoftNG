@@ -22,7 +22,6 @@ namespace applesoft::asm_port {
 // Each will be replaced when its label range is converted.
 // ---------------------------------------------------------------------------
 
-void AS_FOR();
 static void AS_NEXT_Handler() { AS_NEXT(); }
 static void AS_INPUT_Handler() { AS_INPUT(); }
 static void AS_DEL_Handler() { AS_DEL(); }
