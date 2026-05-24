@@ -7,9 +7,6 @@
 
 namespace applesoft::asm_port {
 
-extern std::uint8_t ReadProgramByte(std::uint16_t address);
-extern void AS_ERROR(std::uint8_t error_code);
-extern void AS_LOAD_ARG_FROM_YA();
 static void AS_COPY_ARG_TO_FAC();
 
 // Forward declarations of subroutines used within AS_FADD/AS_FSUB
