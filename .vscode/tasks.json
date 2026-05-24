@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "bash",
+      "fileName": "asm.sh",
+      "isDefault": false,
+      "name": "asm.sh",
+      "path": "SourceMaterial/Combo/asm.sh",
+      "pathAbs": "/bigdata/KAI/projects/ApplesoftNG/SourceMaterial/Combo/asm.sh",
+      "project": "ApplesoftNG",
+      "scriptFile": true,
+      "takesArgs": false,
+      "taskFileId": "",
+      "taskItemId": "",
+      "te": true,
+      "problemMatcher": ["$bashTe"],
+      "label": "bash: asm.sh"
+    }
+  ]
+}

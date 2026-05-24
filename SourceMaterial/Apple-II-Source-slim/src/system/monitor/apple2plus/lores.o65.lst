@@ -19,16 +19,16 @@ lores.s65
   127 T:0006  a9 0f                              lda #%00001111             ;MASK $0F IF EVEN
   128 T:0008  90 02                              bcc RTMASK
   129 T:000a  69 e0                              adc #%11100000             ;MASK $F0 IF ODD
-  130 T:000c  85 2e                    RTMASK    sta $2e
-  131 T:000e  b1 26                    PLOT1     lda ($26),Y       ;DATA
-  132 T:0010  45 30                              eor $30              ; EOR COLOR
-  133 T:0012  25 2e                              and $2e              ;  AND MASK
-  134 T:0014  51 26                              eor ($26),Y          ;   EOR DATA
-  135 T:0016  91 26                              sta ($26),Y          ;    TO DATA
+  130 T:000c  85 2e                    RTMASK    sta MON_MASK
+  131 T:000e  b1 26                    PLOT1     lda (MON_GBASL),Y       ;DATA
+  132 T:0010  45 30                              eor MON_COLOR              ; EOR COLOR
+  133 T:0012  25 2e                              and MON_MASK              ;  AND MASK
+  134 T:0014  51 26                              eor (MON_GBASL),Y          ;   EOR DATA
+  135 T:0016  91 26                              sta (MON_GBASL),Y          ;    TO DATA
   136 T:0018  60                                 rts 
 
   138 T:0019  20 00 00                 HLINE     jsr PLOT          ;PLOT SQUARE
-  139 T:001c  c4 2c                    HLINE1    cpy $2c           ;DONE?
+  139 T:001c  c4 2c                    HLINE1    cpy MON_H2           ;DONE?
   140 T:001e  b0 11                              bcs RTS1                ; YES, RETURN
   141 T:0020  c8                                 iny                    ; NO, INC INDEX (X-COORD)
   142 T:0021  20 0e 00                           jsr PLOT1             ;PLOT NEXT SQUARE
@@ -37,18 +37,18 @@ lores.s65
   145 T:0028  48                       VLINE     pha                 ; SAVE ON STACK
   146 T:0029  20 00 00                           jsr PLOT             ; PLOT SQUARE
   147 T:002c  68                                 pla 
-  148 T:002d  c5 2d                              cmp $2d              ;DONE?
+  148 T:002d  c5 2d                              cmp MON_V2              ;DONE?
   149 T:002f  90 f5                              bcc VLINEZ             ; NO, LOOP
   150 T:0031  60                       RTS1      rts 
 
   154 T:0032  a0 2f                    CLRSCR    ldy #LORESHEIGHT-1      ;MAX Y, FULL SCRN CLR
   155 T:0034  d0 02                              bne CLRSC2                ;ALWAYS TAKEN
   156 T:0036  a0 27                    CLRTOP    ldy #40-1    ;MAX Y, TOP SCREEN CLR
-  157 T:0038  84 2d                    CLRSC2    sty $2d           ;STORE AS BOTTOM COORD
+  157 T:0038  84 2d                    CLRSC2    sty MON_V2           ;STORE AS BOTTOM COORD
   158 T:003a                                    ; FOR VLINE CALLS
   159 T:003a  a0 27                              ldy #40-1       ;RIGHTMOST X-COORD (COLUMN)
   160 T:003c  a9 00                    CLRSC3    lda #0          ;TOP COORD FOR VLINE CALLS
-  161 T:003e  85 30                              sta $30              ;CLEAR COLOR (BLACK)
+  161 T:003e  85 30                              sta MON_COLOR              ;CLEAR COLOR (BLACK)
   162 T:0040  20 28 00                           jsr VLINE             ;DRAW VLINE
   163 T:0043  88                                 dey                    ;NEXT LEFTMOST X-COORD
   164 T:0044  10 f6                              bpl CLRSC3             ;LOOP UNTIL DONE
@@ -58,35 +58,35 @@ lores.s65
   170 T:0048  4a                                 lsr 
   171 T:0049  29 03                              and #%00000011
   172 T:004b  09 04                              ora #%00000100             ;  GENERATE GBASH=000001FG
-  173 T:004d  85 27                              sta $27
+  173 T:004d  85 27                              sta MON_GBASH
   174 T:004f  68                                 pla                    ;  AND GBASL=HDEDE000
   175 T:0050  29 18                              and #%00011000
   176 T:0052  90 02                              bcc GBCALC
   177 T:0054  69 7f                              adc #$80-1
-  178 T:0056  85 26                    GBCALC    sta $26
+  178 T:0056  85 26                    GBCALC    sta MON_GBASL
   179 T:0058  0a                                 asl 
   180 T:0059  0a                                 asl 
-  181 T:005a  05 26                              ora $26
-  182 T:005c  85 26                              sta $26
+  181 T:005a  05 26                              ora MON_GBASL
+  182 T:005c  85 26                              sta MON_GBASL
   183 T:005e  60                                 rts 
 
-  187 T:005f  a5 30                    NXTCOL    lda $30           ;INCREMENT COLOR BY 3
+  187 T:005f  a5 30                    NXTCOL    lda MON_COLOR           ;INCREMENT COLOR BY 3
   188 T:0061  18                                 clc 
   189 T:0062  69 03                              adc #3
   190 T:0064  29 0f                    SETCOL    and #%00001111          ;SETS COLOR=17*A MOD 16
-  191 T:0066  85 30                              sta $30
+  191 T:0066  85 30                              sta MON_COLOR
   192 T:0068  0a                                 asl                    ;BOTH HALF BYTES OF COLOR EQUAL
   193 T:0069  0a                                 asl 
   194 T:006a  0a                                 asl 
   195 T:006b  0a                                 asl 
-  196 T:006c  05 30                              ora $30
-  197 T:006e  85 30                              sta $30
+  196 T:006c  05 30                              ora MON_COLOR
+  197 T:006e  85 30                              sta MON_COLOR
   198 T:0070  60                                 rts 
 
   202 T:0071  4a                       SCRN      lsr                 ;READ SCREEN Y-COORD/2
   203 T:0072  08                                 php                    ;SAVE LSB (CARRY)
   204 T:0073  20 47 00                           jsr GBASCALC             ;CALC BASE ADDRESS
-  205 T:0076  b1 26                              lda ($26),Y          ;GET BYTE
+  205 T:0076  b1 26                              lda (MON_GBASL),Y          ;GET BYTE
   206 T:0078  28                                 plp                    ;RESTORE LSB FROM CARRY
 
   208 T:0079  90 04                    SCRN2     bcc RTMSKZ             ;IF EVEN, USE LO H

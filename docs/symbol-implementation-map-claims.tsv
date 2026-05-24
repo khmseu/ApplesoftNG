@@ -143,8 +143,8 @@ MON_PLOT	src/core/asm_port_graphics.cpp	143	MON_PLOT (inclusive) .. MON_HLINE (e
 MON_HLINE	src/core/asm_port_graphics.cpp	177	MON_HLINE (inclusive) .. MON_VLINEZ (exclusive)	MON_HLINE	MON_VLINEZ	asrom	MON_HLINE	0xf819	MON_VLINEZ	0xf826	resolved-range	ok
 MON_VLINE	src/core/asm_port_graphics.cpp	194	MON_VLINEZ (inclusive) .. MON_CLRSCR (exclusive)	MON_VLINEZ	MON_CLRSCR	asrom	MON_VLINEZ	0xf826	MON_CLRSCR	0xf832	resolved-range	ok
 MON_CLRSCR	src/core/asm_port_graphics.cpp	225	MON_CLRSCR (inclusive) .. MON_GBASCALC (exclusive)	MON_CLRSCR	MON_GBASCALC	asrom	MON_CLRSCR	0xf832	MON_GBASCALC	0xf847	resolved-range	ok
-MON_GBASCALC	src/core/asm_port_graphics.cpp	231	MON_GBASCALC (inclusive) .. MON_NXTCOL (exclusive)	MON_GBASCALC	MON_NXTCOL	asrom	MON_GBASCALC	0xf847	MON_NXTCOL	0xf85f	resolved-range	ok
-MON_NXTCOL	src/core/asm_port_graphics.cpp	250	MON_NXTCOL (inclusive) .. MON_SETCOL (exclusive)	MON_NXTCOL	MON_SETCOL	asrom	MON_NXTCOL	0xf85f	MON_SETCOL	0xf864	resolved-range	ok
+MON_GBASCALC	src/core/asm_port_graphics.cpp	231	MON_GBASCALC (inclusive) .. MON1_NXTCOL (exclusive)	MON_GBASCALC	MON1_NXTCOL	asrom	MON_GBASCALC	0xf847	MON1_NXTCOL	0xf85f	resolved-range	ok
+MON1_NXTCOL	src/core/asm_port_graphics.cpp	250	MON1_NXTCOL (inclusive) .. MON_SETCOL (exclusive)	MON1_NXTCOL	MON_SETCOL	asrom	MON1_NXTCOL	0xf85f	MON_SETCOL	0xf864	resolved-range	ok
 MON_HOME	src/core/asm_port_graphics.cpp	262	MON_HOME (inclusive) .. MON_CLREOL (exclusive)	MON_HOME	MON_CLREOL	asrom	MON_HOME	0xfc58	MON_CLREOL	0xfc9c	resolved-range	ok
 MON_CLREOL	src/core/asm_port_graphics.cpp	294	MON_CLREOL (inclusive) .. MON_CLEOL2 (exclusive)	MON_CLREOL	MON_CLEOL2	asrom	MON_CLREOL	0xfc9c	MON_CLEOL2	0xfca0	resolved-range	ok
 MON_CLREOL	src/core/asm_port_graphics.cpp	295	MON_CLEOL2 (inclusive) .. MON_WAIT (exclusive)	MON_CLEOL2	MON_WAIT	asrom	MON_CLEOL2	0xfca0	MON_WAIT	0xfca8	resolved-range	ok

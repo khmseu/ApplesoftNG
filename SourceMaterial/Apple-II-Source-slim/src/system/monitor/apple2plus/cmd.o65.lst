@@ -241,7 +241,7 @@ cmd.s65
   370 T:016f  20 00 00                 READ      jsr RD2BIT             ;FIND TAPEIN EDGE
   371 T:0172  a9 16                              lda #$16
   372 T:0174  20 00 00                           jsr HEADR                ;DELAY 3.5 SECONDS
-  373 T:0177  85 2e                              sta $2e              ;INIT CHKSUM=$FF
+  373 T:0177  85 2e                              sta MON_MASK              ;INIT CHKSUM=$FF
   374 T:0179  20 00 00                           jsr RD2BIT                ;FIND TAPEIN EDGE
   375 T:017c  a0 24                    RD2       ldy #$24          ;LOOK FOR SYNC BIT
   376 T:017e  20 00 00                           jsr RDBIT                ;  (SHORT 0)
@@ -250,13 +250,13 @@ cmd.s65
   379 T:0186  a0 3b                              ldy #$3b             ;INDEX FOR 0/1 TEST
   380 T:0188  20 00 00                 RD3       jsr RDBYTE             ;READ A BYTE
   381 T:018b  81 3c                              sta ($3c,X)          ;STORE AT (A1)
-  382 T:018d  45 2e                              eor $2e
-  383 T:018f  85 2e                              sta $2e              ;UPDATE RUNNING CHKSUM
+  382 T:018d  45 2e                              eor MON_MASK
+  383 T:018f  85 2e                              sta MON_MASK              ;UPDATE RUNNING CHKSUM
   384 T:0191  20 00 00                           jsr NXTA1                ;INC A1, COMPARE TO A2
   385 T:0194  a0 35                              ldy #$35             ;COMPENSATE 0/1 INDEX
   386 T:0196  90 f0                              bcc RD3             ;LOOP UNTIL DONE
   387 T:0198  20 00 00                           jsr RDBYTE                ;READ CHKSUM BYTE
-  388 T:019b  c5 2e                              cmp $2e
+  388 T:019b  c5 2e                              cmp MON_MASK
   389 T:019d  f0 0d                              beq BELL                ;GOOD, SOUND BELL AND RETURN
   390 T:019f  a9 c5                    PRERR     lda #("E"|%10000000)
   391 T:01a1  20 5f 00                           jsr COUT             ;PRINT "ERR", THEN BELL

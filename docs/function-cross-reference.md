@@ -482,6 +482,7 @@
 | IsTraceEnabled                      | real   | 1    | 1       | src/core/asm_port_control_flow.cpp        | 839  |
 | main                                | real   | 3    | 0       | src/main.cpp                              | 4    |
 | MarkDirectMode                      | real   | 2    | 1       | src/core/asm_port_core.cpp                | 55   |
+| MON1_NXTCOL                         | real   | 5    | 2       | src/core/asm_port_graphics.cpp            | 252  |
 | MON_BELL                            | real   | 1    | 7       | src/core/asm_port_core.cpp                | 206  |
 | MON_BELL_impl                       | real   | 2    | 2       | src/core/asm_port_core.cpp                | 134  |
 | MON_BREAK                           | real   | 2    | 1       | src/core/asm_port_core.cpp                | 2001 |
@@ -510,7 +511,6 @@
 | MON_MON                             | real   | 3    | 2       | src/core/asm_port_core.cpp                | 237  |
 | MON_NOTCR                           | real   | 25   | 3       | src/platform/asm_port_getln.cpp           | 84   |
 | MON_NXTA1                           | real   | 5    | 1       | src/core/asm_port_statements.cpp          | 1119 |
-| MON_NXTCOL                          | real   | 5    | 2       | src/core/asm_port_graphics.cpp            | 252  |
 | MON_OLDBRK                          | real   | 3    | 1       | src/core/asm_port_core.cpp                | 356  |
 | MON_OUTPORT                         | real   | 5    | 3       | src/core/asm_port_graphics.cpp            | 132  |
 | MON_PLOT                            | real   | 19   | 5       | src/core/asm_port_graphics.cpp            | 145  |

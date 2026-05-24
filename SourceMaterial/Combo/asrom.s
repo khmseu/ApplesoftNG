@@ -84,7 +84,9 @@ MON_GBASL           = $26                           ;
 MON_GBASH           = $27                           ; 
 MON_H2              = $2C                           ; 
 MON_V2              = $2D                           ; 
+MON_MASK            = $2E
 MON_HMASK           = $30                           ; 
+MON_COLOR           = $30
 MON_INVFLG          = $32                           ; 
 MON_PROMPT          = $33                           ; 
 MON_A1L             = $3C                           ; USED BY TAPE I/O ROUTINES
@@ -5871,7 +5873,7 @@ AS_L_FOUT_2_9                  ADC #("0"&%01111111)-1                      ; MAK
                     LDY AS_STRNG2                      ; GET OUTPUT PNTR
                     INY                             ; STORE THE DIGIT
                     TAX                             ; SAVE DIGIT, HI-BIT IS DIRECTION
-                    AND #$7F                        ; MAKE SURE $30...$39 FOR STRING
+                    AND #$7F                        ; MAKE SURE MON_COLOR...$39 FOR STRING
                     STA AS_STACK-1,Y                   ; 
                     DEC AS_TMPEXP                      ; COUNT THE DIGIT
                     BNE AS_L_FOUT_2_10                         ; NOT TIME FOR "." YET
@@ -7749,16 +7751,16 @@ MON_PLOT     LSR              ;Y-COORD/2
          LDA   #%00001111 ;MASK $0F IF EVEN
          BCC   MON_RTMASK
          ADC   #%11100000 ;MASK $F0 IF ODD
-MON_RTMASK   STA   $2E
-MON_PLOT1    LDA   ($26),Y  ;DATA
-         EOR   $30      ; EOR COLOR
-         AND   $2E       ;  AND MASK
-         EOR   ($26),Y  ;   EOR DATA
-         STA   ($26),Y  ;    TO DATA
+MON_RTMASK   STA   MON_MASK
+MON_PLOT1    LDA   (MON_GBASL),Y  ;DATA
+         EOR   MON_COLOR      ; EOR COLOR
+         AND   MON_MASK       ;  AND MASK
+         EOR   (MON_GBASL),Y  ;   EOR DATA
+         STA   (MON_GBASL),Y  ;    TO DATA
          RTS
 
 MON_HLINE    JSR   MON_PLOT       ;PLOT SQUARE
-MON_HLINE1   CPY   $2C         ;DONE?
+MON_HLINE1   CPY   MON_H2         ;DONE?
          BCS   MON_RTS1       ; YES, RETURN
          INY              ; NO, INC INDEX (X-COORD)
          JSR   MON_PLOT1      ;PLOT NEXT SQUARE
@@ -7767,7 +7769,7 @@ MON_VLINEZ   ADC   #1         ;NEXT Y-COORD
 MON_VLINE    PHA              ; SAVE ON STACK
          JSR   MON_PLOT       ; PLOT SQUARE
          PLA
-         CMP   $2D         ;DONE?
+         CMP   MON_V2         ;DONE?
          BCC   MON_VLINEZ     ; NO, LOOP
 MON_RTS1     RTS
 
@@ -7776,11 +7778,11 @@ MON_RTS1     RTS
 MON_CLRSCR   LDY   #MON_LORESHEIGHT-1 ;MAX Y, FULL SCRN CLR
          BNE   MON_CLRSC2     ;ALWAYS TAKEN
 MON_CLRTOP   LDY   #40-1 ;MAX Y, TOP SCREEN CLR
-MON_CLRSC2   STY   $2D         ;STORE AS BOTTOM COORD
+MON_CLRSC2   STY   MON_V2         ;STORE AS BOTTOM COORD
                           ; FOR VLINE CALLS
          LDY   #40-1 ;RIGHTMOST X-COORD (COLUMN)
 MON_CLRSC3   LDA   #0         ;TOP COORD FOR VLINE CALLS
-         STA   $30      ;CLEAR COLOR (BLACK)
+         STA   MON_COLOR      ;CLEAR COLOR (BLACK)
          JSR   MON_VLINE      ;DRAW VLINE
          DEY              ;NEXT LEFTMOST X-COORD
          BPL   MON_CLRSC3     ;LOOP UNTIL DONE
@@ -7792,31 +7794,31 @@ MON_GBASCALC PHA              ;FOR INPUT 000DEFGH
          LSR
          AND   #%00000011
          ORA   #%00000100 ;  GENERATE GBASH=000001FG
-         STA   $27
+         STA   MON_GBASH
          PLA              ;  AND GBASL=HDEDE000
          AND   #%00011000
          BCC   MON_GBCALC
          ADC   #$80-1
-MON_GBCALC   STA   $26
+MON_GBCALC   STA   MON_GBASL
          ASL
          ASL
-         ORA   $26
-         STA   $26
+         ORA   MON_GBASL
+         STA   MON_GBASL
          RTS
 
 
 
-MON_NXTCOL   LDA   $30      ;INCREMENT COLOR BY 3
+MON1_NXTCOL   LDA   MON_COLOR      ;INCREMENT COLOR BY 3
          CLC
          ADC   #3
 MON_SETCOL   AND   #%00001111 ;SETS COLOR=17*A MOD 16
-         STA   $30
+         STA   MON_COLOR
          ASL              ;BOTH HALF BYTES OF COLOR EQUAL
          ASL
          ASL
          ASL
-         ORA   $30
-         STA   $30
+         ORA   MON_COLOR
+         STA   MON_COLOR
          RTS
 
 
@@ -7824,7 +7826,7 @@ MON_SETCOL   AND   #%00001111 ;SETS COLOR=17*A MOD 16
 MON_SCRN     LSR              ;READ SCREEN Y-COORD/2
          PHP              ;SAVE LSB (CARRY)
          JSR   MON_GBASCALC   ;CALC BASE ADDRESS
-         LDA   ($26),Y  ;GET BYTE
+         LDA   (MON_GBASL),Y  ;GET BYTE
          PLP              ;RESTORE LSB FROM CARRY
 
 MON_SCRN2    BCC   MON_RTMSKZ     ;IF EVEN, USE LO H
@@ -7975,7 +7977,7 @@ MON_ERR      LDY   #$80       ;SUBSTITUTE $80 FOR INVALID OPS
          LDA   #$00       ;SET PRINT FORMAT INDEX TO 0
 MON_GETFMT   TAX
          LDA   MON_FMT2,X     ;INDEX INTO PRINT FORMAT TABLE
-         STA   $2E     ;SAVE FOR ADR FIELD FORMATTING
+         STA   MON_MASK     ;SAVE FOR ADR FIELD FORMATTING
          AND   #$03       ;MASK FOR 2-BIT (LENGTH-1)
          STA   $2F
          TYA              ;OPCODE
@@ -8018,26 +8020,26 @@ MON_PRNTBL   JSR   MON_PRBL2
          PLA              ;RECOVER MNEMONIC INDEX
          TAY
          LDA   MON_MNEML,Y
-         STA   $2C      ;FETCH 3-CHAR MNEMONIC
+         STA   MON_H2      ;FETCH 3-CHAR MNEMONIC
          LDA   MON_MNEMR,Y    ;  (PACKED IN 2-BYTES)
-         STA   $2D
-MON_PRMN1    LDA   #0
+         STA   MON_V2
+MON_NXTCOL    LDA   #0
          LDY   #5
-MON_PRMN2    ASL   $2D      ;SHIFT 5 BITS OF
-         ROL   $2C      ;  CHARACTER INTO A
+MON_PRMN2    ASL   MON_V2      ;SHIFT 5 BITS OF
+         ROL   MON_H2      ;  CHARACTER INTO A
          ROL              ;    (CLEARS CARRY)
          DEY
          BNE   MON_PRMN2
          ADC   #("?"|%10000000) ;ADD "?" OFFSET
          JSR   MON_COUT       ;OUTPUT A CHAR OF MNEM
          DEX
-         BNE   MON_PRMN1
+         BNE   MON_NXTCOL
          JSR   MON_PRBLNK     ;OUTPUT 3 BLANKS
          LDY   $2F
          LDX   #6         ;CNT FOR 6 FORMAT BITS
 MON_PRADR1   CPX   #3
          BEQ   MON_PRADR5     ;IF X=3 THEN ADDR.
-MON_PRADR2   ASL   $2E
+MON_PRADR2   ASL   MON_MASK
          BCC   MON_PRADR3
          LDA   MON_CHAR1-1,X
          JSR   MON_COUT
@@ -8050,7 +8052,7 @@ MON_PRADR3   DEX
 MON_PRADR4   DEY
          BMI   MON_PRADR2
          JSR   MON_PRBYTE
-MON_PRADR5   LDA   $2E
+MON_PRADR5   LDA   MON_MASK
          CMP   #$E8       ;HANDLE REL ADR MODE
          LDA   ($3A),Y    ;SPECIAL (PRINT TARGET,
          BCC   MON_PRADR4     ;  NOT OFFSET)
@@ -8069,7 +8071,7 @@ MON_PRNTX    TXA              ;  OF BRANCH AND RETURN
 
 MON_PRBLNK   LDX   #3         ;BLANK COUNT
 MON_PRBL2    LDA   #(" "|%10000000) ;LOAD A SPACE
-         JSR   MON_COUT       ;OUTPUT A BLANK
+MON_PRBL3         JSR   MON_COUT       ;OUTPUT A BLANK
          DEX
          BNE   MON_PRBL2      ;LOOP UNTIL COUNT=0
          RTS
@@ -9916,7 +9918,7 @@ MON_CRMON    JSR   MON_BL1        ;HANDLE A CR AS BLANK
 MON_READ     JSR   MON_RD2BIT     ;FIND TAPEIN EDGE
          LDA   #$16
 MON_READ2         JSR   MON_HEADR      ;DELAY 3.5 SECONDS
-         STA   $2E     ;INIT CHKSUM=$FF
+         STA   MON_MASK     ;INIT CHKSUM=$FF
          JSR   MON_RD2BIT     ;FIND TAPEIN EDGE
 MON_RD2      LDY   #$24       ;LOOK FOR SYNC BIT
          JSR   MON_RDBIT      ;  (SHORT 0)
@@ -9925,13 +9927,13 @@ MON_RD2      LDY   #$24       ;LOOK FOR SYNC BIT
          LDY   #$3B       ;INDEX FOR 0/1 TEST
 MON_RD3      JSR   MON_RDBYTE     ;READ A BYTE
          STA   ($3C,X)    ;STORE AT (A1)
-         EOR   $2E
-         STA   $2E     ;UPDATE RUNNING CHKSUM
+         EOR   MON_MASK
+         STA   MON_MASK     ;UPDATE RUNNING CHKSUM
          JSR   MON_NXTA1      ;INC A1, COMPARE TO A2
          LDY   #$35       ;COMPENSATE 0/1 INDEX
          BCC   MON_RD3        ;LOOP UNTIL DONE
          JSR   MON_RDBYTE     ;READ CHKSUM BYTE
-         CMP   $2E
+         CMP   MON_MASK
          BEQ   MON_BELL       ;GOOD, SOUND BELL AND RETURN
 MON_PRERR    LDA   #("E"|%10000000)
          JSR   MON_COUT       ;PRINT "ERR", THEN BELL

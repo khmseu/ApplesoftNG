@@ -32,7 +32,7 @@ disasm.s65
   139 T:0025  a9 00                              lda #$00             ;SET PRINT FORMAT INDEX TO 0
   140 T:0027  aa                       GETFMT    tax 
   141 T:0028  bd 24 01                           lda FMT2,X              ;INDEX INTO PRINT FORMAT TABLE
-  142 T:002b  85 2e                              sta $2e              ;SAVE FOR ADR FIELD FORMATTING
+  142 T:002b  85 2e                              sta MON_MASK              ;SAVE FOR ADR FIELD FORMATTING
   143 T:002d  29 03                              and #$03             ;MASK FOR 2-BIT (LENGTH-1)
   144 T:002f  85 2f                              sta $2f
   145 T:0031  98                                 tya                    ;OPCODE
@@ -71,13 +71,13 @@ disasm.s65
   182 T:0067  68                                 pla                    ;RECOVER MNEMONIC INDEX
   183 T:0068  a8                                 tay 
   184 T:0069  b9 3e 01                           lda MNEML,Y
-  185 T:006c  85 2c                              sta $2c              ;FETCH 3-CHAR MNEMONIC
+  185 T:006c  85 2c                              sta MON_H2              ;FETCH 3-CHAR MNEMONIC
   186 T:006e  b9 7e 01                           lda MNEMR,Y              ;  (PACKED IN 2-BYTES)
-  187 T:0071  85 2d                              sta $2d
+  187 T:0071  85 2d                              sta MON_V2
   188 T:0073  a9 00                    PRMN1     lda #0
   189 T:0075  a0 05                              ldy #5
-  190 T:0077  06 2d                    PRMN2     asl $2d           ;SHIFT 5 BITS OF
-  191 T:0079  26 2c                              rol $2c              ;  CHARACTER INTO A
+  190 T:0077  06 2d                    PRMN2     asl MON_V2           ;SHIFT 5 BITS OF
+  191 T:0079  26 2c                              rol MON_H2              ;  CHARACTER INTO A
   192 T:007b  2a                                 rol                    ;    (CLEARS CARRY)
   193 T:007c  88                                 dey 
   194 T:007d  d0 f8                              bne PRMN2
@@ -90,7 +90,7 @@ disasm.s65
   201 T:008c  a2 06                              ldx #6             ;CNT FOR 6 FORMAT BITS
   202 T:008e  e0 03                    PRADR1    cpx #3
   203 T:0090  f0 1c                              beq PRADR5                ;IF X=3 THEN ADDR.
-  204 T:0092  06 2e                    PRADR2    asl $2e
+  204 T:0092  06 2e                    PRADR2    asl MON_MASK
   205 T:0094  90 0e                              bcc PRADR3
   206 T:0096  bd 31 01                           lda CHAR1-1,X
   207 T:0099  20 00 00                           jsr COUT
@@ -103,7 +103,7 @@ disasm.s65
   214 T:00a8  88                       PRADR4    dey 
   215 T:00a9  30 e7                              bmi PRADR2
   216 T:00ab  20 00 00                           jsr PRBYTE
-  217 T:00ae  a5 2e                    PRADR5    lda $2e
+  217 T:00ae  a5 2e                    PRADR5    lda MON_MASK
   218 T:00b0  c9 e8                              cmp #$e8             ;HANDLE REL ADR MODE
   219 T:00b2  b1 3a                              lda ($3a),Y          ;SPECIAL (PRINT TARGET,
   220 T:00b4  90 f2                              bcc PRADR4             ;  NOT OFFSET)

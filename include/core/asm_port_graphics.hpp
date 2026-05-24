@@ -16,7 +16,7 @@ void MON_HLINE(std::uint8_t y, std::uint8_t right, std::uint8_t left);
 void MON_VLINE(std::uint8_t x, std::uint8_t top);
 void MON_CLRSCR();
 std::uint16_t MON_GBASCALC(std::uint8_t y);
-void MON_NXTCOL();
+void MON1_NXTCOL();
 void MON_HOME();
 void MON_CLREOL();
 void MON_SETTXT();

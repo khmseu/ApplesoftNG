@@ -7626,16 +7626,16 @@ lores.s65
   127 T:f806  a9 0f                              lda #%00001111             ;MASK $0F IF EVEN
   128 T:f808  90 02                              bcc RTMASK
   129 T:f80a  69 e0                              adc #%11100000             ;MASK $F0 IF ODD
-  130 T:f80c  85 2e                    RTMASK    sta $2e
-  131 T:f80e  b1 26                    PLOT1     lda ($26),Y       ;DATA
-  132 T:f810  45 30                              eor $30              ; EOR COLOR
-  133 T:f812  25 2e                              and $2e              ;  AND MASK
-  134 T:f814  51 26                              eor ($26),Y          ;   EOR DATA
-  135 T:f816  91 26                              sta ($26),Y          ;    TO DATA
+  130 T:f80c  85 2e                    RTMASK    sta MON_MASK
+  131 T:f80e  b1 26                    PLOT1     lda (MON_GBASL),Y       ;DATA
+  132 T:f810  45 30                              eor MON_COLOR              ; EOR COLOR
+  133 T:f812  25 2e                              and MON_MASK              ;  AND MASK
+  134 T:f814  51 26                              eor (MON_GBASL),Y          ;   EOR DATA
+  135 T:f816  91 26                              sta (MON_GBASL),Y          ;    TO DATA
   136 T:f818  60                                 rts 
 
   138 T:f819  20 00 00                 HLINE     jsr PLOT          ;PLOT SQUARE
-  139 T:f81c  c4 2c                    HLINE1    cpy $2c           ;DONE?
+  139 T:f81c  c4 2c                    HLINE1    cpy MON_H2           ;DONE?
   140 T:f81e  b0 11                              bcs RTS1                ; YES, RETURN
   141 T:f820  c8                                 iny                    ; NO, INC INDEX (X-COORD)
   142 T:f821  20 0e 00                           jsr PLOT1             ;PLOT NEXT SQUARE
@@ -7644,18 +7644,18 @@ lores.s65
   145 T:f828  48                       VLINE     pha                 ; SAVE ON STACK
   146 T:f829  20 00 00                           jsr PLOT             ; PLOT SQUARE
   147 T:f82c  68                                 pla 
-  148 T:f82d  c5 2d                              cmp $2d              ;DONE?
+  148 T:f82d  c5 2d                              cmp MON_V2              ;DONE?
   149 T:f82f  90 f5                              bcc VLINEZ             ; NO, LOOP
   150 T:f831  60                       RTS1      rts 
 
   154 T:f832  a0 2f                    CLRSCR    ldy #LORESHEIGHT-1      ;MAX Y, FULL SCRN CLR
   155 T:f834  d0 02                              bne CLRSC2                ;ALWAYS TAKEN
   156 T:f836  a0 27                    CLRTOP    ldy #40-1    ;MAX Y, TOP SCREEN CLR
-  157 T:f838  84 2d                    CLRSC2    sty $2d           ;STORE AS BOTTOM COORD
+  157 T:f838  84 2d                    CLRSC2    sty MON_V2           ;STORE AS BOTTOM COORD
   158 T:f83a                                    ; FOR VLINE CALLS
   159 T:f83a  a0 27                              ldy #40-1       ;RIGHTMOST X-COORD (COLUMN)
   160 T:f83c  a9 00                    CLRSC3    lda #0          ;TOP COORD FOR VLINE CALLS
-  161 T:f83e  85 30                              sta $30              ;CLEAR COLOR (BLACK)
+  161 T:f83e  85 30                              sta MON_COLOR              ;CLEAR COLOR (BLACK)
   162 T:f840  20 28 00                           jsr VLINE             ;DRAW VLINE
   163 T:f843  88                                 dey                    ;NEXT LEFTMOST X-COORD
   164 T:f844  10 f6                              bpl CLRSC3             ;LOOP UNTIL DONE
@@ -7665,35 +7665,35 @@ lores.s65
   170 T:f848  4a                                 lsr 
   171 T:f849  29 03                              and #%00000011
   172 T:f84b  09 04                              ora #%00000100             ;  GENERATE GBASH=000001FG
-  173 T:f84d  85 27                              sta $27
+  173 T:f84d  85 27                              sta MON_GBASH
   174 T:f84f  68                                 pla                    ;  AND GBASL=HDEDE000
   175 T:f850  29 18                              and #%00011000
   176 T:f852  90 02                              bcc GBCALC
   177 T:f854  69 7f                              adc #$80-1
-  178 T:f856  85 26                    GBCALC    sta $26
+  178 T:f856  85 26                    GBCALC    sta MON_GBASL
   179 T:f858  0a                                 asl 
   180 T:f859  0a                                 asl 
-  181 T:f85a  05 26                              ora $26
-  182 T:f85c  85 26                              sta $26
+  181 T:f85a  05 26                              ora MON_GBASL
+  182 T:f85c  85 26                              sta MON_GBASL
   183 T:f85e  60                                 rts 
 
-  187 T:f85f  a5 30                    NXTCOL    lda $30           ;INCREMENT COLOR BY 3
+  187 T:f85f  a5 30                    NXTCOL    lda MON_COLOR           ;INCREMENT COLOR BY 3
   188 T:f861  18                                 clc 
   189 T:f862  69 03                              adc #3
   190 T:f864  29 0f                    SETCOL    and #%00001111          ;SETS COLOR=17*A MOD 16
-  191 T:f866  85 30                              sta $30
+  191 T:f866  85 30                              sta MON_COLOR
   192 T:f868  0a                                 asl                    ;BOTH HALF BYTES OF COLOR EQUAL
   193 T:f869  0a                                 asl 
   194 T:f86a  0a                                 asl 
   195 T:f86b  0a                                 asl 
-  196 T:f86c  05 30                              ora $30
-  197 T:f86e  85 30                              sta $30
+  196 T:f86c  05 30                              ora MON_COLOR
+  197 T:f86e  85 30                              sta MON_COLOR
   198 T:f870  60                                 rts 
 
   202 T:f871  4a                       SCRN      lsr                 ;READ SCREEN Y-COORD/2
   203 T:f872  08                                 php                    ;SAVE LSB (CARRY)
   204 T:f873  20 47 00                           jsr GBASCALC             ;CALC BASE ADDRESS
-  205 T:f876  b1 26                              lda ($26),Y          ;GET BYTE
+  205 T:f876  b1 26                              lda (MON_GBASL),Y          ;GET BYTE
   206 T:f878  28                                 plp                    ;RESTORE LSB FROM CARRY
 
   208 T:f879  90 04                    SCRN2     bcc RTMSKZ             ;IF EVEN, USE LO H
@@ -7742,7 +7742,7 @@ disasm.s65
   139 T:f8a7  a9 00                              lda #$00             ;SET PRINT FORMAT INDEX TO 0
   140 T:f8a9  aa                       GETFMT    tax 
   141 T:f8aa  bd 24 01                           lda FMT2,X              ;INDEX INTO PRINT FORMAT TABLE
-  142 T:f8ad  85 2e                              sta $2e              ;SAVE FOR ADR FIELD FORMATTING
+  142 T:f8ad  85 2e                              sta MON_MASK              ;SAVE FOR ADR FIELD FORMATTING
   143 T:f8af  29 03                              and #$03             ;MASK FOR 2-BIT (LENGTH-1)
   144 T:f8b1  85 2f                              sta $2f
   145 T:f8b3  98                                 tya                    ;OPCODE
@@ -7781,13 +7781,13 @@ disasm.s65
   182 T:f8e9  68                                 pla                    ;RECOVER MNEMONIC INDEX
   183 T:f8ea  a8                                 tay 
   184 T:f8eb  b9 3e 01                           lda MNEML,Y
-  185 T:f8ee  85 2c                              sta $2c              ;FETCH 3-CHAR MNEMONIC
+  185 T:f8ee  85 2c                              sta MON_H2              ;FETCH 3-CHAR MNEMONIC
   186 T:f8f0  b9 7e 01                           lda MNEMR,Y              ;  (PACKED IN 2-BYTES)
-  187 T:f8f3  85 2d                              sta $2d
+  187 T:f8f3  85 2d                              sta MON_V2
   188 T:f8f5  a9 00                    PRMN1     lda #0
   189 T:f8f7  a0 05                              ldy #5
-  190 T:f8f9  06 2d                    PRMN2     asl $2d           ;SHIFT 5 BITS OF
-  191 T:f8fb  26 2c                              rol $2c              ;  CHARACTER INTO A
+  190 T:f8f9  06 2d                    PRMN2     asl MON_V2           ;SHIFT 5 BITS OF
+  191 T:f8fb  26 2c                              rol MON_H2              ;  CHARACTER INTO A
   192 T:f8fd  2a                                 rol                    ;    (CLEARS CARRY)
   193 T:f8fe  88                                 dey 
   194 T:f8ff  d0 f8                              bne PRMN2
@@ -7800,7 +7800,7 @@ disasm.s65
   201 T:f90e  a2 06                              ldx #6             ;CNT FOR 6 FORMAT BITS
   202 T:f910  e0 03                    PRADR1    cpx #3
   203 T:f912  f0 1c                              beq PRADR5                ;IF X=3 THEN ADDR.
-  204 T:f914  06 2e                    PRADR2    asl $2e
+  204 T:f914  06 2e                    PRADR2    asl MON_MASK
   205 T:f916  90 0e                              bcc PRADR3
   206 T:f918  bd 31 01                           lda CHAR1-1,X
   207 T:f91b  20 00 00                           jsr COUT
@@ -7813,7 +7813,7 @@ disasm.s65
   214 T:f92a  88                       PRADR4    dey 
   215 T:f92b  30 e7                              bmi PRADR2
   216 T:f92d  20 00 00                           jsr PRBYTE
-  217 T:f930  a5 2e                    PRADR5    lda $2e
+  217 T:f930  a5 2e                    PRADR5    lda MON_MASK
   218 T:f932  c9 e8                              cmp #$e8             ;HANDLE REL ADR MODE
   219 T:f934  b1 3a                              lda ($3a),Y          ;SPECIAL (PRINT TARGET,
   220 T:f936  90 f2                              bcc PRADR4             ;  NOT OFFSET)
@@ -8772,7 +8772,7 @@ cmd.s65
   370 T:fefd  20 00 00                 READ      jsr RD2BIT             ;FIND TAPEIN EDGE
   371 T:ff00  a9 16                              lda #$16
   372 T:ff02  20 00 00                           jsr HEADR                ;DELAY 3.5 SECONDS
-  373 T:ff05  85 2e                              sta $2e              ;INIT CHKSUM=$FF
+  373 T:ff05  85 2e                              sta MON_MASK              ;INIT CHKSUM=$FF
   374 T:ff07  20 00 00                           jsr RD2BIT                ;FIND TAPEIN EDGE
   375 T:ff0a  a0 24                    RD2       ldy #$24          ;LOOK FOR SYNC BIT
   376 T:ff0c  20 00 00                           jsr RDBIT                ;  (SHORT 0)
@@ -8781,13 +8781,13 @@ cmd.s65
   379 T:ff14  a0 3b                              ldy #$3b             ;INDEX FOR 0/1 TEST
   380 T:ff16  20 00 00                 RD3       jsr RDBYTE             ;READ A BYTE
   381 T:ff19  81 3c                              sta ($3c,X)          ;STORE AT (A1)
-  382 T:ff1b  45 2e                              eor $2e
-  383 T:ff1d  85 2e                              sta $2e              ;UPDATE RUNNING CHKSUM
+  382 T:ff1b  45 2e                              eor MON_MASK
+  383 T:ff1d  85 2e                              sta MON_MASK              ;UPDATE RUNNING CHKSUM
   384 T:ff1f  20 00 00                           jsr NXTA1                ;INC A1, COMPARE TO A2
   385 T:ff22  a0 35                              ldy #$35             ;COMPENSATE 0/1 INDEX
   386 T:ff24  90 f0                              bcc RD3             ;LOOP UNTIL DONE
   387 T:ff26  20 00 00                           jsr RDBYTE                ;READ CHKSUM BYTE
-  388 T:ff29  c5 2e                              cmp $2e
+  388 T:ff29  c5 2e                              cmp MON_MASK
   389 T:ff2b  f0 0d                              beq BELL                ;GOOD, SOUND BELL AND RETURN
   390 T:ff2d  a9 c5                    PRERR     lda #("E"|%10000000)
   391 T:ff2f  20 5f 00                           jsr COUT             ;PRINT "ERR", THEN BELL

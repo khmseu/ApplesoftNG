@@ -228,7 +228,7 @@ void MON_CLRSCR() { MON_ClearColumns(47u); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: MON_GBASCALC (inclusive) .. MON_NXTCOL (exclusive)
+// AS_Labels: MON_GBASCALC (inclusive) .. MON1_NXTCOL (exclusive)
 // Name normalization: MON_ prefix kept verbatim for monitor labels.
 std::uint16_t MON_GBASCALC(std::uint8_t y) {
   const std::uint8_t halfRow = static_cast<std::uint8_t>(y >> 1u);
@@ -247,9 +247,9 @@ std::uint16_t MON_GBASCALC(std::uint8_t y) {
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
-// AS_Labels: MON_NXTCOL (inclusive) .. MON_SETCOL (exclusive)
+// AS_Labels: MON1_NXTCOL (inclusive) .. MON_SETCOL (exclusive)
 // Name normalization: MON_ prefix kept verbatim for monitor labels.
-void MON_NXTCOL() {
+void MON1_NXTCOL() {
   const std::uint8_t nibble =
       static_cast<std::uint8_t>(variables_const().MON_COLOR & 0x0fu);
   const std::uint8_t advanced =
