@@ -122,7 +122,7 @@ static void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset);
 static void AS_CHECK_BUMP();
 static void AS_CHECK_EXIT();
 static void AS_MOVE_HIGHEST_STRING_TO_TOP();
-void AS_PUTNEW();
+static void AS_PUTNEW();
 void AS_MOVSTR(std::uint8_t x, std::uint8_t y, std::uint8_t length);
 void AS_MOVSTR_1(std::uint8_t length);
 std::uint8_t AS_FRESTR();
@@ -633,7 +633,7 @@ std::uint8_t AS_FREFAC_impl() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_PUTNEW (inclusive) .. AS_JERR (exclusive)
 // Name normalization: none (assembler label AS_PUTNEW kept verbatim).
-void AS_PUTNEW() {
+static void AS_PUTNEW() {
   const std::uint8_t tempDescriptorAddress = read_AS_TEMPPT();
   const std::uint8_t maxTempDescriptorAddress =
       static_cast<std::uint8_t>(ApplesoftVariables::ZP_AS_TEMPST + 9u);
