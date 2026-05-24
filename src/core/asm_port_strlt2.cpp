@@ -116,7 +116,7 @@ static void AS_PUTEMP(std::uint8_t tempDescriptorAddress);
 static std::uint16_t AS_GETSPA(std::uint8_t length);
 static void AS_FRM_VARIABLE();
 static void AS_NOT_();
-void AS_FIND_HIGHEST_STRING();
+static void AS_FIND_HIGHEST_STRING();
 void AS_CHECK_SIMPLE_VARIABLE();
 void AS_CHECK_VARIABLE(std::uint8_t descriptorOffset);
 void AS_CHECK_BUMP();
@@ -366,7 +366,7 @@ static std::uint16_t AS_GETSPA(std::uint8_t length) {
 // AS_Labels: AS_FIND_HIGHEST_STRING (inclusive) .. AS_CHECK_SIMPLE_VARIABLE
 // (exclusive) Name normalization: none (assembler label AS_FIND_HIGHEST_STRING
 // kept verbatim).
-void AS_FIND_HIGHEST_STRING() {
+static void AS_FIND_HIGHEST_STRING() {
   clear_AS_FNCNAM_hi();
   write_AS_LOWTR(read_AS_STREND());
 
