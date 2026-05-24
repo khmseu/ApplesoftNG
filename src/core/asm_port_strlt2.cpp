@@ -111,7 +111,7 @@ void write_AS_FAC_descriptor_address(std::uint16_t value) {
 
 std::uint8_t g_jerr_error = AS_ERR_FRMCPX;
 
-void AS_JERR();
+static void AS_JERR();
 void AS_PUTEMP(std::uint8_t tempDescriptorAddress);
 std::uint16_t AS_GETSPA(std::uint8_t length);
 void AS_FRM_VARIABLE();
@@ -651,7 +651,7 @@ void AS_PUTNEW() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_JERR (inclusive) .. AS_PUTEMP (exclusive)
 // Name normalization: none (assembler label AS_JERR kept verbatim).
-void AS_JERR() { AS_ERROR(g_jerr_error); }
+static void AS_JERR() { AS_ERROR(g_jerr_error); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
