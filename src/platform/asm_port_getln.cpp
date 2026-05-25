@@ -48,7 +48,7 @@ std::uint8_t MON_RDCHAR() {
 // AS_Labels: MON_CLREOL (inclusive) .. MON_WAIT (exclusive)
 // Name normalization: none (assembler label MON_CLREOL kept verbatim).
 void MON_CLREOL() {
-  constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
+  constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | kHighBitMask);
   const std::uint8_t columnStart = variables_const().MON_CH;
   const std::uint8_t width = variables_const().MON_WNDWDTH;
   const std::uint16_t base = variables_const().MON_BASL;

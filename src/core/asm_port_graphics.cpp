@@ -3,9 +3,8 @@
 #include "core/asm_port_characters.hpp"
 #include "core/asm_port_chrget.hpp"
 #include "core/asm_port_clear.hpp"
-#include "core/asm_port_error.hpp"
+#include "core/asm_port_core.hpp"
 #include "core/asm_port_error_handling.hpp"
-#include "core/asm_port_error_messages.hpp"
 #include "core/asm_port_parser.hpp"
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_statements.hpp"
@@ -279,7 +278,7 @@ void MON_HOME() {
   // Monitor HOME initializes cursor to top-left of current window and clears
   // the window to blanks (high-bit set AS_ASCII space).
 
-  constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
+  constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | kHighBitMask);
 
   const std::uint8_t windowTop = variables_const().MON_WNDTOP;
   const std::uint8_t windowBottom = variables_const().MON_WNDBTM;
@@ -312,7 +311,7 @@ void MON_CLREOL() {
   // Clears from current cursor position to end of line with high-bit-set
   // spaces.
 
-  constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
+  constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | kHighBitMask);
 
   const std::uint16_t baseAddress = variables_const().MON_BASL;
   const std::uint8_t startCol = variables_const().MON_CH;

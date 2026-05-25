@@ -1,16 +1,19 @@
 #include "core/asm_port_rom_constants.hpp"
+#include "core/asm_port_characters.hpp"
 
 namespace {
 
+using namespace applesoft::asm_port;
+
 constexpr std::uint8_t kMON_TITLE[] = {
-    static_cast<std::uint8_t>('A' | 0x80u),
-    static_cast<std::uint8_t>('P' | 0x80u),
-    static_cast<std::uint8_t>('P' | 0x80u),
-    static_cast<std::uint8_t>('L' | 0x80u),
-    static_cast<std::uint8_t>('E' | 0x80u),
-    static_cast<std::uint8_t>(' ' | 0x80u),
-    static_cast<std::uint8_t>(']' | 0x80u),
-    static_cast<std::uint8_t>('[' | 0x80u),
+    static_cast<std::uint8_t>('A' | kHighBitMask),
+    static_cast<std::uint8_t>('P' | kHighBitMask),
+    static_cast<std::uint8_t>('P' | kHighBitMask),
+    static_cast<std::uint8_t>('L' | kHighBitMask),
+    static_cast<std::uint8_t>('E' | kHighBitMask),
+    static_cast<std::uint8_t>(' ' | kHighBitMask),
+    static_cast<std::uint8_t>(']' | kHighBitMask),
+    static_cast<std::uint8_t>('[' | kHighBitMask),
 };
 
 constexpr std::uint8_t kAS_CON_ONE[] = {0x81u, 0x00u, 0x00u, 0x00u, 0x00u};

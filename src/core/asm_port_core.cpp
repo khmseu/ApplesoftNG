@@ -207,7 +207,7 @@ void MON_BELL() { MON_BELL_impl(); }
 // Full monitor disassembly formatting is not modeled yet. Emit a compact
 // address/opcode trace at MON_A1 and advance MON_A1 by one byte.
 std::int8_t MON_INSDS1() {
-  constexpr std::uint8_t kSpace = static_cast<std::uint8_t>(' ' | 0x80u);
+  constexpr std::uint8_t kSpace = static_cast<std::uint8_t>(' ' | kHighBitMask);
 
   const std::uint16_t pc = variables_const().MON_A1;
   const std::uint8_t opcode = variables_const().readByte(pc);
@@ -229,7 +229,8 @@ std::int8_t MON_INSDS1() {
 // The interactive monitor command loop is not hosted in this runtime.
 // Emit a minimal monitor prompt marker and return to the caller.
 void MON_MON() {
-  constexpr std::uint8_t kPrompt = static_cast<std::uint8_t>('>' | 0x80u);
+  constexpr std::uint8_t kPrompt =
+      static_cast<std::uint8_t>('>' | kHighBitMask);
   MON_CROUT();
   MON_COUT(kPrompt);
 }
@@ -363,14 +364,15 @@ void MON_OLDBRK() {
 void MON_REGDSP() {
 
   constexpr std::uint8_t kRegBase = ApplesoftVariables::ZP_MON_DEBUG_REG_A;
-  constexpr std::uint8_t kSpace = static_cast<std::uint8_t>(' ' | 0x80u);
-  constexpr std::uint8_t kEquals = static_cast<std::uint8_t>('=' | 0x80u);
+  constexpr std::uint8_t kSpace = static_cast<std::uint8_t>(' ' | kHighBitMask);
+  constexpr std::uint8_t kEquals =
+      static_cast<std::uint8_t>('=' | kHighBitMask);
   constexpr std::array<std::uint8_t, 5> kRTBL = {
-      static_cast<std::uint8_t>('A' | 0x80u),
-      static_cast<std::uint8_t>('X' | 0x80u),
-      static_cast<std::uint8_t>('Y' | 0x80u),
-      static_cast<std::uint8_t>('P' | 0x80u),
-      static_cast<std::uint8_t>('S' | 0x80u),
+      static_cast<std::uint8_t>('A' | kHighBitMask),
+      static_cast<std::uint8_t>('X' | kHighBitMask),
+      static_cast<std::uint8_t>('Y' | kHighBitMask),
+      static_cast<std::uint8_t>('P' | kHighBitMask),
+      static_cast<std::uint8_t>('S' | kHighBitMask),
   };
 
   MON_CROUT();
