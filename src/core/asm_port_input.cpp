@@ -1,6 +1,7 @@
 #include "core/asm_port_input.hpp"
 
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_characters.hpp"
 #include "core/asm_port_chrget.hpp"
 #include "core/asm_port_clear.hpp"
 #include "core/asm_port_control_flow.hpp"
@@ -189,7 +190,7 @@ void AS_INPUT() {
   AS_INLIN();
 
   // CTRL-C abort path.
-  if (variables_const().readByte(kAS_INPUT_BUFFER) == 0x03u) {
+  if (variables_const().readByte(kAS_INPUT_BUFFER) == kControlCharC) {
     AS_CONTROL_C_TYPED();
     return;
   }

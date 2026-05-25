@@ -1,5 +1,6 @@
 #include "core/asm_port_control_flow.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_characters.hpp"
 #include "core/asm_port_chkmem.hpp"
 #include "core/asm_port_chrget.hpp"
 #include "core/asm_port_error.hpp"
@@ -312,9 +313,9 @@ static std::uint8_t PeekTopControlTokenAfterAS_GTFORPNT() {
 // AS_Line 1925, 1781 call this: jsr AS_ISCNTC
 // AS_Labels: AS_ISCNTC (inclusive) .. AS_CONTROL_C_TYPED (exclusive)
 bool AS_ISCNTC() {
-  constexpr std::uint8_t kCTRL_C_CODE = 0x83;
-
-  if (ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD) != kCTRL_C_CODE) {
+  const std::uint8_t keyboardCode =
+      ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD);
+  if (keyboardCode != kControlCharCHigh) {
     return false;
   }
 

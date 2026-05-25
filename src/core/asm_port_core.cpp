@@ -1,6 +1,7 @@
 #include "core/asm_port_core.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_chkmem.hpp"
+#include "core/asm_port_characters.hpp"
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_handling.hpp"
 #include "core/asm_port_error_messages.hpp"
@@ -174,8 +175,7 @@ void MON_APPLEII() {
 //
 // `lda #$8d` + `bne COUT` is an unconditional transfer to COUT with CR.
 void MON_CROUT() {
-  constexpr std::uint8_t kCarriageReturn = 0x8du;
-  MON_COUT(kCarriageReturn);
+  MON_COUT(kCharCarriageReturnHigh);
 }
 
 // Source:

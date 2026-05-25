@@ -1,6 +1,7 @@
 #include "core/asm_port_print.hpp"
 
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_characters.hpp"
 #include "core/asm_port_chrget.hpp"
 #include "core/asm_port_core.hpp"
 #include "core/asm_port_error_handling.hpp"
@@ -430,7 +431,7 @@ void AS_PRINT2(std::uint8_t a) {
 // Name normalization: none (assembler label AS_CRDO kept verbatim).
 void AS_CRDO() {
   // lda #$0d / jsr AS_OUTDO — print carriage-return character
-  const std::uint8_t a = AS_OUTDO(0x0du);
+  const std::uint8_t a = AS_OUTDO(kCharCarriageReturn);
   // Fall-through to AS_NEGATE (range end is exclusive; modeled as call).
   // AS_NEGATE: eor #$ff / rts — noted "<<< WHY??? >>>" in source.
   // The return value of AS_NEGATE is not used by AS_CRDO's callers in C++.
