@@ -791,7 +791,7 @@ void AS_NEWSTT() {
 void AS_TRACE_() {
   if (IsTraceEnabled()) {
     if (IsRunningMode()) {
-      AS_OUTDO(kCharHash);
+      AS_OUTDO('#');
       AS_LINPRT();
       AS_OUTSP();
     }

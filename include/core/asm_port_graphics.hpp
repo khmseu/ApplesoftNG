@@ -2,7 +2,6 @@
 
 #include "core/applesoft_dual_pointer.hpp"
 
-#include <cstddef>
 #include <cstdint>
 
 namespace applesoft::asm_port {

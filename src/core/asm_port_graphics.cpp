@@ -589,7 +589,7 @@ static HiResCoordinates AS_HFNS() {
 
   constexpr std::uint16_t kMaxXExclusive = 280u;
   constexpr std::uint8_t kMaxYExclusive = 192u;
-  constexpr std::uint8_t kComma = kCharComma;
+  constexpr std::uint8_t kComma = ',';
 
   AS_FRMNUM();
   AS_GETADR();
@@ -1164,7 +1164,7 @@ std::uint8_t AS_PLOTFNS() {
   // Stores A in AS_FIRST and mirrors B into MON_H2/MON_V2.
 
   constexpr std::uint8_t kMaxCoordExclusive = 48u;
-  constexpr std::uint8_t kComma = kCharComma;
+  constexpr std::uint8_t kComma = ',';
 
   const std::uint8_t first = AS_GETBYT();
   if (first >= kMaxCoordExclusive) {

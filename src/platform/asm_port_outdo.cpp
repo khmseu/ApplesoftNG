@@ -24,7 +24,7 @@ static std::uint16_t computeTextRowBase(std::uint8_t row_zero_based) {
 }
 void setCursorRow(std::uint8_t row_zero_based) { MON_TABV(row_zero_based); }
 static void scrollWindowUp() {
-  constexpr std::uint8_t kBlank = (kCharSpace | kHighBitMask);
+  constexpr std::uint8_t kBlank = (' ' | kHighBitMask);
   const std::uint8_t top = variables_const().MON_WNDTOP;
   const std::uint8_t bottom = variables_const().MON_WNDBTM;
   const std::uint8_t width = variables_const().MON_WNDWDTH;
@@ -173,11 +173,11 @@ std::uint8_t AS_OUTDO(std::uint8_t a) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_OUTSP (inclusive) .. AS_OUTQUES (exclusive)
 // Name normalization: none (assembler label AS_OUTSP kept verbatim).
-void AS_OUTSP() { AS_OUTDO(kCharSpace); }
+void AS_OUTSP() { AS_OUTDO(' '); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_OUTQUES (inclusive) .. AS_OUTDO (exclusive)
 // Name normalization: none (assembler label AS_OUTQUES kept verbatim).
-void AS_OUTQUES() { AS_OUTDO(kCharQuestionMark); }
+void AS_OUTQUES() { AS_OUTDO('?'); }
 } // namespace applesoft::asm_port
