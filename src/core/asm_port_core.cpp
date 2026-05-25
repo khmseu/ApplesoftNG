@@ -174,7 +174,7 @@ void MON_APPLEII() {
 // Name normalization: CROUT -> MON_CROUT (monitor label gets MON_ prefix).
 //
 // `lda #$8d` + `bne COUT` is an unconditional transfer to COUT with CR.
-void MON_CROUT() { MON_COUT(kCharCarriageReturnHigh); }
+void MON_CROUT() { MON_COUT((kCharCarriageReturn | kHighBitMask)); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst

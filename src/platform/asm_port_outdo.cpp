@@ -24,7 +24,7 @@ static std::uint16_t computeTextRowBase(std::uint8_t row_zero_based) {
 }
 void setCursorRow(std::uint8_t row_zero_based) { MON_TABV(row_zero_based); }
 static void scrollWindowUp() {
-  constexpr std::uint8_t kBlank = kCharSpaceHigh;
+  constexpr std::uint8_t kBlank = (kCharSpace | kHighBitMask);
   const std::uint8_t top = variables_const().MON_WNDTOP;
   const std::uint8_t bottom = variables_const().MON_WNDBTM;
   const std::uint8_t width = variables_const().MON_WNDWDTH;
@@ -109,14 +109,14 @@ static void MON_VIDOUT(std::uint8_t a) {
 // AS_Labels: MON_VIDWAIT (inclusive) .. MON_ESCOLD (exclusive)
 // Name normalization: none (assembler label MON_VIDWAIT kept verbatim).
 static void MON_VIDWAIT(std::uint8_t a) {
-  if (a == kCharCarriageReturnHigh) {
+  if (a == (kCharCarriageReturn | kHighBitMask)) {
     std::uint8_t keycode = ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD);
-    if ((keycode & 0x80u) != 0u && keycode == kControlCharSHigh) {
+    if ((keycode & 0x80u) != 0u && keycode == (kControlCharS | kHighBitMask)) {
       consumeKeyboardAS_Latch(keycode);
       do {
         keycode = ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD);
       } while ((keycode & 0x80u) == 0u);
-      if (keycode != kControlCharCHigh)
+      if (keycode != (kControlCharC | kHighBitMask))
         consumeKeyboardAS_Latch(keycode);
     }
   }

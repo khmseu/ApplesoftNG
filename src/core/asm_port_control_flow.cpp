@@ -315,7 +315,7 @@ static std::uint8_t PeekTopControlTokenAfterAS_GTFORPNT() {
 bool AS_ISCNTC() {
   const std::uint8_t keyboardCode =
       ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD);
-  if (keyboardCode != kControlCharCHigh) {
+  if (keyboardCode != (kControlCharC | kHighBitMask)) {
     return false;
   }
 

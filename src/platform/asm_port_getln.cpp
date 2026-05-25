@@ -37,7 +37,7 @@ std::uint8_t MON_RDCHAR() {
   // ESC ($9B) branches back through ESC to read another key; model as a loop.
   while (true) {
     const std::uint8_t key = MON_RDKEY();
-    if (key != kCharEscapeHigh) {
+    if (key != (kCharEscape | kHighBitMask)) {
       return key;
     }
   }
@@ -62,7 +62,7 @@ void MON_CLREOL() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: MON_CROUT (inclusive) .. MON_PRA1 (exclusive)
 // Name normalization: none (assembler label MON_CROUT kept verbatim).
-void MON_CROUT() { MON_COUT(kCharCarriageReturnHigh); }
+void MON_CROUT() { MON_COUT((kCharCarriageReturn | kHighBitMask)); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -139,7 +139,7 @@ std::uint8_t MON_GETLN() {
     }
 
     write_input_buffer(x, ch);
-    if (ch == kCharCarriageReturnHigh) {
+    if (ch == (kCharCarriageReturn | kHighBitMask)) {
       MON_CLREOL();
       return x;
     }
