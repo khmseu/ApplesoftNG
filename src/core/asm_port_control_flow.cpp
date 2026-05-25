@@ -15,6 +15,7 @@
 #include "core/asm_port_stack.hpp"
 #include "core/asm_port_statements.hpp"
 #include "core/asm_port_token_address_table.hpp"
+#include "core/asm_port_tokens.hpp"
 #include "core/io_ports.hpp"
 #include "platform/asm_port_outdo.hpp"
 
@@ -24,7 +25,6 @@ namespace applesoft::asm_port {
 
 static void PushForPntFrame();
 
-constexpr std::uint8_t kTokenBase = 0x80u;
 constexpr std::uint8_t AS_RESTART_PROMPT = ']' | 0x80u;
 
 namespace {
@@ -452,7 +452,7 @@ void AS_GOSUB() {
   // target line
   // - On AS_RETURN, restores execution state from the stack frame
 
-  constexpr std::uint8_t kAS_TOKEN_GOSUB = 0xb0;
+  constexpr std::uint8_t kAS_TOKEN_GOSUB = token_byte(ASToken::GOSUB);
 
   AS_CHKMEMState chkmemState{};
   chkmemState.a = 3;
@@ -532,7 +532,7 @@ void AS_ONERR() {
   // Source:
   // SourceMaterial/Combo/asrom.lst
   // Name normalization: none (assembler label AS_ONERR kept verbatim).
-  constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
+  constexpr std::uint8_t kAS_TOKEN_GOTO = token_byte(ASToken::GOTO);
 
   AS_SYNCHR(kAS_TOKEN_GOTO);
   variables().AS_TXPSV = variables_const().AS_TXTPTR;
@@ -571,12 +571,12 @@ static void PushForPntFrame() {
   theStack().pushByte(
       ApplesoftVariables::highByte(variables_const().AS_FORPNT));
   theStack().pushByte(ApplesoftVariables::lowByte(variables_const().AS_FORPNT));
-  theStack().pushToken(AS_TOKEN_FOR);
+  theStack().pushToken(token_byte(ASToken::FOR));
 }
 
 // AS_Labels: AS_FOR (inclusive) .. AS_STEP (exclusive)
 void AS_FOR() {
-  constexpr std::uint8_t kAS_TOKEN_TO = 0xc1u;
+  constexpr std::uint8_t kAS_TOKEN_TO = token_byte(ASToken::TO);
 
   variables().AS_SUBFLG = 0x80;
   AS_LET();
@@ -698,7 +698,7 @@ void AS_NEXT() {
 
 // AS_Labels: AS_POP (inclusive) .. AS_RETURN (exclusive)
 void AS_POP() {
-  constexpr std::uint8_t kAS_TOKEN_GOSUB = 0xb0;
+  constexpr std::uint8_t kAS_TOKEN_GOSUB = token_byte(ASToken::GOSUB);
 
   if (!IsStatementEndOfParsedInput()) {
     AS_RTS_5();
@@ -744,7 +744,7 @@ void AS_RETURN() {
 // AS_Labels: AS_STEP (inclusive) .. AS_NEWSTT (exclusive)
 // AS_Labels: AS_STEP (inclusive) .. AS_NEWSTT (exclusive)
 void AS_STEP() {
-  constexpr std::uint8_t kAS_TOKEN_STEP = 0xc7u;
+  constexpr std::uint8_t kAS_TOKEN_STEP = token_byte(ASToken::STEP);
 
   AS_LOAD_FAC_FROM_YA(AS_CON_ONE());
   if (AS_CHRGOT() == kAS_TOKEN_STEP) {
@@ -908,9 +908,8 @@ void AS_COLON_() {
 // AS_Labels: AS_IF (inclusive) .. AS_REM (exclusive)
 // Name normalization: none (assembler label AS_IF kept verbatim).
 void AS_IF() {
-
-  constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
-  constexpr std::uint8_t kAS_TOKEN_THEN = 0xc4u;
+  constexpr std::uint8_t kAS_TOKEN_GOTO = token_byte(ASToken::GOTO);
+  constexpr std::uint8_t kAS_TOKEN_THEN = token_byte(ASToken::THEN);
 
   AS_FRMEVL();
   if (AS_CHRGOT() != kAS_TOKEN_GOTO) {
@@ -953,8 +952,8 @@ void AS_IF_TRUE() {
 // AS_Labels: AS_ONGOTO (inclusive) .. AS_LINGET (exclusive)
 // Name normalization: none (assembler label AS_ONGOTO kept verbatim).
 void AS_ONGOTO() {
-  constexpr std::uint8_t kAS_TOKEN_GOSUB = 0xb0u;
-  constexpr std::uint8_t kAS_TOKEN_GOTO = 0xabu;
+  constexpr std::uint8_t kAS_TOKEN_GOSUB = token_byte(ASToken::GOSUB);
+  constexpr std::uint8_t kAS_TOKEN_GOTO = token_byte(ASToken::GOTO);
 
   const std::uint8_t token = AS_GETBYT();
   if (token != kAS_TOKEN_GOSUB && token != kAS_TOKEN_GOTO) {

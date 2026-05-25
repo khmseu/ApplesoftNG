@@ -9,6 +9,7 @@
 #include "core/asm_port_parser.hpp"
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_token_name_table.hpp"
+#include "core/asm_port_tokens.hpp"
 #include "core/io_ports.hpp"
 #include "platform/asm_port_outdo.hpp"
 
@@ -17,9 +18,6 @@
 #include <string_view>
 
 namespace applesoft::asm_port {
-
-constexpr std::size_t kTokenCount = 107;
-constexpr std::uint8_t kTokenBase = 0x80u;
 
 // AS_Labels: AS_NEW (inclusive) .. AS_SCRTCH (exclusive)
 bool AS_NEW_impl() {
@@ -192,8 +190,8 @@ static std::optional<TokenMatch> MatchToken(std::uint8_t index) {
       }
     }
 
-    const std::uint8_t tokenCode =
-        static_cast<std::uint8_t>(kTokenBase + static_cast<std::uint8_t>(i));
+    const std::uint8_t tokenCode = static_cast<std::uint8_t>(
+        token_byte(ASToken::END) + static_cast<std::uint8_t>(i));
     if (!best || token.size() > best->length) {
       best =
           TokenMatch{tokenCode, static_cast<std::uint8_t>(token.size()), token};
@@ -264,12 +262,10 @@ void AS_DATA() {
 // Name normalization: none (assembler label AS_LET kept verbatim).
 void AS_LET() {
 
-  constexpr std::uint8_t kTOKEN_EQUAL = 0xd0;
-
   const std::uint16_t variablePtr = AS_PTRGET();
   variables().AS_FORPNT = variablePtr;
 
-  AS_SYNCHR(kTOKEN_EQUAL);
+  AS_SYNCHR(token_byte(ASToken::EQUAL));
 
   const std::uint8_t savedValTyp = variables_const().AS_VALTYP;
   const std::uint8_t savedValTypPlus1 = variables_const().AS_VALTYP_PLUS_1;

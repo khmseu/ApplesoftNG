@@ -17,6 +17,7 @@
 #include "core/asm_port_statements.hpp"
 #include "core/asm_port_strlt2.hpp"
 #include "core/asm_port_strtxt.hpp"
+#include "core/asm_port_tokens.hpp"
 #include "platform/asm_port_outdo.hpp"
 
 #include <cstdint>
@@ -108,8 +109,6 @@ void parseNumericInputAndStore() {
 // the token (the first data item character), so the caller can restore
 // AS_TXTPTR = AS_INPTR for subsequent parsing.
 void AS_FINDATA() {
-  constexpr std::uint8_t kAS_TOKEN_DATA = 0x83u;
-
   while (true) {
     // jsr DATAN: returns offset of the next ':' or NUL (end of statement).
     const std::uint8_t datanOffset = AS_DATAN();
@@ -152,7 +151,7 @@ void AS_FINDATA() {
     const std::uint8_t tokenByte =
         variables_const().pointer(variables_const().AS_TXTPTR).read(nextOffset);
     AS_ADDON(nextOffset);
-    if (tokenByte != kAS_TOKEN_DATA) {
+    if (tokenByte != token_byte(ASToken::DATA)) {
       continue;
     }
 

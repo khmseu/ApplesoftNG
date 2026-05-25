@@ -8,6 +8,7 @@
 #include "core/asm_port_parser.hpp"
 #include "core/asm_port_print.hpp"
 #include "core/asm_port_statements.hpp"
+#include "core/asm_port_tokens.hpp"
 #include "core/io_ports.hpp"
 
 #include <cstdint>
@@ -704,7 +705,7 @@ void AS_HPLOT() {
   // Plots a hi-res point or line for HPLOT forms, including repeated TO
   // clauses.
 
-  constexpr std::uint8_t kTOKEN_TO = 0xc1;
+  constexpr std::uint8_t kTOKEN_TO = token_byte(ASToken::TO);
 
   HiResCoordinates current{variables_const().AS_HGR_X,
                            variables_const().AS_HGR_Y, true};
@@ -742,7 +743,8 @@ void AS_DRWPNT() {
   // Returns with HGR_SHAPE pointing to shape data, HGR_ROTATION containing
   // rotation value.
 
-  constexpr std::uint8_t kAT_TOKEN = 0xc5u; // TOKENDB for "AT"
+  constexpr std::uint8_t kAT_TOKEN =
+      token_byte(ASToken::AT); // TOKENDB for "AT"
 
   // Get shape number in X register.
   const std::uint8_t shape_num = AS_GETBYT();
@@ -1201,7 +1203,7 @@ std::uint8_t AS_LINCOOR() {
   // - returns C coordinate when C < 48
 
   constexpr std::uint8_t kMaxCoordExclusive = 48u;
-  constexpr std::uint8_t kTOKEN_AT = 0xc5u;
+  constexpr std::uint8_t kTOKEN_AT = token_byte(ASToken::AT);
 
   const std::uint8_t bValue = AS_PLOTFNS();
   const std::uint8_t aValue = variables_const().AS_FIRST;

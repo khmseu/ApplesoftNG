@@ -15,6 +15,7 @@
 #include "core/asm_port_stack.hpp"
 #include "core/asm_port_statements.hpp"
 #include "core/asm_port_strlt2.hpp"
+#include "core/asm_port_tokens.hpp"
 #include "core/asm_port_unfnc.hpp"
 #include "core/io_ports.hpp"
 #include "core/jump_table.hpp"
@@ -1375,10 +1376,9 @@ void AS_SCREEN() {
 // the current token.  String functions (AS_LEFT$, RIGHT$, MID$) parse two
 // arguments; all other functions parse one argument via AS_PARCHK.
 void AS_UNARY() {
-
-  constexpr std::uint8_t kAS_TOKEN_SCRN = 0xd7u;
-  constexpr std::uint8_t kAS_TOKEN_SGN = 0xd2u;
-  constexpr std::uint8_t kAS_TOKEN_LEFTSTR = 0xe8u;
+  constexpr std::uint8_t kAS_TOKEN_SCRN = token_byte(ASToken::SCRN);
+  constexpr std::uint8_t kAS_TOKEN_SGN = token_byte(ASToken::SGN);
+  constexpr std::uint8_t kAS_TOKEN_LEFTSTR = token_byte(ASToken::LEFT);
 
   const std::uint8_t token = AS_CHRGOT();
 
@@ -1520,7 +1520,7 @@ void AS_GIVAYF(std::int16_t value) {
 void AS_FNC_() {
 
   // Require "FN" token
-  AS_SYNCHR(static_cast<std::uint8_t>(0xc2u)); // AS_TOKEN_FN = 0xc2
+  AS_SYNCHR(token_byte(ASToken::FN));
 
   // Set high bit in AS_SUBFLG to signal this is from AS_DEF/FN context
   const std::uint8_t subflg = variables_const().AS_SUBFLG;
@@ -1575,7 +1575,7 @@ void AS_DEF() {
   AS_CHKCLS();
 
   // Require "=" and advance past it
-  AS_SYNCHR(static_cast<std::uint8_t>(0xd0u)); // TOKEN_EQUAL = 0xd0
+  AS_SYNCHR(token_byte(ASToken::EQUAL));
 
   // Stack the argument variable pointer (AS_VARPNT)
   variables().AS_VARPNT = variables_const().AS_VARPNT;
@@ -1739,10 +1739,10 @@ void AS_FNCDATA() {
 void AS_FRMEVL() {
 
   constexpr std::uint8_t kAS_STACK_ROOM_BYTES = 1u;
-  constexpr std::uint8_t kAS_TOKEN_PLUS = 0xc8u;
-  constexpr std::uint8_t kAS_TOKEN_GREATER = 0xcfu;
-  constexpr std::uint8_t kTOKEN_EQUAL = 0xd0u;
-  constexpr std::uint8_t kTOKEN_AS_LESS = 0xd1u;
+  constexpr std::uint8_t kAS_TOKEN_PLUS = token_byte(ASToken::PLUS);
+  constexpr std::uint8_t kAS_TOKEN_GREATER = token_byte(ASToken::GREATER);
+  constexpr std::uint8_t kTOKEN_EQUAL = token_byte(ASToken::EQUAL);
+  constexpr std::uint8_t kTOKEN_AS_LESS = token_byte(ASToken::LESS);
 
   const auto frmevl_eval = [&](auto &&self, std::uint8_t callerPrecedence,
                                bool runEntryBackstep) -> void {
@@ -1880,8 +1880,8 @@ static FrmevlStackFrame AS_FRM_STACK_1(std::uint8_t precedence) {
 // AS_Labels: AS_NOTMATH (inclusive) .. AS_FRM_PERFORM_1 (exclusive)
 // Name normalization: none (assembler label AS_NOTMATH kept verbatim).
 bool AS_NOTMATH(std::uint8_t token) {
-  constexpr std::uint8_t kAS_TOKEN_PLUS = 0xc8u;
-  constexpr std::uint8_t kTOKEN_AS_LESS = 0xd1u;
+  constexpr std::uint8_t kAS_TOKEN_PLUS = token_byte(ASToken::PLUS);
+  constexpr std::uint8_t kTOKEN_AS_LESS = token_byte(ASToken::LESS);
 
   if (token < kAS_TOKEN_PLUS || token > kTOKEN_AS_LESS) {
     write_AS_LASTOP(kAS_LASTOPNoMath);

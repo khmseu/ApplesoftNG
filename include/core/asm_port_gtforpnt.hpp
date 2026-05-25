@@ -7,8 +7,6 @@
 
 namespace applesoft::asm_port {
 
-inline constexpr std::uint8_t AS_TOKEN_FOR = 0x81;
-
 // Minimal state needed by AS_GTFORPNT while broader runtime memory wiring is
 // pending.
 struct AS_GTFORPNTState {

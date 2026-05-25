@@ -10,6 +10,7 @@
 #include "core/asm_port_qt_error.hpp"
 #include "core/asm_port_rom_constants.hpp"
 #include "core/asm_port_strlit.hpp"
+#include "core/asm_port_tokens.hpp"
 #include "platform/asm_port_outdo.hpp"
 
 #include <cstdint>
@@ -252,13 +253,6 @@ static std::uint8_t AS_GTBYTC_PRINT() {
 }
 
 // ---------------------------------------------------------------------------
-// Token constants used in AS_PRINT2.
-// ---------------------------------------------------------------------------
-
-constexpr std::uint8_t AS_TOKEN_TAB = 0xc0u; // TAB(
-constexpr std::uint8_t AS_TOKEN_SPC = 0xc3u; // SPC(
-
-// ---------------------------------------------------------------------------
 // AS_STRPRT
 // ---------------------------------------------------------------------------
 
@@ -323,10 +317,10 @@ static void PrintNumericExpression() {
 
 static void print_list_loop(std::uint8_t a, bool expr_cr) {
   while (true) {
-    if (a == AS_TOKEN_TAB) {
+    if (a == token_byte(ASToken::TAB)) {
       // cmp #AS_TOKEN_TAB / beq AS_PR_TAB_OR_SPC (C=1 for TAB)
       AS_PR_TAB_OR_SPC(true);
-    } else if (a == AS_TOKEN_SPC) {
+    } else if (a == token_byte(ASToken::SPC)) {
       // cmp #AS_TOKEN_SPC / beq AS_PR_TAB_OR_SPC (C=0 for SPC)
       AS_PR_TAB_OR_SPC(false);
     } else if (a == static_cast<std::uint8_t>(',' & 0x7fu)) {

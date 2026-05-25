@@ -1,6 +1,7 @@
 #include "core/asm_port_gtforpnt.hpp"
 #include "core/applesoft_variables.hpp"
 #include "core/asm_port_local_utils.hpp"
+#include "core/asm_port_tokens.hpp"
 
 namespace applesoft::asm_port {
 namespace {
@@ -32,7 +33,7 @@ AS_GTFORPNTResult AS_GTFORPNT(std::uint8_t stackPointer,
 
   while (x != 0) {
     // FRAME MARKER at AS_STACK+1,X must be AS_TOKEN_FOR ($81).
-    if (stack_at(state, x, 1) == AS_TOKEN_FOR) {
+    if (stack_at(state, x, 1) == token_byte(ASToken::FOR)) {
       const std::uint16_t frameVariablePointer = stack_word_at(state, x, 2);
 
       // AS_NEXT with no variable: bind AS_FORPNT from current frame first.

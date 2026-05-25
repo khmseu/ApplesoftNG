@@ -9,6 +9,7 @@
 #include "core/asm_port_mathtbl.hpp"
 #include "core/asm_port_parser.hpp"
 #include "core/asm_port_strtxt.hpp"
+#include "core/asm_port_tokens.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -132,8 +133,8 @@ static std::uint8_t AS_FRESTR();
 // AS_Labels: AS_FRM_ELEMENT (inclusive) .. AS_NOT_ (exclusive)
 // Name normalization: none (assembler label AS_FRM_ELEMENT kept verbatim).
 void AS_FRM_ELEMENT() {
-  constexpr std::uint8_t kTokenMinus = 0xc9u;
-  constexpr std::uint8_t kTokenPlus = 0xc8u;
+  constexpr std::uint8_t kTokenMinus = token_byte(ASToken::MINUS);
+  constexpr std::uint8_t kTokenPlus = token_byte(ASToken::PLUS);
 
   // Default to numeric until a string or typed variable path overrides it.
   variables().AS_VALTYP = 0u;
@@ -236,8 +237,8 @@ static void AS_NOT_() {
 // Dispatch expression token handling: FN calls, unary built-ins (SGN and
 // above), or parenthesized-expression parsing.
 void AS_FN_() {
-  constexpr std::uint8_t kTokenFN = 0xc2u;
-  constexpr std::uint8_t kTokenSGN = 0xd2u;
+  constexpr std::uint8_t kTokenFN = token_byte(ASToken::FN);
+  constexpr std::uint8_t kTokenSGN = token_byte(ASToken::SGN);
 
   const std::uint8_t token = AS_CHRGOT();
   if (token == kTokenFN) {
@@ -262,11 +263,12 @@ void AS_FRMEVL_2() {
   // This slice scans chained relational operators and builds AS_CPRTYP bits:
   // > => 0x01, = => 0x02, < => 0x04.
   std::uint8_t token = AS_CHRGOT();
-  while (token >= 0xcfu && token <= 0xd1u) {
+  while (token >= token_byte(ASToken::GREATER) &&
+         token <= token_byte(ASToken::LESS)) {
     std::uint8_t relMask = 0u;
-    if (token == 0xcfu) {
+    if (token == token_byte(ASToken::GREATER)) {
       relMask = 0x01u;
-    } else if (token == 0xd0u) {
+    } else if (token == token_byte(ASToken::EQUAL)) {
       relMask = 0x02u;
     } else {
       relMask = 0x04u;
