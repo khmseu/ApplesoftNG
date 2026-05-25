@@ -1,7 +1,7 @@
 #include "core/asm_port_core.hpp"
 #include "core/applesoft_variables.hpp"
-#include "core/asm_port_chkmem.hpp"
 #include "core/asm_port_characters.hpp"
+#include "core/asm_port_chkmem.hpp"
 #include "core/asm_port_error.hpp"
 #include "core/asm_port_error_handling.hpp"
 #include "core/asm_port_error_messages.hpp"
@@ -174,9 +174,7 @@ void MON_APPLEII() {
 // Name normalization: CROUT -> MON_CROUT (monitor label gets MON_ prefix).
 //
 // `lda #$8d` + `bne COUT` is an unconditional transfer to COUT with CR.
-void MON_CROUT() {
-  MON_COUT(kCharCarriageReturnHigh);
-}
+void MON_CROUT() { MON_COUT(kCharCarriageReturnHigh); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst

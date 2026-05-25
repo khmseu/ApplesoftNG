@@ -65,8 +65,8 @@ void parseStringInputAndStore() {
     startAddr = static_cast<std::uint16_t>(startAddr + 1u);
   } else {
     // Unquoted: terminate on $00, colon ($3a & $7f = $3a), or comma ($2c).
-    charAc = static_cast<std::uint8_t>(':' & 0x7fu);
-    endChr = static_cast<std::uint8_t>(',' & 0x7fu);
+    charAc = kCharColon;
+    endChr = kCharComma;
   }
 
   variables().AS_CHARAC = charAc;
@@ -175,7 +175,7 @@ void AS_INPUT() {
   // Optional prompt string: AS_INPUT "prompt";...
   if (AS_CHRGOT() == static_cast<std::uint8_t>('"')) {
     AS_STRTXT();
-    AS_SYNCHR(static_cast<std::uint8_t>(';' & 0x7fu));
+    AS_SYNCHR(kCharSemicolon);
     AS_STRPRT();
   } else {
     AS_OUTQUES();
@@ -185,8 +185,7 @@ void AS_INPUT() {
   AS_ERRDIR();
 
   // Prime input buffer and read a line.
-  variables().writeByte(kAS_INPUT_BUFFER_MINUS_1,
-                        static_cast<std::uint8_t>(',' & 0x7fu));
+  variables().writeByte(kAS_INPUT_BUFFER_MINUS_1, kCharComma);
   AS_INLIN();
 
   // CTRL-C abort path.
@@ -272,7 +271,7 @@ void AS_PROCESS_INPUT_LIST(std::uint16_t input_ptr, std::uint8_t input_flag) {
 
     // AS_INPUT_MORE: expect EOL/colon or comma separator.
     const std::uint8_t sep = AS_CHRGOT();
-    if (sep != 0u && sep != static_cast<std::uint8_t>(',' & 0x7fu)) {
+    if (sep != 0u && sep != kCharComma) {
       AS_INPUTERR();
       return;
     }

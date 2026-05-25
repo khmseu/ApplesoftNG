@@ -1,6 +1,7 @@
 #include "core/asm_port_strlt2.hpp"
 
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_characters.hpp"
 #include "core/asm_port_chrget.hpp"
 #include "core/asm_port_core.hpp"
 #include "core/asm_port_error_handling.hpp"
@@ -155,7 +156,7 @@ void AS_FRM_ELEMENT() {
       return;
     }
 
-    if (token == static_cast<std::uint8_t>('.' & 0x7fu)) {
+    if (token == kCharPeriod) {
       AS_FIN();
       return;
     }

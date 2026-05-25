@@ -1,5 +1,6 @@
 #include "platform/asm_port_getln.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_characters.hpp"
 #include "core/asm_port_core.hpp"
 #include "core/asm_port_inlin2.hpp"
 #include "platform/asm_port_outdo.hpp"
@@ -34,10 +35,9 @@ std::uint8_t read_screen_char_via_28_y() {
 // Name normalization: none (assembler label MON_RDCHAR kept verbatim).
 std::uint8_t MON_RDCHAR() {
   // ESC ($9B) branches back through ESC to read another key; model as a loop.
-  constexpr std::uint8_t kEsc = 0x9bu;
   while (true) {
     const std::uint8_t key = MON_RDKEY();
-    if (key != kEsc) {
+    if (key != kCharEscapeHigh) {
       return key;
     }
   }
@@ -62,7 +62,7 @@ void MON_CLREOL() {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: MON_CROUT (inclusive) .. MON_PRA1 (exclusive)
 // Name normalization: none (assembler label MON_CROUT kept verbatim).
-void MON_CROUT() { MON_COUT(0x8du); }
+void MON_CROUT() { MON_COUT(kCharCarriageReturnHigh); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
@@ -124,7 +124,6 @@ void MON_NOTCR(std::uint8_t &x) {
 // Name normalization: none (assembler label MON_GETLN kept verbatim).
 std::uint8_t MON_GETLN() {
   constexpr std::uint8_t kCtrlU = 0x95u;
-  constexpr std::uint8_t kCarriageReturn = 0x8du;
   constexpr std::uint8_t kAS_LowercaseThreshold = 0xe0u;
 
   std::uint8_t x = MON_GETLNZ();
@@ -140,7 +139,7 @@ std::uint8_t MON_GETLN() {
     }
 
     write_input_buffer(x, ch);
-    if (ch == kCarriageReturn) {
+    if (ch == kCharCarriageReturnHigh) {
       MON_CLREOL();
       return x;
     }

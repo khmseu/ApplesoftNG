@@ -1,5 +1,6 @@
 #include "core/asm_port_graphics.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_characters.hpp"
 #include "core/asm_port_chrget.hpp"
 #include "core/asm_port_clear.hpp"
 #include "core/asm_port_error.hpp"
@@ -589,7 +590,7 @@ static HiResCoordinates AS_HFNS() {
 
   constexpr std::uint16_t kMaxXExclusive = 280u;
   constexpr std::uint8_t kMaxYExclusive = 192u;
-  constexpr std::uint8_t kComma = static_cast<std::uint8_t>(',' & 0x7fu);
+  constexpr std::uint8_t kComma = kCharComma;
 
   AS_FRMNUM();
   AS_GETADR();
@@ -1164,7 +1165,7 @@ std::uint8_t AS_PLOTFNS() {
   // Stores A in AS_FIRST and mirrors B into MON_H2/MON_V2.
 
   constexpr std::uint8_t kMaxCoordExclusive = 48u;
-  constexpr std::uint8_t kComma = static_cast<std::uint8_t>(',' & 0x7fu);
+  constexpr std::uint8_t kComma = kCharComma;
 
   const std::uint8_t first = AS_GETBYT();
   if (first >= kMaxCoordExclusive) {

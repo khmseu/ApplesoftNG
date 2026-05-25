@@ -324,10 +324,10 @@ static void print_list_loop(std::uint8_t a, bool expr_cr) {
     } else if (a == token_byte(ASToken::SPC)) {
       // cmp #AS_TOKEN_SPC / beq AS_PR_TAB_OR_SPC (C=0 for SPC)
       AS_PR_TAB_OR_SPC(false);
-    } else if (a == static_cast<std::uint8_t>(',' & 0x7fu)) {
+    } else if (a == kCharComma) {
       // cmp #(",",&$7f) / beq AS_PR_COMMA
       AS_PR_COMMA();
-    } else if (a == static_cast<std::uint8_t>(';' & 0x7fu)) {
+    } else if (a == kCharSemicolon) {
       // cmp #(";"&$7f) / beq AS_PR_NEXT_CHAR — no additional action
     } else {
       // jsr AS_FRMEVL — evaluate expression into AS_FAC / AS_VALTYP
@@ -502,7 +502,7 @@ void AS_PR_TAB_OR_SPC(bool is_tab) {
 
   // cmp #(")"&$7f) = $29 — check for closing parenthesis
   const std::uint8_t next = AS_CHRGOT();
-  if (next != static_cast<std::uint8_t>(')' & 0x7fu)) {
+  if (next != kCharCloseParen) {
     // jmp AS_SYNERR
     AS_SYNERR();
     return;

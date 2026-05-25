@@ -1,5 +1,6 @@
 #include "platform/asm_port_outdo.hpp"
 #include "core/applesoft_variables.hpp"
+#include "core/asm_port_characters.hpp"
 #include "core/asm_port_graphics.hpp"
 #include "core/io_ports.hpp"
 #include "core/jump_table.hpp"
@@ -23,7 +24,7 @@ static std::uint16_t computeTextRowBase(std::uint8_t row_zero_based) {
 }
 void setCursorRow(std::uint8_t row_zero_based) { MON_TABV(row_zero_based); }
 static void scrollWindowUp() {
-  constexpr std::uint8_t kBlank = static_cast<std::uint8_t>(' ' | 0x80u);
+  constexpr std::uint8_t kBlank = kCharSpaceHigh;
   const std::uint8_t top = variables_const().MON_WNDTOP;
   const std::uint8_t bottom = variables_const().MON_WNDBTM;
   const std::uint8_t width = variables_const().MON_WNDWDTH;
@@ -108,17 +109,14 @@ static void MON_VIDOUT(std::uint8_t a) {
 // AS_Labels: MON_VIDWAIT (inclusive) .. MON_ESCOLD (exclusive)
 // Name normalization: none (assembler label MON_VIDWAIT kept verbatim).
 static void MON_VIDWAIT(std::uint8_t a) {
-  constexpr std::uint8_t kCarriageReturn = 0x8du;
-  constexpr std::uint8_t kCtrlS = 0x93u;
-  constexpr std::uint8_t kCtrlC = 0x83u;
-  if (a == kCarriageReturn) {
+  if (a == kCharCarriageReturnHigh) {
     std::uint8_t keycode = ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD);
-    if ((keycode & 0x80u) != 0u && keycode == kCtrlS) {
+    if ((keycode & 0x80u) != 0u && keycode == kControlCharSHigh) {
       consumeKeyboardAS_Latch(keycode);
       do {
         keycode = ioPorts_const().readByte(IOPorts::ADDR_AS_KEYBOARD);
       } while ((keycode & 0x80u) == 0u);
-      if (keycode != kCtrlC)
+      if (keycode != kControlCharCHigh)
         consumeKeyboardAS_Latch(keycode);
     }
   }
@@ -175,11 +173,11 @@ std::uint8_t AS_OUTDO(std::uint8_t a) {
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_OUTSP (inclusive) .. AS_OUTQUES (exclusive)
 // Name normalization: none (assembler label AS_OUTSP kept verbatim).
-void AS_OUTSP() { AS_OUTDO(static_cast<std::uint8_t>(' ' & 0x7fu)); }
+void AS_OUTSP() { AS_OUTDO(kCharSpace); }
 
 // Source:
 // SourceMaterial/Combo/asrom.lst
 // AS_Labels: AS_OUTQUES (inclusive) .. AS_OUTDO (exclusive)
 // Name normalization: none (assembler label AS_OUTQUES kept verbatim).
-void AS_OUTQUES() { AS_OUTDO(static_cast<std::uint8_t>('?' & 0x7fu)); }
+void AS_OUTQUES() { AS_OUTDO(kCharQuestionMark); }
 } // namespace applesoft::asm_port
