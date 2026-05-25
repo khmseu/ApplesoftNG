@@ -8,6 +8,8 @@ Guidance for AI coding agents working in this repository.
 
 - C++ Applesoft clone with current executable target: ApplesoftClone.
 - Language standard: C++23 (set in CMake and intended for both GCC 13.3 and Clang 18.1 toolchains).
+- Runtime code is split across `src/core`, `src/platform`, and matching headers in `include/core` and `include/platform`.
+- Core port modules now live as `asm_port_*.cpp` / `asm_port_*.hpp` pairs; use the exact label names from `SourceMaterial/Combo/asrom.sym`.
 - Authoritative source material: [SourceMaterial/Combo](SourceMaterial/Combo). Symbols in the combined listing (`asrom.lst`) and symbol table (`asrom.sym`) already include `AS_` or `MON_` prefixes.
 - Historical Apple II assembly/listing material in `Apple-II-Source-slim` is reference-only.
 - Start with project overview in [README.md](README.md).
@@ -24,7 +26,9 @@ These commands are verified in this workspace.
 
 - Runtime C++ implementation is in [src](src) and [include](include).
 - Core interpreter logic: [src/core](src/core), public headers in [include/core](include/core).
-- Console abstraction: [src/platform](src/platform), headers in [include/platform](include/platform).
+- Platform console abstraction: [src/platform](src/platform), headers in [include/platform](include/platform).
+- Emulated/native pointer bridge: [include/core/applesoft_dual_pointer.hpp](include/core/applesoft_dual_pointer.hpp).
+- I/O-mapped state and soft-switch placeholders: [src/core/io_ports.cpp](src/core/io_ports.cpp) and [include/core/io_ports.hpp](include/core/io_ports.hpp).
 - Reference corpus: [SourceMaterial/Combo](SourceMaterial/Combo).
 
 ## Important Pitfalls

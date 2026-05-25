@@ -19,103 +19,25 @@ On the 6502, a 16-bit address (e.g., `IOPorts::ADDR_KEYBOARD`) is handled as two
 
 **AI Task:** You must recognize patterns where the code loads, stores, or manipulates these bytes in tandem and "re-unify" them into a single C++ pointer variable.
 
-## 3. Heuristics for Pointer Recognition
+# 16-Bit Pointer Problem
 
-The AI agent should identify a "Pointer Candidate" when it sees the following patterns:
+## Background
 
-### A. Indirect Addressing Modes
+6502 code often represents a 16-bit address as two 8-bit bytes. In this codebase the canonical bridge is `ApplesoftDualPointer<T>`, which can hold either an emulated 16-bit address or a native `T*`.
 
-Any memory location used as an operand for indirect instructions is a pointer by definition.
+## Current Model
 
-- **Pattern:** `LDA ($NN), Y` or `STA ($NN, X)`
-- **Logic:** The 16-bit value stored at Zero Page address `$NN` and `$NN+1` is a pointer. In C++, this should be treated as a `uint8_t*`.
+- `ApplesoftDualPointer::emulated(address)` preserves 6502-style addressing.
+- `ApplesoftDualPointer::native(ptr)` wraps an actual typed C++ pointer.
+- `nativePointer()` resolves emulated addresses through `ApplesoftVariables::pointer(address).address()`.
+- Emulated pointers are rejected for regions that do not have stable typed storage: zero page, the input-buffer sentinel/page, and I/O-mapped ranges in `IOPorts`.
 
-### B. High/Low Byte Loading (Immediate)
+## Practical Use
 
-- **Pattern:**
+Use the dual-pointer type for ROM tables and other data where the port needs to switch between emulated addresses and native storage. Examples in the tree include token-name tables, token-address tables, ROM constants, error-message tables, and math tables.
 
-```assembly
-    LDA #<label  ; Load low byte of address
-    STA pointer_lo
-    LDA #>label  ; Load high byte of address
-    STA pointer_hi
-```
+Do not use it to hide genuine byte-level state. Use `ApplesoftVariables` or `IOPorts` directly when the code is intentionally modeling the original 8-bit memory layout.
 
-- **Logic:** The symbol `label` is the base of the pointer. The variables `pointer_lo` and `pointer_hi` should be consolidated into a single `uint8_t* ptr_variable`.
+## Why This Exists
 
-### C. Pointer Arithmetic
-
-- **Pattern:** Adding a value to the low byte and propagating the carry to the high byte.
-
-```assembly
-    CLC
-    LDA ptr_lo
-    ADC #$10
-    STA ptr_lo
-    BCC skip
-    INC ptr_hi
-    skip:
-```
-
-- **Logic:** This is equivalent to `ptr_variable += 0x10;` in C++.
-
-## 4. Handling Dual-Use Memory (The "Ambiguity" Problem)
-
-A specific memory location (especially in Zero Page) may be used as a 16-bit integer in one subroutine and a pointer in another.
-
-**AI Implementation Strategy:**
-
-1. **Type Analysis:** Perform a data-flow analysis on every 16-bit pair.
-2. **The `union` Approach:** If a location is used interchangeably as an integer and a pointer, represent it in C++ using a `union` or `std::variant`, or map it to a "Smart Pointer" class that allows byte-level access.
-3. **Shadow Memory:** In cases where 16-bit math is performed on a pointer, translate it to C++ pointer arithmetic rather than raw integer math to preserve 64-bit compatibility.
-
-## 5. Translation Rules for the AI
-
-### Rule 1: Consolidation
-
-When the AI detects a 16-bit pair being used for addressing, it must not create two `uint8_t` variables. It must create one `uint8_t*`.
-
-### Rule 2: Address Space Mapping
-
-Since the 6502 has a 64KB limit and the 64-bit target does not, the AI should:
-
-- Define a `uint8_t* RAM_BASE` representing the start of the 6502's memory map.
-- Convert 16-bit absolute addresses (e.g., `STA $D010`) into `RAM_BASE[0xD010]`.
-
-However, if the absolute address is of some object in code space, use the address of the translated object instead.
-
-### Rule 3: Zero Space Variable Lifting
-
-If a subroutine expects a pointer in Zero Page (e.g., `$20` and `$21`), the C++ Zero page emulation (class ApplesoftVariables) the variable should be implemented as a `uint8_t*` or some more specialized pointer type.
-
-## 6. Example Conversion Logic
-
-**Source Assembler:**
-
-```assembly
-; Copy 10 bytes from SRC to DEST
-    LDA #<SRC
-    STA $20
-    LDA #>SRC
-    STA $21
-    LDY #$00
-loop
-    LDA ($20), Y
-    STA DEST, Y
-    INY
-    CPY #$0A
-    BNE loop
-```
-
-**Desired C++ Output (Conceptual):**
-
-```cpp
-uint8_t* src_ptr = &RAM[SRC_ADDR];
-for (int y = 0; y < 10; ++y) {
-    RAM[DEST_ADDR + y] = src_ptr[y];
-}
-```
-
-## 7. Summary for AI Instruction
-
-"Search the assembly listing for split-byte manipulation of 16-bit values. Identify those used in indirect addressing or `ADC/INC` carry-chains. Translate these into unified 64-bit pointers in C++. If a memory location is used as both an integer and a pointer, implement a type-safe mechanism (like a union or casting) to allow both 8-bit math and 64-bit memory referencing."
+The goal is to keep 6502 address semantics visible while still allowing native C++ code to work with typed objects and normal pointer arithmetic.
