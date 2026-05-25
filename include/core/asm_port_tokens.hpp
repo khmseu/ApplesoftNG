@@ -122,9 +122,8 @@ constexpr std::uint8_t token_byte(ASToken token) {
   return static_cast<std::uint8_t>(token);
 }
 
-inline constexpr std::size_t kTokenCount =
-  static_cast<std::size_t>(token_byte(ASToken::MID) -
-               token_byte(ASToken::END) + 1u);
+inline constexpr std::size_t kTokenCount = static_cast<std::size_t>(
+    token_byte(ASToken::MID) - token_byte(ASToken::END) + 1u);
 
 constexpr bool is_statement_token(std::uint8_t token) {
   return token >= token_byte(ASToken::END) && token <= token_byte(ASToken::NEW);
