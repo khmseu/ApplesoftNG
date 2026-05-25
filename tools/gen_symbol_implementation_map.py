@@ -17,48 +17,19 @@ from __future__ import annotations
 import argparse
 import csv
 import re
-import sys
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
 
+from clang_utils import (
+    compile_args_for_file,
+    configure_libclang,
+    import_clang_cindex,
+    resolve_path,
+)
 
-def _import_clang_cindex():
-    """Import clang.cindex with Ubuntu dist-packages fallback for venvs."""
-    try:
-        from clang import cindex as _cindex  # type: ignore
-
-        return _cindex
-    except ModuleNotFoundError:
-        pass
-
-    major = sys.version_info.major
-    minor = sys.version_info.minor
-    candidates = [
-        "/usr/lib/python3/dist-packages",
-        f"/usr/lib/python{major}/dist-packages",
-        f"/usr/lib/python{major}.{minor}/dist-packages",
-    ]
-    for candidate in candidates:
-        if Path(candidate).is_dir() and candidate not in sys.path:
-            sys.path.append(candidate)
-
-    try:
-        from clang import cindex as _cindex  # type: ignore
-
-        return _cindex
-    except ModuleNotFoundError as exc:
-        raise SystemExit(
-            "error: python clang bindings not found.\n"
-            "Install one of:\n"
-            "  - apt: python3-clang-18\n"
-            "  - venv: pip install clang\n"
-            "Or run this script with system python outside the venv."
-        ) from exc
-
-
-cindex = _import_clang_cindex()
+cindex = import_clang_cindex()
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_SYM_ROOT = REPO_ROOT / "SourceMaterial" / "Combo"
@@ -68,23 +39,14 @@ DEFAULT_OUT = REPO_ROOT / "docs" / "symbol-implementation-map.tsv"
 DEFAULT_LOG_OUT = REPO_ROOT / "docs" / "symbol-implementation-map-claims.tsv"
 
 
-def _configure_libclang() -> None:
-    """Pin bindings to libclang-18 to avoid mixed-version runtime issues."""
-    if cindex.Config.library_file:
-        return
-
-    candidates = [
+configure_libclang(
+    cindex,
+    [
         "/usr/lib/llvm-18/lib/libclang-18.so.1",
         "/usr/lib/llvm-18/lib/libclang-18.so",
         "/usr/lib/x86_64-linux-gnu/libclang-18.so.1",
-    ]
-    for candidate in candidates:
-        if Path(candidate).is_file():
-            cindex.Config.set_library_file(candidate)
-            return
-
-
-_configure_libclang()
+    ],
+)
 
 # A symbol declaration line in a ca65/xa65 .sym file looks like:
 #   SYMBOL, 0x1234, 0, 0x0000
@@ -96,49 +58,6 @@ SYM_DECL_RE = re.compile(
 LABEL_TOKEN_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 
 IGNORED_CLAIM_TOKENS = {"inclusive", "exclusive", "t"}
-
-
-def _resolve(path_str: str) -> Path:
-    """Resolve a path best-effort without failing hard on missing files."""
-    try:
-        return Path(path_str).resolve()
-    except OSError:
-        return Path(path_str)
-
-
-def _compile_args_for_file(db: Any | None, cpp_file: Path) -> list[str]:
-    """Build parser args from compile_commands for a specific source file."""
-    if db is None:
-        return ["-std=c++23", f"-I{REPO_ROOT / 'include'}"]
-
-    commands = db.getCompileCommands(str(cpp_file))
-    if not commands:
-        return ["-std=c++23", f"-I{REPO_ROOT / 'include'}"]
-
-    command = commands[0]
-    args = list(command.arguments)
-    if args:
-        args = args[1:]  # Drop compiler executable.
-
-    filtered: list[str] = []
-    skip_next = False
-    source = str(cpp_file)
-
-    for arg in args:
-        if skip_next:
-            skip_next = False
-            continue
-
-        if arg in {"-c", "-o", "-MF", "-MT", "-MQ"}:
-            skip_next = True
-            continue
-
-        if arg == source:
-            continue
-
-        filtered.append(arg)
-
-    return filtered
 
 
 def _collect_function_definitions_by_file(
@@ -156,13 +75,13 @@ def _collect_function_definitions_by_file(
     index = cindex.Index.create()
 
     for cpp_path in sorted(src_root.rglob("*.cpp")):
-        args = _compile_args_for_file(db, cpp_path)
+        args = compile_args_for_file(db, cpp_path, REPO_ROOT / "include")
         try:
             tu = index.parse(str(cpp_path), args=args)
         except cindex.TranslationUnitLoadError:
             continue
 
-        resolved_cpp = _resolve(str(cpp_path))
+        resolved_cpp = resolve_path(str(cpp_path))
         seen: set[tuple[str, int]] = set()
 
         for cursor in tu.cursor.walk_preorder():
@@ -180,7 +99,7 @@ def _collect_function_definitions_by_file(
             if loc is None or loc.file is None:
                 continue
 
-            if _resolve(loc.file.name) != resolved_cpp:
+            if resolve_path(loc.file.name) != resolved_cpp:
                 continue
 
             if loc.line <= 0:

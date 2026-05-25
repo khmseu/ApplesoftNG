@@ -19,7 +19,7 @@ On the 6502, a 16-bit address (e.g., `IOPorts::ADDR_KEYBOARD`) is handled as two
 
 **AI Task:** You must recognize patterns where the code loads, stores, or manipulates these bytes in tandem and "re-unify" them into a single C++ pointer variable.
 
-# 16-Bit Pointer Problem
+<!-- # 16-Bit Pointer Problem -->
 
 ## Background
 

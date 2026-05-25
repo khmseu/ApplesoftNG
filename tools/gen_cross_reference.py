@@ -27,61 +27,23 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from clang_utils import (
+    compile_args_for_file,
+    configure_libclang,
+    import_clang_cindex,
+    resolve_path,
+)
 
-def _import_clang_cindex():
-    """Import clang.cindex with Ubuntu dist-packages fallback for venvs."""
-    try:
-        from clang import cindex as _cindex  # type: ignore
+cindex = import_clang_cindex()
 
-        return _cindex
-    except ModuleNotFoundError:
-        pass
-
-    major = sys.version_info.major
-    minor = sys.version_info.minor
-    candidates = [
-        "/usr/lib/python3/dist-packages",
-        f"/usr/lib/python{major}/dist-packages",
-        f"/usr/lib/python{major}.{minor}/dist-packages",
-    ]
-    for candidate in candidates:
-        if Path(candidate).is_dir() and candidate not in sys.path:
-            sys.path.append(candidate)
-
-    try:
-        from clang import cindex as _cindex  # type: ignore
-
-        return _cindex
-    except ModuleNotFoundError as exc:
-        raise SystemExit(
-            "error: python clang bindings not found.\n"
-            "Install one of:\n"
-            "  - apt: python3-clang-18\n"
-            "  - venv: pip install clang\n"
-            "Or run this script with system python outside the venv."
-        ) from exc
-
-
-cindex = _import_clang_cindex()
-
-
-def _configure_libclang() -> None:
-    """Pin bindings to libclang-18 to avoid mixed-version runtime issues."""
-    if cindex.Config.library_file:
-        return
-
-    candidates = [
+configure_libclang(
+    cindex,
+    [
         "/usr/lib/llvm-18/lib/libclang.so.1",
         "/usr/lib/llvm-18/lib/libclang.so",
         "/usr/lib/x86_64-linux-gnu/libclang-18.so.1",
-    ]
-    for candidate in candidates:
-        if Path(candidate).is_file():
-            cindex.Config.set_library_file(candidate)
-            return
-
-
-_configure_libclang()
+    ],
+)
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -157,49 +119,6 @@ def _collect_preceding_comments(lines: list[str], line_index: int) -> str:
 # ---------------------------------------------------------------------------
 
 
-def _resolve(path_str: str) -> Path:
-    """Resolve a path best-effort without failing hard on missing files."""
-    try:
-        return Path(path_str).resolve()
-    except OSError:
-        return Path(path_str)
-
-
-def _compile_args_for_file(db: Any | None, cpp_file: Path) -> list[str]:
-    """Build parser args from compile_commands for a specific source file."""
-    if db is None:
-        return ["-std=c++23", f"-I{REPO_ROOT / 'include'}"]
-
-    commands = db.getCompileCommands(str(cpp_file))
-    if not commands:
-        return ["-std=c++23", f"-I{REPO_ROOT / 'include'}"]
-
-    command = commands[0]
-    args = list(command.arguments)
-    if args:
-        args = args[1:]  # Drop compiler executable.
-
-    filtered: list[str] = []
-    skip_next = False
-    source = str(cpp_file)
-
-    for arg in args:
-        if skip_next:
-            skip_next = False
-            continue
-
-        if arg in {"-c", "-o", "-MF", "-MT", "-MQ"}:
-            skip_next = True
-            continue
-
-        if arg == source:
-            continue
-
-        filtered.append(arg)
-
-    return filtered
-
-
 def _function_defs_via_clang(cpp_file: Path) -> list[tuple[str, int]]:
     """Return (function_name, 1-based line) definitions discovered by libclang."""
     db: Any | None = None
@@ -208,7 +127,7 @@ def _function_defs_via_clang(cpp_file: Path) -> list[tuple[str, int]]:
     except Exception:
         db = None
 
-    args = _compile_args_for_file(db, cpp_file)
+    args = compile_args_for_file(db, cpp_file, REPO_ROOT / "include")
 
     index = cindex.Index.create()
     try:
@@ -217,7 +136,7 @@ def _function_defs_via_clang(cpp_file: Path) -> list[tuple[str, int]]:
         print(f"warning: cannot parse {cpp_file}: {exc}", file=sys.stderr)
         return []
 
-    resolved_source = _resolve(str(cpp_file))
+    resolved_source = resolve_path(str(cpp_file))
     seen: set[tuple[str, int]] = set()
     found: list[tuple[str, int]] = []
 
@@ -236,7 +155,7 @@ def _function_defs_via_clang(cpp_file: Path) -> list[tuple[str, int]]:
         if loc is None or loc.file is None:
             continue
 
-        if _resolve(loc.file.name) != resolved_source:
+        if resolve_path(loc.file.name) != resolved_source:
             continue
 
         if loc.line <= 0:
